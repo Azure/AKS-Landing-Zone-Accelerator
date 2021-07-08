@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "spokeVnetAddressSpace": {
+            "value": "10.240.0.0/16"
+        },
+        "clusterSubnetPrefix": {
+            "value": "10.240.0.0/22"
+        },
+        "appgatewaySubnetPrefix": {
+            "value": "10.240.4.16/28"
+        },
+        "privateEndpointSubnetPrefix": {
+            "value": "10.240.4.0/28"
+        }
+    }
+}
