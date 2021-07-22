@@ -1,3 +1,14 @@
-
-
-az deployment sub create --location 'uksouth' --template-file './deploy.bicep' --parameters '@./modules/virtualNetwork/vnet.parameters.json' '@./modules/DdosProtectionPlans/ddos.parameters.json'
+Param(
+    [Parameter(Mandatory=$true)]
+    [string]$location,
+    [Parameter(Mandatory=$true)]
+    [string]$templatefilepath,
+    [Parameter(Mandatory=$true)]
+    [string]$parameterfolderpath
+)
+$parameters=""
+$parameterfiles=ls $parameterfolderpath
+foreach($paramfile in $parameterfiles){
+$parameters+="@"+$paramfile+" "
+}
+cmd /c "az deployment sub create --location $location --template-file $templatefilepath --parameters $parameters"

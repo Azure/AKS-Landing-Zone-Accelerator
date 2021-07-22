@@ -1,8 +1,9 @@
 targetScope = 'subscription'
-param rg object = {}
+param rg string = ''
+param location string= ''
 resource symbolicname 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: rg.resourceGroupNames
-  location: rg.location
+  name: rg
+  location: location
   tags: {}
   properties: {
   }
