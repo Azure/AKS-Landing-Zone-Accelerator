@@ -15,6 +15,10 @@ resource VNets_resource 'Microsoft.Network/virtualNetworks@2020-08-01' = {
         addressPrefix: item.addressPrefix
       }
     }]
+    dhcpOptions: {
+      dnsServers: [
+        VNet.dnsServers
+      ]
+    }
   }
 }
-
