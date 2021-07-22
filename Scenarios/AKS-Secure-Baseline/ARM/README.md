@@ -10,3 +10,7 @@ This is an implementation taking reference from [Azure Kubernetes Service (AKS) 
 
 
 ### Steps of Implementation for AKS Construction Set
+
+1. This folder includes networking templates , AKS templates
+  1.1 Networking Templates : This includes the networking components for the implementation like Private Link, Azure Firewall , Hub Network, Spoke Networks , Application Gateways etc.
+  1.2 Further components to be added soon
