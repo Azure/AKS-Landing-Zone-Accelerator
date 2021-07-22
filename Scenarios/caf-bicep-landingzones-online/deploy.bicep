@@ -11,11 +11,13 @@ param resourceGroupNames array = []
   }
 }]*/
 
-/*module Ddos './Modules/DdosProtectionPlans/main.bicep' = {
+module Ddos './Modules/DdosProtectionPlans/main.bicep' = {
   name: 'DdosDeploy'
   scope: resourceGroup(DdosProtectionPlan.rg)
-  params: {}
-}*/
+  params: {
+    DdosProtectionPlan: DdosProtectionPlan
+  }
+}
 
 module VNet './Modules/virtualNetwork/main.bicep' = [for VNet in VNets: {
   name: 'VNetDeploy'
