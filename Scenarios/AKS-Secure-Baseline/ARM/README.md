@@ -2,7 +2,7 @@
 
 ## Background
 
-This is an implementation which takes reference from https://github.com/mspnp/aks-fabrikam-dronedelivery
+This is an implementation taking reference from [Azure Kubernetes Service (AKS) Fabrikam Drone Delivery](https://github.com/mspnp/aks-fabrikam-dronedelivery)
 
 ## Reference Architecture
 
