@@ -2,14 +2,16 @@ targetScope = 'subscription'
 
 param VNets array = []
 param DdosProtectionPlan object = {}
-param resourceGroupNames array = []
+param rgnames array = []
+param rglocation string = ''
 
-/*module rg './Modules/resourceGroup/main.bicep' = [for rg in resourceGroupNames: {
+module rg './Modules/resourceGroup/main.bicep' = [for rg in rgnames: {
   name: rg
   params: {
     rg: rg
+    location:rglocation
   }
-}]*/
+}]
 
 module Ddos './Modules/DdosProtectionPlans/main.bicep' = {
   name: 'DdosDeploy'
@@ -17,6 +19,9 @@ module Ddos './Modules/DdosProtectionPlans/main.bicep' = {
   params: {
     DdosProtectionPlan: DdosProtectionPlan
   }
+  dependsOn:[
+    rg
+  ]
 }
 
 module VNet './Modules/virtualNetwork/main.bicep' = [for VNet in VNets: {
@@ -25,4 +30,7 @@ module VNet './Modules/virtualNetwork/main.bicep' = [for VNet in VNets: {
   params: {
     VNet: VNet
   }
+  dependsOn: [
+    Ddos
+  ]
 }]
