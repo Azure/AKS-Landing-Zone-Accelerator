@@ -8,6 +8,7 @@
                     "name": "vnet_hub_re1",
                     "rg": "vnet_hub_re1",
                     "addressPrefix": "100.64.100.0/22",
+                    "dnsServers": "1.1.1.1",
                     "ddosProtectionPlan": {
                         "enabled": "true",
                         "name": "ddos-standard-ml"
@@ -39,6 +40,7 @@
                     "name": "aks",
                     "rg": "aks_spoke_re1",
                     "addressPrefix": "10.100.80.0/22",
+                    "dnsServers": "1.1.1.1",
                     "ddosProtectionPlan": {
                         "enabled": "true",
                         "name": "ddos-standard-ml"

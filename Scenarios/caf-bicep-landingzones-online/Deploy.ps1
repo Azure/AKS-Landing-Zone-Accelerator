@@ -18,4 +18,4 @@ $files = @("C:\Users\mattl\OneDrive\Documents\Enterprise-Scale-for-AKS\Enterpris
 
 
 
-az deployment sub create --location 'uksouth' --template-file './deploy.bicep' --parameters '@./merged.json'
+az deployment sub create --location 'uksouth' --template-file './deploy.bicep' --parameters '@./modules/virtualNetwork/vnet.parameters.json'
