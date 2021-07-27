@@ -3,14 +3,13 @@ targetScope = 'subscription'
 param VNets array = []
 param DdosProtectionPlan object = {}
 param rgnames array = []
-param rglocation string = ''
 param acr object = {}
 
 module rg './Modules/resourceGroup/main.bicep' = [for rg in rgnames: {
   name: rg
   params: {
     rg: rg
-    location:rglocation
+    location: deployment().location
   }
 }]
 
