@@ -5,6 +5,7 @@
     "rgnames": {
       "value": [
         "aks_re1",
+        "acr_re1",
         "agw_re1",
         "vnet_hub_re1",
         "aks_spoke_re1",

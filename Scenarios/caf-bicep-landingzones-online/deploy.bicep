@@ -4,6 +4,7 @@ param VNets array = []
 param DdosProtectionPlan object = {}
 param rgnames array = []
 param rglocation string = ''
+param acr object = {}
 
 module rg './Modules/resourceGroup/main.bicep' = [for rg in rgnames: {
   name: rg
@@ -34,3 +35,15 @@ module VNet './Modules/virtualNetwork/main.bicep' = [for VNet in VNets: {
     Ddos
   ]
 }]
+
+module ACR './Modules/ACR/main.bicep' = {
+  name: 'ACRDeploy'
+  scope: resourceGroup(acr.rg)
+  params: {
+    acrName: acr.name
+    acrSku: acr.sku
+  }
+  dependsOn:[
+    rg
+  ]
+}
