@@ -13,9 +13,6 @@
         "devops_re1",
         "jumpbox_re1"
       ]
-    },
-    "rglocation": {
-      "value": "uksouth"
     }
   }
 }
