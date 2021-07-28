@@ -6,6 +6,9 @@
             "value": [
                 {
                     "name": "azure_bastion_nsg",
+                    "rg": "aks_re1",
+                    "id": "/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourcegroups/DefaultResourceGroup-SUK/providers/Microsoft.Network/networkSecurityGroups/azure_bastion_nsg",
+                    "trafficAnalytics": true,
                     "rules": [
                         {
                             "name": "in-allow-https",
