@@ -59,3 +59,29 @@ module NSG './Modules/networkSecurityGroup/main.bicep' = [for NSG in networkSecu
     rg
   ]
 }]
+
+module NSGFlowLogs './Modules/trafficAnalytics/main.bicep' = [for NSG in networkSecurityGroups: if (NSG.trafficAnalytics){
+  name: 'NSG'
+  scope: resourceGroup(trafficAnalytics.rg)
+  params: {
+    trafficAnalytics:trafficAnalytics
+    networkSecurityGroup: NSG
+  }
+  dependsOn:[
+    rg
+  ]
+  
+}]
+
+module VNetPeering './Modules/trafficAnalytics/main.bicep' = [for VNet in VNets: {
+  name: 'VNetPeering'
+  scope: resourceGroup(trafficAnalytics.rg)
+  params: {
+    trafficAnalytics:trafficAnalytics
+    networkSecurityGroup: NSG
+  }
+  dependsOn:[
+    VNetDeploy
+  ]
+  
+}]
