@@ -1,8 +1,8 @@
 param networkSecurityGroup object = {}
 param trafficAnalytics object = {}
 
-resource symbolicname 'Microsoft.Network/networkWatchers/flowLogs@2020-07-01' = {
-  name: '${networkSecurityGroup}-flowlog'
+resource NSGFlowLogs 'Microsoft.Network/networkWatchers/flowLogs@2020-07-01' = {
+  name: '${trafficAnalytics.name}/${networkSecurityGroup.name}-flowlog'
   location: resourceGroup().location
   tags: {}
   properties: {
@@ -16,7 +16,6 @@ resource symbolicname 'Microsoft.Network/networkWatchers/flowLogs@2020-07-01' = 
     flowAnalyticsConfiguration: {
       networkWatcherFlowAnalyticsConfiguration: {
         enabled: true
-        workspaceId: trafficAnalytics.LAWorkspaceId
         workspaceRegion: resourceGroup().location
         workspaceResourceId: trafficAnalytics.LAWorkspaceId
         trafficAnalyticsInterval: 10

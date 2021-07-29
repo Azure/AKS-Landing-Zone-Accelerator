@@ -4,6 +4,8 @@
     "parameters": {
         "trafficAnalytics": {
             "value": {
+                "rg": "NetworkWatcherRG",
+                "name": "NetworkWatcher_uksouth",
                 "storageAccountId": "/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/DefaultResourceGroup-SUK/providers/Microsoft.Storage/storageAccounts/fhnnghjhgh",
                 "LAWorkspaceId": "/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourcegroups/defaultresourcegroup-suk/providers/microsoft.operationalinsights/workspaces/tedsgsdgds"
             }
