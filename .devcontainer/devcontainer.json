@@ -1,0 +1,46 @@
+{
+	"name": "constructionsets",
+	"dockerFile": "Dockerfile",
+	"runArgs": [
+	"--init",
+	"--privileged"
+	],
+	"overrideCommand": false,
+
+	// some base images require a specific user name
+	"remoteUser": "vscode",
+
+	// Set container specific settings
+	"settings": {
+		"terminal.integrated.defaultProfile.linux": "zsh"
+	},
+
+	// forward ports for the app
+	"forwardPorts": [
+		30000,
+		30080,
+		30088,
+		32000
+	],
+
+	// add labels
+	"portsAttributes": {
+		"30000": { "label": "Prometheus" },
+		"30080": { "label": "ngsa-app" },
+		"30088": { "label": "WebV" },
+		"32000": { "label": "Grafana" },
+	},
+
+	// Install extensions
+	"extensions": [
+		"ms-azuretools.vscode-docker",
+		"ms-kubernetes-tools.vscode-kubernetes-tools",
+		"davidanson.vscode-markdownlint",
+		"gruntfuggly.todo-tree",
+		"mutantdino.resourcemonitor",
+		"humao.rest-client"
+	],
+
+	// Use 'postStartCommand' to run commands after the container starts.
+	"postCreateCommand": "/bin/bash -c .devcontainer/post-start.sh"
+}
