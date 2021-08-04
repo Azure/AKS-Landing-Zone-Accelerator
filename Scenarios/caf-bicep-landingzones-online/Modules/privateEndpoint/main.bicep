@@ -2,7 +2,8 @@ param resourceType string
 param resourceName string
 param subnetId string
 param groupId string
-param dnsZoneName string
+param dnsZoneresourceId string
+param dnsZoneRGName string
 
 
 resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2019-04-01' = {
@@ -28,27 +29,24 @@ resource privateEndpointName_resource 'Microsoft.Network/privateEndpoints@2019-0
   }
 }
 
-resource privateZone_resource 'Microsoft.Network/dnsZones@2018-05-01' = {
-  name: dnsZoneName
-  location: 'global'
-  tags: {}
+
+
+resource privateDNSZoneGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2020-06-01' = {
+  name: '${privateEndpointName_resource.name}/dnsgroupname'
   properties: {
-    zoneType: 'Private'
-    registrationVirtualNetworks: [
+    privateDnsZoneConfigs: [
       {
-        id: split(subnetId,'/subnets/')[0]
-      }
-    ]
-    resolutionVirtualNetworks: [
-      {
-        id: split(subnetId,'/subnets/')[0]
+        name: 'config1'
+        properties: {
+          privateDnsZoneId: dnsZoneresourceId
+        }
       }
     ]
   }
 }
 
 resource vnetLink_resource 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  name: '${dnsZoneName}/${dnsZoneName}-link'
+  name: '${dnsZoneName}/${split(split(subnetId,'/subnets/')[0],'/')[-1]}-link'
   tags: {}
   location: 'global'
   properties: {
