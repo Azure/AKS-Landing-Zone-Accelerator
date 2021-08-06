@@ -37,7 +37,7 @@
     },
     "functions": [],
     "variables": {
-        "hubVNetName": "[concat('vnet-', resourceGroup().location, '-hub')]",
+        "hubVNetName": "vnet_hub_arm",
         "hubLaName": "[concat('la-',resourceGroup().location,'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]"        
     },
     "resources": [

@@ -3,20 +3,29 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appgatewayname": {
-            "type": "string",
-            "defaultValue": "appgateway"
+            "type": "string"
+        },
+        "spokeVNetName": {
+            "type": "string"
+        },
+        "appgatewaySubnet": {
+            "type": "string"
+        },
+        "appgatewayPip": {
+            "type": "string"
         }
+        
     },
     "functions": [],
     "variables": {
-        "hubVNetName": "[concat('vnet-', resourceGroup().location, '-hub')]"
+        "location": "[resourceGroup().location]"
     },
     "resources": [
         {
             "type": "Microsoft.Network/applicationGateways",
             "apiVersion": "2019-11-01",
             "name": "[parameters('appgatewayname')]",
-            "location": "eastus",
+            "location": "[variables('location')]",
             "properties": {
                 "sku": {
                     "name": "Standard_v2",
@@ -28,7 +37,7 @@
                         "name": "appGatewayIpConfig",
                         "properties": {
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('hubVNetName'), 'aks-applicationgateways')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('spokeVNetName'), parameters('appgatewaySubnet'))]"
                             }
                         }
                     }
@@ -38,7 +47,7 @@
                         "name": "appGatewayFrontendIP",
                         "properties": {
                             "PublicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'appgatewaypubip')]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('appgatewayPip'))]"
                             }
                         }
                     }
@@ -73,10 +82,10 @@
                         "name": "appGatewayHttpListener",
                         "properties": {
                             "FrontendIPConfiguration": {
-                                "Id": "[resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', 'applicationGatewayName', 'appGatewayFrontendIP')]"
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways',parameters('appgatewayname')),'/frontendIPConfigurations/appGatewayFrontendIP')]"
                             },
                             "FrontendPort": {
-                                "Id": "[resourceId('Microsoft.Network/applicationGateways/frontendPorts',  'applicationGatewayName', 'appGatewayFrontendPort')]"
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways',parameters('appgatewayname')),'/frontendPorts/appGatewayFrontendPort')]"
                             },
                             "Protocol": "Http",
                             "SslCertificate": null
@@ -85,17 +94,17 @@
                 ],
                 "requestRoutingRules": [
                     {
-                        "Name": "ruleName",
+                        "Name": "RR1",
                         "properties": {
                             "RuleType": "Basic",
                             "httpListener": {
-                                "id": "[resourceId('Microsoft.Network/applicationGateways/httpListeners', 'applicationGatewayName', 'appGatewayHttpListener')]"
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways',parameters('appgatewayname')),'/httpListeners/appGatewayHttpListener')]"
                             },
                             "backendAddressPool": {
-                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendAddressPools', 'applicationGatewayName', 'appGatewayBackendPool')]"
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways',parameters('appgatewayname')),'/backendAddressPools/appGatewayBackendPool')]"
                             },
                             "backendHttpSettings": {
-                                "id": "[resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', 'applicationGatewayName', 'appGatewayBackendHttpSettings')]"
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways',parameters('appgatewayname')),'/backendHttpSettingsCollection/appGatewayBackendHttpSettings')]"
                             }
                         }
                     }

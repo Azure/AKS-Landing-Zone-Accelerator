@@ -2,14 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "location": {
-            "type": "string",
-            "defaultValue": "eastus"
-        },
         "spokeVnetAddressSpace": {
             "type": "string"
-        },
-        
+        },       
         "clusterSubnetPrefix": {
             "type": "string"
         },
@@ -22,12 +17,12 @@
     },
     "functions": [],
     "variables": {
-        "orgAppId": "aks-eslz",
-        "clusterVNetName": "[concat('vnet-hub-spoke-', variables('orgAppId'), '-00')]",
-        "subscriptionID": "[subscription().id]",
-        "hubVNetName": "[concat('vnet-', resourceGroup().location, '-hub')]",
-        "routeTableName": "[concat('route-', variables('clusterVNetName'), '-clusternodes-to-hub')]",
-        "hubLaName": "[concat('la-',resourceGroup().location,'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]",
+        "location": "[resourceGroup().location]",
+        "spokeVNetName": "vnet_spoke_arm",
+        "hubVNetName": "vnet_hub_arm",
+        "hubFwName": "hub_firewall_arm",
+        "routeTableName": "default_to_firewall_arm",
+        "hubLaName": "[concat('la-',variables('location'),'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]",
         "workSpaceID" : "[resourceId('microsoft.operationalinsights/workspaces',variables('hubLaName'))]"
         
     },
@@ -35,16 +30,16 @@
         {
             "type": "Microsoft.Network/routeTables",
             "apiVersion": "2019-11-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "name": "[variables('routeTableName')]",
             "properties": {
                 "routes": [
                     {
-                        "name": "r-nexthop-to-fw",
+                        "name": "0-0-0-0-through-firewall-arm",
                         "properties": {
                             "nextHopType": "VirtualAppliance",
                             "addressPrefix": "0.0.0.0/0",
-                            "nextHopIpAddress": "[reference(resourceId('Microsoft.Network/azureFirewalls', concat('fw-', parameters('location'), '-hub')), '2019-11-01', 'Full').properties.ipConfigurations[0].properties.privateIpAddress]"                            
+                            "nextHopIpAddress": "[reference(resourceId('Microsoft.Network/azureFirewalls', variables('hubFwName')), '2019-11-01', 'Full').properties.ipConfigurations[0].properties.privateIpAddress]"                            
                         }
                     }
                 ]
@@ -53,8 +48,8 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2019-11-01",
-            "name": "[variables('clusterVNetName')]",
-            "location": "[parameters('location')]",
+            "name": "[variables('spokeVNetName')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/routeTables', variables('routeTableName'))]"
             ],
@@ -66,7 +61,7 @@
                 },
                 "subnets": [
                     {
-                        "name": "aks-subnet",
+                        "name": "aksClusterSubnet",
                         "properties": {
                             "addressPrefix": "[parameters('clusterSubnetPrefix')]",
                             "serviceEndpoints": [
@@ -79,14 +74,14 @@
                         }
                     },
                     {
-                        "name": "aks-privateEndpoint",
+                        "name": "privateEndpointSubnet",
                         "properties": {
                             "addressPrefix": "[parameters('privateEndpointSubnetPrefix')]",
                             "privateEndpointNetworkPolicies": "Disabled" 
                         }                        
                     },
                     {
-                        "name": "aks-applicationgateways",
+                        "name": "applicationGatewaySubnet",
                         "properties": {
                             "addressPrefix": "[parameters('appgatewaySubnetPrefix')]"
                         }
@@ -99,9 +94,9 @@
         {
             "type": "Microsoft.Network/virtualNetworks/providers/diagnosticSettings",
             "apiVersion": "2017-05-01-preview",
-            "name": "[concat(variables('clusterVNetName'), '/Microsoft.Insights/toHub')]",
+            "name": "[concat(variables('spokeVNetName'), '/Microsoft.Insights/toHub')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('clusterVNetName'))]"
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('spokeVNetName'))]"
             ],
             "properties": {
                 "workspaceId": "[variables('workSpaceID')]",
@@ -117,11 +112,11 @@
     "outputs": {
         "spokeVnetId": {
             "type": "string",
-            "value": "[resourceId('Microsoft.Network/virtualNetworks',variables('clusterVNetName'))]"
+            "value": "[resourceId('Microsoft.Network/virtualNetworks',variables('spokeVNetName'))]"
         },
         "spokeVnetName": {
             "type": "string",
-            "value": "[variables('clusterVNetName')]"
+            "value": "[variables('spokeVNetName')]"
         },
         "spokeRGName": {
             "type": "string",

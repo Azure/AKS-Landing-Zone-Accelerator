@@ -8,36 +8,6 @@
                 "description": "Subnet resource Ids for all AKS clusters nodepools in all attached spokes to allow necessary outbound traffic through the firewall"
             }
         },
-        "location": {
-            "defaultValue": "eastus",
-            "type": "string",
-            "allowedValues": [
-                "australiaeast",
-                "canadacentral",
-                "centralus",
-                "eastus",
-                "eastus2",
-                "westus2",
-                "francecentral",
-                "germanywestcentral",
-                "northeurope",
-                "southafricanorth",
-                "southcentralus",
-                "uksouth",
-                "westeurope",
-                "japaneast",
-                "southeastasia"
-            ],
-            "metadata": {
-                "description": "The hub's regional affinity. All resources tied to this hub will also be homed in this region.  The network team maintains this approved regional list which is a subset of zones with Availability Zone support."
-            }
-        },
-        "serviceTagsLocation": {
-            "type": "string",
-            "metadata": {
-                "description": "the location that will be used from the Azure Firewall rules to regionally allow establishing connections against Azure specific services."
-            }
-        },
         "acrServers": {
             "type": "array",
             "defaultValue": ["*.azurecr.io"],
@@ -48,18 +18,19 @@
     },
     "functions": [],
     "variables": {
-        "aksIpGroupName": "[concat('ipg-', parameters('location'), '-AksNodepools')]",
-        "defaultFwPipName": "[concat('pip-fw-', parameters('location'), '-default')]",
-        "hubFwName": "[concat('fw-', parameters('location'), '-hub')]",
-        "hubVNetName": "[concat('vnet-', parameters('location'), '-hub')]",
-        "hubLaName": "[concat('la-',parameters('location'),'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]"
+        "location": "[resourceGroup().location]",
+        "aksIpGroupName": "[concat('ipg-',variables('location'),'-AksNodepools')]",
+        "fwPipName": "firewall_pip_arm",
+        "hubFwName": "hub_firewall_arm",
+        "hubVNetName": "vnet_hub_arm",
+        "hubLaName": "[concat('la-',variables('location'),'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]"
     },
     "resources": [
         {
             "apiVersion": "2019-11-01",
             "type": "Microsoft.Network/publicIpAddresses",
-            "name": "[variables('defaultFwPipName')]",
-            "location": "[parameters('location')]",
+            "name": "[variables('FwPipName')]",
+            "location": "[variables('location')]",
             "sku": {
                 "name": "Standard"
             },
@@ -72,7 +43,7 @@
         {
             "type": "Microsoft.Network/ipGroups",
             "apiVersion": "2019-11-01",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "name": "[variables('aksIpGroupName')]",
             "properties": {
                 "copy": [
@@ -88,14 +59,14 @@
             "type": "Microsoft.Network/azureFirewalls",
             "apiVersion": "2019-11-01",
             "name": "[variables('hubFwName')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "zones": [
                 "1",
                 "2",
                 "3"
             ],
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIpAddresses', variables('defaultFwPipName'))]",
+                "[resourceId('Microsoft.Network/publicIpAddresses', variables('fwPipName'))]",
                 "[resourceId('Microsoft.Network/ipGroups', variables('aksIpGroupName'))]"
             ],
             "properties": {
@@ -106,13 +77,13 @@
                 "threatIntelMode": "Alert",
                 "ipConfigurations": [
                     {
-                        "name": "[variables('defaultFwPipName')]",
+                        "name": "[variables('fwPipName')]",
                         "properties": {
                             "subnet": {
                                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('hubVnetName'), 'AzureFirewallSubnet')]"
                             },
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('defaultFwPipName'))]"
+                                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('fwPipName'))]"
                             }
                         }
                     }
@@ -506,7 +477,7 @@
             "type": "Microsoft.Network/azureFirewalls/providers/diagnosticSettings",
             "apiVersion": "2017-05-01-preview",
             "name": "[concat(variables('hubFwName'), '/Microsoft.Insights/default')]",
-            "location": "[parameters('location')]",
+            "location": "[variables('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/azureFirewalls', variables('hubFwName'))]"
             ],
