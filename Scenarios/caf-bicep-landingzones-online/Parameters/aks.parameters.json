@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "aksClusters": {
+            "value": [
+                {
+                    "name": "akstest1",
+                    "rg": "aks_re1",
+                    "location": "uksouth",
+                    "agentPoolProfiles": [
+                        {
+                            "name": "agentpool",
+                            "osDiskSizeGB": 32,
+                            "nodeCount": 1,
+                            "vmSize": "Standard_B2ms",
+                            "osType": "Linux",
+                            "osSKU": "Ubuntu",
+                            "type": "virtualMachineScaleSets",
+                            "mode": "System",
+                            "subnet": "aks_nodepool_system",
+                            "virtualNetwork": "aks",
+                            "subnetId": "/subscriptions/d01e22a2-bdb3-4c7a-92a2-613cc0dc1f30/resourceGroups/aks_spoke_re1/providers/Microsoft.Network/virtualNetworks/aks/subnets/aks_nodepool_system"
+                        }
+                    ],
+                    "networkProfile": {
+                        "loadBalancerSku": "Standard",
+                        "networkPlugin": "azure",
+                        "serviceCidr": "10.1.0.0/24",
+                        "dnsServiceIP": "10.1.0.10",
+                        "dockerBridgeCidr": "172.17.0.1/16"
+                    },
+                    "nodeResourceGroup": "test-node-rg",
+                    "identity": "SystemAssigned"
+                }
+            ]
+        }
+    }
+}

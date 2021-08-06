@@ -6,6 +6,7 @@ param rgnames array = []
 param acr object = {}
 param networkSecurityGroups array = []
 param trafficAnalytics object = {}
+param aksclusters array = []
 
 module rg './Modules/resourceGroup/main.bicep' = [for rg in rgnames: {
   name: rg
@@ -15,7 +16,7 @@ module rg './Modules/resourceGroup/main.bicep' = [for rg in rgnames: {
   }
 }]
 
-module Ddos './Modules/DdosProtectionPlans/main.bicep' = {
+/* module Ddos './Modules/DdosProtectionPlans/main.bicep' = {
   name: 'DdosDeploy'
   scope: resourceGroup(DdosProtectionPlan.rg)
   params: {
@@ -24,7 +25,7 @@ module Ddos './Modules/DdosProtectionPlans/main.bicep' = {
   dependsOn:[
     rg
   ]
-}
+} */
 
 module VNet './Modules/virtualNetwork/main.bicep' = [for VNet in VNets: {
   name: 'VNetDeploy'
@@ -32,9 +33,9 @@ module VNet './Modules/virtualNetwork/main.bicep' = [for VNet in VNets: {
   params: {
     VNet: VNet
   }
-  dependsOn: [
+  /* dependsOn: [
     Ddos
-  ]
+  ] */
 }]
 
 module ACR './Modules/ACR/main.bicep' = {
@@ -68,20 +69,20 @@ module NSGFlowLogs './Modules/trafficAnalytics/main.bicep' = [for NSG in network
     networkSecurityGroup: NSG
   }
   dependsOn:[
-    rg
+
   ]
   
 }]
 
-module VNetPeering './Modules/trafficAnalytics/main.bicep' = [for VNet in VNets: {
-  name: 'VNetPeering'
-  scope: resourceGroup(trafficAnalytics.rg)
+
+module akscluster './Modules/AKS/main.bicep' = [for akscluster in aksclusters: {
+  name: 'AKSDeploy'
+  scope: resourceGroup(akscluster.rg)
   params: {
-    trafficAnalytics:trafficAnalytics
-    networkSecurityGroup: NSG
+    akscluster: akscluster
   }
-  dependsOn:[
-    VNetDeploy
+  dependsOn: [
+    VNet
+    rg
   ]
-  
 }]

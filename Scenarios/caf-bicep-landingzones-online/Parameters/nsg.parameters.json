@@ -7,8 +7,8 @@
                 {
                     "name": "azure_bastion_nsg",
                     "rg": "aks_re1",
-                    "id": "/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/aks_re1/providers/Microsoft.Network/networkSecurityGroups/azure_bastion_nsg",
-                    "trafficAnalytics": true,
+                    "id": "/subscriptions/d01e22a2-bdb3-4c7a-92a2-613cc0dc1f30/resourceGroups/aks_re1/providers/Microsoft.Network/networkSecurityGroups/azure_bastion_nsg",
+                    "trafficAnalytics": false,
                     "rules": [
                         {
                             "name": "in-allow-https",

@@ -10,7 +10,7 @@
                     "addressPrefix": "100.64.100.0/22",
                     "dnsServers": "1.1.1.1",
                     "ddosProtectionPlan": {
-                        "enabled": "true",
+                        "enabled": "false",
                         "name": "ddos-standard-ml"
                     },
                     "subnets": [

@@ -1,42 +1,35 @@
+param akscluster object = {}
+param vNet object = {}
+
 targetScope = 'resourceGroup'
-resource aks 'Microsoft.ContainerService/managedClusters@2021-05-01' = {
-  name: ''
-  location: 'uksouth'
+resource aks_resource 'Microsoft.ContainerService/managedClusters@2021-05-01' = {
+  name: akscluster.name
+  location: akscluster.location
   properties: {
-    dnsPrefix: ''
-    agentPoolProfiles: [
-      {
-        name: 'agentpool'
-        osDiskSizeGB: 32
-        count: 1
-        vmSize: 'Standard_B2MS'
-        osType: 'Linux'
-        osSKU: 'Ubuntu'
-        type: 'VirtualMachineScaleSets'
-        mode: 'System'
-        vnetSubnetID: ''
-      }
-    ]
-    networkProfile: {
-      loadBalancerSku: 'standard'
-      networkPlugin: 'azure'
-      serviceCidr: '10.1.0.0/24'
-      dnsServiceIP: '10.1.0.10'
-      dockerBridgeCidr: '172.17.0.1/16'
-      outboundType: 'userDefinedRouting'
-    }
+    dnsPrefix: akscluster.name
+    agentPoolProfiles: [ for item in akscluster.agentPoolProfiles: {
       
-    apiServerAccessProfile: {
-      enablePrivateCluster: true
+        name: item.name
+        osDiskSizeGB: item.osDiskSizeGB
+        count: item.nodeCount
+        vmSize: item.vmSize
+        osType: item.osType
+        osSKU: item.osSKU
+        type: item.type
+        mode: item.mode
+        vnetSubnetID: item.subnetId
+      
+    }]
+    networkProfile: {
+      loadBalancerSku: akscluster.networkProfile.loadBalancerSku
+      networkPlugin: akscluster.networkProfile.networkPlugin
+      serviceCidr: akscluster.networkProfile.serviceCidr
+      dnsServiceIP: akscluster.networkProfile.dnsServiceIP
+      dockerBridgeCidr: akscluster.networkProfile.dockerBridgeCidr
     }
-    addonProfiles: {
-      httpApplicationRouting: {
-        enabled: true
-      }
-    }
-    nodeResourceGroup: ''
+    nodeResourceGroup: akscluster.nodeResourceGroup
   }
   identity: {
-    type: 'SystemAssigned'
+    type: akscluster.identity
   }
 }
