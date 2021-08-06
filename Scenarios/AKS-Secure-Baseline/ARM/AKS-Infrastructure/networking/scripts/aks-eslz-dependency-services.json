@@ -18,36 +18,23 @@
       "metadata": {
         "description": "The SKU of the vault to be created."
       }
-    },
-    "acrName": {
-      "type": "string",
-      "defaultValue": "[concat('acr', uniqueString(resourceGroup().id))]",
-      "minLength": 5,
-      "maxLength": 50,
-      "metadata": {
-        "description": "Globally unique name of your Azure Container Registry"
-      }
-    },
-    "acrAdminUserEnabled": {
-      "type": "bool",
-      "defaultValue": false,
-      "metadata": {
-        "description": "Enable admin user that has push / pull permission to the registry."
-      }
     }
+  },
+  "variables": {
+    "uniqueVaultName": "[concat(parameters('vaultName'),'-',take(uniqueString(resourceGroup().id),3))]"
   },
   "resources": [
     {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2019-09-01",
-      "name": "[parameters('vaultName')]",
+      "name": "[variables('uniqueVaultName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "enableRbacAuthorization": false,
-        "enableSoftDelete": true,
+        "enableSoftDelete": false,
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
-        "enabledForTemplateDeployment": true,
+        "enabledForTemplateDeployment": false,
         "tenantId": "[subscription().tenantId]",
         "accessPolicies": [],
         "sku": {
@@ -59,29 +46,7 @@
           "bypass": "AzureServices"
         }
       }
-    },
-    {
-      "comments": "Container registry for storing docker images",
-      "type": "Microsoft.ContainerRegistry/registries",
-      "apiVersion": "2019-12-01-preview",
-      "location": "[resourceGroup().location]",
-      "name": "[parameters('acrName')]",
-      "sku": {
-        "name": "Premium"
-      },
-      "tags": {
-        "displayName": "Container Registry",
-        "container.registry": "[parameters('acrName')]"
-      },
-      "properties": {
-        "adminUserEnabled": "[parameters('acrAdminUserEnabled')]"
-      }
     }
   ],
-  "outputs": {
-        "acrLoginServer": {
-        "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries',parameters('acrName')),'2019-12-01-preview').loginServer]",
-        "type": "string"
-    }
-  }
+  "outputs": {}
 }

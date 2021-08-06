@@ -6,12 +6,6 @@
             "value": [
             ]
         },
-        "location": {
-            "value": "eastus"
-        },
-        "serviceTagsLocation": {
-            "value": "eastus" 
-        },
         "acrServers": {
             "value": ["*.azurecr.io"]
         }

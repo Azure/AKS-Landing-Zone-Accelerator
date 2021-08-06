@@ -1,47 +1,38 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "private_endpoint_acr": {
-            "type": "String"
-        },
-        "private_endpoint_keyVault": {
+        "privateEndpointKeyVault": {
             "type": "string"
         },
-        "virtualNetworks_name": {
+        "privateEndpointSubnet": {
             "type": "string"
         },
-        "subnet_privateEndpoint":{
-            "type": "string"
-        },
-        "acr_name":{
-            "type": "string"
-        },
-        "keyVault_name":{
+        "keyVaultName":{
             "type": "string"
         }
     },
     "variables": {
-        "private_acr_dns_zone": "privatelink.azurecr.io",
-        "private_keyVault_dns_zone": "privatelink.vaultcore.azure.net",
-        "private_endpoint_dnsgroupname_keyVault": "[concat(parameters('private_endpoint_keyVault'),'/','default')]",
-        "private_endpoint_dnsgroupname_acr": "[concat(parameters('private_endpoint_acr'),'/','default')]"
+        "spokeVnetName": "vnet_spoke_arm",
+        "uniqueVaultName": "[concat(parameters('keyvaultName'),'-',take(uniqueString(resourceGroup().id),3))]",
+        "privateKeyVaultDnsZone": "privatelink.vaultcore.azure.net",
+        "privateEndpointDnsgroupnameKeyVault": "[concat(parameters('privateEndpointKeyVault'),'/','default')]"
     },
     "resources": [
         {
             "type": "Microsoft.Network/privateEndpoints",
             "apiVersion": "2020-05-01",
-            "name": "[parameters('private_endpoint_keyVault')]",
+            "name": "[parameters('privateEndpointKeyVault')]",
             "location": "[resourceGroup().location]",
             "properties": {
                 "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_name'), parameters('subnet_privateEndpoint'))]"
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('spokeVnetName'), parameters('privateEndpointSubnet'))]"
                 },
                 "privateLinkServiceConnections": [
                 {
-                    "name": "[parameters('private_endpoint_keyVault')]",
+                    "name": "[parameters('privateEndpointKeyVault')]",
                     "properties": {
-                    "privateLinkServiceId": "[resourceId('Microsoft.KeyVault/vaults',parameters('keyVault_name'))]",
+                    "privateLinkServiceId": "[resourceId('Microsoft.KeyVault/vaults',variables('uniqueVaultName'))]",
                     "groupIds": [
                         "vault"
                     ]
@@ -51,37 +42,7 @@
             }
         },
         {
-            "type": "Microsoft.Network/privateEndpoints",
-            "apiVersion": "2020-05-01",
-            "name": "[parameters('private_endpoint_acr')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_name'), parameters('subnet_privateEndpoint'))]"
-                },
-                "privateLinkServiceConnections": [
-                {
-                    "name": "[parameters('private_endpoint_acr')]",
-                    "properties": {
-                    "privateLinkServiceId": "[resourceId('Microsoft.ContainerRegistry/registries',parameters('acr_name'))]",
-                    "groupIds": [
-                        "registry"
-                    ]
-                    }
-                }
-                ]
-            }
-        },
-            {
-            "name": "[variables('private_acr_dns_zone')]",
-            "type": "Microsoft.Network/privateDnsZones",
-            "apiVersion": "2018-09-01",
-            "location": "global",
-            "properties": {                
-            }
-        },
-        {
-            "name": "[variables('private_keyVault_dns_zone')]",
+            "name": "[variables('privateKeyVaultDnsZone')]",
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2018-09-01",
             "location": "global",
@@ -91,30 +52,15 @@
         {
             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
             "apiVersion": "2018-09-01",
-            "name": "[concat(variables('private_acr_dns_zone'), '/aksvnetlink')]",
+            "name": "[concat(variables('privateKeyVaultDnsZone'), '/aksvnetlink')]",
             "location": "global",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('private_acr_dns_zone'))]"
+                "[resourceId('Microsoft.Network/privateDnsZones', variables('privateKeyVaultDnsZone'))]"
             ],
             "properties": {
                 "registrationEnabled": false,
                 "virtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('virtualNetworks_name'))]"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-            "apiVersion": "2018-09-01",
-            "name": "[concat(variables('private_keyVault_dns_zone'), '/aksvnetlink')]",
-            "location": "global",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', variables('private_keyVault_dns_zone'))]"
-            ],
-            "properties": {
-                "registrationEnabled": false,
-                "virtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('virtualNetworks_name'))]"
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks',variables('spokeVnetName'))]"
                 }
             }
         },
@@ -123,8 +69,7 @@
         "name": "aRecord",
         "type": "Microsoft.Resources/deployments",
         "dependsOn": [
-            "[resourceId('Microsoft.Network/privateEndpoints',parameters('private_endpoint_keyVault'))]",
-            "[resourceId('Microsoft.Network/privateEndpoints',parameters('private_endpoint_acr'))]"
+            "[resourceId('Microsoft.Network/privateEndpoints',parameters('privateEndpointKeyVault'))]"
         ],
         "properties": 
             {
@@ -133,39 +78,25 @@
                     "scope": "inner"
                 },
                 "parameters": {
-                    "acr_name": {
-                        "value": "[parameters('acr_name')]"
-                    },
                     "keyVault_name":{
-                        "value": "[parameters('keyVault_name')]"
-                    },
-                    "ACR_NetworkInterfaceId": {
-                        "value": "[reference(parameters('private_endpoint_acr')).networkInterfaces[0].id]"
+                        "value": "[parameters('keyVaultName')]"
                     },
                     "keyvault_NetworkInterfaceId": {
-                        "value": "[reference(parameters('private_endpoint_keyVault')).networkInterfaces[0].id]"
+                        "value": "[reference(parameters('privateEndpointKeyVault')).networkInterfaces[0].id]"
                     }
                 },
                 "template": {
                     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
                     "contentVersion": "1.0.0.0",
                     "parameters": {
-                        "acr_name": {
-                            "type": "string"
-                        },
                         "keyVault_name":{
-                            "type": "string"
-                        },
-                        "ACR_NetworkInterfaceId": {
                             "type": "string"
                         },
                         "keyVault_NetworkInterfaceId": {
                             "type": "string"
                         }
                     },
-                    "variables": {
-                        "acr_name_data": "[concat(parameters('acr_name'),'.',resourceGroup().location,'.','data')]"
-                    },
+                    "variables": {},
                     "resources": [
                         {
                             "type": "Microsoft.Network/privateDnsZones/A",
@@ -179,32 +110,6 @@
                                     }
                                 ]
                             }
-                        },
-                        {
-                            "type": "Microsoft.Network/privateDnsZones/A",
-                            "apiVersion": "2018-09-01",
-                            "name": "[concat('privatelink.azurecr.io','/',parameters('acr_name'))]",
-                            "properties": {
-                                "ttl": 30,
-                                "aRecords": [
-                                    {
-                                        "ipv4Address": "[reference(parameters('acr_NetworkInterfaceId'), '2020-05-01', 'Full').properties.ipConfigurations[1].properties.privateIPAddress]"
-                                    }                                       
-                                ]
-                            }
-                        },
-                        {
-                            "type": "Microsoft.Network/privateDnsZones/A",
-                            "apiVersion": "2018-09-01",
-                            "name": "[concat('privatelink.azurecr.io','/',variables('acr_name_data'))]",
-                            "properties": {
-                                "ttl": 30,
-                                "aRecords": [
-                                    {
-                                        "ipv4Address": "[reference(parameters('acr_NetworkInterfaceId'), '2020-05-01', 'Full').properties.ipConfigurations[0].properties.privateIPAddress]"
-                                    }                                      
-                                ]
-                            }
                         }
                     ]
                 }
@@ -213,32 +118,15 @@
         {
             "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
             "apiVersion": "2020-05-01",
-            "name": "[variables('private_endpoint_dnsgroupname_acr')]",
+            "name": "[variables('privateEndpointDnsgroupnameKeyVault')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateEndpoints', parameters('private_endpoint_acr'))]"
-            ],
-            "properties": {
-                "privateDnsZoneConfigs": [{
-                        "name": "ACR",
-                        "properties": {
-                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('private_acr_dns_zone'))]"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
-            "apiVersion": "2020-05-01",
-            "name": "[variables('private_endpoint_dnsgroupname_keyVault')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/privateEndpoints', parameters('private_endpoint_keyVault'))]"
+                "[resourceId('Microsoft.Network/privateEndpoints', parameters('privateEndpointKeyVault'))]"
             ],
             "properties": {
                 "privateDnsZoneConfigs": [{
                         "name": "KeyVault",
                         "properties": {
-                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('private_keyVault_dns_zone'))]"
+                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', variables('privateKeyVaultDnsZone'))]"
                         }
                     }
                 ]
