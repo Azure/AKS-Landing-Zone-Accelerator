@@ -3,16 +3,28 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appgatewayname": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Name of the application gateway to be provisioned"
+            }
         },
         "spokeVNetName": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Name of the VNET where the application gateway is to be provisioned"
+            }
         },
         "appgatewaySubnet": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet where the application gateway is to be provisioned"
+            }
         },
         "appgatewayPip": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "Name of the PIP created for application gateway"
+            }
         }
         
     },
