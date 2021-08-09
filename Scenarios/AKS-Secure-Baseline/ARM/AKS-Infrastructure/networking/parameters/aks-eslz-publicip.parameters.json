@@ -3,7 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "appGatewayPipName": {
-            "value": "agw_pip1"
+            "value": "agw_pip1",
+            "metadata": {
+                "description": "Name of PIP to be created for Application gateway"
+            }
         }
     }
 }

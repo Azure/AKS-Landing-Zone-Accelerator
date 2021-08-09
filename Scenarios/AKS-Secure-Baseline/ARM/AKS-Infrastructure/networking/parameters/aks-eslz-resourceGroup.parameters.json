@@ -3,7 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourceGroup": {
-            "value": "TestRG" 
+            "value": "AKS-ESLZ-RG",
+            "metadata": {
+                "description": "Name of RG to be created for the complete AKS Enterprise Scale Landing Zone implementation"
+            }   
         }
     }
 }
