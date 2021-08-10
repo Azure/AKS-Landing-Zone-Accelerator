@@ -13,6 +13,9 @@
         },
         "privateEndpointSubnetPrefix": {
             "value": "10.240.4.0/28"
+        },
+        "clusterServicePrefix": {
+            "value": "10.240.5.0/24"
         }
     }
 }
