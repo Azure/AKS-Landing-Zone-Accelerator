@@ -13,6 +13,9 @@
         },
         "privateEndpointSubnetPrefix": {
             "type": "string"
+        }.
+        "clusterServicePrefix": {
+            "type": "string"
         }
     },
     "functions": [],
@@ -84,6 +87,12 @@
                         "name": "applicationGatewaySubnet",
                         "properties": {
                             "addressPrefix": "[parameters('appgatewaySubnetPrefix')]"
+                        }
+                    },
+                    {
+                        "name": "clusterServicePrefix",
+                        "properties": {
+                            "addressPrefix": "[parameters('clusterServicePrefix')]"
                         }
                     }
                 ],
