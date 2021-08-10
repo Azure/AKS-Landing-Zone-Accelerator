@@ -13,7 +13,7 @@
         },
         "privateEndpointSubnetPrefix": {
             "type": "string"
-        }.
+        },
         "clusterServicePrefix": {
             "type": "string"
         }
