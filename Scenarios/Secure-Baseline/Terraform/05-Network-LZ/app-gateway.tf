@@ -9,6 +9,20 @@ resource "azurerm_subnet" "appgw" {
 
 }
 
+module "appgw_nsgs" {
+  source = "./modules/app_gw_nsg"
+
+  resource_group_name = azurerm_resource_group.net-rg.name
+  location            = azurerm_resource_group.net-rg.location
+  nsg_name = "${azurerm_virtual_network.vnet.name}-${azurerm_subnet.appgw.name}-nsg"
+
+}
+
+resource "azurerm_subnet_network_security_group_association" "appgwsubnet" {
+  subnet_id                 = azurerm_subnet.appgw.id
+  network_security_group_id = module.appgw_nsgs.appgw_nsg_id
+}
+
 resource "azurerm_public_ip" "appgw" {
   name                = "appgw-pip"
   resource_group_name = azurerm_resource_group.net-rg.name
@@ -19,6 +33,9 @@ resource "azurerm_public_ip" "appgw" {
 
 module "appgw" {
   source = "./modules/app_gw"
+  depends_on = [
+    module.appgw_nsgs
+  ]
 
   resource_group_name  = azurerm_resource_group.net-rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name

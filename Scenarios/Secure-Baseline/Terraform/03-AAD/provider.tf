@@ -6,13 +6,14 @@ terraform {
     }
 
   }
-  
+
   backend "azurerm" {
     resource_group_name  = "tfstate"
     storage_account_name = "tfstate09102021"
     container_name       = "akscs"
-    key                  = "lz-net"
+    key                  = "aad"
   }
+
 }
 
 provider "azurerm" {

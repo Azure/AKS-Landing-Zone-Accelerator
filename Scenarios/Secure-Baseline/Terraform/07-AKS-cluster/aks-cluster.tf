@@ -1,45 +1,3 @@
-#############
-# VARIABLES #
-#############
-
-variable "prefix" {
-  default = "escs"
-}
-
-variable "admin_password" {}
-
-variable "access_key" {}
-
-
-########
-# DATA #
-########
-
-# Data From Existing Infrastructure
-
-data "terraform_remote_state" "existing-lz" {
-  backend = "azurerm"
-
-  config = {
-    storage_account_name = "escstfstate"
-    container_name       = "escs"
-    key                  = "lz-net"
-    access_key = var.access_key
-  }
-}
-
-data "terraform_remote_state" "aks-support" {
-  backend = "azurerm"
-
-  config = {
-    storage_account_name = "escstfstate"
-    container_name       = "escs"
-    key                  = "aks-support"
-    access_key = var.access_key
-  }
-}
-
-data "azurerm_client_config" "current" {}
 
 #############
 # RESOURCES #
@@ -108,8 +66,22 @@ module "aks" {
 
 }
 
+# These role assignments grant the groups made in "03-AAD" access to use
+# The AKS cluster. 
+resource "azurerm_role_assignment" "appdevs_user" {
+  scope                = module.aks.aks_id
+  role_definition_name = "Azure Kubernetes Service Cluster User Role"
+  principal_id         = data.terraform_remote_state.aad.outputs.appdev_object_id
+}
+
+resource "azurerm_role_assignment" "aksops_admin" {
+  scope                = module.aks.aks_id
+  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id         = data.terraform_remote_state.aad.outputs.aksops_object_id
+}
+
 # This role assigned grants the current user running the deployment admin rights
-# to the cluster. In production, this should be an AD Group. 
+# to the cluster. In production, you should use just the AAD groups (above).
 resource "azurerm_role_assignment" "aks_rbac_admin" {
   scope                = module.aks.aks_id
   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
@@ -120,12 +92,11 @@ resource "azurerm_role_assignment" "aks_rbac_admin" {
 # Role Assignment to Azure Container Registry from AKS Cluster
 
 resource "azurerm_role_assignment" "aks-to-acr" {
-  scope                = data.terraform_remote_state.aks-support.outputs.key_vault_id
+  scope                = data.terraform_remote_state.aks-support.outputs.container_registry_id
   role_definition_name = "AcrPull"
   principal_id         = module.aks.kubelet_id
 
 }
-
 
 
 
