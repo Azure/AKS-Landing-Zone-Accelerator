@@ -20,6 +20,9 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 
 3. This repo!
 
+/Enterprise-Scale-for-AKS/Scenarios/Secure-Baseline/Terraform/08-Workload$ 
+
+
 Once the Azure CLI is installed, log into Azure. You must be a member of the appropriate
 group (AKS App Dev Users, AKS Operations) to access the cluster:
 
