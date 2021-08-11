@@ -20,8 +20,7 @@
 #         path: /
 
 
-# apiVersion: extensions/v1beta1
-apiVersion: networking.k8s.io/v1
+apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: ratings-web
@@ -29,21 +28,9 @@ metadata:
     kubernetes.io/ingress.class: azure/application-gateway
 spec:
   rules:
-  - host: 
-    http:
+  - http:
       paths:
-       - backend:
-          service:
-            name: ratings-web
-            port:
-              number: 80
-          path: /
-          pathType: Exact
-# spec:
-#   rules:
-#   - http:
-#       paths:
-#       - path: /
-#         backend:
-#           serviceName: ratings-web
-#           servicePort: 80
+      - path: /
+        backend:
+          serviceName: ratings-web
+          servicePort: 80
