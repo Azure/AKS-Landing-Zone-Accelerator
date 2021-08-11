@@ -61,11 +61,11 @@ helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=
 
 kubectl create secret generic mongosecret --namespace ratingsapp --from-literal=MONGOCONNECTION="mongodb://dbadmin:Passw0rd1@ratings-mongodb.ratingsapp:27017/ratingsdb"
 
-kubectl apply --namespace ratingsapp -f ratings-api-deployment.yaml
-kubectl apply --namespace ratingsapp -f ratings-api-service.yaml
+kubectl apply --namespace ratingsapp -f 1-ratings-api-deployment.yaml
+kubectl apply --namespace ratingsapp -f 2-ratings-api-service.yaml
 
-kubectl apply --namespace ratingsapp -f ratings-web-deployment.yaml
-kubectl apply --namespace ratingsapp -f ratings-web-service.yaml
+kubectl apply --namespace ratingsapp -f 3-ratings-web-deployment.yaml
+kubectl apply --namespace ratingsapp -f 4-ratings-web-service.yaml
 
 https://raw.githubusercontent.com/Azure/application-gateway-kubernetes-ingress/master/docs/examples/aspnetapp.yaml -o aspnetapp.yaml
 
