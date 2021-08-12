@@ -6,7 +6,8 @@ This is an implementation taking reference from [Azure Kubernetes Service (AKS) 
 
 ## Reference Architecture
 
-![AKS-ESLZ](https://user-images.githubusercontent.com/50182145/126659950-3a362d01-8973-48c7-9e8f-412534c33e05.jpg)
+![kubernetes-eslz-architecture](https://user-images.githubusercontent.com/50182145/129262042-6652bcac-bb2e-4e7d-a20b-92cc8271b0ec.jpg)
+
 
 
 ### Steps of Implementation for AKS Construction Set
