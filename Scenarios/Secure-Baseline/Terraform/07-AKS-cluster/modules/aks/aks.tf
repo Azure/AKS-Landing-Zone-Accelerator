@@ -21,6 +21,10 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     ingress_application_gateway {
       enabled = true 
       gateway_id = var.gateway_id
+      ingress_application_gateway_identity {
+        user_assigned_identity_id = var.agic_id
+
+      }
     }
 
   }

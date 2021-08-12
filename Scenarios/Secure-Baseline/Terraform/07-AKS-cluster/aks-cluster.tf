@@ -11,9 +11,8 @@ resource "azurerm_resource_group" "rg-aks" {
 }
 
 # MSI for Kubernetes Cluster (Control Plane)
-# This ID is used by the cluster to create or act on other resources in Azure.
+# This ID is used by the AKS control plane to create or act on other resources in Azure.
 # It is referenced in the "identity" block in the azurerm_kubernetes_cluster resource.
-#(will need access to Route Table, ACR, KV...)
 
 resource "azurerm_user_assigned_identity" "mi-aks-cp" {
   name                = "mi-${var.prefix}-aks-cp"
@@ -21,7 +20,7 @@ resource "azurerm_user_assigned_identity" "mi-aks-cp" {
   location            = azurerm_resource_group.rg-aks.location
 }
 
-# Role Assignments for MSI
+# Role Assignments for Control Plane MSI
 
 resource "azurerm_role_assignment" "aks-to-rt" {
   scope                = data.terraform_remote_state.existing-lz.outputs.lz_rt_id
@@ -33,6 +32,26 @@ resource "azurerm_role_assignment" "aks-to-vnet" {
   scope                = data.terraform_remote_state.existing-lz.outputs.lz_vnet_id
   role_definition_name = "Network Contributor"
   principal_id         = azurerm_user_assigned_identity.mi-aks-cp.principal_id
+
+}
+
+# MSI for AGIC (Ingress Controller)
+# This ID is used by the cluster to act on the Application Gateway
+# It is referenced in the "addon_profile" block in the azurerm_kubernetes_cluster resource.
+
+
+resource "azurerm_user_assigned_identity" "mi-aks-agic" {
+  name                = "mi-${var.prefix}-aks-agic"
+  resource_group_name = azurerm_resource_group.rg-aks.name
+  location            = azurerm_resource_group.rg-aks.location
+}
+
+# Role Assignments for AGIC on AppGW
+
+resource "azurerm_role_assignment" "agic_appgw" {
+  scope                = data.terraform_remote_state.existing-lz.outputs.gateway_id
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_user_assigned_identity.mi-aks-agic.principal_id
 
 }
 
@@ -62,6 +81,7 @@ module "aks" {
   la_id = azurerm_log_analytics_workspace.aks.id
   gateway_name = data.terraform_remote_state.existing-lz.outputs.gateway_name
   gateway_id = data.terraform_remote_state.existing-lz.outputs.gateway_id
+  agic_id = azurerm_user_assigned_identity.mi-aks-agic.id
   # admin_password = var.admin_password   #for Windows Nodes
 
 }
@@ -90,6 +110,7 @@ resource "azurerm_role_assignment" "aks_rbac_admin" {
 }
 
 # Role Assignment to Azure Container Registry from AKS Cluster
+# This must be granted after the cluster is created in order to use the kubelet identity.
 
 resource "azurerm_role_assignment" "aks-to-acr" {
   scope                = data.terraform_remote_state.aks-support.outputs.container_registry_id
@@ -97,6 +118,7 @@ resource "azurerm_role_assignment" "aks-to-acr" {
   principal_id         = module.aks.kubelet_id
 
 }
+
 
 
 
