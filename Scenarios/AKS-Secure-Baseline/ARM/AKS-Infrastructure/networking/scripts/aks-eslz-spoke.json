@@ -3,19 +3,28 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "spokeVnetAddressSpace": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "A /16 to contain the application gateway, dependency services private endpoint and AKS cluster"
+            }
         },       
         "clusterSubnetPrefix": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "A /22 subnet for provisioning the AKS cluster. Both nodes and pods will make use of the IP addresses from this subnet"
+            }
         },
         "appgatewaySubnetPrefix": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "A /28 subnet for provisioning the application gateway"
+            }
         },
         "privateEndpointSubnetPrefix": {
-            "type": "string"
-        },
-        "clusterServicePrefix": {
-            "type": "string"
+            "type": "string",
+            "metadata": {
+                "description": "A /28 subnet for provisioning the private endpoints of the dependency services"
+            }
         }
     },
     "functions": [],
@@ -25,7 +34,7 @@
         "hubVNetName": "vnet_hub_arm",
         "hubFwName": "hub_firewall_arm",
         "routeTableName": "default_to_firewall_arm",
-        "hubLaName": "[concat('la-',variables('location'),'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]",
+        "hubLaName": "[concat('la-',resourceGroup().location,'-',take(uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))),3))]",
         "workSpaceID" : "[resourceId('microsoft.operationalinsights/workspaces',variables('hubLaName'))]"
         
     },
@@ -87,12 +96,6 @@
                         "name": "applicationGatewaySubnet",
                         "properties": {
                             "addressPrefix": "[parameters('appgatewaySubnetPrefix')]"
-                        }
-                    },
-                    {
-                        "name": "clusterServicePrefix",
-                        "properties": {
-                            "addressPrefix": "[parameters('clusterServicePrefix')]"
                         }
                     }
                 ],

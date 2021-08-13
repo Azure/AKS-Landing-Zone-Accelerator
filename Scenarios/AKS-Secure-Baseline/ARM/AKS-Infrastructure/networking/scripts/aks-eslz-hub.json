@@ -15,7 +15,7 @@
             "maxLength": 18,
             "minLength": 10,
             "metadata": {
-                "description": "A /26 under the VNet Address Space for Azure Firewall"
+                "description": "A /26 under the Hub VNet Address Space for Azure Firewall"
             }
         },
         "azureGatewaySubnetAddressSpace": {
@@ -23,7 +23,7 @@
             "maxLength": 18,
             "minLength": 10,
             "metadata": {
-                "description": "A /27 under the VNet Address Space for our On-Prem Gateway"
+                "description": "A /27 under the Hub VNet Address Space for our On-Prem Gateway"
             }
         },
         "azureBastionSubnetAddressSpace": {
@@ -31,14 +31,14 @@
             "maxLength": 18,
             "minLength": 10,
             "metadata": {
-                "description": "A /27 under the VNet Address Space for Azure Bastion"
+                "description": "A /27 under the Hub VNet Address Space for Azure Bastion"
             }
         }
     },
     "functions": [],
     "variables": {
         "hubVNetName": "vnet_hub_arm",
-        "hubLaName": "[concat('la-',resourceGroup().location,'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]"        
+        "hubLaName": "[concat('la-',resourceGroup().location,'-',take(uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))),3))]"
     },
     "resources": [
         {
@@ -130,4 +130,3 @@
             "value": "[variables('hubVNetName')]"
         }
     }
-}
