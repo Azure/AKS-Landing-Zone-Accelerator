@@ -1,0 +1,14 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "trafficAnalytics": {
+            "value": {
+                "rg": "NetworkWatcherRG",
+                "name": "NetworkWatcher_uksouth",
+                "storageAccountId": "/subscriptions/d01e22a2-bdb3-4c7a-92a2-613cc0dc1f30/resourceGroups/testing-rg/providers/Microsoft.Storage/storageAccounts/sdfsdfs",
+                "LAWorkspaceId": "/subscriptions/d01e22a2-bdb3-4c7a-92a2-613cc0dc1f30/resourcegroups/testing-rg/providers/microsoft.operationalinsights/workspaces/testlaworkspace012"
+            }
+        }
+    }
+}

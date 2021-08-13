@@ -4,7 +4,7 @@
     "parameters": {
         "acr": {
             "value": {
-                "name": "aksbaselineacr",
+                "name": "mltestacr",
                 "sku": "Standard",
                 "rg": "acr_re1"
             }

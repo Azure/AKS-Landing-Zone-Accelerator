@@ -5,14 +5,14 @@
         "nodepoolSubnetResourceIds": {
             "type": "array",
             "metadata": {
-                "description": "Subnet resource Ids of all AKS cluster nodepools in all attached spokes for allowing necessary outbound traffic through the firewall"
+                "description": "Subnet resource Ids for all AKS clusters nodepools in all attached spokes to allow necessary outbound traffic through the firewall"
             }
         },
         "acrServers": {
             "type": "array",
             "defaultValue": ["*.azurecr.io"],
             "metadata": {
-                "description": "The Azure Container Registries names used by the AKS deployment for allowing necessary outbound traffic through the firewall."
+                "description": "the Fabrikam Shipping Drone Delivery 00's Azure Container Registries server names for dev-qa-staging and production."
             }
         }
     },
@@ -23,7 +23,7 @@
         "fwPipName": "firewall_pip_arm",
         "hubFwName": "hub_firewall_arm",
         "hubVNetName": "vnet_hub_arm",
-        "hubLaName": "[concat('la-',resourceGroup().location,'-',take(uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))),3))]"
+        "hubLaName": "[concat('la-',variables('location'),'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]"
     },
     "resources": [
         {
@@ -503,4 +503,5 @@
         }
     ],
     "outputs": {}
+
 }

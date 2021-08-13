@@ -5,7 +5,7 @@
     "vaultName": {
       "type": "string",
       "metadata": {
-        "description": "The suffix name of the key vault to be created."
+        "description": "The name of the key vault to be created."
       }
     },
     "SkuName": {

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratings-api
+spec:
+  selector:
+    matchLabels:
+      app: ratings-api
+  template:
+    metadata:
+      labels:
+        app: ratings-api # the label for the pods and the deployments
+    spec:
+      containers:
+      - name: ratings-api
+        image: acr60273.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: mongoconnection
+          mountPath: "/mnt/mongoconnection"
+          readOnly: true
+        ports:
+        - containerPort: 3000 # the application listens to this port
+        env:
+        - name: MONGODB_URI # the application expects to find the MongoDB connection details in this environment variable
+          valueFrom:
+            secretKeyRef:
+              name: mongoconnection # the name of the Kubernetes secret containing the data
+              key: MONGOCONNECTION # the key inside the Kubernetes secret containing the data
+        resources:
+          requests: # minimum resources required
+            cpu: 1000m
+            memory: 64Mi
+          limits: # maximum resources allocated
+            cpu: 1000m
+            memory: 256Mi
+        readinessProbe: # is the container ready to receive traffic?
+          initialDelaySeconds: 10
+          httpGet:
+            port: 3000
+            path: /healthz
+        livenessProbe: # is the container healthy?
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            port: 3000
+            path: /healthz
+      volumes:
+        - name: mongoconnection
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "kv60273-akscs"
