@@ -21,10 +21,7 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     ingress_application_gateway {
       enabled = true 
       gateway_id = var.gateway_id
-      ingress_application_gateway_identity {
-        user_assigned_identity_id = var.agic_id
-
-      }
+    
     }
 
   }
@@ -61,8 +58,8 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     type                      = "UserAssigned"
     user_assigned_identity_id = var.mi_aks_cp_id
   }
-
 }
+
 
 output "aks_id" {
   value = azurerm_kubernetes_cluster.akscluster.id
@@ -72,19 +69,11 @@ output "kubelet_id" {
   value = azurerm_kubernetes_cluster.akscluster.kubelet_identity[0].object_id
 }
 
+output "agic_id" {
+  value = azurerm_kubernetes_cluster.akscluster.addon_profile[0].ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
+}
+
 output "node_pool_rg" {
   value = azurerm_kubernetes_cluster.akscluster.node_resource_group
 }
 
-# Created additional Windows Node pool
-
-# resource "azurerm_kubernetes_cluster_node_pool" "windows" {
-#   name                  = "wincon"
-#   kubernetes_cluster_id = azurerm_kubernetes_cluster.akscluster.id
-#   vm_size               = "Standard_DS2_v2"
-#   node_count            = 1
-#   os_type               = "Windows" #capitalization matters
-#   vnet_subnet_id        = var.vnet_subnet_id
-
-
-# }

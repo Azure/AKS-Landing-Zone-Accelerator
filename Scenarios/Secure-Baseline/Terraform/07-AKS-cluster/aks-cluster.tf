@@ -40,20 +40,11 @@ resource "azurerm_role_assignment" "aks-to-vnet" {
 # It is referenced in the "addon_profile" block in the azurerm_kubernetes_cluster resource.
 
 
-resource "azurerm_user_assigned_identity" "mi-aks-agic" {
-  name                = "mi-${var.prefix}-aks-agic"
-  resource_group_name = azurerm_resource_group.rg-aks.name
-  location            = azurerm_resource_group.rg-aks.location
-}
-
-# Role Assignments for AGIC on AppGW
-
-resource "azurerm_role_assignment" "agic_appgw" {
-  scope                = data.terraform_remote_state.existing-lz.outputs.gateway_id
-  role_definition_name = "Contributor"
-  principal_id         = azurerm_user_assigned_identity.mi-aks-agic.principal_id
-
-}
+# resource "azurerm_user_assigned_identity" "mi-aks-agic" {
+#   name                = "mi-${var.prefix}-aks-agic"
+#   resource_group_name = azurerm_resource_group.rg-aks.name
+#   location            = azurerm_resource_group.rg-aks.location
+# }
 
 # Log Analytics Workspace for Cluster
 
@@ -81,8 +72,6 @@ module "aks" {
   la_id = azurerm_log_analytics_workspace.aks.id
   gateway_name = data.terraform_remote_state.existing-lz.outputs.gateway_name
   gateway_id = data.terraform_remote_state.existing-lz.outputs.gateway_id
-  agic_id = azurerm_user_assigned_identity.mi-aks-agic.id
-  # admin_password = var.admin_password   #for Windows Nodes
 
 }
 
@@ -116,6 +105,16 @@ resource "azurerm_role_assignment" "aks-to-acr" {
   scope                = data.terraform_remote_state.aks-support.outputs.container_registry_id
   role_definition_name = "AcrPull"
   principal_id         = module.aks.kubelet_id
+
+}
+
+# Role Assignments for AGIC on AppGW
+# This must be granted after the cluster is created in order to use the ingress identity.
+
+resource "azurerm_role_assignment" "agic_appgw" {
+  scope                = data.terraform_remote_state.existing-lz.outputs.gateway_id
+  role_definition_name = "Contributor"
+  principal_id         = module.aks.agic_id
 
 }
 
