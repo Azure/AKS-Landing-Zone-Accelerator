@@ -3,10 +3,16 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vaultName": {
-            "value": "kv-aks-eslz"
+            "value": "kv-aks-eslz",
+            "metadata": {
+              "description": "The suffix name of the key vault to be created."
+            }
         },
         "SkuName": {
-            "value": "Standard"
+            "value": "Standard",
+            "metadata": {
+              "description": "The SKU of the vault to be created."
+            }
         }
     }
 }
