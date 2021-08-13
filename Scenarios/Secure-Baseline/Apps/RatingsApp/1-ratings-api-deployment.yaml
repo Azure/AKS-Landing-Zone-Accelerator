@@ -15,13 +15,17 @@ spec:
       - name: ratings-api
         image: acr60273.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository
         imagePullPolicy: Always
+        volumeMounts:
+        - name: mongoconnection
+          mountPath: "/mnt/mongoconnection"
+          readOnly: true
         ports:
         - containerPort: 3000 # the application listens to this port
         env:
         - name: MONGODB_URI # the application expects to find the MongoDB connection details in this environment variable
           valueFrom:
             secretKeyRef:
-              name: mongosecret # the name of the Kubernetes secret containing the data
+              name: mongoconnection # the name of the Kubernetes secret containing the data
               key: MONGOCONNECTION # the key inside the Kubernetes secret containing the data
         resources:
           requests: # minimum resources required
@@ -41,3 +45,10 @@ spec:
           httpGet:
             port: 3000
             path: /healthz
+      volumes:
+        - name: mongoconnection
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "kv60273-akscs"
