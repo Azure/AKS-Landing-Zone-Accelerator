@@ -20,10 +20,8 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     }
     ingress_application_gateway {
       enabled = true 
-      gateway_id = var.gateway_id
-    
+      gateway_id = var.gateway_id  
     }
-
   }
 
   default_node_pool {
@@ -60,10 +58,15 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 }
 
-
 output "aks_id" {
   value = azurerm_kubernetes_cluster.akscluster.id
 }
+
+output "node_pool_rg" {
+  value = azurerm_kubernetes_cluster.akscluster.node_resource_group
+}
+
+# Managed Identities created for Addons
 
 output "kubelet_id" {
   value = azurerm_kubernetes_cluster.akscluster.kubelet_identity[0].object_id
@@ -73,7 +76,7 @@ output "agic_id" {
   value = azurerm_kubernetes_cluster.akscluster.addon_profile[0].ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
 }
 
-output "node_pool_rg" {
-  value = azurerm_kubernetes_cluster.akscluster.node_resource_group
-}
+
+
+
 

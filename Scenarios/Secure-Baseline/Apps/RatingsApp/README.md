@@ -18,7 +18,7 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
 2. The public repo for the Fruit Smootie Web Frontend:
 git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 
-3. This repo  - /Enterprise-Scale-for-AKS/Scenarios/Secure-Baseline/Terraform/08-Workload
+3. This repo, for the application code  - /Enterprise-Scale-for-AKS/Scenarios/Secure-Baseline/Apps/RatingsApp
 
 
 
