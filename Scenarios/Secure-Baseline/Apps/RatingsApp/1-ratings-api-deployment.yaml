@@ -26,7 +26,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mongoconnection # the name of Keyvault volume mount
-              key: MONGOCONNECTION # the name of Secret in KeyVault
+              key: mongoconnection # the name of Secret in KeyVault
         resources:
           requests: # minimum resources required
             cpu: 1000m
