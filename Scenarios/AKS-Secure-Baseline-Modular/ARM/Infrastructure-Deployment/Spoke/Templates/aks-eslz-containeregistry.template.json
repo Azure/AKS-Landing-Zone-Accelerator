@@ -1,0 +1,182 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "registryName": {
+            "type": "string"
+        },
+        "registryLocation": {
+            "type": "string"
+        },
+        "zoneRedundancy": {
+            "type": "string"
+        },
+        "registryApiVersion": {
+            "type": "string"
+        },
+        "tags": {
+            "type": "object"
+        },
+        "publicNetworkAccess": {
+            "type": "string"
+        },
+        "acrPESubnetId" : {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "resourceGroupId": "[resourceGroup().id]"
+
+
+    },
+
+    "resources": [
+        {
+            "name": "[parameters('registryName')]",
+            "type": "Microsoft.ContainerRegistry/registries",
+            "location": "[parameters('registryLocation')]",
+            "apiVersion": "[parameters('registryApiVersion')]",
+            "sku": {
+                "name": "Premium"
+            },
+            "dependsOn": [
+            ],
+            "properties": {
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                "zoneRedundancy": "[parameters('zoneRedundancy')]"
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "type": "Microsoft.Resources/deployments",
+            "name": "acr-pe_b784b705-6401-40a8-8f59-76aba5261040",
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ContainerRegistry/registries', parameters('registryName'))]"
+            ],
+            "resources": [],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {
+                    "privateEndpointName": {
+                        "value": "acr-pe"
+                    },
+                    "privateEndpointConnectionId": {
+                        "value": "[concat(variables('resourceGroupId'),'/providers/Microsoft.Network/privateEndpoints/privateLinkServiceConnections','acr-pe')]"
+                        
+                    },
+                    "privateEndpointConnectionName": {
+                        "value": "acr-pe"
+                    },
+                    "privateEndpointId": {
+                        "value": "[concat(variables('resourceGroupId'),'/providers/Microsoft.Network/privateEndpoints/','acr-pe')]"
+                       
+                    },
+                    "privateEndpointApiVersion": {
+                        "value": "2019-04-01"
+                    },
+                    "privateLinkServiceId": {
+                        "value": "[concat(variables('resourceGroupId'),'/providers/Microsoft.ContainerRegistry/registries/',parameters('registryName'))]"
+                        
+                    },
+                    "groupId": {
+                        "value": "registry"
+                    },
+                    "subnetId": {
+                        "value": "[parameters('acrPESubnetId')]"
+                        
+                    },
+                    "location": {
+                        "value": "[parameters('registryLocation')]"
+                    },
+                    "tags": {
+                        "value": {}
+                    }
+                },
+                "templatelink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "https://containerregistry.hosting.portal.azure.net/containerregistry/Content/1.0.20210721.6/DeploymentTemplates/PrivateEndpointForRegistry.json"
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "PrivateDns-b784b705640140a88f5976aba5261041",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[string('rg-aks-eslz-arm')]",
+            "dependsOn": [
+                "[string('acr-pe_b784b705-6401-40a8-8f59-76aba5261040')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateDnsZones",
+                            "apiVersion": "2018-09-01",
+                            "name": "[string('privatelink.azurecr.io')]",
+                            "location": "global",
+                            "tags": {},
+                            "properties": {}
+                        },
+                        {
+                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                            "apiVersion": "2018-09-01",
+                            "name": "[concat(string('privatelink.azurecr.io'), '/', uniqueString(string('[parameters(acrPESubnetId)]')))]",
+                            "location": "global",
+                            "dependsOn": [
+                                "[string('privatelink.azurecr.io')]"
+                            ],
+                            "properties": {
+                                "virtualNetwork": {
+                                    "id": "[concat(variables('resourceGroupId'),'/providers/Microsoft.Network/virtualNetworks/',split(parameters('acrPESubnetId'),'/')[8])]"
+                                },
+                                "registrationEnabled": false
+                            }
+                        },
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "EndpointDnsRecords-b784b705640140a88f5976aba5261041",
+                            "type": "Microsoft.Resources/deployments",
+                            "dependsOn": [
+                                "[string('privatelink.azurecr.io')]"
+                            ],
+                            "properties": {
+                                "mode": "Incremental",
+                                "templatelink": {
+                                    "contentVersion": "1.0.0.0",
+                                    "uri": "https://containerregistry.hosting.portal.azure.net/containerregistry/Content/1.0.20210721.6/DeploymentTemplates/PrivateDnsForPrivateEndpoint.json"
+                                },
+                                "parameters": {
+                                    "privateDnsName": {
+                                        "value": "[string('privatelink.azurecr.io')]"
+                                    },
+                                    "privateEndpointNicResourceId": {
+                                        "value": "[reference('acr-pe_b784b705-6401-40a8-8f59-76aba5261040').outputs.networkInterfaceId.value]"
+                                    },
+                                    "nicRecordsTemplateUri": {
+                                        "value": "https://containerregistry.hosting.portal.azure.net/containerregistry/Content/1.0.20210721.6/DeploymentTemplates/PrivateDnsForPrivateEndpointNic.json"
+                                    },
+                                    "ipConfigRecordsTemplateUri": {
+                                        "value": "https://containerregistry.hosting.portal.azure.net/containerregistry/Content/1.0.20210721.6/DeploymentTemplates/PrivateDnsForPrivateEndpointIpConfig.json"
+                                    },
+                                    "uniqueId": {
+                                        "value": "b784b705640140a88f5976aba5261041"
+                                    },
+                                    "existingRecords": {
+                                        "value": {}
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "subscriptionId": "[subscription().subscriptionId]"
+        }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,12 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "0.0.0.1",
+    "parameters": {
+        "hubVnetName": {
+            "value": "vnet-eastus-hub"
+        },
+        "spokeVnetName": {
+            "value": "vnet-hub-spoke-aks-eslz-00"
+        }     
+    }
+}
