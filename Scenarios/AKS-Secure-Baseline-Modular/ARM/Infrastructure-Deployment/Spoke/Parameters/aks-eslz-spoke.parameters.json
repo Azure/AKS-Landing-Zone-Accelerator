@@ -21,12 +21,16 @@
             }
         },
         "privateEndpointSubnetPrefix": {
-
             "value": "10.240.4.0/28",
             "metadata": {
                 "description": "A /28 subnet for provisioning the private endpoints of the dependency services"
             }
-
+        },
+        "laName": {
+            "value": "la-eastus-arm",
+            "metadata": {
+                "description": "Log Analytics Name"
+            }
         }
     }
 }
