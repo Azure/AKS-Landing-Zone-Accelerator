@@ -17,7 +17,7 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - name: mongoconnection
-          mountPath: "/mnt/secrets-store"
+          mountPath: "/mnt/mongoconnection"
           readOnly: true
         ports:
         - containerPort: 3000 # the application listens to this port
