@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "nodepoolSubnetResourceIds": {
+            "value": [],
+            "metadata": {
+                "description": "Subnet resource Ids of all AKS cluster nodepools in all attached spokes for allowing necessary outbound traffic through the firewall"
+            }
+        },
+        "acrServers": {
+            "value": ["*.azurecr.io"],
+            "metadata": {
+                "description": "The Azure Container Registries names used by the AKS deployment for allowing necessary outbound traffic through the firewall."
+            }
+        }
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "registryName": {
+            "value": "acreslz"
+        },
+        "zoneRedundancy": {
+            "value": "disabled"
+        },
+        "registryApiVersion": {
+            "value": "2020-11-01-preview"
+        },
+        "tags": {
+            "value": {}
+        },
+        "publicNetworkAccess": {
+            "value": "Disabled"
+        },
+        "spokeVnetName": {
+            "value": "vnet_spoke_arm",
+            "metadata": {
+                "description": "Name of the spoke VNET for creating the private endpoint"
+            }
+        },
+        "privateEndpointSubnet" : {
+            "value": "privateEndpointSubnet"
+        }
+        
+    }
+}
