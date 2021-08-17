@@ -20,41 +20,41 @@
 #         path: /
 
 
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: ratings-web
-  annotations:
-    kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: letsencrypt
-spec:
-  tls:
-    - hosts:
-      - frontend.20-99-128-181.nip.io # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
-      secretName: ratings-web-cert
-  rules:
-  - host: frontend.20-99-128-181.nip.io # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
-    http:
-      paths:
-      - backend:
-          serviceName: ratings-web
-          servicePort: 80
-        path: /
-
-
-# NON-TLS
-
 # apiVersion: extensions/v1beta1
 # kind: Ingress
 # metadata:
 #   name: ratings-web
 #   annotations:
 #     kubernetes.io/ingress.class: azure/application-gateway
+#     cert-manager.io/cluster-issuer: letsencrypt
 # spec:
+#   tls:
+#     - hosts:
+#       - frontend.20-99-128-181.nip.io # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
+#       secretName: ratings-web-cert
 #   rules:
-#   - http:
+#   - host: frontend.20-99-128-181.nip.io # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
+#     http:
 #       paths:
-#       - path: /
-#         backend:
+#       - backend:
 #           serviceName: ratings-web
 #           servicePort: 80
+#         path: /
+
+
+# NON-TLS
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ratings-web
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ratings-web
+          servicePort: 80
