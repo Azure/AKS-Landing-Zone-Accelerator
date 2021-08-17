@@ -25,8 +25,8 @@ spec:
         - name: MONGODB_URI # the application expects to find the MongoDB connection details in this environment variable
           valueFrom:
             secretKeyRef:
-              name: mongoconnection # the name of Keyvault volume mount
-              key: mongoconnection # the name of Secret in KeyVault
+              name: MONGODBURI # the name of Keyvault volume mount
+              key: MONGODBURI # the name of Secret in KeyVault
         resources:
           requests: # minimum resources required
             cpu: 1000m
