@@ -3,16 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "nodepoolSubnetResourceIds": {
-            "value": [],
-            "metadata": {
-                "description": "Subnet resource Ids of all AKS cluster nodepools in all attached spokes for allowing necessary outbound traffic through the firewall"
-            }
+            "value": []
         },
         "acrServers": {
-            "value": ["*.azurecr.io"],
-            "metadata": {
-                "description": "The Azure Container Registries names used by the AKS deployment for allowing necessary outbound traffic through the firewall."
-            }
+            "value": ["*.azurecr.io"]
         }
     }
 }

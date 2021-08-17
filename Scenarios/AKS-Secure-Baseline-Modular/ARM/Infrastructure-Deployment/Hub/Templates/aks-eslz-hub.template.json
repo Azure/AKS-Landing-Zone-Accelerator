@@ -143,3 +143,4 @@
             "value": "[variables('hubVNetName')]"
         }
     }
+}
