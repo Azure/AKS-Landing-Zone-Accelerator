@@ -3,7 +3,10 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "registryName": {
-            "value": "acreslz01"
+            "value": "acreslz1"
+        },
+        "registryLocation": {
+            "value": "eastus"
         },
         "zoneRedundancy": {
             "value": "disabled"
@@ -17,14 +20,8 @@
         "publicNetworkAccess": {
             "value": "Disabled"
         },
-        "spokeVnetName": {
-            "value": "vnet_spoke_arm",
-            "metadata": {
-                "description": "Name of the spoke VNET for creating the private endpoint"
-            }
-        },
-        "privateEndpointSubnet" : {
-            "value": "privateEndpointSubnet"
+        "acrPESubnetId" : {
+            "value": "/subscriptions/82e70289-bf40-45f9-8476-eab93d2031f4/resourceGroups/rg-aks-eslz-arm/providers/Microsoft.Network/virtualNetworks/vnet_spoke_arm/subnets/privateEndpointSubnet"
         }
         
     }

@@ -13,12 +13,6 @@
             "metadata": {
                 "description": "The Azure Container Registries names used by the AKS deployment for allowing necessary outbound traffic through the firewall."
             }
-        },
-        "laName": {
-            "value": "la-aks-arm",
-            "metadata": {
-                "description": "Log Analytics Name"
-            }
         }
     }
 }

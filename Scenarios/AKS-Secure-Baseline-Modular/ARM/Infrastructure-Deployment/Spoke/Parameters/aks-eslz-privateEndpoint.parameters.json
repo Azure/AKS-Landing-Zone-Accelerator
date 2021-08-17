@@ -8,12 +8,6 @@
                 "description": "Name of private endpoint created for Key Vault"
             }
         },
-        "spokeVnetName": {
-            "value": "vnet_spoke_arm",
-            "metadata": {
-                "description": "Name of the spoke VNET for creating the private endpoint"
-            }
-        },
         "privateEndpointSubnet": {
             "value": "privateEndpointSubnet",
             "metadata": {

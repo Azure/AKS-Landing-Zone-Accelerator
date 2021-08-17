@@ -25,12 +25,6 @@
             "metadata": {
                 "description": "A /27 under the Hub VNet Address Space for Azure Bastion"
             }
-        },
-        "laName": {
-            "value": "la-aks-arm",
-            "metadata": {
-                "description": "Log Analytics Name"
-            }
         }
     }
 }

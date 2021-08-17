@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vaultName": {
-            "value": "kv-aks-eslz-arm",
+            "value": "kv-aks-eslz",
             "metadata": {
               "description": "The suffix name of the key vault to be created."
             }
@@ -13,24 +13,6 @@
             "metadata": {
               "description": "The SKU of the vault to be created."
             }
-        },
-        "privateEndpointKeyVault": {
-          "value": "aks-pvtlink-keyVault",
-          "metadata": {
-              "description": "Name of private endpoint created for Key Vault"
-          }
-        },
-        "spokeVnetName": {
-          "value": "vnet_spoke_arm",
-          "metadata": {
-              "description": "Name of the spoke VNET for creating the private endpoint"
-          }
-        },
-        "privateEndpointSubnet": {
-          "value": "privateEndpointSubnet",
-          "metadata": {
-              "description": "Name of subnet used in Spoke VNet for creating the private endpoint"
-          }
         }
     }
 }
