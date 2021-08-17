@@ -30,7 +30,6 @@
     }
   },
   "variables": {
-    "VaultName": "[concat(parameters('vaultName'),'-',take(uniqueString(resourceGroup().id),3))]",
     "privateKeyVaultDnsZone": "privatelink.vaultcore.azure.net",
     "privateEndpointDnsgroupnameKeyVault": "[concat(parameters('privateEndpointKeyVault'),'/','default')]"
   },
@@ -38,7 +37,7 @@
     {
       "type": "Microsoft.KeyVault/vaults",
       "apiVersion": "2019-09-01",
-      "name": "[variables('VaultName')]",
+      "name": "[parameters('VaultName')]",
       "location": "[resourceGroup().location]",
       "properties": {
         "enableRbacAuthorization": false,
@@ -63,7 +62,7 @@
       "apiVersion": "2020-05-01",
       "name": "[parameters('privateEndpointKeyVault')]",
       "dependsOn": [
-          "[resourceId('Microsoft.KeyVault/vaults/',variables('VaultName'))]"
+          "[resourceId('Microsoft.KeyVault/vaults/',parameters('VaultName'))]"
       ],
       "location": "[resourceGroup().location]",
       "properties": {
@@ -74,7 +73,7 @@
           {
               "name": "[parameters('privateEndpointKeyVault')]",
               "properties": {
-              "privateLinkServiceId": "[resourceId('Microsoft.KeyVault/vaults',variables('VaultName'))]",
+              "privateLinkServiceId": "[resourceId('Microsoft.KeyVault/vaults',parameters('VaultName'))]",
               "groupIds": [
                   "vault"
               ]
