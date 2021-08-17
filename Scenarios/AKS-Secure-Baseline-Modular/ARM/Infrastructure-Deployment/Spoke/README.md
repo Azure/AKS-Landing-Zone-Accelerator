@@ -9,12 +9,12 @@ This folder contains the ARM templates for deploying the below Azure resources:
 Before deploying the Azure resources from this folder, please ensure that all the resources are deployed as mentioned in the [Hub directory](https://github.com/Azure/Enterprise-Scale-for-AKS/tree/main/Scenarios/AKS-Secure-Baseline-Modular/ARM/Infrastructure-Deployment/Hub).
 For deploying an AKS cluster, the Spoke VNET should be having basic supporting infra components like Azure Key Vault, Azure Container Registry and Azure Application Gateway.
 
-For secure communication between Azure Key Vault and ACR, private endpoints will be used.
-
-For better flexibility, Application Gateway has been deployed separetely and not as an AKS add-on. This helps customers to make use of their existing Application Gateway for AKS.
-
+>For secure communication between Azure Key Vault and ACR, private endpoints will be used.
+>
+>For better flexibility, Application Gateway has been deployed separetely and not as an AKS add-on. This helps customers to make use of their existing Application Gateway for AKS.
+---
 ### How to deploy the templates
-Before executing these templates, ensure that you are connected to your Azure subscription using AZ CLI or PowerShell and a Resource Group has been created to hold these new deployments. 
+>Before executing these templates, ensure that you are connected to your Azure subscription using AZ CLI or PowerShell and a Resource Group has been created to hold these new deployments. 
 
 ```json
 az login --tenant <tenant id>
