@@ -16,7 +16,7 @@ az login --tenant <tenant id>
 resourcegroup=aks-eslz-arm
 az group create --location eastus --name $resourcegroup
 ```
-The templates should be deployed in the below order:
+#### The templates should be deployed in the below order:
 
 * Deploy Log Analytics Workspace
 ```json
@@ -29,7 +29,7 @@ az deployment group create \
 * Deploy Hub VNET
 ```json
 az deployment group create \
-	--name LogAnalytics \
+	--name Hub \
 	--resource-group $resourcegroup \
 	--template-file hub\templates\aks-eslz-hub.json \
   --parameters @aks-eslz-hub.parameters.json
@@ -37,7 +37,7 @@ az deployment group create \
 * Deploy Azure Firewall
 ```json
 az deployment group create \
-	--name LogAnalytics \
+	--name Firewall \
 	--resource-group $resourcegroup \
 	--template-file hub\templates\aks-eslz-firewall.json \
   --parameters @aks-eslz-firewall.parameters.json
@@ -45,7 +45,7 @@ az deployment group create \
 * Deploy Azure Bastion Host
 ```json
 az deployment group create \
-	--name LogAnalytics \
+	--name Bastion \
 	--resource-group $resourcegroup \
 	--template-file hub\templates\aks-eslz-bastion.json \
   --parameters @aks-eslz-bastion.parameters.json
