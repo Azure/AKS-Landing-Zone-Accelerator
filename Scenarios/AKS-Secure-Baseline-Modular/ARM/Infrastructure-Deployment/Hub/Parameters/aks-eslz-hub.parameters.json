@@ -13,6 +13,9 @@
         },
         "azureBastionSubnetAddressSpace": {
             "value": "10.200.0.96/27"
+        },
+        "laName": {
+            "value": "la-aks-arm"
         }
     }
 }
