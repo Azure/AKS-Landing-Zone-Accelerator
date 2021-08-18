@@ -117,7 +117,7 @@
             "apiVersion": "2017-05-10",
             "name": "PrivateDns-b784b705640140a88f5976aba5261041",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[string('rg-aks-eslz-arm')]",
+            "resourceGroup": "[resourceGroup().name]",
             "dependsOn": [
                 "[string('acr-pe_b784b705-6401-40a8-8f59-76aba5261040')]"
             ],
