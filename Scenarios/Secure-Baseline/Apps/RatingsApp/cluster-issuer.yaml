@@ -1,13 +1,13 @@
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: letsencrypt-prod
+  name: letsencrypt-staging
 spec:
   acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
     email: jennelle.crothers@microsoft.com # IMPORTANT: Replace with a valid email from your organization
     privateKeySecretRef:
-      name: letsencrypt-secret
+      name: letsencrypt-staging
     solvers:
     - http01:
         ingress:
