@@ -1,26 +1,15 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "bastionName": {
-                "value": "bastionhost11oo"
-        },
-
-        "location": {
-            
-            "value": "eastus"
+            "value": "aks-bastion"
         },
         "hubVnetName": {
-            
             "value": "vnet_hub_arm"
-            
         },
         "bastionPipName": {
-            
-            "value": ""
-            
-
-             }
+            "value": "bastion_pip1"
         }
+    }
 }
-
