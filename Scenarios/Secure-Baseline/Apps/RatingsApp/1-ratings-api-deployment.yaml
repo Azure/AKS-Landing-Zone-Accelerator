@@ -1,3 +1,5 @@
+# Before this deployment, ensure that MongoDB has been created using Helm.  
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,7 +27,7 @@ spec:
         - name: MONGODB_URI # the application expects to find the MongoDB connection details in this environment variable
           valueFrom:
             secretKeyRef:
-              name: mongodburi 
+              name: MONGODBURI
               key:  MONGODBURI # the name of Secret in KeyVault
         resources:
           requests: # minimum resources required
