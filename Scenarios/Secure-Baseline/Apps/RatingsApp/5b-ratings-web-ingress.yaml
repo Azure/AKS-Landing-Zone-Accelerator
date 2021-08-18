@@ -4,9 +4,7 @@ metadata:
   name: ratings-web-ingress
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: letsencrypt-staging
-    cert-manager.io/acme-challenge-type: http01
-    # acme.cert-manager.io/http01-edit-in-place: "true"
+    appgw.ingress.kubernetes.io/appgw-ssl-certificate: ratings-cert
 spec:
   rules:
   - http:
@@ -18,10 +16,7 @@ spec:
             name: ratings-web
             port: 
               number: 80
-    host: ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
-  tls:
-    - hosts:
-      - ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
-      secretName: ratings-web-cert
+   
+
 
 
