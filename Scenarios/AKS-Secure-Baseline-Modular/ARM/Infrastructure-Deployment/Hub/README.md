@@ -19,19 +19,20 @@ az group create --location eastus ----name $resourcegroup
 #### The templates should be deployed in the below order:
 
 >Ensure that the parameter files of the templates are customized as per your naming standard & browse yourself to "Enterprise-Scale-for-AKSmain/Scenarios/AKS-Secure-Baseline-Modular/ARM/Infrastructure-Deployment/Hub"
+>Change your current working directory to 'Parameters' folder 
 * Deploy **Log Analytics Workspace**
 ```json
-az deployment group create --name LogAnalytics --resource-group $resourcegroup --template-file Templates/aks-eslz-la.template.json     --parameters Parameters/aks-eslz-la.parameters.json
+az deployment group create --name LogAnalytics --resource-group $resourcegroup --template-file ../templates/aks-eslz-la.template.json --parameters @aks-eslz-la.parameters.json
 ```
 * Deploy Hub **Virtual Network**
 ```json
-az deployment group create --name Hub --resource-group $resourcegroup --template-file Templates/aks-eslz-hub.template.json   --parameters Parameters/aks-eslz-hub.parameters.json
+az deployment group create --name Hub --resource-group $resourcegroup --template-file ../templates/aks-eslz-hub.template.json --parameters @aks-eslz-hub.parameters.json
 ```
 * Deploy **Azure Firewall**
 ```json
-az deployment group create --name Firewall --resource-group $resourcegroup --template-file Templates/aks-eslz-firewall.template.json   --parameters Parameters/aks-eslz-firewall.parameters.json
+az deployment group create --name Firewall --resource-group $resourcegroup --template-file ../templates/aks-eslz-firewall.template.json   --parameters @aks-eslz-firewall.parameters.json
 ```
 * Deploy **Azure Bastion Host**
 ```json
-az deployment group create --name Bastion --resource-group $resourcegroup --template-file Templates/aks-eslz-bastion.template.json   --parameters Parameters/aks-eslz-bastion.parameters.json
+az deployment group create --name Bastion --resource-group $resourcegroup --template-file ../templates/aks-eslz-bastion.template.json   --parameters @aks-eslz-bastion.parameters.json
 ```
