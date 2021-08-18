@@ -5,14 +5,20 @@
         "nodepoolSubnetResourceIds": {
             "type": "array",
             "metadata": {
-                "description": "Subnet resource Ids for all AKS clusters nodepools in all attached spokes to allow necessary outbound traffic through the firewall"
+                "description": "Subnet resource Ids of all AKS cluster nodepools in all attached spokes for allowing necessary outbound traffic through the firewall"
             }
         },
         "acrServers": {
             "type": "array",
             "defaultValue": ["*.azurecr.io"],
             "metadata": {
-                "description": "the Fabrikam Shipping Drone Delivery 00's Azure Container Registries server names for dev-qa-staging and production."
+                "description": "The Azure Container Registries names used by the AKS deployment for allowing necessary outbound traffic through the firewall."
+            }
+        },
+        "laName": {
+            "type": "string",
+            "metadata": {
+                "description": "Log Analytics name"
             }
         }
     },
@@ -22,8 +28,8 @@
         "aksIpGroupName": "[concat('ipg-',variables('location'),'-AksNodepools')]",
         "fwPipName": "firewall_pip_arm",
         "hubFwName": "hub_firewall_arm",
-        "hubVNetName": "vnet_hub_arm",
-        "hubLaName": "[concat('la-',variables('location'),'-',uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))))]"
+        "hubVNetName": "vnet_hub_arm"
+																																					   
     },
     "resources": [
       {
@@ -33,12 +39,12 @@
         "properties": {
           "mode": "Incremental",
           "template": {
-            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-            "contentVersion": "1.0.0.0",
-            "resources": []
-          }
-        }
-      },
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "resources": []
+            }
+            }
+        },	   
         {
             "apiVersion": "2019-11-01",
             "type": "Microsoft.Network/publicIpAddresses",
@@ -495,7 +501,7 @@
                 "[resourceId('Microsoft.Network/azureFirewalls', variables('hubFwName'))]"
             ],
             "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('hubLaName'))]",
+                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laName'))]",
                 "logs": [
                     {
                         "category": "AzureFirewallApplicationRule",
@@ -516,5 +522,4 @@
         }
     ],
     "outputs": {}
-
 }
