@@ -4,20 +4,15 @@
     "parameters": {
         "appgatewayName": {
             "value": "app_gateway"
-            
-            }
         },
         "spokeVNetName":{
             "value": "vnet_spoke_arm"
-             
-            
         },
         "appgatewaySubnet": {
             "value": "applicationGatewaySubnet"
-            
         },
         "appgatewayPip": {
             "value": "agw_pip1"
-            }
-
         }
+    }
+}

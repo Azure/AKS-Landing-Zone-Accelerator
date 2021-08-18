@@ -33,15 +33,21 @@
             "metadata": {
                 "description": "A /27 under the Hub VNet Address Space for Azure Bastion"
             }
+        },
+        "laName": {
+            "type": "string",
+            "metadata": {
+                "description": "Log Analytics name"
+            }
         }
     },
     "functions": [],
     "variables": {
-        "hubVNetName": "vnet_hub_arm",
-        "hubLaName": "[concat('la-',resourceGroup().location,'-',take(uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))),3))]"
+        "hubVNetName": "vnet_hub_arm"
+																																								  
     },
     "resources": [
-      {
+	{
         "apiVersion": "2020-06-01",
         "name": "pid-526622e4-fc47-11eb-9a03-0242ac130003",
         "type": "Microsoft.Resources/deployments",
@@ -94,28 +100,16 @@
             }
         },
         {
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "apiVersion": "2015-11-01-preview",
-            "name": "[variables('hubLaName')]",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "sku": {
-                    "name": "PerGB2018"
-                },
-                "retentionInDays": 30
-            }
-        },
-        {
             "type": "Microsoft.Network/virtualNetworks/providers/diagnosticSettings",
             "apiVersion": "2017-05-01-preview",
             "name": "[concat(variables('hubVnetName'), '/Microsoft.Insights/default')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('hubLaName'))]",
+																								   
                 "[resourceId('Microsoft.Network/virtualNetworks', variables('hubVnetName'))]"
             ],
             "properties": {
-                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('hubLaName'))]",
+                "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('laName'))]",
                 "metrics": [
                     {
                         "category": "AllMetrics",
@@ -131,7 +125,7 @@
             "type": "string"
         },
         "workspaceId" : {
-            "value": "[resourceId('Microsoft.OperationalInsights/workspaces',variables('hubLaName'))]",
+            "value": "[resourceId('Microsoft.OperationalInsights/workspaces',parameters('laName'))]",
             "type": "string" 
         },
         "hubRGName": {
