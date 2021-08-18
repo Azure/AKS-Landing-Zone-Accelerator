@@ -45,7 +45,7 @@
             "resources": []
           }
         }
-      },
+      },	   
         {
             "type": "Microsoft.Network/applicationGateways",
             "apiVersion": "2019-11-01",
@@ -53,8 +53,8 @@
             "location": "[variables('location')]",
             "properties": {
                 "sku": {
-                    "name": "Standard_v2",
-                    "tier": "Standard_v2",
+                    "name": "WAF_v2",
+                    "tier": "WAF_v2",
                     "capacity": 1
                 },
                 "gatewayIPConfigurations": [
