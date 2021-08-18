@@ -24,7 +24,6 @@ az deployment group create --name AKS_Deployment --resource-group $resourcegroup
 ```
 ## Enabling Addons
  > Pod Identity
-####################################################################################################
 
 >> Pod Identities
 ```json
