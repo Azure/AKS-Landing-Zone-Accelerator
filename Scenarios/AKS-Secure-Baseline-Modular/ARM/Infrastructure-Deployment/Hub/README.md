@@ -5,6 +5,7 @@ This folder contains the ARM templates for deploying the below Azure resources:
 * Virtual Network (Hub)
 * Azure Firewall
 * Azure Bastion Host
+* Virtual Machine
 
 >*In the Hub-Spoke topology, all Azure resources which are shared by spoke VNETs will be deployed in Hub VNET. Eg: Firewall, Bastion.. All Spoke VNETs will be connected to the Hub VNET using VNET peering.*
 ---
@@ -30,9 +31,13 @@ az deployment group create --name Hub --resource-group $resourcegroup --template
 ```
 * Deploy **Azure Firewall**
 ```json
-az deployment group create --name Firewall --resource-group $resourcegroup --template-file ../templates/aks-eslz-firewall.template.json   --parameters @aks-eslz-firewall.parameters.json
+az deployment group create --name Firewall --resource-group $resourcegroup --template-file ../templates/aks-eslz-firewall.template.json --parameters @aks-eslz-firewall.parameters.json
 ```
 * Deploy **Azure Bastion Host**
 ```json
-az deployment group create --name Bastion --resource-group $resourcegroup --template-file ../templates/aks-eslz-bastion.template.json   --parameters @aks-eslz-bastion.parameters.json
+az deployment group create --name Bastion --resource-group $resourcegroup --template-file ../templates/aks-eslz-bastion.template.json --parameters @aks-eslz-bastion.parameters.json
+```
+* Deploy **Virtual Machine**
+```json
+az deployment group create --name Bastion --resource-group $resourcegroup --template-file ../templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
 ```
