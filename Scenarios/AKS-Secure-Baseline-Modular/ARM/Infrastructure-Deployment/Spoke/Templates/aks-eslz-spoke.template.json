@@ -25,17 +25,23 @@
             "metadata": {
                 "description": "A /28 subnet for provisioning the private endpoints of the dependency services"
             }
+        },
+        "laName": {
+            "type": "string",
+            "metadata": {
+                "description": "Log Analytics name"
+            }
         }
     },
     "functions": [],
     "variables": {
         "location": "[resourceGroup().location]",
         "spokeVNetName": "vnet_spoke_arm",
-        "hubVNetName": "vnet_hub_arm",
+									  
         "hubFwName": "hub_firewall_arm",
         "routeTableName": "default_to_firewall_arm",
-        "hubLaName": "[concat('la-',resourceGroup().location,'-',take(uniqueString(resourceId('Microsoft.Network/virtualNetworks',variables('hubVnetName'))),3))]",
-        "workSpaceID" : "[resourceId('microsoft.operationalinsights/workspaces',variables('hubLaName'))]"
+																																								   
+        "workSpaceID" : "[resourceId('microsoft.operationalinsights/workspaces',parameters('laName'))]"
         
     },
     "resources": [
@@ -51,7 +57,7 @@
             "resources": []
           }
         }
-      },
+      },	   
         {
             "type": "Microsoft.Network/routeTables",
             "apiVersion": "2019-11-01",
