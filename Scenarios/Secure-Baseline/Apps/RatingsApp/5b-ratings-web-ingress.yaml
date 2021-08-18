@@ -28,7 +28,7 @@ metadata:
     kubernetes.io/ingress.class: azure/application-gateway
     cert-manager.io/cluster-issuer: letsencrypt-prod
     cert-manager.io/acme-challenge-type: http01
-    # acme.cert-manager.io/http01-edit-in-place: "true"
+    acme.cert-manager.io/http01-edit-in-place: "true"
 spec:
   rules:
   - http:
