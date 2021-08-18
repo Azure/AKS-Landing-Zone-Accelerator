@@ -3,34 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "spokeVnetAddressSpace": {
-            "value": "10.240.0.0/16",
-            "metadata": {
-                "description": "A /16 to contain the application gateway, dependency services private endpoint and AKS cluster"
-            }
+            "value": "10.240.0.0/16"
         },
         "clusterSubnetPrefix": {
-            "value": "10.240.0.0/22",
-            "metadata": {
-                "description": "A /22 subnet for provisioning the AKS cluster. Both nodes and pods will make use of the IP addresses from this subnet"
-            }
+            "value": "10.240.0.0/22"
         },
         "appgatewaySubnetPrefix": {
-            "value": "10.240.4.16/28",
-            "metadata": {
-                "description": "A /28 subnet for provisioning the application gateway"
-            }
+            "value": "10.240.4.16/28"
         },
         "privateEndpointSubnetPrefix": {
-            "value": "10.240.4.0/28",
-            "metadata": {
-                "description": "A /28 subnet for provisioning the private endpoints of the dependency services"
-            }
+            "value": "10.240.4.0/28"
         },
         "laName": {
-            "value": "la-aks-arm",
-            "metadata": {
-                "description": "Log Analytics Name"
-            }
+            "value": "la-aks-arm"
         }
     }
 }

@@ -6,8 +6,7 @@
             "type": "string"
         },
         "registryLocation": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]"
+            "type": "string"
         },
         "zoneRedundancy": {
             "type": "string"
@@ -21,20 +20,31 @@
         "publicNetworkAccess": {
             "type": "string"
         },
-        "spokeVnetName": {
-            "type": "string"
-        },
-        "privateEndpointSubnet" : {
+        "acrPESubnetId" : {
             "type": "string"
         }
     },
     "variables": {
-        "resourceGroupId": "[resourceGroup().id]",
-        "acrPESubnetID" : "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('spokeVnetName'), parameters('privateEndpointSubnet'))]"
+        "resourceGroupId": "[resourceGroup().id]"
+
+
     },
 
     "resources": [
-        {
+{
+        "apiVersion": "2020-06-01",
+        "name": "pid-526622e4-fc47-11eb-9a03-0242ac130003",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+          "mode": "Incremental",
+          "template": {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "contentVersion": "1.0.0.0",
+            "resources": []
+          }
+        }
+      },
+      {
             "name": "[parameters('registryName')]",
             "type": "Microsoft.ContainerRegistry/registries",
             "location": "[parameters('registryLocation')]",
@@ -87,7 +97,7 @@
                         "value": "registry"
                     },
                     "subnetId": {
-                        "value": "[variables('acrPESubnetId')]"
+                        "value": "[parameters('acrPESubnetId')]"
                         
                     },
                     "location": {
@@ -128,14 +138,14 @@
                         {
                             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
                             "apiVersion": "2018-09-01",
-                            "name": "[concat(string('privatelink.azurecr.io'), '/', uniqueString(string('[variables(acrPESubnetId)]')))]",
+                            "name": "[concat(string('privatelink.azurecr.io'), '/', uniqueString(string('[parameters(acrPESubnetId)]')))]",
                             "location": "global",
                             "dependsOn": [
                                 "[string('privatelink.azurecr.io')]"
                             ],
                             "properties": {
                                 "virtualNetwork": {
-                                    "id": "[concat(variables('resourceGroupId'),'/providers/Microsoft.Network/virtualNetworks/',split(variables('acrPESubnetId'),'/')[8])]"
+                                    "id": "[concat(variables('resourceGroupId'),'/providers/Microsoft.Network/virtualNetworks/',split(parameters('acrPESubnetId'),'/')[8])]"
                                 },
                                 "registrationEnabled": false
                             }

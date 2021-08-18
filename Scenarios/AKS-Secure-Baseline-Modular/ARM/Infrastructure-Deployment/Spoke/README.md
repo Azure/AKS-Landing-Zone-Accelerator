@@ -25,49 +25,25 @@ resourcegroup=aks-eslz-arm
 >Ensure that the parameter files of the templates are customized as per your naming standard
 * Deploy Spoke **Virtual Network**
 ```json
-az deployment group create \
-	--name Spoke \
-	--resource-group $resourcegroup \
-	--template-file spoke\templates\aks-eslz-spoke.json \
-  --parameters @aks-eslz-spoke.parameters.json
+az deployment group create --name Spoke --resource-group $resourcegroup --template-file ../templates/aks-eslz-spoke.template.json --parameters @aks-eslz-spoke.parameters.json
 ```
 * Create **VNET peering** with Hub VNET
 ```json
-az deployment group create \
-	--name Peering \
-	--resource-group $resourcegroup \
-	--template-file spoke\templates\aks-eslz-peering.json \
-  --parameters @aks-eslz-peering.parameters.json
+az deployment group create --name Peering --resource-group $resourcegroup --template-file ../templates/aks-eslz-vnet-peering.template.json
 ```
 * Deploy **Azure KeyVault** with Private Endpoint.
 ```json
-az deployment group create \
-	--name KeyVault \
-	--resource-group $resourcegroup \
-	--template-file spoke\templates\aks-eslz-keyVault.json \
-  --parameters @aks-eslz-keyVault.parameters.json
+az deployment group create --name KeyVault --resource-group $resourcegroup --template-file ../templates/aks-eslz-keyVault.template.json --parameters @aks-eslz-keyVault.parameters.json
 ```
 * Deploy **Azure Container Registry (ACR)** with Private Endpoint
 ```json
-az deployment group create \
-	--name ACR \
-	--resource-group $resourcegroup \
-	--template-file spoke\templates\aks-eslz-acr.json \
-  --parameters @aks-eslz-acr.parameters.json
+az deployment group create --name ACR --resource-group $resourcegroup --template-file ../templates/aks-eslz-containerregistry.template.json --parameters @aks-eslz-containerregistry.parameters.json
 ```
 * Create a **Public IP address** for application Gateway.
 ```json
-az deployment group create \
-	--name PublicIP \
-	--resource-group $resourcegroup \
-	--template-file spoke\templates\aks-eslz-publicip.json \
-  --parameters @aks-eslz-publicip.parameters.json
+az deployment group create --name PublicIP --resource-group $resourcegroup --template-file ../templates/aks-eslz-publicip.template.json --parameters @aks-eslz-publicip.parameters.json
 ```
 * Deploy **Application Gateway** with WAFv2
 ```json
-az deployment group create \
-	--name AppGateway \
-	--resource-group $resourcegroup \
-	--template-file spoke\templates\aks-eslz-applicationgateway.json \
-  --parameters @aks-eslz-applicationgateway.parameters.json
+az deployment group create --name AppGateway --resource-group $resourcegroup --template-file ../templates/aks-eslz-applicationgateway.template.json --parameters @aks-eslz-applicationgateway.parameters.json
 ```

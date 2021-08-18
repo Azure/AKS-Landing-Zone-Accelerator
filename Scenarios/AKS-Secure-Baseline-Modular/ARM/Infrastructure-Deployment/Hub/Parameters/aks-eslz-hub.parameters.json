@@ -3,34 +3,22 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "hubVnetAddressSpace": {
-            "value": "10.200.0.0/24",
-            "metadata": {
-                "description": "A /24 to contain the firewall, management, and gateway subnet"
-            }
+            "value": "10.200.0.0/24"
         },
         "azureFirewallSubnetAddressSpace": {
-            "value": "10.200.0.0/26",
-            "metadata": {
-                "description": "A /26 under the Hub VNet Address Space for Azure Firewall"
-            }
+            "value": "10.200.0.0/26"
         },
         "azureGatewaySubnetAddressSpace": {
-            "value": "10.200.0.64/27",
-            "metadata": {
-                "description": "A /27 under the Hub VNet Address Space for our On-Prem Gateway"
-            }
+            "value": "10.200.0.64/27"
         },
         "azureBastionSubnetAddressSpace": {
-            "value": "10.200.0.96/27",
-            "metadata": {
-                "description": "A /27 under the Hub VNet Address Space for Azure Bastion"
-            }
+            "value": "10.200.0.96/27"
+        },
+        "azureManagementSubnetAddressSpace": {
+            "value": "10.200.0.128/27"
         },
         "laName": {
-            "value": "la-aks-arm",
-            "metadata": {
-                "description": "Log Analytics Name"
-            }
+            "value": "la-aks-arm"
         }
     }
 }

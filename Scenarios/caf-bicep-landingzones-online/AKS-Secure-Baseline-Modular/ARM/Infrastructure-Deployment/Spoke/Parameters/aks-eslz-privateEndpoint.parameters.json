@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "privateEndpointKeyVault": {
+            "value": "aks-pvtlink-keyVault",
+            "metadata": {
+                "description": "Name of private endpoint created for Key Vault"
+            }
+        },
+        "privateEndpointSubnet": {
+            "value": "privateEndpointSubnet",
+            "metadata": {
+                "description": "Name of subnet used in Spoke VNet for creating the private endpoint"
+            }
+        },
+        "keyVaultName":{
+            "value": "kv-aks-eslz",
+            "metadata": {
+                "description": "The suffix name of the key vault to be created."
+            }
+        }
+    }
+}
