@@ -20,26 +20,29 @@
 #         path: /
 
 
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ratings-web
+  name: ratings-web-ingress
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     cert-manager.io/acme-challenge-type: http01
-    acme.cert-manager.io/http01-edit-in-place: "true"
+    # acme.cert-manager.io/http01-edit-in-place: "true"
 spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          name: ratings-web
+          port: 
+             number: 80
+      host: ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
   tls:
     - hosts:
       - ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
       secretName: ratings-web-cert
-  rules:
-  - host: ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
-    http:
-      paths:
-      - backend:
-          serviceName: ratings-web
-          servicePort: 80
-        path: /
+
 
