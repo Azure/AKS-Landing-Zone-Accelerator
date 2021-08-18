@@ -36,10 +36,11 @@ spec:
       - path: /
         pathType: Prefix
         backend:
-          name: ratings-web
-          port: 
-             number: 80
-      host: ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
+          service:
+            name: ratings-web
+            port: 
+              number: 80
+    host: ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
   tls:
     - hosts:
       - ratingsappgw.westus2.cloudapp.azure.com # IMPORTANT: update <ingress ip> with the dashed public IP of your ingress, for example frontend.13-68-177-68.nip.io
