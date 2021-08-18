@@ -22,4 +22,4 @@
 *.tfstate.*
 *.tfvars
 *.hcl
-.vs
+*.vs
