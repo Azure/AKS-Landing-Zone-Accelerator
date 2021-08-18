@@ -18,7 +18,7 @@
             "value": "JumpBox"
         },
         "hubVNetName":{
-            "value": "vnet_spoke_arm"
+            "value": "vnet_hub_arm"
         },
         "managementSubnet": {
             "value": "AzureManagementSubnet"
