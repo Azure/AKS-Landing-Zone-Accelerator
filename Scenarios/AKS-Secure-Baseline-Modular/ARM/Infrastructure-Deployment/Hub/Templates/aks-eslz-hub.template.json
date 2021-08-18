@@ -34,6 +34,14 @@
                 "description": "A /27 under the Hub VNet Address Space for Azure Bastion"
             }
         },
+        "azureManagementSubnetAddressSpace": {
+            "type": "string",
+            "maxLength": 18,
+            "minLength": 10,
+            "metadata": {
+                "description": "A /27 under the Hub VNet Address Space for deploying virtual machine to access Azure resources"
+            }
+        },
         "laName": {
             "type": "string",
             "metadata": {
@@ -47,7 +55,7 @@
 																																								  
     },
     "resources": [
-	{
+		{
         "apiVersion": "2020-06-01",
         "name": "pid-526622e4-fc47-11eb-9a03-0242ac130003",
         "type": "Microsoft.Resources/deployments",
@@ -90,6 +98,14 @@
                         "name": "AzureBastionSubnet",
                         "properties": {
                             "addressPrefix": "[parameters('azureBastionSubnetAddressSpace')]",
+                            "serviceEndpoints": [
+                            ]
+                        }
+                    },
+                    {
+                        "name": "AzureManagementSubnet",
+                        "properties": {
+                            "addressPrefix": "[parameters('azureManagementSubnetAddressSpace')]",
                             "serviceEndpoints": [
                             ]
                         }
