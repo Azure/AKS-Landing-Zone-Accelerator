@@ -1,4 +1,4 @@
-## ARM templates in Spoke folder
+## ARM templates in Shared-Components folder
 
 This folder contains the ARM templates for deploying the below Azure resources:
 * Azure Key Vault
