@@ -21,7 +21,7 @@ resource hubfirewall 'Microsoft.Network/azureFirewalls@2020-06-01' = {
         name: 'IpConf1'
         properties: {
           subnet: {
-            id: subnet.id
+            id: resourceId('/resourceGroups/rg-hub-network/Microsoft.Network/virtualNetworks/subnets', 'hub-vnet', 'AzureFirewallSubnet')
           }
           publicIPAddress: {
             id: publicIP.id

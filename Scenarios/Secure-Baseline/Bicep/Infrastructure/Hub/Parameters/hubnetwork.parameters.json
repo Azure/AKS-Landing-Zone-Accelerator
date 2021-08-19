@@ -7,7 +7,7 @@
                 "virtualNetwork": {
                     "deploy": true,
                     "rg": "rg-hub-network",
-                    "VnetName": "hub-vnet",
+                    "name": "hub-vnet",
                     "addressPrefix": "100.64.100.0/22",
                     "dnsServers": "1.1.1.1",
                     "ddosProtectionPlan": {
@@ -39,6 +39,7 @@
                 },
                 "azureFirewall": {
                     "deploy": true,
+                    "rg": "aks_re1",
                     "name": "testazfw",
                     "location": "uksouth",
                     "sku": ""
