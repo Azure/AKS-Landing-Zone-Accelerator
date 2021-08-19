@@ -51,6 +51,6 @@ A deployment of AKS-hosted workloads typically experiences a separation of dutie
 
 1.2 [Creation of Spoke Network & its respective Components](./Infrastructure-Deployment/Spoke/README.md)
 
-1.3 [Creation of Shared-components](./Infrastructure-Deployment/Shared-Components/README.md)
+1.3 [Creation of Shared-components](./Infrastructure-Deployment/Shared-components/README.md)
 
 1.4 [Creation of AKS & enabling Addons](./AKS-Deployment/README.md)
