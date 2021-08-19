@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "hubNetwork": {
+            "value": {
+                "virtualNetwork": {
+                    "deploy": true,
+                    "rg": "rg-hub-network",
+                    "VnetName": "hub-vnet",
+                    "addressPrefix": "100.64.100.0/22",
+                    "dnsServers": "1.1.1.1",
+                    "ddosProtectionPlan": {
+                        "enabled": false,
+                        "name": "ddos-standard-ml"
+                    },
+                    "subnets": [
+                        {
+                            "name": "GatewaySubnet",
+                            "addressPrefix": "100.64.100.0/27"
+                        },
+                        {
+                            "name": "AzureFirewallSubnet",
+                            "addressPrefix": "100.64.101.0/26"
+                        },
+                        {
+                            "name": "AzureBastionSubnet",
+                            "addressPrefix": "100.64.101.64/26"
+                        },
+                        {
+                            "name": "jumpbox",
+                            "addressPrefix": "100.64.102.0/27"
+                        },
+                        {
+                            "name": "private_endpoints",
+                            "addressPrefix": "100.64.103.128/25"
+                        }
+                    ]
+                },
+                "azureFirewall": {
+                    "deploy": true,
+                    "name": "testazfw",
+                    "location": "uksouth",
+                    "sku": ""
+                }
+            }
+        }
+    }
+}
