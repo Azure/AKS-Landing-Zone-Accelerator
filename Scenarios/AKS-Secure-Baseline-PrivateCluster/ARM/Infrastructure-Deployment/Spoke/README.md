@@ -2,9 +2,11 @@
 
 This folder contains the ARM templates for deploying the below Azure resources:
 * Virtual Network (Spoke)
-* Azure Key Vault
-* Azure Container Registry (ACR)
 * Azure Application Gateway
+* VNET Peering
+* Public IP Allocation for Appgateway
+
+<br/>
 
 Before deploying the Azure resources from this folder, please ensure that all the resources are deployed as mentioned in the [Hub directory](https://github.com/Azure/Enterprise-Scale-for-AKS/tree/main/Scenarios/AKS-Secure-Baseline-Modular/ARM/Infrastructure-Deployment/Hub).
 For deploying an AKS cluster, the Spoke VNET should be having basic supporting infra components like Azure Key Vault, Azure Container Registry and Azure Application Gateway.
@@ -30,14 +32,6 @@ az deployment group create --name Spoke --resource-group $resourcegroup --templa
 * Create **VNET peering** with Hub VNET
 ```json
 az deployment group create --name Peering --resource-group $resourcegroup --template-file ../templates/aks-eslz-vnet-peering.template.json
-```
-* Deploy **Azure KeyVault** with Private Endpoint.
-```json
-az deployment group create --name KeyVault --resource-group $resourcegroup --template-file ../templates/aks-eslz-keyVault.template.json --parameters @aks-eslz-keyVault.parameters.json
-```
-* Deploy **Azure Container Registry (ACR)** with Private Endpoint
-```json
-az deployment group create --name ACR --resource-group $resourcegroup --template-file ../templates/aks-eslz-containerregistry.template.json --parameters @aks-eslz-containerregistry.parameters.json
 ```
 * Create a **Public IP address** for application Gateway.
 ```json
