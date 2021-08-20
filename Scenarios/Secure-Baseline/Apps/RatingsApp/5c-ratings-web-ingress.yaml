@@ -5,7 +5,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
     appgw.ingress.kubernetes.io/ssl-redirect: "true"
-    appgw.ingress.kubernetes.io/appgw-ssl-certificate: aks-ingress-tls
+    # appgw.ingress.kubernetes.io/appgw-ssl-certificate: aks-ingress-tls
 spec:
   tls:
     - hosts:
