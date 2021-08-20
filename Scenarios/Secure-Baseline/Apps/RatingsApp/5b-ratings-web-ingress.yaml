@@ -15,7 +15,7 @@ spec:
             service:
               name: ratings-web
               port: 
-                number: 80
+              - number: 80
     host: ratingsappgw.westus2.cloudapp.azure.com
   tls:
     - hosts:
