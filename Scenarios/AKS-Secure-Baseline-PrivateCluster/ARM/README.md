@@ -47,10 +47,10 @@ A deployment of AKS-hosted workloads typically experiences a separation of dutie
 
 >We start with Infrastructure Deployments referenced in order listed below
  
-1.1 [Creation of Hub Network & its respective Components](./Infrastructure-Deployment/Hub/README.md)
+1.1 [Creation of Hub Network & its respective Components](./01-Setup-Hub.md)
 
-1.2 [Creation of Spoke Network & its respective Components](./Infrastructure-Deployment/Spoke/README.md)
+1.2 [Creation of Spoke Network & its respective Components](./02-Setup-Spoke.md)
 
-1.3 [Creation of Shared-components](./Infrastructure-Deployment/Shared-components/README.md)
+1.3 [Creation of Shared-components](./03-Setup-supporting-components.md)
 
-1.4 [Creation of AKS & enabling Addons](./AKS-Deployment/README.md)
+1.4 [Creation of AKS & enabling Addons](./04-Setup-Addons-and-AKS.md)
