@@ -6,21 +6,21 @@ metadata:
     kubernetes.io/ingress.class: azure/application-gateway
     # appgw.ingress.kubernetes.io/appgw-ssl-certificate: aks-agic-tls
 spec:
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: ratings-web
+              port: 
+                number: 80
+    host: ratingsappgw.westus2.cloudapp.azure.com
   tls:
     - hosts:
       - ratingsappgw.westus2.cloudapp.azure.com
       secretName: aks-ingress-tls
-  rules:
-    - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: ratings-web
-            port: 
-              number: 80
-    host: ratingsappgw.westus2.cloudapp.azure.com
    
 
 
