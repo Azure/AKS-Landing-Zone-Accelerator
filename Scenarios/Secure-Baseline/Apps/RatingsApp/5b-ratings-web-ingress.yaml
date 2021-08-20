@@ -4,7 +4,7 @@ metadata:
   name: ratings-web-ingress
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
-    appgw.ingress.kubernetes.io/appgw-ssl-certificate: ratings-cert
+    # appgw.ingress.kubernetes.io/appgw-ssl-certificate: ratingsapp
 spec:
   rules:
   - http:
