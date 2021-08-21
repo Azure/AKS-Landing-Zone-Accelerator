@@ -37,7 +37,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: frontend
+          serviceName: ratings-web
           servicePort: 80
 
 
