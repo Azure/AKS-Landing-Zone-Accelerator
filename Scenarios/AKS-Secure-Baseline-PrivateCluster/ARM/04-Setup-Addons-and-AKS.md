@@ -5,22 +5,24 @@ This folder contains the ARM templates for deploying AKS resource
 ### How to deploy the templates
 >Before executing this template, ensure that you are connected to your Azure subscription using AZ CLI or PowerShell and a Resource Group has been created for these new deployments. 
 > We also need to ensure that all resources are configured in Hub & Deployment
-```json
-az login --tenant <tenant id>
-resourcegroup=aks-eslz-arm
+
+```bash
+# login if you haven't already
+# az login --tenant <tenant id>
+AKS_RESOURCEGROUP=aks-eslz-arm
 ```
 
 
->Ensure that the parameter files of the templates are customized as per your naming standard & browse yourself to "Enterprise-Scale-for-AKSmain/Scenarios/AKS-Secure-Baseline-Modular/ARM/Infrastructure-Deployment/Hub"
+Navigate to "Enterprise-Scale-for-AKSmain/Scenarios/AKS-Secure-Baseline-Modular/ARM/Infrastructure-Deployment/Supporting-components/Parameters" folder
+```bash
+cd ../../../AKS-Deployment
+```
 
 <br/>
 
->Change your current working directory to 'Parameters' folder 
-
-> Browse yourself to <ins>Enterprise-Scale-for-AKSmain/Scenarios/AKS-Secure-Baseline-Modular/ARM/AKS-Deployment</ins>
 * Deploy **AKS**
 ```json
-az deployment group create --name AKS_Deployment --resource-group $resourcegroup --template-file aks-eslz-aks.template.json --parameters @aks-eslz-aks.parameters.json
+az deployment group create --name AKS_Deployment --resource-group $AKS_RESOURCEGROUP --template-file aks-eslz-aks.template.json --parameters @aks-eslz-aks.parameters.json
 ```
 ## Enabling Addons
  > Pod Identity
@@ -40,19 +42,15 @@ az extension update --name aks-preview
 ```
 
 ```json
-az aks update -g $resourcegroup -n aks-eslz1 --enable-pod-identity
+az aks get-credentials --resource-group $AKS_RESOURCEGROUP --name aks-eslz1
 ```
 
-<br/>
-
-
----
-
-<br/>
-
+```json
+az aks update -g $AKS_RESOURCEGROUP -n aks-eslz1 --enable-pod-identity
+```
 > Application Gateway Addon
 ```json
-az aks enable-addons -n aks-eslz1 -g $resourcegroup -a ingress-appgw --appgw-id $(az network application-gateway show -n app_gateway -g $resourcegroup -o tsv --query "id")
+az aks enable-addons -n aks-eslz1 -g $AKS_RESOURCEGROUP -a ingress-appgw --appgw-id $(az network application-gateway show -n app_gateway -g $AKS_RESOURCEGROUP -o tsv --query "id")
 ```
 
 > Enable CSI
@@ -80,5 +78,5 @@ az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKe
 
 >> To upgrade an existing AKS cluster with Secrets Store CSI Driver capability, use the az aks enable-addons command with the addon azure-keyvault-secrets-provider
 ```json
- az aks enable-addons --addons azure-keyvault-secrets-provider --name aks-eslz1 --resource-group $resourcegroup
+ az aks enable-addons --addons azure-keyvault-secrets-provider --name aks-eslz1 --resource-group $AKS_RESOURCEGROUP
 ```

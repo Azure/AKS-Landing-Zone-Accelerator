@@ -14,18 +14,26 @@ For deploying an AKS cluster, the Spoke VNET should be having basic supporting i
 ### How to deploy the templates
 Before executing these templates, ensure that you are connected to your Azure subscription using AZ CLI or PowerShell and a Resource Group has been created to hold these new deployments.
 
-```json
-az login --tenant <tenant id>
-resourcegroup=aks-eslz-arm
+```bash
+# login if you haven't already
+# az login --tenant <tenant id>
+SUPPORTING_RESOURCEGROUP=aks-eslz-arm
 ```
 #### The templates should be deployed in the below order:
 
 >Ensure that the parameter files of the templates are customized as per your naming standard
+
+Navigate to "Enterprise-Scale-for-AKSmain/Scenarios/AKS-Secure-Baseline-Modular/ARM/Infrastructure-Deployment/Supporting-components/Parameters" folder
+```bash
+cd ../../Supporting-components/Parameters
+```
 * Deploy **Azure KeyVault** with Private Endpoint.
-```json
-az deployment group create --name KeyVault --resource-group $resourcegroup --template-file ../templates/aks-eslz-keyVault.template.json --parameters @aks-eslz-keyVault.parameters.json
+```bash
+az deployment group create --name KeyVault --resource-group $SUPPORTING_RESOURCEGROUP --template-file ../Templates/aks-eslz-keyvault.template.json --parameters @aks-eslz-keyvault.parameters.json
 ```
 * Deploy **Azure Container Registry (ACR)** with Private Endpoint
-```json
-az deployment group create --name ACR --resource-group $resourcegroup --template-file ../templates/aks-eslz-containerregistry.template.json --parameters @aks-eslz-containerregistry.parameters.json
+```bash
+az deployment group create --name ACR --resource-group $SUPPORTING_RESOURCEGROUP --template-file ../Templates/aks-eslz-containerregistry.template.json --parameters @aks-eslz-containerregistry.parameters.json
 ```
+
+:arrow_forward: [Generate your client-facing TLS certificate](./04-Setup-Addons-and-AKS.md)

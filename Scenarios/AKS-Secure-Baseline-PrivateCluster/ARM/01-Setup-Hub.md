@@ -14,8 +14,8 @@ This folder contains the ARM templates for deploying the below Azure resources:
 
 ```bash
 az login --tenant <tenant id>
-RESOURCEGROUP=aks-eslz-arm
-az group create --location eastus --name $RESOURCEGROUP
+HUB_RESOURCEGROUP=aks-eslz-arm-hub
+az group create --location eastus --name $HUB_RESOURCEGROUP
 ```
 #### The templates should be deployed in the below order:
 
@@ -30,21 +30,25 @@ cd Scenarios/AKS-Secure-Baseline-PrivateCluster/ARM/Infrastructure-Deployment/Hu
 > [!NOTE]
 > You can check the various arm template files to see the resources that would be deployed by the following deployment groups by checking out the files in the appropriate folder shown in the deployment steps below.
 ```bash
-az deployment group create --name LogAnalytics --resource-group $RESOURCEGROUP --template-file ../Templates/aks-eslz-la.template.json --parameters @aks-eslz-la.parameters.json
+az deployment group create --name LogAnalytics --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-la.template.json --parameters @aks-eslz-la.parameters.json
 ```
 * Deploy Hub **Virtual Network**
 ```bash
-az deployment group create --name Hub --resource-group $RESOURCEGROUP --template-file ../Templates/aks-eslz-hub.template.json --parameters @aks-eslz-hub.parameters.json
+az deployment group create --name Hub --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-hub.template.json --parameters @aks-eslz-hub.parameters.json
 ```
 * Deploy **Azure Firewall**
 ```bash
-az deployment group create --name Firewall --resource-group $RESOURCEGROUP --template-file ../Templates/aks-eslz-firewall.template.json --parameters @aks-eslz-firewall.parameters.json
+az deployment group create --name Firewall --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-firewall.template.json --parameters @aks-eslz-firewall.parameters.json
 ```
 * Deploy **Azure Bastion Host**
 ```bash
-az deployment group create --name Bastion --resource-group $RESOURCEGROUP --template-file ../Templates/aks-eslz-bastion.template.json --parameters @aks-eslz-bastion.parameters.json
+az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-bastion.template.json --parameters @aks-eslz-bastion.parameters.json
 ```
 * Deploy **Virtual Machine**
 ```bash
-az deployment group create --name Bastion --resource-group $RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
+az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
 ```
+
+### Next step
+
+:arrow_forward: [Creation of Spoke Network & its respective Components](./02-Setup-Spoke.md)
