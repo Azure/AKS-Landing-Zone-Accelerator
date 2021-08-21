@@ -21,7 +21,7 @@
             "value": "Disabled"
         },
         "acrPESubnetId" : {
-            "value": "/subscriptions/82e70289-bf40-45f9-8476-eab93d2031f4/resourceGroups/rg-aks-eslz-arm/providers/Microsoft.Network/virtualNetworks/vnet_spoke_arm/subnets/privateEndpointSubnet"
+            "value": "/subscriptions/82e70289-bf40-45f9-8476-eab93d2031f4/resourceGroups/aks-eslz-arm/providers/Microsoft.Network/virtualNetworks/vnet_spoke_arm/subnets/privateEndpointSubnet"
         }
         
     }
