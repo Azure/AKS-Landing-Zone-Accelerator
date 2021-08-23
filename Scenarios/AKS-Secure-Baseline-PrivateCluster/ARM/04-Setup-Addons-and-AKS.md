@@ -1,4 +1,4 @@
-## Setup AKS Addons
+## Setup AKS and its Addons
 
 This folder contains the ARM templates for deploying AKS resource
 
