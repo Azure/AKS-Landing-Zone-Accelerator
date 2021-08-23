@@ -25,7 +25,7 @@ cd ../../../AKS-Deployment
 az deployment group create --name AKS_Deployment --resource-group $AKS_RESOURCEGROUP --template-file aks-eslz-aks.template.json --parameters @aks-eslz-aks.parameters.json
 ```
 ## Enabling Addons
- > Pod Identity
+ > **Pod Identity** - Azure Active Directory pod-managed identities uses Kubernetes primitives to associate managed identities for Azure resources and identities in Azure Active Directory (AAD) with pods
 
 >> Pod Identities
 ```json
@@ -40,20 +40,20 @@ az extension add --name aks-preview
 ```json
 az extension update --name aks-preview
 ```
-
+>> Use az aks get-credentials to sign in to your AKS cluster
 ```json
 az aks get-credentials --resource-group $AKS_RESOURCEGROUP --name aks-eslz1
 ```
-
+>> Update an existing AKS cluster with Azure CNI to include pod-managed identity.
 ```json
 az aks update -g $AKS_RESOURCEGROUP -n aks-eslz1 --enable-pod-identity
 ```
-> Application Gateway Addon
+> **Application Gateway Addon** - The Application Gateway Ingress Controller (AGIC) is a Kubernetes application, which makes it possible for Azure Kubernetes Service (AKS) customers to leverage Azure's native Application Gateway L7 load-balancer to expose cloud software to the Internet.
 ```json
 az aks enable-addons -n aks-eslz1 -g $AKS_RESOURCEGROUP -a ingress-appgw --appgw-id $(az network application-gateway show -n app_gateway -g $AKS_RESOURCEGROUP -o tsv --query "id")
 ```
 
-> Enable CSI
+> **Enable CSI**
 
 ```json
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
