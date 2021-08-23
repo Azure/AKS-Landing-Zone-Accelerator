@@ -44,6 +44,14 @@ az deployment group create --name Firewall --resource-group $HUB_RESOURCEGROUP -
 ```bash
 az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-bastion.template.json --parameters @aks-eslz-bastion.parameters.json
 ```
+
+**Optional Components** : For management of resources we're providing the sample for a VM creation
+
+* Update **Network Policies for AzureManagementSubnet **
+```bash
+az network vnet subnet update --disable-private-endpoint-network-policies true --name AzureManagementSubnet --resource-group $RESOURCEGROUP --vnet-name vnet_hub_arm 
+```
+
 * Deploy **Virtual Machine**
 ```bash
 az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
