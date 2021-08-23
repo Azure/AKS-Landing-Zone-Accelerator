@@ -49,7 +49,7 @@ az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --
 
 * Update <ins>Network Policies for AzureManagementSubnet</ins>
 ```bash
-az network vnet subnet update --disable-private-endpoint-network-policies true --name AzureManagementSubnet --resource-group $RESOURCEGROUP --vnet-name vnet_hub_arm 
+az network vnet subnet update --disable-private-endpoint-network-policies true --name AzureManagementSubnet --resource-group $HUB_RESOURCEGROUP --vnet-name vnet_hub_arm 
 ```
 
 * Deploy **Virtual Machine**
