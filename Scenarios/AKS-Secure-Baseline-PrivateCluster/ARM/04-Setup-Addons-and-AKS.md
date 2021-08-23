@@ -1,4 +1,4 @@
-## ARM templates in Hub folder
+## Setup AKS Addons
 
 This folder contains the ARM templates for deploying AKS resource
 
