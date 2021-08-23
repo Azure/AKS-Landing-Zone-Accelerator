@@ -1,4 +1,4 @@
-## ARM templates in Hub folder
+## Create the Spoke Network
 
 This folder contains the ARM templates for deploying the below Azure resources:
 * Log Analytics Workspace
