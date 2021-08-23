@@ -1,25 +1,4 @@
 #############
-# VARIABLES #
-#############
-
-variable "location" {
-  default = "westus2"
-}
-
-variable "tags" {
-  type = map(string)
-
-  default = {
-    project = "cs-aks"
-  }
-}
-
-variable "hub_prefix" {
-  default = "escs-hub"
-
-}
-
-#############
 # RESOURCES #
 #############
 

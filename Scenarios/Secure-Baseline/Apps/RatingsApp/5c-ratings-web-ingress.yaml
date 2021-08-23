@@ -10,7 +10,7 @@ spec:
   tls:
     - hosts:
       - ratingsappgw.westus2.cloudapp.azure.com
-      secretName: aks-ingress-tls-secret
+      secretName: aks-ingress-tls
   rules:
   - host: ratingsappgw.westus2.cloudapp.azure.com
     http:  

@@ -8,9 +8,9 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name  = "tfstate"
-    storage_account_name = "tfstate09102021"
-    container_name       = "akscs"
+    resource_group_name  = "tfstate"      # Update this value
+    storage_account_name = "tfstate-sa"   # Update this value
+    container_name       = "akscs"        # Update this value
     key                  = "hub-net"
   }
 

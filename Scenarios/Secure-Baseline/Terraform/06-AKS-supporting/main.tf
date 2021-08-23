@@ -1,15 +1,3 @@
-#############
-# VARIABLES #
-#############
-
-variable "access_key" {}
-
-variable "prefix" {
-  default = "akscs"
-}
-
-
-
 ########
 # DATA #
 ########
@@ -38,9 +26,7 @@ output "container_registry_id" {
   value = module.create_acr.acr_id
 }
 
-variable "state_sa_name" {}
 
-variable "container_name" {}
 
 
 

@@ -1,20 +1,3 @@
-#############
-# VARIABLES #
-#############
-
-variable "prefix" {
-  default = "escs"
-}
-
-variable "admin_password" {}
-
-variable "access_key" {}
-
-variable "state_sa_name" {}
-
-variable "container_name" {}
-
-
 ########
 # DATA #
 ########

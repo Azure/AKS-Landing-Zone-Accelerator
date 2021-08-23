@@ -42,21 +42,23 @@ module "create_linuxsserver" {
   location            = azurerm_resource_group.dev.location
   vnet_subnet_id      = azurerm_subnet.dev.id
 
-  server_name       = "server-dev-linux"
-  admin_username                 = var.admin_username
-  admin_password = var.admin_password
+  server_name         = "server-dev-linux"
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
   # admin_ssh                 = var.admin_ssh
 
 }
 
-#############
-# VARIABLES #
-#############
+#######################
+# SENSITIVE VARIABLES #
+#######################
 
 variable "admin_password" {
-
+  default = "changeme"
 }
 
 variable "admin_username" {
+  default = "sysadmin"
 
 }
+
