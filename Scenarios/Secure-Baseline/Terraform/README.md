@@ -22,6 +22,6 @@ This section is organized using folders that match the steps outlined below. Mak
 
 6. [Creation of Supporting Components for AKS](./06-aks-supporting.md)
 
-7.  [Creation of AKS & enabling Addons](./07-aks-cluster.md)
+7. [Creation of AKS & enabling Addons](./07-aks-cluster.md)
 
 

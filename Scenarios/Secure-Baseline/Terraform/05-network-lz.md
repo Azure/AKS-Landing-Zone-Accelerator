@@ -20,3 +20,5 @@ This deployment will need to reference data objects from the Hub deployment and 
 
 
 Once the files are updated, deploy using Terraform Init, Plan and Apply. 
+
+:arrow_forward: [Creation of AKS & enabling Addons](./07-aks-cluster.md)
