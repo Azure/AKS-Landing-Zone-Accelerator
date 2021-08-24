@@ -1,4 +1,5 @@
-# Documentation to implement the ARM templates for deployment of AKS Construction Set
+# Enterprise Scale for AKS - Private Cluster Scenario
+## ARM Reference Implementation
 
 ## Background
 
