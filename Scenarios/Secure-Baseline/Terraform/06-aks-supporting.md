@@ -21,4 +21,5 @@ Once the files are updated, deploy using Terraform Init, Plan and Apply.
 ## A Note about MongoDB
 Sample code is provided to add a secret for the MongoDB connection string to the Azure Key Vault, which would be referenced by the application workload later. However, this is a "data plane" operation and networking restrictions on the Key Vault deployment will not allow this code to succeed if from a client machine outside of the hub or spoke virtual network. 
 
-:arrow_forward: [Creation of Supporting Components for AKS](./06-aks-supporting.md)
+
+:arrow_forward: [Creation of AKS & enabling Addons](./07-aks-cluster.md)

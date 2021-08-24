@@ -1,0 +1,3 @@
+access_key = "XXXXX"
+mongodb_secret = "mongodb://dbadmin:Passw0rd1@ratings-mongodb.ratingsapp:27017/ratingsdb"
+

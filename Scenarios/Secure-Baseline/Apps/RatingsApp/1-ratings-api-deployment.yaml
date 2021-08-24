@@ -53,4 +53,4 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: "kv60273-akscs"
+              secretProviderClass: "mongodb-akscs"

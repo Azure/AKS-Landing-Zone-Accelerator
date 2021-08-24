@@ -3,6 +3,7 @@
 The following will be created:
 * Resource Group for AKS
 * AKS Cluster
+* Log Analytics Workspace
 * Managed Identity for AKS Control Plane
 * Managed Identity for Application Gateway Ingress Controller
 * AKS Pod Identity Assignments - OPTIONAL
@@ -19,3 +20,26 @@ This deployment will need to reference data objects from the Hub deployment and 
 
 Once the files are updated, deploy using Terraform Init, Plan and Apply. 
 
+## The Key Vault Add-On
+The AKS Key Vault Add-On is not currently supported for deployment with Terraform. Configure that separtely on the cluster after it is deployed. 
+```
+az aks enable-addons --addons azure-keyvault-secrets-provider --name myAKSCluster --resource-group myResourceGroup
+```
+When completed, take note of the client-id created for the add-on:
+
+...,
+ "addonProfiles": {
+    "azureKeyvaultSecretsProvider": {
+      ...,
+      "identity": {
+        "clientId": "<client-id>",
+        ...
+      }
+    }
+
+Update the permissions on the Key Vault to allow access to the newly created identity.
+```
+az keyvault set-policy -n <keyvault-name> --<object-type>-permissions get --spn <client-id>
+```
+
+:arrow_forward: [Deploy a Basic Workload](./08-workload.md)
