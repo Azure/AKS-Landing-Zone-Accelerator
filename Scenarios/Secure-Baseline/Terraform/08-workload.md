@@ -14,7 +14,7 @@ Install the following applications:
 Once connected, install the Azure CLI and log into Azure. You must be a member of the appropriate
 group (AKS App Dev Users, AKS Operations) to access the cluster. 
 
-````
+```
 az login
 ```
 
