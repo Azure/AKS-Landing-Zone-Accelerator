@@ -8,8 +8,13 @@ The reference implementation is split into two repos. This one and the [CAF-Terr
 
 In this repo, you get access to various customer [scenarios](./Scenarios) that can help accelerate the development and deployment of AKS clusters that conform with Enterprise-Scale for AKS best practices and guidelines. Each scenario aims to represent common customer experiences with the goal of accelerating the process of deploying conforming AKS clusters using IaC. Each scenario will eventually have a Terraform, ARM and Bicep version. They will also include CI/CD pipelines to help automate deployment of these clusters and the workload that run in them.
 
+Below is a picture of what a golden state looks like and it shows how open source software like flux and traefik integrate well within the AKS ecosystem.
+
+![Golden state platform foundation with AKS landingzone highlighted in red](./media/aks-eslz-architecture.png)
+The enterprise-scale for AKS is only concerned with what gets deployed in the landingzone subscription highlighted by the red box in the picture above. It is assumed that an appropriate platform foundation is already setup which may or may not be the [official ESLZ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/architecture) platform foundation. The policies applied by the platform foundation would trickle down to the Enterprise-scale for AKS landingzone subscription.
+
 ### Next step
-Pick one of the scenarios below
+Pick one of the scenarios below to get started on a reference implementation
 
 :arrow_forward: [AKS Secure Baseline](./Scenarios/Secure-Baseline)
 

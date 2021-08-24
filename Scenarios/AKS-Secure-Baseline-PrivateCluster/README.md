@@ -38,8 +38,8 @@ For this scenario, we have various IaC technology that you can choose from depen
 ## Next
 Pick one of the IaC options below and follow the instructions to deploy the AKS reference implementation.
 
-:arrow_forward: [ARM](./Scenarios/AKS-Secure-Baseline-PrivateCluster/ARM)
+:arrow_forward: [ARM](./ARM)
 
-:arrow_forward: [Terraform](./Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform)
+:arrow_forward: [Terraform](./Terraform)
 
-:arrow_forward: [Bicep](./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep)
+:arrow_forward: [Bicep](./Bicep)
