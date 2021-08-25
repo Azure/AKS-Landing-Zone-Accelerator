@@ -15,6 +15,10 @@ spec:
       - name: ratings-web
         image: acr60273.azurecr.io/ratings-web:v1 # IMPORTANT: update with your own repository
         imagePullPolicy: Always
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
         ports:
         - containerPort: 8080 # the application listens to this port
         env:
@@ -27,3 +31,10 @@ spec:
           limits: # maximum resources allocated
             cpu: 500m
             memory: 512Mi
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "aks-ingress-tls"
