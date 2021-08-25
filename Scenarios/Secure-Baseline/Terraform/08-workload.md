@@ -1,6 +1,6 @@
 # Deploy a Basic Workload using the Fruit Smoothie Ratings Application
 
-This application is provided by Microsoft Learning and is used as part of a self-paced Kubernetes training workshop.  You may find reviewing that workshop helpful as it presents some alternative deployment options and features using different architecture requirements. The application consists of a web frontend, an API service and a MongoDB database.
+This application is provided by Microsoft Learning and is used as part of a self-paced Kubernetes training [workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/).  You may find reviewing that workshop helpful as it presents some alternative deployment options and features using different architecture requirements. The application consists of a web frontend, an API service and a MongoDB database.
 
 Because the infrastructure has been deployed in a secure manner, only the API server to the AKS Cluster is accessible outside of the private network.  You will need to perform the majority of the application deployment from the Dev Jumpbox in the Hub VNET, connect via the Bastion Host service.
 
@@ -42,7 +42,7 @@ git clone
 ```
 git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
 ```
-3. The Ratingss Web repo
+3. The Ratings Web repo
 ```
 git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 ```
@@ -61,11 +61,12 @@ On the Kubernetes cluster, create a namespace for the Ratings Application.
 kubectl create namespace ratingsapp
 ```
 
-The MongoDB backend application is installed using Helm. You may use anything you'd like for the username and password for the MongoDB database, however that needs to be reflected in the connection string that is placed in Key Vault.  
+The MongoDB backend application is installed using Helm. You may use anything you'd like for the username and password for the MongoDB database, however that needs to be reflected in the connection string that is placed in Key Vault.
+
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
 
-helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=dbadmin,auth.password=Passw0rd1,auth.database=ratingsdb
+helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=<username>,auth.<password>=Passw0rd1,auth.database=ratingsdb
 ```
 
 Navigate to "/Scenarios/Secure-Baseline/Apps/RatingsApp" folder. 
