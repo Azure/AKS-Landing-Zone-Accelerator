@@ -73,7 +73,7 @@ Navigate to "/Scenarios/Secure-Baseline/Apps/RatingsApp" folder.
 ```
 cd //Scenarios/Secure-Baseline/Apps/RatingsApp
 ```
-Update the "0-secret-provider-class.yaml" file to reflect the correct Key Vault name, Client ID for the AKS Key Vault Add-on and the Tenant ID for the subscription.  Deploy the edited yaml file.
+Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vault name, Client ID for the AKS Key Vault Add-on and the Tenant ID for the subscription.  Deploy the edited yaml file.
 
 Update the "1-ratings-api-deployment.yaml" file to reflect the correct name for the Azure Container Service.  Deploy the file.
 
