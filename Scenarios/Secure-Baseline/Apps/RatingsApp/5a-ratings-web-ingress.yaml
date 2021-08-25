@@ -1,4 +1,4 @@
-# NON-TLS
+# NON-TLS - HTTP Only
 
 apiVersion: extensions/v1beta1
 kind: Ingress
