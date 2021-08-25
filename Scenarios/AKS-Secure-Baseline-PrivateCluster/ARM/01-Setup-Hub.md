@@ -14,7 +14,7 @@ This folder contains the ARM templates for deploying the below Azure resources:
 
 ```bash
 az login --tenant <tenant id>
-HUB_RESOURCEGROUP=aks-eslz-arm-hub
+HUB_RESOURCEGROUP=aks-eslz-arm
 az group create --location eastus --name $HUB_RESOURCEGROUP
 ```
 #### The templates should be deployed in the below order:
@@ -45,7 +45,9 @@ az deployment group create --name Firewall --resource-group $HUB_RESOURCEGROUP -
 az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-bastion.template.json --parameters @aks-eslz-bastion.parameters.json
 ```
 
-**Optional Components** : For management of resources we're providing the sample for a VM creation
+
+### Setup optional VM within the Hub virtual network to connect with Private Cluster
+**Optional Components** : For management of resources in private cluster, we're providing the sample for a VM creation
 
 * Update <ins>Network Policies for AzureManagementSubnet</ins>
 ```bash
@@ -54,8 +56,22 @@ az network vnet subnet update --disable-private-endpoint-network-policies true -
 
 * Deploy **Virtual Machine**
 ```bash
-az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
+az deployment group create --name VirtualMachine --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
 ```
+
+* Install Azure CLI in the new VM
+1. Go to Azure portal and click on the VM that was created in the previous step.
+1. Click on **Connect** at the top left of the overview page of the vm 
+1. Select **Bastion**
+1. Click on the **Use Bastion** button
+1. Enter the username and password and click on the **Connect** button. The username and password can be found in the parameters file that was used to create the VM 
+1. Install az CLI
+    ```bash
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    ```
+1. Follow the instructions here: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/ to install kubectl CLI in the new VM
+
+Now your hub network has been setup and you have a vm you can use to connect to the resources in the private cluster you are about to build.
 
 ### Next step
 

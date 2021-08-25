@@ -11,7 +11,7 @@ In this repo, you get access to various customer [scenarios](./Scenarios) that c
 Below is a picture of what a golden state looks like and open source software like flux and traefik integrate well within the AKS ecosystem.
 
 ![Golden state platform foundation with AKS landingzone highlighted in red](./media/aks-eslz-architecture.png)
-The enterprise-scale for AKS is only concerned with what gets deployed in the landingzone subscription highlighted by the red box in the picture above. It is assumed that an appropriate platform foundation is already setup which may or may not be the [official ESLZ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/architecture) platform foundation. The policies applied by the platform foundation would trickle down to the Enterprise-scale for AKS landingzone subscription.
+The enterprise-scale for AKS is only concerned with what gets deployed in the landingzone subscription highlighted by the red box in the picture above. It is assumed that an appropriate platform foundation is already setup which may or may not be the [official ESLZ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/architecture) platform foundation. This means that policies and governance should already be in place or should be setup after this implementation and are not a part of the scope this program. The policies applied by the platform foundation would trickle down to the Enterprise-scale for AKS landingzone subscription.
 
 ## Steps of Implementation for Enterprise-Scale for AKS
 

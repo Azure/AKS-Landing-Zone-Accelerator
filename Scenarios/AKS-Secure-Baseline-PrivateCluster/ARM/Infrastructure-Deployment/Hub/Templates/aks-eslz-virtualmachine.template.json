@@ -128,8 +128,8 @@
           },
           "storageProfile": {
             "imageReference": {
-              "publisher": "MicrosoftWindowsServer",
-              "offer": "WindowsServer",
+              "publisher": "Canonical",
+              "offer": "UbuntuServer",
               "sku": "[parameters('OSVersion')]",
               "version": "latest"
             },
