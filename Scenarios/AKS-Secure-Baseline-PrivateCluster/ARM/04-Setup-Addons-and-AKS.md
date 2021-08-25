@@ -83,7 +83,7 @@ az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKe
 
 ## Log into cluster
 
-To deploy workload, we need to log into the AKS cluster. However, since this is a private cluster we are unable to log in directly using our command interface because private clusterws are only accessible from computers within the virtual network of the cluster or peered networks. To get access to the cluster we have to log into the jumpbox virtual machine that we setup at the last step of the hub setup stage.
+To deploy workload, we need to log into the AKS cluster. However, since this is a private cluster we are unable to log in directly using our command line interface because private clusters are only accessible from computers within the virtual network of the cluster or peered networks. To get access to the cluster we have to log into the jumpbox virtual machine that we setup at the last step of the hub setup stage.
 
 ### Setup Prerequisites for the new VM
 * Install Azure CLI in the new VM
@@ -97,10 +97,11 @@ To deploy workload, we need to log into the AKS cluster. However, since this is 
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
     ```
 * Install kubectl CLI
+
 Follow the instructions here: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/ to install kubectl CLI in the new VM
 
 ### Update host file to point the private link URL to the IP address of the endpoint setup for the cluster
-The next step is to update the host file of the virtual machine so that the private link az aks get-credentials command points to corresponds to the ip address of the private endpoint of the cluster.
+The next step is to update the host file of the virtual machine so that the *az aks get-credentials* command points to the ip address of the private endpoint of the cluster.
 
 1. Find the resource group where the private endpoint was setup in Azure portal. The name of the resource group usually starts with MC_ + the name of the AKS cluster resource group. 
 1. Click on the private endpoint setup for the AKS cluster. In this case it is called kube-apiserver
@@ -120,7 +121,7 @@ The next step is to update the host file of the virtual machine so that the priv
     ```bash
     kubectl get nodes
     ```
-    It will show you an error stating that it cant find the host located at the private link address. Copy the private link address and save it somewhere
+    It will show you an error stating that it can't find the host located at the private link address. Copy the private link address and save it somewhere
 1. Modify the host file using nano
     ```bash
     sudo nano /etc/hosts
@@ -132,7 +133,7 @@ The next step is to update the host file of the virtual machine so that the priv
 
     Your result should look like the picture below
     ![Updated hosts file](../media/updated-host-file.png)
-1. Enter **ctrl + q** and then enter **y** to save the changes
+1. Enter **Ctrl + Q** to exit and then enter **Y** to save the changes
 1. Attempt to get nodes again and this time it should work
     ```bash
     kubectl get nodes
