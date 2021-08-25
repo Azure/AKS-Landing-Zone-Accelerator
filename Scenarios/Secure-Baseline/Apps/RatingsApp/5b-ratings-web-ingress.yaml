@@ -4,6 +4,7 @@ metadata:
   name: ratings-web-ingress
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   tls:
     - hosts:
