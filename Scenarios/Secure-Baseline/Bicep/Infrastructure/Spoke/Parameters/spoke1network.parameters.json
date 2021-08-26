@@ -2,13 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "hubNetwork": {
+        "spoke1Network": {
             "value": {
                 "virtualNetwork": {
                     "deploy": true,
-                    "rg": "rg-hub-network",
-                    "name": "hub-vnet",
-                    "addressPrefix": "10.200.0.0/24",
+                    "rg": "rg-spoke1-network",
+                    "name": "spoke1-vnet",
+                    "addressPrefix": "10.240.0.0/16",
                     "dnsServers": "1.1.1.1",
                     "ddosProtectionPlan": {
                         "enabled": false,
@@ -16,28 +16,21 @@
                     },
                     "subnets": [
                         {
-                            "name": "GatewaySubnet",
-                            "addressPrefix": "10.200.0.64/27",
+                            "name": "snet-clusternodes",
+                            "addressPrefix": "10.240.0.0/22",
                             "NSGName": ""
                         },
                         {
-                            "name": "AzureFirewallSubnet",
-                            "addressPrefix": "10.200.0.0/26",
+                            "name": "snet-clusteringressservices",
+                            "addressPrefix": "10.240.4.0/28",
                             "NSGName": ""
                         },
                         {
-                            "name": "AzureBastionSubnet",
-                            "addressPrefix": "10.200.0.96/27",
+                            "name": "snet-applicationgateway",
+                            "addressPrefix": "10.240.4.16/28",
                             "NSGName": "nsg-uksouth-bastion"
                         }
                     ]
-                },
-                "azureFirewall": {
-                    "deploy": true,
-                    "rg": "aks_re1",
-                    "name": "testazfw",
-                    "location": "uksouth",
-                    "sku": ""
                 }
             }
         }

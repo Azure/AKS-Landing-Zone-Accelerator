@@ -19,15 +19,6 @@ module hubVNet '../Modules/network.bicep' = {
   }
 }
 
-module hubFirewall '../Modules/azFirewall.bicep' = if (hubNetwork.azureFirewall.deploy){
-  scope: resourceGroup(hubNetwork.azureFirewall.rg)
-  name: 'hubFirewallDeploy'
-  params: {
-    hubNetwork:hubNetwork
-  }
-  dependsOn: [
-    hubVNet
-  ]
-}
+
 
 
