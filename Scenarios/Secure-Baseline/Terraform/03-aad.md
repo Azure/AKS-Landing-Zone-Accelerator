@@ -5,7 +5,7 @@ Depending on the needs of your organization, you may have a choice of existing g
 
 Navigate to "/Scenarios/Secure-Baseline/Terraform/03-AAD" folder
 ```
-cd /Scenarios/Secure-Baseline/Terraform/03-AAD
+cd ./Scenarios/Secure-Baseline/Terraform/03-AAD
 ```
 
 In the "provider.tf" file update the backend settings to reflect the storage account created for Terraform state management.  Do not change the "key" name, as it's referenced later in the deployment files. 
