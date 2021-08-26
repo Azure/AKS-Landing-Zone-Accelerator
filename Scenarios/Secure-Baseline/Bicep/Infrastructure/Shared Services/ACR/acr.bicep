@@ -1,38 +1,38 @@
-param vaultName string = 'keyVault${uniqueString(resourceGroup().id)}' 
+@minLength(5)
+@maxLength(50)
+@description('Name of the azure container registry (must be globally unique)')
+param acrName string
+
+@description('Location for all resources.')
 param location string = resourceGroup().location
-param sku string = 'Standard'
-param tenant string = '' // replace with your tenantId
-param enabledForDeployment bool = true
-param enabledForTemplateDeployment bool = true
-param enabledForDiskEncryption bool = true
-param enableRbacAuthorization bool = false
-param softDeleteRetentionInDays int = 90
+
+@allowed([
+  'Basic'
+  'Standard'
+  'Premium'
+])
+@description('Tier of your Azure Container Registry.')
+param acrSku string = 'Standard'
 
 param dnsZoneName string = 'privatelink.vaultcore.azure.net'
 
 param subnetId string=''
 
-
-
-
-
-
-resource keyvault 'Microsoft.KeyVault/vaults@2019-09-01' = {
-  name: vaultName
+// azure container registry
+resource acr 'Microsoft.ContainerRegistry/registries@2019-12-01-preview' = {
+  name: acrName
   location: location
+  tags: {
+   
+  }
+  sku: {
+    name: acrSku
+  }
   properties: {
-    tenantId: tenant
-    sku: {
-      family: 'A'
-      name: sku
-    }
-    enabledForDeployment: enabledForDeployment
-    enabledForDiskEncryption: enabledForDiskEncryption
-    enabledForTemplateDeployment: enabledForTemplateDeployment
-    softDeleteRetentionInDays: softDeleteRetentionInDays
-    enableRbacAuthorization: enableRbacAuthorization
+    adminUserEnabled: false
   }
 }
+
 
 resource privateDNSZone 'Microsoft.Network/dnsZones@2018-05-01'  = {
   name: dnsZoneName
@@ -62,16 +62,16 @@ resource vnetLink_resource 'Microsoft.Network/privateDnsZones/virtualNetworkLink
 }
 
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2019-04-01' = {
-  name: '${vaultName}-privateEndpoint'
+  name: '${acrName}-privateEndpoint'
   location: resourceGroup().location
   properties: {
     privateLinkServiceConnections: [
       {
-        name: '${vaultName}-privateEndpoint'
+        name: '${acrName}-privateEndpoint'
         properties: {
-          privateLinkServiceId: keyvault.id
+          privateLinkServiceId:acr.id
           groupIds: [
-            'vault'
+            'registry'
           ]
         }
       }
