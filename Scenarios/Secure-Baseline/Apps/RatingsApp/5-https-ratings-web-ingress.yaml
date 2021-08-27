@@ -1,20 +1,22 @@
-
 kind: Ingress
 apiVersion: networking.k8s.io/v1beta1
 metadata:
-  name: ratings-web-ingress
+  name: ratings-web-https
+  namespace: ratingsapp
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
+    # kubernetes.io/ingress.allow-http: 'false'
     appgw.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   tls:
     - hosts:
-      - ratingsappgw.westus2.cloudapp.azure.com
-      secretName: aks-ingress-tls
+      - ratingsjkc.westus2.cloudapp.azure.com
+      secretName: aks-tls-akv
   rules:
-  - host: ratingsappgw.westus2.cloudapp.azure.com
+  - host: ratingsjkc.westus2.cloudapp.azure.com
     http:  
       paths:
-      - backend:
+      - path: /
+        backend:
           serviceName: ratings-web
           servicePort: 80

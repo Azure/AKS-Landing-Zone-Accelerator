@@ -1,12 +1,11 @@
 apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
 kind: SecretProviderClass
 metadata:
-  name: aks-ingress-tls
+  name: aks-tls-akv
   namespace: ratingsapp
 spec:
   provider: azure
   parameters:
-    # usePodIdentity: "true"
     keyvaultName: "kv55488-jkc" 
     useVMManagedIdentity: "true"         
     userAssignedIdentityID: "fc5c1fcf-7222-4d2a-a09a-12b7a073834b" # the client ID of the MSI created by the 
@@ -14,14 +13,19 @@ spec:
       array:
         - |
           objectName: aks-ingress-tls-secret
-          objectAlias: aks-ingress-tls-secret
+          objectAlias: tls.crt
+          objectType: secret
+        - |
+          objectName: tls-key
+          objectAlias: tls.key
           objectType: secret
     tenantId: "449fbe1d-9c99-4509-9014-4fd5cf25b014"
   secretObjects:
-    - data:
-      - key: tls.key
-        objectName: aks-ingress-tls-secret # must match the name of certificate in kv
-      - key: tls.crt
-        objectName: aks-ingress-tls-secret # must match the name of certificate in kv
-      secretName: aks-ingress-tls   # k8s secret manifest will be generated and synced after mounting it from pod/deploy
+    - secretName: aks-tls-akv  # k8s secret manifest will be generated and synced after mounting it from pod/deploy
       type: kubernetes.io/tls
+      data:
+      - objectName: tls.crt # must match the name of certificate in kv
+        key: tls.crt
+      - objectName: tls.key # must match the name of certificate in kv
+        key: tls.key
+      

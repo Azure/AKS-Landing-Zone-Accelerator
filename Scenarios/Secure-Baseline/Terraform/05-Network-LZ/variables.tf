@@ -11,7 +11,7 @@ variable "tags" {
 }
 
 variable "lz_prefix" {
-  default = "escs-lz01"
+  default = "jkc-lz01"
 }
 
 
@@ -20,11 +20,11 @@ variable "lz_prefix" {
 # a .TFVARS file or other secure method. 
 
 variable "state_sa_name" {
-    default = "tfstate"   # Update this value to match provider.tf
+    default = "tfstatestorejkc"   # Update this value to match provider.tf
 }
 
 variable "container_name" {
-    default = "akscs"    # Update this value to match provider.tf
+    default = "escsjkc"     # Update this value to match provider.tf
 }
 
 # Storage Account Access Key

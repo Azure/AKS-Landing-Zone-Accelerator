@@ -3,15 +3,15 @@
 #############
 
 variable "prefix" {
-  default = "escs"
+  default = "jkc"
 }
 
 variable "state_sa_name" {
-    default = "tfstate-sa"  # Update this value
+    default = "tfstatestorejkc"   # Update this value
 }
 
 variable "container_name" {
-    default = "akscs"    # Update this value
+    default = "escsjkc"     # Update this value
 }
 
 variable "access_key" {}
