@@ -18,7 +18,9 @@ In the "provider.tf" file update the backend settings to reflect the storage acc
 In the "variables.tf" file, update the defaults to reflect the tags and prefix you'd like to use.  
 This deployment will need to reference data objects from the Hub deployment and will need access to the pre-existing state file, update the variables as needed.  
 
-This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. A sample terraform.tfvars file is included. To get the access key:
+This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. A sample terraform.tfvars file is included. 
+
+To get the access key:
 
 1. Go to Azure portal and find the storage account that was created for Terraform
 2. Under **Security + networking** section in the left blade, click on **Access keys**

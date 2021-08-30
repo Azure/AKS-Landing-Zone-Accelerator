@@ -19,6 +19,3 @@ Once the files are updated, deploy using Terraform Init, Plan and Apply.
 ### Next step
 
 :arrow_forward: [Creation of Hub Network & its respective Components](./04-network-hub.md)
-
-
-
