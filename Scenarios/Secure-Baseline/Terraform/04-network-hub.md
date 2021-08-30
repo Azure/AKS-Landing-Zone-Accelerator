@@ -23,8 +23,6 @@ Once the files are updated, deploy using Terraform Init, Plan and Apply.
 terraform init
 ```
 
-> :note:
-
 > Enter terraform init -reconfigure if you get an error saying there was a change in the backend configuration which may require migrating existing state
 
 ```bash
@@ -34,9 +32,5 @@ terraform plan
 ```bash
 terraform apply
 ```
-
-
-
-terraform init -reconfigure
 
 :arrow_forward: [Creation of Spoke Network & its respective Components](./05-network-lz.md)

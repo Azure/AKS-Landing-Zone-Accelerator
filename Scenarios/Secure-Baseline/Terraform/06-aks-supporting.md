@@ -19,7 +19,9 @@ This deployment will need to reference data objects from the Hub deployment and 
 Once the files are updated, deploy using Terraform Init, Plan and Apply. 
 
 ## A Note about MongoDB
-Sample code is provided to add a secret for the MongoDB connection string to the Azure Key Vault, which would be referenced by the application workload later. However, this is a "data plane" operation and networking restrictions on the Key Vault deployment will not allow this code to succeed if from a client machine outside of the hub or spoke virtual network. If you are running this from a machine withi the hub or spoke virtual network, for example by using the jumpbox vm created earlier, feel free to rename the mongo-secret.tf.sample file to mongo-secret.tf to create the mongodb secret and grant access to the current user.
+Sample code is provided to add a secret for the MongoDB connection string to the Azure Key Vault, which would be referenced by the application workload later. However, this is a "data plane" operation and networking restrictions on the Key Vault deployment will not allow this code to succeed if from a client machine outside of the hub or spoke virtual network. If you are running this from a machine within the hub or spoke virtual network, for example by using the jumpbox vm created earlier, feel free to rename the mongo-secret.tf.sample file to mongo-secret.tf to create the mongodb secret and grant access to the current user.
+
+Otherwise skip this part for now, we will create the secret manually using Azure CLI later.
 
 
 :arrow_forward: [Creation of AKS & enabling Addons](./07-aks-cluster.md)
