@@ -16,6 +16,18 @@ In the "variables.tf" file, update the defaults to reflect the display names as 
 
 Once the files are updated, deploy using Terraform Init, Plan and Apply. 
 
+```
+terraform init
+```
+
+```
+terraform plan
+```
+
+```
+terraform apply
+```
+
 ### Next step
 
 :arrow_forward: [Creation of Hub Network & its respective Components](./04-network-hub.md)
