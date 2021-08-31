@@ -11,7 +11,7 @@ variable "tags" {
 }
 
 variable "lz_prefix" {
-  default = "jkc-lz01"
+  default = "escs-lz01"
 }
 
 
