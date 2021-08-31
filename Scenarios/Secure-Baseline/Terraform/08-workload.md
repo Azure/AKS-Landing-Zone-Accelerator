@@ -61,7 +61,7 @@ Since the Container registry can only be accessed via private link, we need to c
 
 2. Find the Private DNS zone created for keyvault. This should be in the landing zone resource group (escs-lz01-rg for example)
 
-   ![Location of private link for keyvault](..\media\acr-privatelink-location.png)
+   ![Location of private link for keyvault](../media/acr-privatelink-location.png)
 
 3. Click on **Virtual network links** in the left blade under **Settings**
 
@@ -79,11 +79,11 @@ Since the Container registry can only be accessed via private link, we need to c
 
 1. Go to the Azure portal and find your container registry. This should be in the landing zone resource group (escs-lz01-rg for example)
 2. You should see your pod-identity-example managed identity  as well as the azurekeyvaultsecrets identity. The pod identity will provide pods access to the pull secrets from the keyvault. The azurekeyvaultsecrets identity will be used by the keyvault driver. If either of these are missing, perhaps you are missing a step. 
-3. Click on **Access policies** under **Settings** in the left blade![add access policy](..\media\add-access-policy-acr.png)
-4. Select the required access policies ![add access policy](..\media\add-access-policy-acr2.png)
+3. Click on **Access policies** under **Settings** in the left blade![add access policy](../media/add-access-policy-acr.png)
+4. Select the required access policies ![add access policy](../media/add-access-policy-acr2.png)
 5. Under **Select principal** click on the **None selected** link and select the user group(s) you created for this to provide you and everyone in the group access to the Key vault
 6. Click **Select** at the bottom of the the screen
-7. **Important**: Click **Save** at the top of the next screen to save the changes ![add access policy](..\media\add-access-policy-acr2.png)
+7. **Important**: Click **Save** at the top of the next screen to save the changes ![add access policy](../media/add-access-policy-acr2.png)
 
 7. 
 
@@ -155,7 +155,7 @@ Ensure you have access to the cluster
 kubectl get nodes
 ```
 
-![cluster access granted](..\media\access-granted-to-cluster.png)
+![cluster access granted](../media/access-granted-to-cluster.png)
 
 On the Kubernetes cluster, create a namespace for the Ratings Application. 
 
@@ -206,7 +206,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 3. Ensure the ratings-api deployment was successful. If you dont get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity. 
 
-   ![cluster access granted](..\media\api-pod-deployed.png)
+   ![cluster access granted](../media/api-pod-deployed.png)
 
    You can troubleshoot container creation issues by running
 
@@ -248,7 +248,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 1. Go to Azure portal and in the lz resource group you'll find the appgwSubnet NSG
 
-   ![application gw nsg](..\media\app-gw-nsg.png)
+   ![application gw nsg](../media/app-gw-nsg.png)
 
 2. Click on the **Inbound rules** in the left blade
 
@@ -256,7 +256,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 4. Set the priority to 200. Your result should look like this
 
-   ![application gw nsg](..\media\allow-http-access.png)
+   ![application gw nsg](../media/allow-http-access.png)
 
 5. Click on **Add**
 
@@ -270,7 +270,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 2. Copy the ip address displayed, open a browser, navigate to that address and explore your website
 
-   ![application gw nsg](..\media\deployed-workload.png)
+   ![application gw nsg](../media/deployed-workload.png)
 
 ## Next Step
 

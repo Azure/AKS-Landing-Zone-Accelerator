@@ -8,8 +8,6 @@ REGION=<REGION>
 STORAGEACCOUNTNAME=<UNIQUENAME>
 CONTAINERNAME=akscs
 TFSTATE_RG=tfstate
-REGION=eastus
-STORAGEACCOUNTNAME=awesomestorateaccayo
 ```
 
 
@@ -21,7 +19,7 @@ az group create --name $TFSTATE_RG --location $REGION
 
 Create a Storage Account:
 ```bash
-az storage account create -n $STORAGEACCOUNTNAME -g tfstate -l $REGION --sku Standard_LRS
+az storage account create -n $STORAGEACCOUNTNAME -g $TFSTATE_RG -l $REGION --sku Standard_LRS
 ```
 
 Create a Storage Container within the Storage Account:
