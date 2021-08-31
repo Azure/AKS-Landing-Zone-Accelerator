@@ -24,7 +24,7 @@ variable "state_sa_name" {
 }
 
 variable "container_name" {
-    default = "akscs"     # Update this value to match provider.tf
+    default = "akscs"    # Update this value to match provider.tf
 }
 
 # Storage Account Access Key
