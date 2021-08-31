@@ -102,11 +102,23 @@ az aks enable-addons --addons azure-keyvault-secrets-provider --name $AKSCLUSTER
       }
     }
 
-Update the permissions on the Key Vault to allow access from the newly created identity. The object type can be key or secret. In this case it should be secret.
+Update the permissions on the Key Vault to allow access from the newly created identity. The object-type can be key or secret. In this case it should be secret.
 ```
-az keyvault set-policy -n <keyvault-name> --<object-type>-permissions get --spn <client-id>
+az keyvault set-policy -n kv80049-aks --secret-permissions get --spn "94d5455f-9a5c-4c0c-80bb-f487578c4c7a"
 ```
 
+## Grant access from hub network to private link created for keyvault
 
+For the jumpbox you just created in the hub network to have access to Key vault's private link you need to add the network to the access. To do this,
+
+1. Find the Private DNS zone created for keyvault. This should be in the landing zone resource group (escs-lz01-rg for example)
+
+   ![Location of private link for keyvault](../media/keyvault-privatelink-location.png)
+   
+2. Click on **Virtual network links** in the left blade under **Settings**
+3. Click on **+ Add** in the in the top left of the next screen
+4. enter a name for the link eg *hub_to_kv*
+5. Select the hub virtual network for the **Virtual network** field
+6. Click on **OK** at the bottom
 
 :arrow_forward: [Deploy a Basic Workload](./08-workload.md)

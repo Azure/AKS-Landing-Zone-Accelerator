@@ -28,6 +28,18 @@ terraform plan
 terraform apply
 ```
 
+## Ensure you are part of the AAD group you just created or pointed to
+
+1. Go to Azure portal and type AAD
+2. Select **Azure Active Directory**
+3. Click on **Groups** in the left blade
+4. Select the Admin User group you just created. For the default name, this should be *AKS App Admin Team*
+5. Click on **Members** in the left blade
+6. ![Location of private link for keyvault](../media/adding-to-aad-group.png)
+7. Click **+ Add members**
+8. Enter your name in the search bar and select your user(s)
+9. Click **Select**
+
 ### Next step
 
 :arrow_forward: [Creation of Hub Network & its respective Components](./04-network-hub.md)
