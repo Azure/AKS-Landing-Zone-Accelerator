@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ratings-api
-        image: acr60273.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository
+        image: <acr name>.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository
         imagePullPolicy: Always
         volumeMounts:
         - name: secrets-store-inline
