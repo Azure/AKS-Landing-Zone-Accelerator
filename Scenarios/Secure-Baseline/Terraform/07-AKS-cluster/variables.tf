@@ -11,7 +11,7 @@ variable "state_sa_name" {
 }
 
 variable "container_name" {
-    default = "akscs"     # Update this value
+    default = "akscs"    # Update this value
 }
 
 variable "access_key" {}
