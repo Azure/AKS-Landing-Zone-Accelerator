@@ -272,6 +272,25 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
    ![application gw nsg](../media/deployed-workload.png)
 
+## Update the Ingress to support HTTPS traffic
+
+1. Configure the Public IP address of your Application Gateway to have a DNS name. 
+
+2. Create a certificate and store it in KeyVault. 
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<fqdn of appgw public ip>/O=AKS-INGRESS-TLS"
+
+openssl pkcs12 -export -out aks-ingress-tls.pfx -in aks-ingress-tls.crt -inkey aks-ingress-tls.key -passout pass:
+
+az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name <keyvault>
+```
+3. Update the web-secret-class-provider.yaml with your keyvault name, user assigned identity for the keyvault add-on and the tenant ID. Deploy it.
+
+4. Redeploy the web application using the "3b-ratings-web-deployment.yaml", which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
+
+5. Update the "5-https-ratings-web-ingress.yaml" file to use the FQDN that matches the certificate and application gateway public IP address.  Redeploy the ingress with this file. 
+
+
 ## Next Step
 
 :arrow_forward: [Cleanup](./09-cleanup.md)

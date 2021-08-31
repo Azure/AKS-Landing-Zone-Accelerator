@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - ratingsjkc.westus2.cloudapp.azure.com
-      secretName: aks-ingress-tls-manual
+      - <fqdn>
+      secretName: aks-tls-akv
   rules:
-  - host: ratingsjkc.westus2.cloudapp.azure.com
+  - host: <fqdn>
     http:  
       paths:
       - pathType: Prefix
