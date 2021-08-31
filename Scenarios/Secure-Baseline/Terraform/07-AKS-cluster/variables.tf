@@ -7,7 +7,7 @@ variable "prefix" {
 }
 
 variable "state_sa_name" {
-    default = "tfstate-sa"   # Update this value
+    default = "tfstate-sa"  # Update this value
 }
 
 variable "container_name" {
