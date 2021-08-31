@@ -15,7 +15,7 @@ variable "tags" {
 }
 
 variable "hub_prefix" {
-  default = "jkc-hub"
+  default = "escs-hub"
 
 }
 
