@@ -16,19 +16,17 @@ Once you connect ensure you permit the site to read the content of your clipboar
 
 Install the following applications:
 
-2. AZ CLIto 
+1. AZ CLIto 
 
-   ```
-   curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-   ```
+```
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
 
 2. Docker
 
-   ```
-   sudo apt install docker.io
-   ```
-
-   
+```
+sudo apt install docker.io -y
+```
 
 3. [Kubernetes CLI](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 
@@ -59,16 +57,43 @@ az login --service-principal --username "${applicationId}" --password "${passwor
 
 Since the Container registry can only be accessed via private link, we need to connect it to the network where jumpbox or whichever computer we are using to create the container images resides. We already added the container registry to the spoke network where the cluster resides using terraform. 
 
-1. Find the ....
-2. 
+1. Go to Azure portal
+
+2. Find the Private DNS zone created for keyvault. This should be in the landing zone resource group (escs-lz01-rg for example)
+
+   ![Location of private link for keyvault](..\media\acr-privatelink-location.png)
+
+3. Click on **Virtual network links** in the left blade under **Settings**
+
+4. Click on **+ Add** in the in the top left of the next screen
+
+5. enter a name for the link eg *hub_to_kv*
+
+6. Select the hub virtual network for the **Virtual network** field
+
+7. Click on **OK** at the bottom
+
+
+
+## Provide yourself Access to Create Secrets in your Key vault
+
+1. Go to the Azure portal and find your container registry. This should be in the landing zone resource group (escs-lz01-rg for example)
+2. You should see your pod-identity-example managed identity  as well as the azurekeyvaultsecrets identity. The pod identity will provide pods access to the pull secrets from the keyvault. The azurekeyvaultsecrets identity will be used by the keyvault driver. If either of these are missing, perhaps you are missing a step. 
+3. Click on **Access policies** under **Settings** in the left blade![add access policy](..\media\add-access-policy-acr.png)
+4. Select the required access policies ![add access policy](..\media\add-access-policy-acr2.png)
+5. Under **Select principal** click on the **None selected** link and select the user group(s) you created for this to provide you and everyone in the group access to the Key vault
+6. Click **Select** at the bottom of the the screen
+7. **Important**: Click **Save** at the top of the next screen to save the changes ![add access policy](..\media\add-access-policy-acr2.png)
+
+7. 
 
 ## Build Container Images
 
 Set your environmental variables
 
 ```
-AKSCLUSTERNAME=aks-escs
-AKSRESOURCEGROUP=escs-lz01-rg-aks
+AKSCLUSTERNAME=aks-aks
+AKSRESOURCEGROUP=aks-lz01-rg-aks
 ```
 
 Clone the required repos to the Dev Jumpbox:
@@ -96,29 +121,25 @@ sudo docker build . -t <acrname>.azurecr.io/ratings-web:v1
 Log into ACR
 
 ```
-az acr login
+sudo az acr login -n <acrname>
 ```
 
 Push the images into the container registry. Ensure you are logged in u
 
 ```
-sudo docker push <acrname>.azurecr.io/ratings-api:v1
+sudo docker push <acrname>.azurecr.io/ratings-web:v1
 sudo docker push <acrname>.azurecr.io/ratings-web:v1
 ```
 
 
 
-Create the secret in keyvault if you havent already
+Create the secret in keyvault if you havent already. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chat in the next steps.
 
 ```
-az keyvault secret set --name mongodburi --vault-name acr78860-akscs --value "mongodb://<username>:Awesomepassword2@ratings-mongodb.ratingsapp:27017/ratingsdb"
-
-az keyvault secret set --name mongodburi --vault-name kv78860-akscs --value "mongodb://dbadmin:Awesomepassword2@ratings-mongodb.ratingsapp:27017/ratingsdb"
-
-helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=dbadmin,auth.password=Awesomepassword2,auth.database=ratingsdb
+az keyvault secret set --name mongodburi --vault-name <acr name> --value "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
 ```
 
-## Deploy the workload unto the cluster
+## Deploy the database into the cluster
 
 You can deploy the workload into the cluster using your local computer since this is not a private cluster. This is not a very secure option. For better security, use a private cluster. We have a private cluster scenario in this repository. We are using a non private cluster for training purposes and for cases where you may not want to use a private cluster. It is easier to perform the following steps using your local computer since, it would be easy to modify the deployment files as needed. 
 
@@ -128,7 +149,13 @@ Get the connection credentials for the cluster:
 az aks get-credentials --name $AKSCLUSTERNAME --resource-group $AKSRESOURCEGROUP
 ```
 
+Ensure you have access to the cluster
 
+```
+kubectl get nodes
+```
+
+![cluster access granted](..\media\access-granted-to-cluster.png)
 
 On the Kubernetes cluster, create a namespace for the Ratings Application. 
 
@@ -136,7 +163,7 @@ On the Kubernetes cluster, create a namespace for the Ratings Application.
 kubectl create namespace ratingsapp
 ```
 
-The MongoDB backend application is installed using Helm. You may use anything you'd like for the username and password for the MongoDB database, however that needs to be reflected in the connection string that is placed in Key Vault.
+The MongoDB backend application is installed using Helm. Your username and password must be the same username and password using in the connection string secret that was created in Key vault in the previous step.
 
 ```
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -144,21 +171,108 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=<username>,auth.password=<password>,auth.database=ratingsdb
 ```
 
-Navigate to "/Scenarios/Secure-Baseline/Apps/RatingsApp" folder. 
+## Deploy the workload into the cluster
+
+The steps below can be completed on your computer even if it is not connected to the cluster's virtual network. This makes it easier to tweak the yaml files for this demo. For a more secure AKS cluster, deploy a private cluster. Instructions on how to do that can be found in this repo.
+
+On your computer, navigate to "/Scenarios/Secure-Baseline/Apps/RatingsApp" folder. 
+
 ```
-cd ../Apps/RatingsApp
+cd ../../Apps/RatingsApp
 ```
-Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vault name, Client ID for the AKS Key Vault Add-on and the Tenant ID for the subscription.  Deploy the edited yaml file.
+Log into the cluster on your computer
 
-Update the "1-ratings-api-deployment.yaml" file to reflect the correct name for the Azure Container Registry.  Deploy the file.
+```
+az aks get-credentials -g $AKSRESOURCEGROUP -n $AKSCLUSTERNAME
+```
 
-Deploy the "2-ratings-api-service.yaml" file.
 
-Update the "3-ratings-web-deployment.yaml" file to reflect the correct name for the Azure Container Registry. Deploy the file. 
 
-Deploy the "4-ratings-web-serivce.yaml" file.
+Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vault name, Client ID for the AKS Key Vault Add-on you saved earlier and the Tenant ID for the subscription.  
 
-Deploy the "5a-ratings-web-ingress.yaml" file.
+> If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
 
-Browse to the IP address of the external IP for the Application Gateway.
+1. Deploy the edited yaml file.
+
+```
+kubectl apply -f api-secret-provider-class.yaml -n ratingsapp
+```
+
+2. Update the "1-ratings-api-deployment.yaml" file to reflect the correct name for the Azure Container Registry.  Deploy the file.
+
+```
+kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
+```
+
+3. Ensure the ratings-api deployment was successful. If you dont get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity. 
+
+   ![cluster access granted](..\media\api-pod-deployed.png)
+
+   You can troubleshoot container creation issues by running
+
+   ```
+   kubectl describe pod <pod name>
+   ```
+
+4. Deploy the "2-ratings-api-service.yaml" file.
+
+5. ```
+   kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp
+   ```
+
+6. Update the "3a-ratings-web-deployment.yaml" file to reflect the correct name for the Azure Container Registry. Deploy the file. 
+
+   ```
+   kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp
+   ```
+
+7. Deploy the "4-ratings-web-service.yaml" file.
+
+   ```
+   kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp
+   ```
+
+8. Deploy the "5a-ratings-web-ingress.yaml" file.
+
+   ```
+   kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp
+   ```
+
+9. Get the ip address of your ingress controller
+
+   ```
+   kubectl get ingress -n ratingsapp
+   ```
+
+## Allow access to the application gateway via port 80 (Will be updated to https soon)
+
+1. Go to Azure portal and in the lz resource group you'll find the appgwSubnet NSG
+
+   ![application gw nsg](..\media\app-gw-nsg.png)
+
+2. Click on the **Inbound rules** in the left blade
+
+3. Add a new rule that allows access to the application gateway on port 80
+
+4. Set the priority to 200. Your result should look like this
+
+   ![application gw nsg](..\media\allow-http-access.png)
+
+5. Click on **Add**
+
+## Check your deployed workload
+
+1. Get the ip address of your ingress controller
+
+   ```
+   kubectl get ingress -n ratingsapp
+   ```
+
+2. Copy the ip address displayed, open a browser, navigate to that address and explore your website
+
+   ![application gw nsg](..\media\deployed-workload.png)
+
+## Next Step
+
+:arrow_forward: [Cleanup](./09-cleanup.md)
 
