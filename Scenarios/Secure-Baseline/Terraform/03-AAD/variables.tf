@@ -3,7 +3,7 @@
 #############
 
 variable "aks_admin_group" {
-    default = "AKS App Dev Team"
+    default = "AKS App Admin Team"
 
 }
 

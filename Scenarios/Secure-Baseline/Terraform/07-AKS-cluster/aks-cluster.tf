@@ -35,17 +35,6 @@ resource "azurerm_role_assignment" "aks-to-vnet" {
 
 }
 
-# MSI for AGIC (Ingress Controller)
-# This ID is used by the cluster to act on the Application Gateway
-# It is referenced in the "addon_profile" block in the azurerm_kubernetes_cluster resource.
-
-
-# resource "azurerm_user_assigned_identity" "mi-aks-agic" {
-#   name                = "mi-${var.prefix}-aks-agic"
-#   resource_group_name = azurerm_resource_group.rg-aks.name
-#   location            = azurerm_resource_group.rg-aks.location
-# }
-
 # Log Analytics Workspace for Cluster
 
 resource "azurerm_log_analytics_workspace" "aks" {

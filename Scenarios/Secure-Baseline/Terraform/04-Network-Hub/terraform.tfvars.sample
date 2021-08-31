@@ -1,5 +1,3 @@
-# Private Variables
-
 admin_password = "change me"
 admin_username = "sysadmin"
 

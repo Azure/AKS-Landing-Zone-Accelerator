@@ -12,7 +12,7 @@ terraform {
 
   backend "azurerm" {
     resource_group_name  = "tfstate"            # Update this value
-    storage_account_name = "tfstate-sa"         # Update this value
+    storage_account_name = <unique storage account name>         # Update this value
     container_name       = "akscs"              # Update this value
     key                  = "aad"
   }
