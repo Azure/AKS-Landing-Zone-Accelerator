@@ -31,6 +31,13 @@
                             "NSGName": "nsg-uksouth-bastion"
                         }
                     ]
+                },
+                "appGwyPIP": {
+                    "name": "appgwy-pip",
+                    "sku": "Standard",
+                    "allocationMethod": "Static",
+                    "idleTimeoutInMinutes": 4,
+                    "publicIPAddressVersion": "IPv4"
                 }
             }
         }
