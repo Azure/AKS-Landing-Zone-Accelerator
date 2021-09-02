@@ -274,11 +274,13 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 ## Update the Ingress to support HTTPS traffic
 
-1. Configure the Public IP address of your Application Gateway to have a DNS name. 
+A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demostrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway. 
 
-2. Create a certificate and store it in KeyVault. 
+1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customprefix>.<region>.cloudapp.azure.com
+
+2. Create a certificate using the FQDN and store it in KeyVault. 
 ```
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<fqdn of appgw public ip>/O=AKS-INGRESS-TLS"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<fqdn_of_appgw_public_ip>/O=AKS-INGRESS-TLS"
 
 openssl pkcs12 -export -out aks-ingress-tls.pfx -in aks-ingress-tls.crt -inkey aks-ingress-tls.key -passout pass:
 
