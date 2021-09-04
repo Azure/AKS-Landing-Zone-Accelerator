@@ -10,6 +10,12 @@ CONTAINERNAME=akscs
 TFSTATE_RG=tfstate
 ```
 
+Setup environment variable 
+
+```
+export ARM_PARTNER_ID=fde452b3-60b3-4ce5-831c-c354d84dacdd
+```
+
 
 
 Create a Resource Group:
