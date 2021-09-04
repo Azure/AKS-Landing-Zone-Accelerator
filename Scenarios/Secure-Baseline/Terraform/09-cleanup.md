@@ -82,6 +82,6 @@ Remember to destroy resources that are not in use
    terraform destroy
    ```
    ```
-   az group delete -n $TFSTATE_RG -l $REGION
+   az group delete -n $TFSTATE_RG 
    ```
    
