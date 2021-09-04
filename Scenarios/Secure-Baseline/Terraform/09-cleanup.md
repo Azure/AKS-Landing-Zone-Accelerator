@@ -84,4 +84,4 @@ Remember to destroy resources that are not in use
    ```
    az group delete -n $TFSTATE_RG 
    ```
-   
+   After this is complete you may have to go to Azure portal and ensure the private DNS zones got deleted as well.
