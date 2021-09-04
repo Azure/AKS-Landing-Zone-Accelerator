@@ -11,13 +11,6 @@ spec:
       labels:
         app: ratings-web # the label for the pods and the deployments
     spec:
-      # volumes:
-      #   - name: aks-tls-akv
-      #     csi:
-      #       driver: secrets-store.csi.k8s.io
-      #       readOnly: true
-      #       volumeAttributes:
-      #         secretProviderClass: "aks-tls-akv"
       containers:
       - name: ratings-web
         image: <acr name>.azurecr.io/ratings-web:v1 # IMPORTANT: update with your own repository
@@ -34,7 +27,4 @@ spec:
           limits: # maximum resources allocated
             cpu: 500m
             memory: 512Mi
-        # volumeMounts:
-        # - name: aks-tls-akv
-        #   mountPath: /mnt/secrets-store
-        #   readOnly: true
+
