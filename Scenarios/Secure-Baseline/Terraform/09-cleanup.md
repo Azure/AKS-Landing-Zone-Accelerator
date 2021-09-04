@@ -9,7 +9,7 @@ Remember to destroy resources that are not in use
    ```
 
    ```bash
-   terrform init
+   terraform init
    ```
 
    ```bash
@@ -81,5 +81,7 @@ Remember to destroy resources that are not in use
    ```
    terraform destroy
    ```
-
+   ```
+   az group delete -n $TFSTATE_RG -l $REGION
+   ```
    
