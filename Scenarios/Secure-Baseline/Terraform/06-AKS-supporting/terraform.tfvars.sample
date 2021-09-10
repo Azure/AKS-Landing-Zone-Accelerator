@@ -1,4 +1,7 @@
-access_key = "XXXXX"
+state_sa_name "tfstate-sa"
+container_name = "tfstate"
+access_key = "XXXXXXXXX"
+
 mongodb_secret = "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
 
 # Update the mongodb_secret with a username and password

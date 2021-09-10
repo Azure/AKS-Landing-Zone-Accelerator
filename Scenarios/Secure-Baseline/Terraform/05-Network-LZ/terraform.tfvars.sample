@@ -1,1 +1,6 @@
+# Update to reflect correct environment
+
+state_sa_name "tfstate-sa"
+container_name = "tfstate"
 access_key = "XXXXXXXXX"
+
