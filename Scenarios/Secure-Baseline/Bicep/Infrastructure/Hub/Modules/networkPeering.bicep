@@ -9,7 +9,7 @@ resource hub_spoke1_peer 'Microsoft.Network/virtualNetworks/virtualNetworkPeerin
     allowVirtualNetworkAccess: true
     useRemoteGateways: false
     remoteVirtualNetwork: {
-      id: resourceId('Microsoft.Network/virtualNetworks', spoke1Network.virtualNetwork.name)
+      id: resourceId('${spoke1Network.virtualNetwork.rg}','Microsoft.Network/virtualNetworks', spoke1Network.virtualNetwork.name)
     }
   }
 }

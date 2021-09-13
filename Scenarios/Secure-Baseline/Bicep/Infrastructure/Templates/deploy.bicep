@@ -67,3 +67,4 @@ module spoke1VNet_hubVNet_Peer '../Spoke/Modules/networkPeering.bicep' = {
     hubVNet_spoke1VNet_Peer
   ]
 }
+
