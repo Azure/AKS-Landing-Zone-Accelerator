@@ -1,4 +1,7 @@
 param spoke1Network object = {}
+param hubNetwork object = {}
+param location string = resourceGroup().location
+var routeTableName = 'route-to-${location}-hub-fw'
 
 resource VNet_resource 'Microsoft.Network/virtualNetworks@2020-06-01' = {
   name: spoke1Network.virtualNetwork.name
@@ -119,7 +122,30 @@ resource publicIP 'Microsoft.Network/publicIPAddresses@2020-06-01' = {
     name: spoke1Network.appGwyPIP.sku
   }
   properties: {
-    publicIPAllocationMethod: spoke1Network.appGwyPIP.publicIPAllocationMethod
+    publicIPAllocationMethod: spoke1Network.appGwyPIP.allocationMethod
     publicIPAddressVersion: spoke1Network.appGwyPIP.publicIPAddressVersion
   }
 }
+
+resource hubFirewall 'Microsoft.Network/azureFirewalls@2021-02-01' existing = {
+  name: hubNetwork.azureFirewall.name
+}
+
+resource fwRouteTable 'Microsoft.Network/routeTables@2021-02-01' = {
+  name: routeTableName
+  location: location
+  properties: {
+    routes: [
+      {
+        name: 'r-nexthop-to-fw'
+        properties: {
+          addressPrefix: '0.0.0.0/0'
+          //nextHopIpAddress: hubFirewall.properties.ipConfigurations[0].properties.privateIPAddress
+          nextHopIpAddress: '1.1.1.1'
+          nextHopType: 'VirtualAppliance'
+        }
+      }
+    ]
+  }
+}
+  
