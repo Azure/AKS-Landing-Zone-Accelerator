@@ -3,7 +3,6 @@
 #############
 
 variable "location" {
-  default = "westus2"
 }
 
 variable "tags" {
@@ -15,8 +14,6 @@ variable "tags" {
 }
 
 variable "hub_prefix" {
-  default = "escs-hub"
-
 }
 
 ## Sensitive Variables for the Jumpbox
