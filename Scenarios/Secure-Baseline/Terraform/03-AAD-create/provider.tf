@@ -11,9 +11,9 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name  = "tfstate"            # Update this value
-    storage_account_name = <unique storage account name>         # Update this value
-    container_name       = "akscs"              # Update this value    
+    # resource_group_name  = ""   # Partial configuration, provided during "terraform init"
+    # storage_account_name = ""   # Partial configuration, provided during "terraform init"
+    # container_name       = ""   # Partial configuration, provided during "terraform init"
     key                  = "aad"
   }
 
