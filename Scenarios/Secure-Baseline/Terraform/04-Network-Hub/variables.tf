@@ -13,8 +13,7 @@ variable "tags" {
   }
 }
 
-variable "hub_prefix" {
-}
+variable "hub_prefix" {}
 
 ## Sensitive Variables for the Jumpbox
 ## Sample terraform.tfvars File

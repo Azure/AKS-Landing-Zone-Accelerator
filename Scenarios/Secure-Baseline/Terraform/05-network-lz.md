@@ -18,7 +18,7 @@ This deployment will need to reference data objects from the Hub deployment and 
 
 This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. 
 
-A sample terraform.tfvars file is included. 
+Once again, A sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
 
 To get the access key:
 
