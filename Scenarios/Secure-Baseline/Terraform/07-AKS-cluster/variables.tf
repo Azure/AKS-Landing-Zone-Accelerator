@@ -2,20 +2,14 @@
 # VARIABLES #
 #############
 
-variable "prefix" {
-  default = "escs"
-}
+variable "prefix" {}
 
-variable "state_sa_name" {
-    default = "tfstate-sa"  # Update this value
-}
+variable "state_sa_name" {}
 
-variable "container_name" {
-    default = "akscs"    # Update this value
-}
+variable "container_name" {}
 
 variable "access_key" {}
 
-# variable "admin_password" {}
+
 
 

@@ -13,10 +13,12 @@ Navigate to "/Scenarios/Secure-Baseline/Terraform/05-Network-LZ" folder
 cd ../05-Network-LZ
 ```
 
-In the "variables.tf" file, update the defaults to reflect the tags and prefix you'd like to use.  
+In the "variables.tf" file, update the defaults to reflect the tags you'd like to use.  
 This deployment will need to reference data objects from the Hub deployment and will need access to the pre-existing state file, update the variables as needed.  
 
-This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. A sample terraform.tfvars file is included. 
+This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. 
+
+Once again, A sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
 
 To get the access key:
 
@@ -26,6 +28,8 @@ To get the access key:
 4. Copy the string under **Key** from one of the two keys provided
 5. Update your the terraform.tfvsars.sample file with this as the value for access_key 
 6. Rename the file to terraform.tfvars
+
+Update the rest of the variables in the new terraform.tfvars file as well.
 
 Once the files are updated, deploy using Terraform Init, Plan and Apply. 
 

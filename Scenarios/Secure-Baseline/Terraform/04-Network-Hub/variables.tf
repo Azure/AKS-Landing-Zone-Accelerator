@@ -3,7 +3,6 @@
 #############
 
 variable "location" {
-  default = "westus2"
 }
 
 variable "tags" {
@@ -14,10 +13,7 @@ variable "tags" {
   }
 }
 
-variable "hub_prefix" {
-  default = "escs-hub"
-
-}
+variable "hub_prefix" {}
 
 ## Sensitive Variables for the Jumpbox
 ## Sample terraform.tfvars File
