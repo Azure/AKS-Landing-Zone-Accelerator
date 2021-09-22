@@ -14,6 +14,7 @@ jobs:
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_VAR_access_key: ${{ secrets.ACCESS_KEY }}
     runs-on: ubuntu-latest
     environment: production
 
@@ -39,10 +40,10 @@ jobs:
       working-directory: ./Scenarios/Secure-Baseline/Terraform/07-AKS-cluster
       run: terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan 07-AKS-cluster
-      working-directory: ./Scenarios/Secure-Baseline/Terraform/07-AKS-cluster
-      run: terraform plan
+    # # Generates an execution plan for Terraform
+    # - name: Terraform Plan 07-AKS-cluster
+    #   working-directory: ./Scenarios/Secure-Baseline/Terraform/07-AKS-cluster
+    #   run: terraform plan
 
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
