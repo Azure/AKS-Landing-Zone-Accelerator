@@ -1,23 +1,19 @@
 targetScope = 'subscription'
 
+// Parameters
 param rgName string
 param vnetSpokeName string
-// Parameters
-param spokeVNETaddPrefixes array = [
-  '10.1.0.0/16'
-]
-param spokeSubnets array = [
-
-]
+param spokeVNETaddPrefixes array
+param spokeSubnets array
 param rtAKSSubnetName string
 param firewallIP string
-//param aksVNetSubnetName string
 param vnetHubName string
 param appGatewayName string
 param appGatewaySubnetName string
 param vnetHUBRGName string
 param nsgAKSName string
 param nsgAppGWName string
+param dhcpOptions object
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -36,6 +32,7 @@ module vnetspoke 'modules/vnet/vnet.bicep' = {
     }
     vnetName: vnetSpokeName
     subnets: spokeSubnets
+    dhcpOptions: dhcpOptions
   }
   dependsOn: [
     rg
@@ -151,7 +148,7 @@ module privatednsACRZone 'modules/vnet/privatednszone.bicep' = {
   }
 }
 
-module privateDNSLinkACR 'modules/vnet/privatdnslink.bicep' = {
+module privateDNSLinkACR 'modules/vnet/privatednslink.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'privateDNSLinkACR'
   params: {
@@ -168,11 +165,28 @@ module privatednsVaultZone 'modules/vnet/privatednszone.bicep' = {
   }
 }
 
-module privateDNSLinkVault 'modules/vnet/privatdnslink.bicep' = {
+module privateDNSLinkVault 'modules/vnet/privatednslink.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'privateDNSLinkVault'
   params: {
     privateDnsZoneName: privatednsVaultZone.outputs.privateDNSZoneName
+    vnetId: vnethub.id
+  }
+}
+
+module privatednsAKSZone 'modules/vnet/privatednszone.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'privatednsAKSZone'
+  params: {
+    privateDNSZoneName: 'privatelink.${toLower(deployment().location)}.azmk8s.io'
+  }
+}
+
+module privateDNSLinkAKS 'modules/vnet/privatednslink.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'privateDNSLinkAKS'
+  params: {
+    privateDnsZoneName: privatednsAKSZone.outputs.privateDNSZoneName
     vnetId: vnethub.id
   }
 }

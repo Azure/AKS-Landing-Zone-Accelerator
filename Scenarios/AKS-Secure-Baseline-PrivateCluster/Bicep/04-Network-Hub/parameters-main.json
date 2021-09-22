@@ -46,9 +46,6 @@
     },
     "rtVMSubnetName":{
       "value": "vm-subnet-rt"
-    },
-    "vmVNetSubnetName": {
-      "value": "vmsubnet"
     }
   }
 }

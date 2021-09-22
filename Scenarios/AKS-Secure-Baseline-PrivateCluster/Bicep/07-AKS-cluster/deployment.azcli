@@ -1,4 +1,4 @@
 # az deployment sub create -n <deployment name> -l <location> -f <main.bicep> -p <parameters-main.json>
 
-az deployment sub create -n "ESLZ-HUB-AKS" -l "WestUS2" -f main.bicep -p parameters-main.json
-az deployment sub create -n "ESLZ-HUB-VM" -l "WestUS2" -f deploy-vm.bicep -p parameters-deploy-vm.json
+# 04 AKS Cluster Deployment
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json

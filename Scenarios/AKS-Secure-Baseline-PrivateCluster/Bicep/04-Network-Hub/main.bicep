@@ -1,15 +1,12 @@
 targetScope = 'subscription'
 
+// Parameters
 param rgName string
 param vnetHubName string
-// Parameters
-param hubVNETaddPrefixes array = [
-  '10.0.0.0/16'
-]
-param hubSubnets array = []
+param hubVNETaddPrefixes array
+param hubSubnets array
 param azfwName string
 param rtVMSubnetName string
-param vmVNetSubnetName string
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -52,7 +49,6 @@ module publicipfw 'modules/vnet/publicip.bicep' = {
 resource subnetfw 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
   scope: resourceGroup(rg.name)
   name: '${vnethub.name}/AzureFirewallSubnet'
-  parent: vnethub
 }
 
 module azfirewall 'modules/vnet/firewall.bicep' = {
@@ -275,7 +271,6 @@ module publicipbastion 'modules/vnet/publicip.bicep' = {
 resource subnetbastion 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
   scope: resourceGroup(rg.name)
   name: '${vnethub.name}/AzureBastionSubnet'
-  parent: vnethub
 }
 
 module bastion 'modules/VM/bastion.bicep' = {

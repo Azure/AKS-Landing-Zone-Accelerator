@@ -1,7 +1,7 @@
-param basename string
+param identityName string
 
 resource azidentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
-  name: '${basename}identity'
+  name: identityName
   location: resourceGroup().location
 }
 
