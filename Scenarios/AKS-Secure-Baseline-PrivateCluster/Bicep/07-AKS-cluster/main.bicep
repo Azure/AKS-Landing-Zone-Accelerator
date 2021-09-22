@@ -55,6 +55,24 @@ resource appGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing 
   name: appGatewayName
 }
 
+module aksPvtDNSContrib 'modules/Identity/role.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksPvtDNSContrib'
+  params: {
+    principalId: aksIdentity.outputs.principalId
+    roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
+  }
+}
+
+module aksPvtNetworkContrib 'modules/Identity/role.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksPvtNetworkContrib'
+  params: {
+    principalId: aksIdentity.outputs.principalId
+    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
+  }
+}
+
 module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
@@ -67,7 +85,10 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     identity: {
       '${aksIdentity.outputs.identityid}' : {}
     }
-    principalId: aksIdentity.outputs.principalId
     appGatewayResourceId: appGateway.id
   }
+  dependsOn: [
+    aksPvtDNSContrib
+    aksPvtNetworkContrib
+  ]
 }

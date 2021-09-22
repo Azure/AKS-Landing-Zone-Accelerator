@@ -2,5 +2,7 @@
 
 # 05 Network LZ
 az deployment sub create -n "ESLZ-Spoke-AKS" -l "CentralUS" -f main.bicep -p parameters-main.json
+
+# Wait until App Gateway get deployed. It takes a few mins to complete.
+
 az deployment sub create -n "ESLZ-AKS-SPOKE-UDRNSG" -l "CentralUS" -f updateUDR-NSG.bicep -p parameters-updateUDR-NSG.json
-#az deployment sub create -n "ESLZ-HUB-VM" -l "CentralUS" -f deploy-vm.bicep -p parameters-deploy-vm.json

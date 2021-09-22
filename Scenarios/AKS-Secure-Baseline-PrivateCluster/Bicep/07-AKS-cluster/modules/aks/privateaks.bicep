@@ -4,7 +4,6 @@ param privateDNSZoneId string
 param aadGroupdIds array
 param subnetId string
 param identity object
-param principalId string
 param appGatewayResourceId string
 //param appGatewayIdentityResourceId string
 
@@ -67,21 +66,5 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
         }
       }
     }
-  }
-}
-
-module aksPvtDNSContrib '../Identity/role.bicep' = {
-  name: 'aksPvtDNSContrib'
-  params: {
-    principalId: principalId
-    roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
-  }
-}
-
-module aksPvtNetworkContrib '../Identity/role.bicep' = {
-  name: 'aksPvtNetworkContrib'
-  params: {
-    principalId: principalId
-    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
   }
 }

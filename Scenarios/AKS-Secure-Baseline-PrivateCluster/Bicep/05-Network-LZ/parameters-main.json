@@ -70,7 +70,7 @@
       "value": "AKS-NSG"
     },
     "nsgAppGWName": {
-      "value": "APPGW-Nsg"
+      "value": "APPGW-NSG"
     },
     "dhcpOptions": {
       "value": {

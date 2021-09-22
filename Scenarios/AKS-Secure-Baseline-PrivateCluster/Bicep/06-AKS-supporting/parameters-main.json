@@ -12,7 +12,7 @@
       "value": "VNet-SPOKE"
     },
     "subnetName": {
-      "value": "AKS"
+      "value": "servicespe"
     },
     "privateDNSZoneACRName": {
       "value": "privatelink.azurecr.io"

@@ -25,7 +25,7 @@ module keyvault 'modules/keyvault/keyvault.bicep' = {
   }
 }
 
-resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
+resource servicesSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
   name: '${vnetName}/${subnetName}'
 }
 
@@ -38,7 +38,7 @@ module privateEndpointKeyVault 'modules/vnet/privateendpoint.bicep' = {
     privateEndpointName: keyVaultPrivateEndpointName
     privatelinkConnName: '${keyVaultPrivateEndpointName}-conn'
     resourceId: keyvault.outputs.keyvaultId
-    subnetid: aksSubnet.id
+    subnetid: servicesSubnet.id
   }
 }
 
@@ -51,7 +51,7 @@ module privateEndpointAcr 'modules/vnet/privateendpoint.bicep' = {
     privateEndpointName: acrPrivateEndpointName
     privatelinkConnName: '${acrPrivateEndpointName}-conn'
     resourceId: acr.outputs.acrid
-    subnetid: aksSubnet.id
+    subnetid: servicesSubnet.id
   }
 }
 
