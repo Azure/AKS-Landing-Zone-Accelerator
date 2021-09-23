@@ -5,8 +5,8 @@ param subnetName string
 param privateDNSZoneACRName string
 param privateDNSZoneKVName string
 
-var acrName = 'acr${uniqueString(resourceGroup().name)}'
-var keyvaultName = 'kv${uniqueString(resourceGroup().name)}'
+var acrName = 'eslzacr${uniqueString(resourceGroup().name)}'
+var keyvaultName = 'eslz-kv-${uniqueString(resourceGroup().name)}'
 
 module acr 'modules/acr/acr.bicep' = {
   name: acrName

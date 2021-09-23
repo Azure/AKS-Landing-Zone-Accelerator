@@ -7,6 +7,8 @@ param akslaWorkspaceName string
 param vnetName string
 param subnetName string
 param appGatewayName string
+param aksuseraccessprincipalId string
+param aksadminaccessprincipalId string
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -92,3 +94,32 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     aksPvtNetworkContrib
   ]
 }
+
+module acraksaccess 'modules/Identity/role.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'acraksaccess'
+  params: {
+    principalId: aksIdentity.outputs.principalId
+    roleGuid: '7f951dda-4ed3-4680-a7ca-43fe172d538d' //AcrPull
+  }
+}
+
+module aksuseraccess 'modules/Identity/role.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksuseraccess'
+  params: {
+    principalId: aksuseraccessprincipalId
+    roleGuid: '4abbcc35-e782-43d8-92c5-2d3f1bd2253f' //Azure Kubernetes Service Cluster User Role
+  }
+}
+
+module aksadminaccess 'modules/Identity/role.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksadminaccess'
+  params: {
+    principalId: aksadminaccessprincipalId
+    roleGuid: '0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8' //Azure Kubernetes Service Cluster Admin Role
+  }
+}
+
+// stopped adding the AppGW permission
