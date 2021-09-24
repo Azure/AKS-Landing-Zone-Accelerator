@@ -1,4 +1,5 @@
 # az deployment sub create -n <deployment name> -l <location> -f <main.bicep> -p <parameters-main.json>
 
 # 06 AKS Supporting Infrastructure
-az deployment group create -n "ESLZ-HUB-Supporting" -g "ESLZ-SPOKE" -f main.bicep -p parameters-main.json
+#az deployment group create -n "ESLZ-HUB-Supporting" -g "ESLZ-SPOKE" -f main.bicep -p parameters-main.json
+az deployment sub create -n "ESLZ-AKS-Supporting" -l "CentralUS" -f main.bicep -p parameters-main.json

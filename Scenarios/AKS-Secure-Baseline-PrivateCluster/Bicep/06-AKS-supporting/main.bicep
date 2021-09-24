@@ -1,3 +1,6 @@
+targetScope = 'subscription'
+
+param rgName string
 param keyVaultPrivateEndpointName string
 param acrPrivateEndpointName string
 param vnetName string
@@ -5,10 +8,19 @@ param subnetName string
 param privateDNSZoneACRName string
 param privateDNSZoneKVName string
 
-var acrName = 'eslzacr${uniqueString(resourceGroup().name)}'
-var keyvaultName = 'eslz-kv-${uniqueString(resourceGroup().name)}'
+var acrName = 'eslzacr${uniqueString(rgName, deployment().name)}'
+var keyvaultName = 'eslz-kv-${uniqueString(rgName, deployment().name)}'
+
+module rg 'modules/resource-group/rg.bicep' = {
+  name: rgName
+  params: {
+    rgName: rgName
+    location: deployment().location
+  }
+}
 
 module acr 'modules/acr/acr.bicep' = {
+  scope: resourceGroup(rg.name)
   name: acrName
   params: {
     acrName: acrName
@@ -17,6 +29,7 @@ module acr 'modules/acr/acr.bicep' = {
 }
 
 module keyvault 'modules/keyvault/keyvault.bicep' = {
+  scope: resourceGroup(rg.name)
   name: keyvaultName
   params: {
     keyVaultsku: 'Standard'
@@ -26,10 +39,12 @@ module keyvault 'modules/keyvault/keyvault.bicep' = {
 }
 
 resource servicesSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
+  scope: resourceGroup(rg.name)
   name: '${vnetName}/${subnetName}'
 }
 
 module privateEndpointKeyVault 'modules/vnet/privateendpoint.bicep' = {
+  scope: resourceGroup(rg.name)
   name: keyVaultPrivateEndpointName
   params: {
     groupIds: [
@@ -43,6 +58,7 @@ module privateEndpointKeyVault 'modules/vnet/privateendpoint.bicep' = {
 }
 
 module privateEndpointAcr 'modules/vnet/privateendpoint.bicep' = {
+  scope: resourceGroup(rg.name)
   name: acrPrivateEndpointName
   params: {
     groupIds: [
@@ -56,10 +72,12 @@ module privateEndpointAcr 'modules/vnet/privateendpoint.bicep' = {
 }
 
 resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+  scope: resourceGroup(rg.name)
   name: privateDNSZoneACRName
 }
 
 module privateEndpointACRDNSSetting 'modules/vnet/privatedns.bicep' = {
+  scope: resourceGroup(rg.name)
   name: 'acr-pvtep-dns'
   params: {
     privateDNSZoneId: privateDNSZoneACR.id
@@ -68,13 +86,31 @@ module privateEndpointACRDNSSetting 'modules/vnet/privatedns.bicep' = {
 }
 
 resource privateDNSZoneKV 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+  scope: resourceGroup(rg.name)
   name: privateDNSZoneKVName
 }
 
 module privateEndpointKVDNSSetting 'modules/vnet/privatedns.bicep' = {
+  scope: resourceGroup(rg.name)
   name: 'kv-pvtep-dns'
   params: {
     privateDNSZoneId: privateDNSZoneKV.id
     privateEndpointName: privateEndpointKeyVault.name
+  }
+}
+
+module aksIdentity 'modules/Identity/userassigned.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksIdentity'
+  params: {
+    identityName: 'aksIdentity'
+  }
+}
+
+module appGatewayIdentity 'modules/Identity/userassigned.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'appGatewayIdentity'
+  params: {
+    identityName: 'appGatewayIdentity'
   }
 }

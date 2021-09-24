@@ -9,6 +9,8 @@ param subnetName string
 param appGatewayName string
 param aksuseraccessprincipalId string
 param aksadminaccessprincipalId string
+param aksIdentityName string
+param acrName string //User to provide each time could change
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -18,28 +20,17 @@ module rg 'modules/resource-group/rg.bicep' = {
   }
 }
 
-module aksIdentity 'modules/Identity/userassigned.bicep' = {
+resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
   scope: resourceGroup(rg.name)
-  name: 'aksIdentity'
-  params: {
-    identityName: 'aksIdentity'
-  }
+  name: aksIdentityName
 }
 
 module aksPodIdentityRole 'modules/Identity/role.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksPodIdentityRole'
   params: {
-    principalId: aksIdentity.outputs.principalId
+    principalId: aksIdentity.properties.principalId
     roleGuid: 'f1a07417-d97a-45cb-824c-7a7467783830' //Managed Identity Operator
-  }
-}
-
-module appGatewayIdentity 'modules/Identity/userassigned.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'appGatewayIdentity'
-  params: {
-    identityName: 'appGatewayIdentity'
   }
 }
 
@@ -66,24 +57,6 @@ resource appGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing 
   name: appGatewayName
 }
 
-module aksPvtDNSContrib 'modules/Identity/role.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksPvtDNSContrib'
-  params: {
-    principalId: aksIdentity.outputs.principalId
-    roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
-  }
-}
-
-module aksPvtNetworkContrib 'modules/Identity/role.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksPvtNetworkContrib'
-  params: {
-    principalId: aksIdentity.outputs.principalId
-    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
-  }
-}
-
 module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
@@ -94,7 +67,7 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     privateDNSZoneId: pvtdnsAKSZone.id
     subnetId: aksSubnet.id
     identity: {
-      '${aksIdentity.outputs.identityid}' : {}
+      '${aksIdentity.id}' : {}
     }
     appGatewayResourceId: appGateway.id
   }
@@ -105,12 +78,32 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   ]
 }
 
-module acraksaccess 'modules/Identity/role.bicep' = {
+module acraksaccess 'modules/Identity/acrrole.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'acraksaccess'
   params: {
-    principalId: aksIdentity.outputs.principalId
+    principalId: aksIdentity.properties.principalId
     roleGuid: '7f951dda-4ed3-4680-a7ca-43fe172d538d' //AcrPull
+    acrName: acrName
+  }
+}
+
+module aksPvtNetworkContrib 'modules/Identity/networkcontributorRole.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksPvtNetworkContrib'
+  params: {
+    principalId: aksIdentity.properties.principalId
+    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
+    vnetName: vnetName
+  }
+}
+
+module aksPvtDNSContrib 'modules/Identity/pvtdnscontribrole.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksPvtDNSContrib'
+  params: {
+    principalId: aksIdentity.properties.principalId
+    roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
   }
 }
 
