@@ -3,13 +3,12 @@ Enterprise-scale is an architectural approach and a reference implementation tha
 
 Enterprise-scale for AKS represents the strategic design path and target technical state for an Azure Kubernetes Service (AKS) deployment. This solution provides an architectural approach and reference implementation to prepare landing zone subscriptions for a scalable Azure Kubernetes Service (AKS) cluster. For the architectural guidance, check out [Enterprise-scale for AKS](https://docs.microsoft.com/azure/cloud-adoption-framework/scenarios/aks/enterprise-scale-landing-zone) in Microsoft Docs.
 
----
-
 Below is a picture of what a golden state looks like and open source software like flux and traefik integrate well within the AKS ecosystem.
 
 ![Golden state platform foundation with AKS landingzone highlighted in red](./media/aks-eslz-architecture.png)
 The enterprise-scale for AKS is only concerned with what gets deployed in the landingzone subscription highlighted by the red box in the picture above. It is assumed that an appropriate platform foundation is already setup which may or may not be the [official ESLZ](https://docs.microsoft.com/azure/cloud-adoption-framework/ready/enterprise-scale/architecture) platform foundation. This means that policies and governance should already be in place or should be setup after this implementation and are not a part of the scope this program. The policies applied by the platform foundation would trickle down to the Enterprise-scale for AKS landingzone subscription.
 
+---
 # Choosing a Deployment Model
 The reference implementation is provided by three repos that all build on top of the [AKS Secure Baseline](https://docs.microsoft.com/azure/architecture/reference-architectures/containers/aks/secure-baseline-aks).
 1. This one
