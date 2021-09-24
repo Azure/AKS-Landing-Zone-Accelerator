@@ -26,6 +26,15 @@ module aksIdentity 'modules/Identity/userassigned.bicep' = {
   }
 }
 
+module aksPodIdentityRole 'modules/Identity/role.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksPodIdentityRole'
+  params: {
+    principalId: aksIdentity.outputs.principalId
+    roleGuid: 'f1a07417-d97a-45cb-824c-7a7467783830' //Managed Identity Operator
+  }
+}
+
 module appGatewayIdentity 'modules/Identity/userassigned.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'appGatewayIdentity'
@@ -92,6 +101,7 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   dependsOn: [
     aksPvtDNSContrib
     aksPvtNetworkContrib
+    aksPodIdentityRole
   ]
 }
 

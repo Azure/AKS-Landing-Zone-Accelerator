@@ -17,6 +17,9 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
   properties: {
     kubernetesVersion: '1.21.1'
     nodeResourceGroup: '${clusterName}-aksInfraRG'
+    podIdentityProfile: {
+      enabled: true
+    }
     dnsPrefix: '${clusterName}aks'
     agentPoolProfiles: [
       {
@@ -64,6 +67,9 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
           applicationGatewayId: appGatewayResourceId
           effectiveApplicationGatewayId: appGatewayResourceId
         }
+      }
+      azureKeyvaultSecretsProvider: {
+        enabled: true
       }
     }
   }
