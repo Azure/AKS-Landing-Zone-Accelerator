@@ -4,7 +4,6 @@ param fwapplicationRuleCollections array
 param fwnetworkRuleCollections array
 param fwnatRuleCollections array
 param location string = resourceGroup().location
-var dnsEnableProxy = 'Network.DNS.EnableProxy'
 
 resource firewall 'Microsoft.Network/azureFirewalls@2021-02-01' = {
   name: fwname
