@@ -2,3 +2,6 @@
 
 # 07 AKS Cluster Deployment
 az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json
+
+# AZ PowerShell
+New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
