@@ -32,7 +32,7 @@ A flexible templating approach using Bicep that enables multiple scenarios using
 Driving the configuration experience is a [wizard](https://azure.github.io/Aks-Construction/?default=es) to guide your decision making, it provides presets for the main Enterprise-Scale deployment modes (Sandbox, Corp & Online). The output of this wizard experience are the parameters and CLI commands to immediately deploy using our maintained Bicep template to deploy your customized AKS environment in one step.
 [Pipeline examples](https://github.com/Azure/Aks-Construction#devops---github-actions) are provided that show best practices for your AKS Infrastructure as Code deployments.
 
-Use this repo if you would like to use a guided experience to rapidly create your environment with a maintained Bicep template.
+Use this repo if you would like to use a guided experience to rapidly create your environment with a maintained Bicep template based on the architecture of the AKS Secure Baseline.
 
 ### CAF Terraform Landingzones
 
