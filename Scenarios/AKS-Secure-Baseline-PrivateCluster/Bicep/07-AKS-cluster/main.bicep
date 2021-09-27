@@ -139,17 +139,17 @@ module aksadminaccess 'modules/Identity/role.bicep' = {
 
 module appGatewayContributerRole 'modules/Identity/appgtwyingressroles.bicep' = {
   scope: resourceGroup(rg.name)
-  name: 'vmContributeRole'
+  name: 'appGatewayContributerRole'
   params: {
     principalId: aksCluster.outputs.ingressIdentity
-    roleGuid: '9b24988ac-6180-42a0-ab88-20f7382dd24c' //Contributor
+    roleGuid: 'b24988ac-6180-42a0-ab88-20f7382dd24c' //Contributor
     applicationGatewayName: appGateway.name
   }
 }
 
 module appGatewayReaderRole 'modules/Identity/role.bicep' = {
   scope: resourceGroup(rg.name)
-  name: 'vmContributeRole'
+  name: 'appGatewayReaderRole'
   params: {
     principalId: aksCluster.outputs.ingressIdentity
     roleGuid: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' //Reader
