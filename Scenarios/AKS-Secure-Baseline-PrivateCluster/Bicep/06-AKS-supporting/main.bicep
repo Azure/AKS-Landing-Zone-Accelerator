@@ -106,11 +106,3 @@ module aksIdentity 'modules/Identity/userassigned.bicep' = {
     identityName: 'aksIdentity'
   }
 }
-
-module appGatewayIdentity 'modules/Identity/userassigned.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'appGatewayIdentity'
-  params: {
-    identityName: 'appGatewayIdentity'
-  }
-}

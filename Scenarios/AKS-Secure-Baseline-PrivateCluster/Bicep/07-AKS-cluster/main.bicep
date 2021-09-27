@@ -82,7 +82,7 @@ module acraksaccess 'modules/Identity/acrrole.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'acraksaccess'
   params: {
-    principalId: aksIdentity.properties.principalId
+    principalId: aksCluster.outputs.kubeletIdentity
     roleGuid: '7f951dda-4ed3-4680-a7ca-43fe172d538d' //AcrPull
     acrName: acrName
   }
@@ -107,6 +107,18 @@ module aksPvtDNSContrib 'modules/Identity/pvtdnscontribrole.bicep' = {
   }
 }
 
+module vmContributeRole 'modules/Identity/role.bicep' = {
+  scope: resourceGroup('${clusterName}-aksInfraRG')
+  name: 'vmContributeRole'
+  params: {
+    principalId: aksIdentity.properties.principalId
+    roleGuid: '9980e02c-c2be-4d73-94e8-173b1dc7cf3c' //Virtual Machine Contributor
+  }
+  dependsOn: [
+    aksCluster
+  ]
+}
+
 module aksuseraccess 'modules/Identity/role.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksuseraccess'
@@ -125,4 +137,21 @@ module aksadminaccess 'modules/Identity/role.bicep' = {
   }
 }
 
-// stopped adding the AppGW permission
+module appGatewayContributerRole 'modules/Identity/appgtwyingressroles.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'vmContributeRole'
+  params: {
+    principalId: aksCluster.outputs.ingressIdentity
+    roleGuid: '9b24988ac-6180-42a0-ab88-20f7382dd24c' //Contributor
+    applicationGatewayName: appGateway.name
+  }
+}
+
+module appGatewayReaderRole 'modules/Identity/role.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'vmContributeRole'
+  params: {
+    principalId: aksCluster.outputs.ingressIdentity
+    roleGuid: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' //Reader
+  }
+}

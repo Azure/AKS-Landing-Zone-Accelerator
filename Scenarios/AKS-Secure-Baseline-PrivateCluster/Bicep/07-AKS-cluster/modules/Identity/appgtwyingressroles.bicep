@@ -1,9 +1,9 @@
 param principalId string
 param roleGuid string
-param acrName string
+param applicationGatewayName string
 
-resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' existing = {
-  name: acrName
+resource applicationGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing = {
+  name: applicationGatewayName
 }
 
 resource role_assignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
@@ -12,5 +12,5 @@ resource role_assignment 'Microsoft.Authorization/roleAssignments@2020-04-01-pre
     principalId: principalId
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleGuid)
   }
-  scope: acr
+  scope: applicationGateway
 }
