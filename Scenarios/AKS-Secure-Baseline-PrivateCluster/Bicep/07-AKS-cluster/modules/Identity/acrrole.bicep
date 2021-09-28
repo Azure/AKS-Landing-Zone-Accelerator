@@ -7,7 +7,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' existin
 }
 
 resource role_assignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(subscription().id, principalId)
+  name: guid(subscription().id, principalId, roleGuid)
   properties: {
     principalId: principalId
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleGuid)

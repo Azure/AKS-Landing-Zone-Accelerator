@@ -1,0 +1,47 @@
+cd Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep
+
+# AZ CLI
+# 04 Network HUB
+az deployment sub create -n "ESLZ-HUB-AKS" -l "CentralUS" -f 04-Network-Hub/main.bicep -p 04-Network-Hub/parameters-main.json
+az deployment sub create -n "ESLZ-AKS-HUB-UDR" -l "CentralUS" -f 04-Network-Hub/updateUDR.bicep -p 04-Network-Hub/parameters-updateUDR.json
+az deployment sub create -n "ESLZ-HUB-VM" -l "CentralUS" -f 04-Network-Hub/deploy-vm.bicep -p 04-Network-Hub/parameters-deploy-vm.json
+
+# 05 Network LZ
+az deployment sub create -n "ESLZ-Spoke-AKS" -l "CentralUS" -f 05-Network-LZ/main.bicep -p 05-Network-LZ/parameters-main.json
+# Wait until App Gateway get deployed. It takes a few mins to complete. at least 10 min
+az deployment sub create -n "ESLZ-AKS-SPOKE-UDRNSG" -l "CentralUS" -f 05-Network-LZ/updateUDR-NSG.bicep -p 05-Network-LZ/parameters-updateUDR-NSG.json
+
+# 06 AKS Supporting Infrastructure
+az deployment sub create -n "ESLZ-AKS-Supporting" -l "CentralUS" -f 06-AKS-supporting/main.bicep -p 06-AKS-supporting/parameters-main.json
+
+# 07 AKS Cluster Deployment
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 07-AKS-cluster/main.bicep -p 07-AKS-cluster/parameters-main.json
+
+# Clean Up
+az group delete -n ESLZ-HUB -y
+az group delete -n ESLZ-SPOKE -y
+# Delete Deployments
+az deployment sub delete -n ESLZ-HUB-AKS
+az deployment sub delete -n ESLZ-AKS-HUB-UDR
+az deployment sub delete -n ESLZ-HUB-VM
+az deployment sub delete -n ESLZ-Spoke-AKS
+az deployment sub delete -n ESLZ-AKS-SPOKE-UDRNSG
+az deployment sub delete -n ESLZ-AKS-Supporting
+az deployment sub delete -n ESLZ-AKS-CLUSTER
+
+
+# AZ PowerShell
+# 04 Network HUB
+New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\updateUDR.bicep -TemplateParameterFile .\parameters-updateUDR.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\deploy-vm.bicep -TemplateParameterFile .\parameters-deploy-vm.json -Location "CentralUS"
+
+# 05 Network LZ
+New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\updateUDR-NSG.bicep -TemplateParameterFile .\parameters-updateUDR-NSG.json -Location "CentralUS"
+
+# 06 AKS Supporting Infrastructure
+New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
+
+# 07 AKS Cluster Deployment
+New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"

@@ -7,7 +7,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2021-02-01' e
 }
 
 resource role_assignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
-  name: guid(subscription().id, principalId)
+  name: guid(subscription().id, principalId, roleGuid)
   properties: {
     principalId: principalId
     roleDefinitionId: resourceId('Microsoft.Authorization/roleDefinitions', roleGuid)
