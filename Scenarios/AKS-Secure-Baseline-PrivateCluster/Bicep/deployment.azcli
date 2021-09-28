@@ -32,16 +32,16 @@ az deployment sub delete -n ESLZ-AKS-CLUSTER
 
 # AZ PowerShell
 # 04 Network HUB
-New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
-New-AzSubscriptionDeployment -TemplateFile .\updateUDR.bicep -TemplateParameterFile .\parameters-updateUDR.json -Location "CentralUS"
-New-AzSubscriptionDeployment -TemplateFile .\deploy-vm.bicep -TemplateParameterFile .\parameters-deploy-vm.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\04-Network-Hub\main.bicep -TemplateParameterFile .\04-Network-Hub\parameters-main.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\04-Network-Hub\updateUDR.bicep -TemplateParameterFile .\04-Network-Hub\parameters-updateUDR.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\04-Network-Hub\deploy-vm.bicep -TemplateParameterFile .\04-Network-Hub\parameters-deploy-vm.json -Location "CentralUS"
 
 # 05 Network LZ
-New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
-New-AzSubscriptionDeployment -TemplateFile .\updateUDR-NSG.bicep -TemplateParameterFile .\parameters-updateUDR-NSG.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\05-Network-LZ\main.bicep -TemplateParameterFile .\05-Network-LZ\parameters-main.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\05-Network-LZ\updateUDR-NSG.bicep -TemplateParameterFile .\05-Network-LZ\parameters-updateUDR-NSG.json -Location "CentralUS"
 
 # 06 AKS Supporting Infrastructure
-New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\06-AKS-supporting\main.bicep -TemplateParameterFile .\06-AKS-supporting\parameters-main.json -Location "CentralUS"
 
 # 07 AKS Cluster Deployment
-New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\07-AKS-cluster\main.bicep -TemplateParameterFile .\07-AKS-cluster\parameters-main.json -Location "CentralUS"
