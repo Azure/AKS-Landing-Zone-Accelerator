@@ -16,7 +16,7 @@ Once you connect ensure you permit the site to read the content of your clipboar
 
 Install the following applications:
 
-1. AZ CLIto 
+1. AZ CLI
 
 ```
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -67,7 +67,7 @@ Since the Container registry can only be accessed via private link, we need to c
 
 4. Click on **+ Add** in the in the top left of the next screen
 
-5. enter a name for the link eg *hub_to_kv*
+5. enter a name for the link eg *hub_to_acr*
 
 6. Select the hub virtual network for the **Virtual network** field
 
@@ -83,7 +83,7 @@ Since the Container registry can only be accessed via private link, we need to c
 4. Select the required access policies ![add access policy](../media/add-access-policy-acr2.png)
 5. Under **Select principal** click on the **None selected** link and select the user group(s) you created for this to provide you and everyone in the group access to the Key vault
 6. Click **Select** at the bottom of the the screen
-7. **Important**: Click **Save** at the top of the next screen to save the changes ![add access policy](../media/add-access-policy-acr2.png)
+7. **IMPORTANT**: Click **Save** at the top of the next screen to save the changes ![add access policy](../media/add-access-policy-acr2.png)
 
 7. 
 
@@ -92,8 +92,8 @@ Since the Container registry can only be accessed via private link, we need to c
 Set your environmental variables
 
 ```
-AKSCLUSTERNAME=aks-aks
-AKSRESOURCEGROUP=aks-lz01-rg-aks
+AKSCLUSTERNAME=aks-escs
+AKSRESOURCEGROUP=escs-lz01-rg-aks
 ```
 
 Clone the required repos to the Dev Jumpbox:
@@ -127,7 +127,7 @@ sudo az acr login -n <acrname>
 Push the images into the container registry. Ensure you are logged in u
 
 ```
-sudo docker push <acrname>.azurecr.io/ratings-web:v1
+sudo docker push <acrname>.azurecr.io/ratings-api:v1
 sudo docker push <acrname>.azurecr.io/ratings-web:v1
 ```
 
@@ -232,19 +232,27 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
    kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp
    ```
 
-8. Deploy the "5a-ratings-web-ingress.yaml" file.
+   
+
+## (Optional) Deploy the Ingress using without support for HTTPS
+
+This step is optional. If you would like to go straight to using https which is the secure option, skip this section and go straight to the **Update the Ingress to support HTTPS traffic** section.
+
+1. Deploy the "5a-ratings-web-ingress.yaml" file.
 
    ```
    kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp
    ```
 
-9. Get the ip address of your ingress controller
+2. Get the ip address of your ingress controller
 
    ```
    kubectl get ingress -n ratingsapp
    ```
 
-## Allow access to the application gateway via port 80 (Will be updated to https soon)
+### Allow access to the application gateway via port 80 
+
+For the first deployment we are using http, so we need to access the workload at port 80. Follow the steps below to allow access to the application gateway via port 80.
 
 1. Go to Azure portal and in the lz resource group you'll find the appgwSubnet NSG
 
@@ -260,7 +268,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 5. Click on **Add**
 
-## Check your deployed workload
+### Check your deployed workload
 
 1. Get the ip address of your ingress controller
 
@@ -270,27 +278,85 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 2. Copy the ip address displayed, open a browser, navigate to that address and explore your website
 
-   ![application gw nsg](../media/deployed-workload.png)
+   ![deployed workload](../media/deployed-workload.png)
+
+After you are done testing the workload, go back to the NSG and disable the inbound rule you just created. 
+
+
 
 ## Update the Ingress to support HTTPS traffic
 
-A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demostrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway. 
+A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway. 
 
 1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customprefix>.<region>.cloudapp.azure.com
-
 2. Create a certificate using the FQDN and store it in KeyVault. 
+
+### Creating Public IP address for your Application Gateway
+
+1. Find your application gateway in your landing zone resource group and click on it. By default is has the name *lzappgw*.
+
+2. Click on the *Frontend public IP address* 
+
+   ![front end public ip address](../media/front-end-pip-link.png)
+
+3. Click on configuration in the left blade of the resulting page
+
+4. Enter a unique DNS name in the field provided and click **Save**
+
+   ![creating nds](../media/dns-created.png)
+
+### Create the self signed certificate using openssl
+
+Create the self signed certificate using openssl. Note that these steps need to be created by a computer within the hub or spoke network since the Key vault is private. Head back to your jump box and enter these commands.
+
 ```
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<fqdn_of_appgw_public_ip>/O=AKS-INGRESS-TLS"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=ratingsappdns.westus2.cloudapp.azure.com/O=AKS-INGRESS-TLS"
 
 openssl pkcs12 -export -out aks-ingress-tls.pfx -in aks-ingress-tls.crt -inkey aks-ingress-tls.key -passout pass:
-
-az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name <keyvault>
 ```
-3. Update the web-secret-class-provider.yaml with your keyvault name, user assigned identity for the keyvault add-on and the tenant ID. Deploy it.
+Create the secret in Key vault
 
-4. Redeploy the web application using the "3b-ratings-web-deployment.yaml", which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
+```
+az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name kv94640-akscs
+```
 
-5. Update the "5-https-ratings-web-ingress.yaml" file to use the FQDN that matches the certificate and application gateway public IP address.  Redeploy the ingress with this file. 
+### Redeploy the workload using HTTPS
+
+Now that you have created the certificate in  Key vault you can switch back to your computer and redeploy the workload using HTTPS
+
+1. Update the web-secret-class-provider.yaml with your keyvault name, user assigned identity for the keyvault add-on, the tenant ID and the user assigned identity. Deploy it.
+
+   ```
+   kubectl apply -f web-secret-provider-class.yaml -n ratingsapp
+   ```
+
+   
+
+2. Delete the previous ratings-web deployment. 
+
+   ```
+    kubectl delete -f 3a-ratings-web-deployment.yaml -n ratingsapp
+   ```
+
+   Update the  "3b-ratings-web-deployment.yaml" file with the ACR name and redeploy the web application using the this file, which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
+
+   ```
+   kubectl apply -f 3b-ratings-web-deployment.yaml -n ratingsapp
+   ```
+
+   Update the "5-https-ratings-web-ingress.yaml" file to use the FQDN that matches the certificate and application gateway public IP address.  Delete the previous ingress and redeploy the ingress with this file. 
+
+   ```
+   kubectl delete -f 5-http-ratings-web-ingress.yaml -n ratingsapp
+   ```
+
+   ```
+   kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp 
+   ```
+
+Now you can access the website using using your FQDN. When you navigate to the website using your browser you will see a warning stating the destination is not safe. This is because you are using a self signed certificate which we used for illustration purposes. Do not use a self signed certificate in production. Go ahead and proceed to the destination to get access to your deployment.
+
+![deployed workload https](../media/deployed-workload-https.png)
 
 
 ## Next Step

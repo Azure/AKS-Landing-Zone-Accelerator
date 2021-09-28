@@ -10,6 +10,12 @@ CONTAINERNAME=akscs
 TFSTATE_RG=tfstate
 ```
 
+Setup environment variable 
+
+```
+export ARM_PARTNER_ID=fde452b3-60b3-4ce5-831c-c354d84dacdd
+```
+
 
 
 Create a Resource Group:
@@ -37,3 +43,4 @@ To continue with the main deployment click the link below:
 To continue with CI/CD deployment click on the link below:
 
 :arrow_forward: ​[GitHub Actions for Secure Baseline Scenario with Terraform](./workflows/README.md)
+
