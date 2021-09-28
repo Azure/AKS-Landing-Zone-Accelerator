@@ -3,9 +3,9 @@ Before creating the Azure Active Directory integrated cluster, groups must be cr
 
 Depending on the needs of your organization, you may have a choice of existing groups to use or a new groups may need to be created for each cluster deployment.  
 
-Navigate to "/Scenarios/Secure-Baseline/Terraform/03-AAD" folder, either "03-AAD-create" or "03-AAD-import"
+Navigate to "/Scenarios/Secure-Baseline/Terraform/03-AAD" folder, either "03-AAD-create" or "03-AAD-import". The first option is used below for illustration purposes.
 ```
-cd ./Scenarios/Secure-Baseline/Terraform/03-AAD
+cd ./Scenarios/Secure-Baseline/Terraform/03-AAD-create
 ```
 
 In the "variables.tf" file, update the defaults to reflect the display names as needed to either match existing groups or create names that fit your requirements.  
@@ -38,4 +38,11 @@ terraform apply
 
 ### Next step
 
+To continue with the main deployment click the link below:
+
 :arrow_forward: [Creation of Hub Network & its respective Components](./04-network-hub.md)
+
+To continue with CI/CD deployment click on the link below:
+
+:arrow_forward: ​[GitHub Actions for Secure Baseline Scenario with Terraform](./workflows/README.md)
+
