@@ -26,6 +26,17 @@ For this scenario, we have various IaC technology that you can choose from depen
 * [Azure RBAC for Kubernetes Authorization](https://docs.microsoft.com/azure/aks/manage-azure-rbac)
 * [Azure Active Directory pod-managed identities](https://docs.microsoft.com/azure/aks/use-azure-ad-pod-identity)
 
+## Some of the differences Between this RI and the AKS  Secure Baseline
+
+Here are some of the differences between the Enterprise scale reference implementation of an AKS secure baseline and the [AKS secure baseline](https://github.com/mspnp/aks-secure-baseline) the RI is based on
+
+* As of now, GitOps is not used in this scenario. GitHub CI/CD pipeline used instead
+* AGIC used instead of Traefik ingress controller
+* ACR and Key vault are used that are accessed via private link. This requires the use of Bastion host to build the image for the private ACR.
+* The templates are broken down in a way to promote separation of duties and modularity and the steps are broken into stages
+* Reference implementations in Terraform and Bicep
+* More recent Add-ons are used 
+
 ## Steps of Implementation for AKS Construction Set
 
 A deployment of AKS-hosted workloads typically experiences a separation of duties and lifecycle management in the area of prerequisites, the host network, the cluster infrastructure, and finally the workload itself. This reference implementation is similar. Also, be aware our primary purpose is to illustrate the topology and decisions of a baseline cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (team roles, organizational standards, etc), and will be implemented as appropriate for your needs.
