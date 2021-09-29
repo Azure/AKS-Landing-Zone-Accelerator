@@ -77,8 +77,7 @@
                   "motd.ubuntu.com"
                 ],
                 "sourceAddresses": [
-                  "10.0.0.0/16",
-                  "10.1.0.0/16"
+                  "10.1.1.0/24"
                 ]
               }
             ]
@@ -109,8 +108,7 @@
                   "*.monitoring.azure.com"
                 ],
                 "sourceAddresses": [
-                  "10.0.0.0/16",
-                  "10.1.0.0/16"
+                  "10.1.1.0/24"
                 ]
               },
               {
@@ -131,8 +129,7 @@
                   "production.cloudflare.docker.com"
                 ],
                 "sourceAddresses": [
-                  "10.0.0.0/16",
-                  "10.1.0.0/16"
+                  "10.1.1.0/24"
                 ]
               },
               {
@@ -154,8 +151,7 @@
                   "vortex.data.microsoft.com"
                 ],
                 "sourceAddresses": [
-                  "10.0.0.0/16",
-                  "10.1.0.0/16"
+                  "10.1.1.0/24"
                 ]
               },
               {
@@ -175,8 +171,7 @@
                   "AzureKubernetesService"
                 ],
                 "sourceAddresses": [
-                  "10.0.0.0/16",
-                  "10.1.0.0/16"
+                  "10.1.1.0/24"
                 ]
               }                  
             ]
