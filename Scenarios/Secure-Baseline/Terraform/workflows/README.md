@@ -64,10 +64,10 @@ When the service principal is created, it will output details about the service 
 4. Go to Scenarios/Secure-Baseline/Terraform/04-Network-Hub/terraform.tfvars.sample file and comment out (add a "#" at the beginning of the line) the admin_password line
 5. Update the three remaining values as you see fit and save the file
 6. Rename the file to terraform.tfvars
-7. Go to Scenarios/Secure-Baseline/Terraform/05-Network-LZ/terraform.tfvars.sample and comment out the state_sa_name line
+7. Go to Scenarios/Secure-Baseline/Terraform/05-Network-LZ/terraform.tfvars.sample and comment out the state_sa_name  and access_key lines
 8. Update your lz_prefix value as you see fit and save the file
 9. Rename the file to terraform.tfvars
-10. Go to Scenarios/Secure-Baseline/Terraform/06-AKS-supporting/terraform.tfvars.sample and comment out the state_sa_name line 
+10. Go to Scenarios/Secure-Baseline/Terraform/06-AKS-supporting/terraform.tfvars.sample and comment out the state_sa_name and access_key lines 
 11. Update the prefix value as you see fit and save the file
 12. Rename the file to terraform.tfvars
 13. Go to Scenarios/Secure-Baseline/Terraform/07-AKS-cluster/terraform.tfvars.sample and comment out the state_sa_name line
