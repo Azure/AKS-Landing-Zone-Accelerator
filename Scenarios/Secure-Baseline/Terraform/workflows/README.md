@@ -21,7 +21,7 @@ The next step would be to create a storage account that will be used to store th
 
 ## Create or Import Azure Active Directory Groups for AKS
 
-Next, create or import Azure Active directory groups who's members will have access to the AKS cluster you are about to build following instructions in the link below:
+Next, create or import Azure Active directory groups who's members will have access to the AKS cluster you are about to build. This cannot be done as part of the pipeline because the Service principal the GitHub runner is using does not have tenant AAD access. Follow the instructions in the link below:
 
 :arrow_forward: ​[Create or Import Azure Active Directory Groups for AKS Cluster Admins and AKS Cluster Users](../03-aad.md)
 
@@ -59,21 +59,10 @@ When the service principal is created, it will output details about the service 
 ## Update Deployment files
 
 1. Clone your repo unto your local computer
-2. In the .devcontainer/deploy040506.yml (the pipeline that deploys stages 4,5 and 6 in our deployment step) file, update the values for TFSTATE_RG, STORAGEACCOUNTNAME, CONTAINERNAME and save the file
-3. Do the same for the deploy07.yml file
-4. Go to Scenarios/Secure-Baseline/Terraform/04-Network-Hub/terraform.tfvars.sample file and comment out (add a "#" at the beginning of the line) the admin_password line
-5. Update the three remaining values as you see fit and save the file
-6. Rename the file to terraform.tfvars
-7. Go to Scenarios/Secure-Baseline/Terraform/05-Network-LZ/terraform.tfvars.sample and comment out the state_sa_name  and access_key lines
-8. Update your lz_prefix value as you see fit and save the file
-9. Rename the file to terraform.tfvars
-10. Go to Scenarios/Secure-Baseline/Terraform/06-AKS-supporting/terraform.tfvars.sample and comment out the state_sa_name and access_key lines 
-11. Update the prefix value as you see fit and save the file
-12. Rename the file to terraform.tfvars
-13. Go to Scenarios/Secure-Baseline/Terraform/07-AKS-cluster/terraform.tfvars.sample and comment out the state_sa_name line
-14. Update the prefix value as you see fit and save the file
-15. Rename the file to terraform.tfvars
-16. Go to the .gitignore file in the root folder, delete the row *.tfvars and save it
+
+2. In the .devcontainer/deployInfrastructure.yml (the pipeline that deploys stages 4,5 and 6 in our deployment step) file, update the values for TF_VAR_hub_prefix, TF_VAR_lz_prefix, TF_VAR_prefix,TF_VAR_state_sa_name, TFSTATE_RG, STORAGEACCOUNTNAME and CONTAINERNAME and save the file. 
+
+   **IMPORTANT**: Make sure you update the value for the two jobs in the pipeline.
 
 ## Deploy the pipeline
 
