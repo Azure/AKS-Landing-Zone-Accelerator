@@ -1,6 +1,6 @@
 # NON-TLS - HTTP Only
 
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ratings-web
@@ -10,7 +10,10 @@ spec:
   rules:
   - http:
       paths:
-      - path: /
+      - pathType: Prefix
+        path: /
         backend:
-          serviceName: ratings-web
-          servicePort: 80
+          service:
+            name: ratings-web
+            port: 
+              number: 80

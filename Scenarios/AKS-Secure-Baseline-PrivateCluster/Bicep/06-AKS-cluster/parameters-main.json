@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "rgName": {
+      "value": "ESLZ-SPOKE"
+    },
+    "aadGroupdIds": {
+      "value": [
+        "e822cf30-7f5e-4968-a215-5cc48d538580"
+      ]
+    },
+    "clusterName": {
+      "value": "eslzakscluster"
+    },
+    "akslaWorkspaceName": {
+      "value": "eslzlaworkspace"
+    },
+    "vnetName": {
+      "value": "VNet-SPOKE"
+    },
+    "subnetName": {
+      "value": "AKS"
+    },
+    "appGatewayName": {
+      "value": "APPGW"
+    },
+    "aksuseraccessprincipalId": {
+      "value": "e822cf30-7f5e-4968-a215-5cc48d538580"
+    },
+    "aksadminaccessprincipalId": {
+      "value": "e822cf30-7f5e-4968-a215-5cc48d538580"
+    },
+    "aksIdentityName": {
+      "value": "aksIdentity"
+    }
+  }
+}

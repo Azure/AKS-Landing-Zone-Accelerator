@@ -31,10 +31,10 @@ spec:
               key:  MONGODBURI # the name of Secret in KeyVault
         resources:
           requests: # minimum resources required
-            cpu: 1000m
+            cpu: 250m
             memory: 64Mi
           limits: # maximum resources allocated
-            cpu: 1000m
+            cpu: 250m
             memory: 256Mi
         readinessProbe: # is the container ready to receive traffic?
           initialDelaySeconds: 10
