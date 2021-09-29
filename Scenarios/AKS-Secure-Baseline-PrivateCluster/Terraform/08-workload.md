@@ -2,7 +2,7 @@
 
 This application is provided by Microsoft Learning and is used as part of a self-paced Kubernetes training [workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/).  You may find reviewing that workshop helpful as it presents some alternative deployment options and features using different architecture requirements. The application consists of a web frontend, an API service and a MongoDB database.
 
-Because the infrastructure has been deployed in a secure manner, only the API server to the AKS Cluster is accessible outside of the private network.  You will need to perform the majority of the application deployment from the Dev Jumpbox in the Hub VNET, connect via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well.
+Because the infrastructure has been deployed in a secure manner, only the API server to the AKS Private Cluster is accessible from inside of the private network.  You will need to perform the majority of the application deployment from the Dev Jumpbox in the Hub VNET, connect via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well.
 
 ## Connecting to the Bastion Host
 
@@ -10,7 +10,7 @@ Because the infrastructure has been deployed in a secure manner, only the API se
 2. Click on **Connect** at the top of the screen and select **Bastion**
 3. Click on the **Use Bastion** button
 4. Enter the username and password. It should be in the terraform.tfvars file in the Network Hub folder
-5. Click on the **Connect** button. 
+5. Click on the **Connect** button.
 
 Once you connect ensure you permit the site to read the content of your clipboard
 
@@ -85,7 +85,6 @@ Since the Container registry can only be accessed via private link, we need to c
 6. Click **Select** at the bottom of the the screen
 7. **Important**: Click **Save** at the top of the next screen to save the changes ![add access policy](../media/add-access-policy-acr2.png)
 
-7. 
 
 ## Build Container Images
 
@@ -141,7 +140,7 @@ az keyvault secret set --name mongodburi --vault-name <acr name> --value "mongod
 
 ## Deploy the database into the cluster
 
-You can deploy the workload into the cluster using your local computer since this is not a private cluster. This is not a very secure option. For better security, use a private cluster. We have a private cluster scenario in this repository. We are using a non private cluster for training purposes and for cases where you may not want to use a private cluster. It is easier to perform the following steps using your local computer since, it would be easy to modify the deployment files as needed. 
+You can deploy the workload into the cluster using the dev jumpbox or a computer that is on the private network since this is a private cluster. AKS Private Clusters provide better security and can only be accessed from inside your private network.
 
 Get the connection credentials for the cluster:
 
@@ -173,9 +172,9 @@ helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=
 
 ## Deploy the workload into the cluster
 
-The steps below can be completed on your computer even if it is not connected to the cluster's virtual network. This makes it easier to tweak the yaml files for this demo. For a more secure AKS cluster, deploy a private cluster. Instructions on how to do that can be found in this repo.
+The steps below can be completed from the dev jumpbox since we are deploying a private cluster.
 
-On your computer, navigate to "/Scenarios/Secure-Baseline/Apps/RatingsApp" folder. 
+On your computer, navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder. 
 
 ```
 cd ../../Apps/RatingsApp
