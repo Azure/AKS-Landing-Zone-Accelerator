@@ -1,0 +1,56 @@
+# Before this deployment, ensure that MongoDB has been created using Helm.  
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratings-api
+spec:
+  selector:
+    matchLabels:
+      app: ratings-api
+  template:
+    metadata:
+      labels:
+        app: ratings-api # the label for the pods and the deployments
+    spec:
+      containers:
+      - name: ratings-api
+        image: <acr name>.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+        ports:
+        - containerPort: 3000 # the application listens to this port
+        env:
+        - name: MONGODB_URI # the application expects to find the MongoDB connection details in this environment variable
+          valueFrom:
+            secretKeyRef:
+              name: mongodburi
+              key:  MONGODBURI # the name of Secret in KeyVault
+        resources:
+          requests: # minimum resources required
+            cpu: 250m
+            memory: 64Mi
+          limits: # maximum resources allocated
+            cpu: 250m
+            memory: 256Mi
+        readinessProbe: # is the container ready to receive traffic?
+          initialDelaySeconds: 10
+          httpGet:
+            port: 3000
+            path: /healthz
+        livenessProbe: # is the container healthy?
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            port: 3000
+            path: /healthz
+      volumes:
+        - name: secrets-store-inline
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "mongo-secret-csi"

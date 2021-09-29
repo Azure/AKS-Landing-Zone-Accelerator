@@ -1,5 +1,7 @@
 # Cleanup
 
+To clean up run the below az cli \ Az PowerShell commands
+
 # [CLI](#tab/CLI)
 
 ```azurecli
@@ -19,5 +21,15 @@ az deployment sub delete -n ESLZ-AKS-CLUSTER
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
+# Delete Resource Groups
+Remove-AzResourceGroup -Name ESLZ-HUB
+Remove-AzResourceGroup -Name ESLZ-SPOKE
+# Delete Deployments
+Remove-AzSubscriptionDeployment -Name ESLZ-HUB-AKS
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-HUB-UDR
+Remove-AzSubscriptionDeployment -Name ESLZ-HUB-VM
+Remove-AzSubscriptionDeployment -Name ESLZ-Spoke-AKS
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-SPOKE-UDRNSG
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-Supporting
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-CLUSTER
 ```

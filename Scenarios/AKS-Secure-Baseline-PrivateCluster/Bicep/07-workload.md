@@ -44,6 +44,15 @@ Because the infrastructure has been deployed in a private AKS cluster setup, you
    az account set --subscription <subscription id>
    ```
 
+## Provide yourself Access to Create Secrets in your Key vault
+
+1. Go to the Azure portal and find your container registry.
+2. Click on **Access policies** under **Settings** in the left blade![add access policy](../media/add-access-policy-acr.png)
+3. Select the required access policies ![add access policy](../media/add-access-policy-acr2.png)
+4. Under **Select principal** click on the **None selected** link and select the user group(s) you created for this to provide you and everyone in the group access to the Key vault
+5. Click **Select** at the bottom of the the screen
+6. **IMPORTANT**: Click **Save** at the top of the next screen to save the changes ![add access policy](../media/add-access-policy-acr2.png)
+
 ## Build Container Images
 
 Clone the required repos to the Dev Jumpbox:
@@ -88,7 +97,7 @@ az keyvault secret set --name mongodburi --vault-name <keyvault name> --value "m
 
 ## Deploy the database into the cluster
 
-You can deploy the workload into the cluster using your local computer since this is not a private cluster. This is not a very secure option. For better security, use a private cluster. We have a private cluster scenario in this repository. We are using a non private cluster for training purposes and for cases where you may not want to use a private cluster. It is easier to perform the following steps using your local computer since, it would be easy to modify the deployment files as needed. 
+You can deploy the workload into the cluster using your local computer since this is not a private cluster. This is not a very secure option. For better security, use a private cluster. We have a private cluster scenario in this repository. We are using a non private cluster for training purposes and for cases where you may not want to use a private cluster. It is easier to perform the following steps using your local computer since, it would be easy to modify the deployment files as needed.
 
 Get the connection credentials for the cluster:
 
@@ -218,15 +227,16 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
 Create the self signed certificate using openssl. Note that these steps need to be created by a computer within the hub or spoke network since the Key vault is private. Head back to your jump box and enter these commands.
 
-```
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=ratingsappdns.westus2.cloudapp.azure.com/O=AKS-INGRESS-TLS"
+```bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<FQDN of App Gateway>/O=AKS-INGRESS-TLS"
 
 openssl pkcs12 -export -out aks-ingress-tls.pfx -in aks-ingress-tls.crt -inkey aks-ingress-tls.key -passout pass:
 ```
+
 Create the secret in Key vault
 
-```
-az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name kv94640-akscs
+```bash
+az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name <KeyVault Name>
 ```
 
 ### Redeploy the workload using HTTPS
@@ -235,36 +245,35 @@ Now that you have created the certificate in  Key vault you can switch back to y
 
 1. Update the web-secret-class-provider.yaml with your keyvault name, user assigned identity for the keyvault add-on, the tenant ID and the user assigned identity. Deploy it.
 
-   ```
+   ```bash
    kubectl apply -f web-secret-provider-class.yaml -n ratingsapp
    ```
 
-2. Delete the previous ratings-web deployment. 
+2. Delete the previous ratings-web deployment.
 
-   ```
+   ```bash
     kubectl delete -f 3a-ratings-web-deployment.yaml -n ratingsapp
    ```
 
    Update the  "3b-ratings-web-deployment.yaml" file with the ACR name and redeploy the web application using the this file, which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
 
-   ```
+   ```bash
    kubectl apply -f 3b-ratings-web-deployment.yaml -n ratingsapp
    ```
 
    Update the "5-https-ratings-web-ingress.yaml" file to use the FQDN that matches the certificate and application gateway public IP address.  Delete the previous ingress and redeploy the ingress with this file. 
 
-   ```
+   ```bash
    kubectl delete -f 5-http-ratings-web-ingress.yaml -n ratingsapp
    ```
 
-   ```
+   ```bash
    kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp 
    ```
 
 Now you can access the website using using your FQDN. When you navigate to the website using your browser you will see a warning stating the destination is not safe. This is because you are using a self signed certificate which we used for illustration purposes. Do not use a self signed certificate in production. Go ahead and proceed to the destination to get access to your deployment.
 
 ![deployed workload https](../media/deployed-workload-https.png)
-
 
 ## Next Step
 

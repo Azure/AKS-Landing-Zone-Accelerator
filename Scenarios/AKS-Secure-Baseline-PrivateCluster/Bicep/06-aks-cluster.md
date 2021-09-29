@@ -37,7 +37,7 @@ When ready, refresh the registration of the *Microsoft.ContainerService* resourc
 az provider register --namespace Microsoft.ContainerService
 ```
 
-Review "parameters-main.json" file and update the values as required. Once the files are updated, deploy using az cli or Az PowerShell
+Review "parameters-main.json" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell
 
 # [CLI](#tab/CLI)
 
@@ -51,7 +51,7 @@ az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p p
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\main.bicep -TemplateParameterFile .\parameters-main.json -Location "CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\06-AKS-cluster\main.bicep -TemplateParameterFile .\06-AKS-cluster\parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-CLUSTER
 ```
 
 :arrow_forward: [Deploy a Basic Workload](./07-workload.md)
