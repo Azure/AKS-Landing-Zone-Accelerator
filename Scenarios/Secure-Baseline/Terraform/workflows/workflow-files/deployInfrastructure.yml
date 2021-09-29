@@ -1,0 +1,147 @@
+name: Terraform deployment pipeline
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+jobs:
+
+  terraform-hub-and-landingzone:
+    name: Terraform Hub and LZ
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
+      TF_VAR_access_key: ${{ secrets.ACCESS_KEY }}
+      TF_VAR_hub_prefix: <enter the prefix for your hub resources (eg escs-hub)>
+      TF_VAR_lz_prefix: <enter the prefix for your landingzone resources (eg escs-lz01)>
+      TF_VAR_prefix: <enter the prefix for your aks cluster (eg akscs)>
+      TF_VAR_state_sa_name: <enter the value for your state storage account name>
+      TFSTATE_RG: <enter the name of the resource group where you TF state files are>
+      STORAGEACCOUNTNAME: <enter the name of the storage account where you TF state files are>
+      CONTAINERNAME: <enter the name of the container where you TF state files are>
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.DEPLOYMENT_SP }}
+
+    # Initialize the TF working directory.
+    # Change the backend-config variables to match the storage account used for your deployments.
+    - name: Terraform Init 04-Network-Hub
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/04-Network-Hub
+      run: terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
+
+    # # Generates an execution plan for Terraform
+    # - name: Terraform Plan 04-Network-Hub
+    #   working-directory: ./Scenarios/Secure-Baseline/Terraform/04-Network-Hub
+    #   run: terraform plan
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply 04-Network-Hub
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/04-Network-Hub
+      run: terraform apply -auto-approve
+
+    # Change the backend-config variables to match the storage account used for your deployments.
+    - name: Terraform Init 05-Network-LZ
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/05-Network-LZ
+      run: terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
+
+
+    # - name: Terraform Plan 05-Network-LZ
+    #   working-directory: ./Scenarios/Secure-Baseline/Terraform/05-Network-LZ
+    #   run: terraform plan
+
+   
+    - name: Terraform Apply 05-Network-LZ
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/05-Network-LZ
+      run: terraform apply -auto-approve
+
+    # Change the backend-config variables to match the storage account used for your deployments.
+    - name: Terraform Init 06-AKS-supporting
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/06-AKS-supporting
+      run: terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
+
+
+    # - name: Terraform Plan 06-AKS-supporting
+    #   working-directory: ./Scenarios/Secure-Baseline/Terraform/06-AKS-supporting
+    #   run: terraform plan
+
+   
+    - name: Terraform Apply 06-AKS-supporting
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/06-AKS-supporting
+      run: terraform apply -auto-approve
+
+  terraform-AKS:
+    name: Terraform-AKS
+    needs: terraform-hub-and-landingzone
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TF_VAR_access_key: ${{ secrets.ACCESS_KEY }}
+      TF_VAR_state_sa_name: <enter the value for your state storage account name>
+      TFSTATE_RG: <enter the name of the resource group where you TF state files are>
+      STORAGEACCOUNTNAME: <enter the name of the storage account where you TF state files are>
+      CONTAINERNAME: <enter the name of the container where you TF state files are>
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.DEPLOYMENT_SP }}
+
+    # Initialize the TF working directory.
+    # Change the backend-config variables to match the storage account used for your deployments.
+    - name: Terraform Init 07-AKS-cluster
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/07-AKS-cluster
+      run: terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
+
+    # # Generates an execution plan for Terraform
+    # - name: Terraform Plan 07-AKS-cluster
+    #   working-directory: ./Scenarios/Secure-Baseline/Terraform/07-AKS-cluster
+    #   run: terraform plan
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply 07-AKS-cluster
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/07-AKS-cluster
+      run: terraform apply -auto-approve
+
+
+
+
+

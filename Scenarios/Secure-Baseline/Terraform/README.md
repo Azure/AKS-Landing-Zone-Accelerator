@@ -14,19 +14,23 @@ In this example, state is stored in an Azure Storage account that was created ou
 This section is organized using folders that match the steps outlined below. Make any necessary adjustments to the variables and settings within that folder to match the needs of your deployment. 
 
 1. Preqs - Clone this repo, install Azure CLI, install Terraform
-
 2. [Creation of Azure Storage Account for State Management](./02-state-storage.md)
-
 3. [Create or Import Azure Active Directory Groups for AKS Cluster Admins and AKS Cluster Users](./03-aad.md)
-
 4. [Creation of Hub Network & its respective Components](./04-network-hub.md)
- 
 5. [Creation of Spoke Network & its respective Components](./05-network-lz.md)
-
 6. [Creation of Supporting Components for AKS](./06-aks-supporting.md)
-
 7. [Creation of AKS & enabling Addons](./07-aks-cluster.md)
-
 8. [Deploy a Basic Workload](./08-workload.md)
 
+## Next Steps
+
+You can deploy the resources in one of two ways. 
+
+The first way is by following the steps indicated above by clicking on the link below
+
+:arrow_forward: [Manual deployment](./03-aad.md)
+
+The second way is by using our GitHub Actions pipeline
+
+:arrow_forward: [Use GitHub Actions Pipeline](./workflows/README.md)
 

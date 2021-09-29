@@ -10,7 +10,7 @@ For this scenario, we have various IaC technology that you can choose from depen
 ![Architectural diagram for the secure baseline scenario.](./media/AKS-private-cluster-scenario.jpg)
 
 ## Core architecture components
-* AKS
+* AKS Private Cluster
 * Azure Virtual Networks (hub-spoke)
   * Azure Firewall managed egress
 * Azure Application Gateway (WAF)

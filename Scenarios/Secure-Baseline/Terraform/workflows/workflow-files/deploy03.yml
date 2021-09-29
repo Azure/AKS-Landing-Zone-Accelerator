@@ -1,0 +1,55 @@
+name: 'Terraform_AAD'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: 'Terraform_AAD'
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      TFSTATE_RG: <enter the name of the resource group where you TF state files are>
+      STORAGEACCOUNTNAME: <enter the name of the storage account where you TF state files are>
+      CONTAINERNAME: <enter the name of the container where you TF state files are>
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        cli_config_credentials_token: ${{ secrets.DEPLOYMENT_SP }}
+
+    # Initialize the TF working directory.
+    # Change the backend-config variables to match the storage account used for your deployments.
+    ####### IMPORTANT: if you are using importing already exisiting user groups, use the 03-AAD-import folder instead ######
+    - name: Terraform Init 03-AAD
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/03-AAD-create
+      run: terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan 03-AAD
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/03-AAD
+      run: terraform plan
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply 03-AAD
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/03-AAD
+      run: terraform apply -auto-approve
+
+

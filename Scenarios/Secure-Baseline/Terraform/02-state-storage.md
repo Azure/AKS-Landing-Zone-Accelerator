@@ -36,4 +36,11 @@ az storage container-rm create --storage-account $STORAGEACCOUNTNAME --name $CON
 
 ### Next step
 
+To continue with the main deployment click the link below:
+
 :arrow_forward: [Create or Import Azure Active Directory Groups for AKS Cluster Admins and AKS Cluster Users](./03-aad.md)
+
+To continue with CI/CD deployment click on the link below:
+
+:arrow_forward: ​[GitHub Actions for Secure Baseline Scenario with Terraform](./workflows/README.md)
+
