@@ -68,6 +68,6 @@ When the service principal is created, it will output details about the service 
 
 The first pipeline (deploy040506) is set to get triggered whenever there is a push to the main branch. To get this workflow started ensure your files are saved and push your changes to your GitHub repository. Go to the **Actions** tab in GitHub to see the workflow deploying. Once the deployment is complete, you can click on the Terraform_AKS workflow under All workflows. Click on **Run workflows** button on the right side of the screen and click on **Run workflow**.
 
-### Up next: Deploy the workload
+### Up next: Integrate the cluster with Key vault
 
-:arrow_forward: [Deploy a Basic Workload](../08-workload.md)
+:arrow_forward: [Integrate with Key vault](./07-b-keyvault-addon.md)
