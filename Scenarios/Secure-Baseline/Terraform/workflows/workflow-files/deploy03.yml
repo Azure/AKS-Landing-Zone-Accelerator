@@ -35,8 +35,9 @@ jobs:
 
     # Initialize the TF working directory.
     # Change the backend-config variables to match the storage account used for your deployments.
+    ####### IMPORTANT: if you are using importing already exisiting user groups, use the 03-AAD-import folder instead ######
     - name: Terraform Init 03-AAD
-      working-directory: ./Scenarios/Secure-Baseline/Terraform/03-AAD
+      working-directory: ./Scenarios/Secure-Baseline/Terraform/03-AAD-create
       run: terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
 
     # Generates an execution plan for Terraform
