@@ -1,4 +1,4 @@
-name: 'Terraform'
+name: 'Terraform_Hub_and_LZ'
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Terraform_Hub_and_LZ'
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
@@ -16,6 +16,9 @@ jobs:
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       TF_VAR_admin_password: ${{ secrets.ADMIN_PASSWORD }}
       TF_VAR_access_key: ${{ secrets.ACCESS_KEY }}
+      TFSTATE_RG: <enter the name of the resource group where you TF state files are>
+      STORAGEACCOUNTNAME: <enter the name of the storage account where you TF state files are>
+      CONTAINERNAME: <enter the name of the container where you TF state files are>
     runs-on: ubuntu-latest
     environment: production
 

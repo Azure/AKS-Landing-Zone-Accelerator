@@ -1,20 +1,20 @@
-name: 'Terraform'
+name: 'Terraform_AKS'
 
 on:
-  push:
-    branches:
-    - main
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Terraform_AKS'
     env:
       ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       TF_VAR_access_key: ${{ secrets.ACCESS_KEY }}
+      TFSTATE_RG: <enter the name of the resource group where you TF state files are>
+      STORAGEACCOUNTNAME: <enter the name of the storage account where you TF state files are>
+      CONTAINERNAME: <enter the name of the container where you TF state files are>
     runs-on: ubuntu-latest
     environment: production
 

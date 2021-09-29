@@ -10,6 +10,15 @@ The next step would be to create a storage account that will be used to store th
 
 :arrow_forward: [Create Storage Account for State Files](../02-state-storage.md)
 
+#### Get storage account access key
+
+1. Go to Azure portal and click on the storage account you just created
+2. In the left blade click on **Access keys**
+3. Click on **Show keys** at the top of the resulting page
+4. Copy one of the keys (Key field) and save it somewhere for later use
+
+
+
 ## Create or Import Azure Active Directory Groups for AKS
 
 Next, create or import Azure Active directory groups who's members will have access to the AKS cluster you are about to build following instructions in the link below:
@@ -24,6 +33,8 @@ The GitHub runner that will create your Azure Resources using GitHub actions nee
 az ad sp create-for-rbac --name ServicePrincipalName
 ```
 
+When the service principal is created, it will output details about the service principal. Copy the details and save it somewhere for future use.
+
 ### Grant SP Access at Subscription Level
 
 1. Go to the Azure portal and find the subscription you intent to deploy the resources into
@@ -34,9 +45,40 @@ az ad sp create-for-rbac --name ServicePrincipalName
 6. Click **Save**
 7. Repeat the same steps to grant the SP the **User Access Administrator** role
 
-### Get the ID of your SP
+## Create GitHub Secrets
 
-1. In Azure portal search for and select **Azure Active Directory**
-2. In the **Search your tenant** search bar enter the name of your SP and select it
-3. Copy the **Application ID** in the resulting page and save it somewhere. You will need this ID later
+1. In your GitHub repo click on Settings > Secrets > New repository secret
+2. Create a secret named **AZURE_CLIENT_ID** and for the value use the value of **appId** in the output you saved earlier
+3. Create a secret named **AZURE_CLIENT_SECRET** and for the value use the value of **password** in the output you saved earlier
+4. Create a secret named **AZURE_SUB_ID** and for the value use your subscription id
+5. Create a secret named **AZURE_TENANT_ID** and for the value use your tenant id 
+6. Create a secret named **ADMIN_PASSWORD** and enter a strong password for the bastion VM that will be created as part of the pipeline
+7. Create a secret named **ACCESS_KEY** and enter the storage account access key you saved earlier
+8. Create a secret named **DEPLOYMENT_SP** and enter the same value you entered for AZURE_CLIENT_ID above
 
+## Update Deployment files
+
+1. Clone your repo unto your local computer
+2. In the .devcontainer/deploy040506.yml (the pipeline that deploys stages 4,5 and 6 in our deployment step) file, update the values for TFSTATE_RG, STORAGEACCOUNTNAME, CONTAINERNAME and save the file
+3. Do the same for the deploy07.yml file
+4. Go to Scenarios/Secure-Baseline/Terraform/04-Network-Hub/terraform.tfvars.sample file and comment out (add a "#" at the beginning of the line) the admin_password line
+5. Update the three remaining values as you see fit and save the file
+6. Rename the file to terraform.tfvars
+7. Go to Scenarios/Secure-Baseline/Terraform/05-Network-LZ/terraform.tfvars.sample and comment out the state_sa_name line
+8. Update your lz_prefix value as you see fit and save the file
+9. Rename the file to terraform.tfvars
+10. Go to Scenarios/Secure-Baseline/Terraform/06-AKS-supporting/terraform.tfvars.sample and comment out the state_sa_name line 
+11. Update the prefix value as you see fit and save the file
+12. Rename the file to terraform.tfvars
+13. Go to Scenarios/Secure-Baseline/Terraform/07-AKS-cluster/terraform.tfvars.sample and comment out the state_sa_name line
+14. Update the prefix value as you see fit and save the file
+15. Rename the file to terraform.tfvars
+16. Go to the .gitignore file in the root folder, delete the row *.tfvars and save it
+
+## Deploy the pipeline
+
+The first pipeline (deploy040506) is set to get triggered whenever there is a push to the main branch. To get this workflow started ensure your files are saved and push your changes to your GitHub repository. Go to the **Actions** tab in GitHub to see the workflow deploying. Once the deployment is complete, you can click on the Terraform_AKS workflow under All workflows. Click on **Run workflows** button on the right side of the screen and click on **Run workflow**.
+
+### Up next: Deploy the workload
+
+:arrow_forward: [Deploy a Basic Workload](../08-workload.md)
