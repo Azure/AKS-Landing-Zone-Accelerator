@@ -10,7 +10,8 @@ param appGatewayName string
 param aksuseraccessprincipalId string
 param aksadminaccessprincipalId string
 param aksIdentityName string
-param acrName string //User to provide each time could change
+param acrName string //User to provide each time
+param keyvaultName string //user to provide each time
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -153,5 +154,14 @@ module appGatewayReaderRole 'modules/Identity/role.bicep' = {
   params: {
     principalId: aksCluster.outputs.ingressIdentity
     roleGuid: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' //Reader
+  }
+}
+
+module keyvaultAccessPolicy 'modules/keyvault/keyvault.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'akskeyvaultaddonaccesspolicy'
+  params: {
+    keyvaultManagedIdentityObjectId: aksCluster.outputs.keyvaultaddonIdentity
+    vaultName: keyvaultName
   }
 }

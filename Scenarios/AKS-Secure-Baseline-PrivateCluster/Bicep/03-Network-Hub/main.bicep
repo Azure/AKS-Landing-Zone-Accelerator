@@ -303,28 +303,3 @@ module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
     }
   }
 }
-
-// resource vmSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
-//   scope: resourceGroup(rg.name)
-//   name:  '${vnethub.name}/${vmVNetSubnetName}'
-// }
-
-// module updateUDR 'modules/vnet/subnet.bicep' = {
-//   scope: resourceGroup(rg.name)
-//   name: 'updateUDR'
-//   params: {
-//     subnetName: vmVNetSubnetName
-//     vnetName: vnethub.name
-//     properties: {
-//       addressPrefix: vmSubnet.properties.addressPrefix
-//       routeTable: {
-//         id: routetable.outputs.routetableID
-//       }
-//     }
-//   }
-//   dependsOn:[
-//     rg
-//     vnethub
-//     azfirewall
-//   ]
-// }

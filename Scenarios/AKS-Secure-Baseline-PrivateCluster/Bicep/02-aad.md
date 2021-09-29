@@ -42,4 +42,4 @@ terraform apply
 
 ### Next step
 
-:arrow_forward: [Creation of Hub Network & its respective Components](./04-network-hub.md)
+:arrow_forward: [Creation of Hub Network & its respective Components](./03-network-hub.md)

@@ -77,3 +77,4 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
 
 output kubeletIdentity string = aksCluster.properties.identityProfile.kubeletidentity.objectId
 output ingressIdentity string = aksCluster.properties.addonProfiles.ingressApplicationGateway.identity.objectId
+output keyvaultaddonIdentity string = aksCluster.properties.addonProfiles.azureKeyvaultSecretsProvider.identity.objectId

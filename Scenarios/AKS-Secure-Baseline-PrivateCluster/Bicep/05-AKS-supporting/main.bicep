@@ -106,3 +106,6 @@ module aksIdentity 'modules/Identity/userassigned.bicep' = {
     identityName: 'aksIdentity'
   }
 }
+
+output acrName string = acr.name
+output keyvaultName string = keyvault.name

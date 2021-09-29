@@ -72,29 +72,6 @@ module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
   ]
 }
 
-// resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
-//   scope: resourceGroup(rg.name)
-//   name:  '${vnetSpokeName}/${aksVNetSubnetName}'
-// }
-
-// module updateNSGUDR 'modules/vnet/subnet.bicep' = {
-//   scope: resourceGroup(rg.name)
-//   name: 'updateNSGUDR'
-//   params: {
-//     subnetName: aksVNetSubnetName
-//     vnetName: vnetSpokeName
-//     properties: {
-//       addressPrefix: aksSubnet.properties.addressPrefix
-//       routeTable: {
-//         id: routetable.outputs.routetableID
-//       }
-//       networkSecurityGroup: {
-//         id: nsgakssubnet.outputs.nsgID
-//       }
-//     }
-//   }
-// }
-
 resource vnethub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   scope: resourceGroup(vnetHUBRGName)
   name: vnetHubName
@@ -291,35 +268,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
-      }            
-      // {
-      //   name: 'DenyAllInBound'
-      //   properties: {
-      //     priority: 1000
-      //     sourceAddressPrefix: '*'
-      //     protocol: '*'
-      //     destinationPortRange: '*'
-      //     access: 'Deny'
-      //     direction: 'Inbound'
-      //     sourcePortRange: '*'
-      //     destinationAddressPrefix: '*'
-      //   }
-      // }      
+      }
     ]
   }
 }
-
-// module updateNSGUDRAPPGW 'modules/vnet/subnet.bicep' = {
-//   scope: resourceGroup(rg.name)
-//   name: 'updateNSGUDRAPPGW'
-//   params: {
-//     subnetName: appGatewaySubnetName
-//     vnetName: vnetSpokeName
-//     properties: {
-//       addressPrefix: appgwSubnet.properties.addressPrefix
-//       networkSecurityGroup: {
-//         id: nsgakssubnet.outputs.nsgID
-//       }
-//     }
-//   }
-// }

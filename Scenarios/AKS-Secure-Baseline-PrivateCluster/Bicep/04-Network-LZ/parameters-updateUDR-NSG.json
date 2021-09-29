@@ -21,7 +21,7 @@
       "value": "AppGWSubnet"
     },
     "nsgAppGWName": {
-      "value": "APPGW-Nsg"
+      "value": "APPGW-NSG"
     }
   }
 }
