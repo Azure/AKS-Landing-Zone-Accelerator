@@ -1,7 +1,7 @@
 ## The Key Vault Add-On
 The AKS Key Vault Add-On is not currently supported for deployment with Terraform. Configure that separately on the cluster after it is deployed. 
 
-  :warning: **Note:** Because these steps are not being deployed by Terraform, TF state will not know these extenstions exist. By continuing to use these extensions, you will not be able to futher update your AKS cluster using Terraform. We are adding these steps for training purposes only. If you plan to use this deployment in production where you would need to continue updating your AKS infrastructure using Terraform, do not use these implement these CLI commands. 
+  :warning: **Note:** Because these steps are not being deployed by Terraform, TF state will not know these extensions exist. The features are not supported by Terraform yet because they are preview features. By continuing to use these extensions, you will not be able to further update your AKS cluster using Terraform. We are adding these steps for training purposes only. If you plan to use this deployment in production where you would need to continue updating your AKS infrastructure using Terraform, do not use these implement these CLI commands. 
 
 We start by creating some environment variables. The AKS cluster name can be found in the portal or in the variables file. The value is aks-<prefix value>, for example, in this case it is aks-escs. The resource group name by default is <prefix value>-lz01-rg-aks
 
