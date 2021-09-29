@@ -28,4 +28,4 @@ az deployment sub create -n "ESLZ-AKS-Supporting" -l "CentralUS" -f main.bicep -
 New-AzSubscriptionDeployment -TemplateFile .\05-AKS-supporting\main.bicep -TemplateParameterFile .\05-AKS-supporting\parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-Supporting
 ```
 
-:arrow_forward: [Creation of AKS & enabling Addons](./06-AKS-cluster.md)
+:arrow_forward: [Creation of AKS & enabling Addons](./06-aks-cluster.md)

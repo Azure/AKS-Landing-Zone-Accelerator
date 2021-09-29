@@ -37,4 +37,4 @@ New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\main.bicep -TemplateP
 New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\updateUDR-NSG.bicep -TemplateParameterFile .\04-Network-LZ\parameters-updateUDR-NSG.json -Location "CentralUS" -Name ESLZ-AKS-SPOKE-UDRNSG
 ```
 
-:arrow_forward: [Creation of Supporting Components for AKS](./05-AKS-supporting.md)
+:arrow_forward: [Creation of Supporting Components for AKS](./05-aks-supporting.md)

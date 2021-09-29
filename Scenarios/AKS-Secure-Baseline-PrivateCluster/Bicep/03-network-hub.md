@@ -38,4 +38,4 @@ New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\updateUDR.bicep -Tem
 New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\deploy-vm.bicep -TemplateParameterFile .\03-Network-Hub\parameters-deploy-vm.json -Location "CentralUS" -Name ESLZ-HUB-VM
 ```
 
-:arrow_forward: [Creation of Spoke Network & its respective Components](./04-Network-LZ.md)
+:arrow_forward: [Creation of Spoke Network & its respective Components](./04-network-lz.md)
