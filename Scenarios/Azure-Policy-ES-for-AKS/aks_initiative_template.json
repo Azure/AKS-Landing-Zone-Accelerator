@@ -1,0 +1,128 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+          "type": "string",
+          "defaultValue" : "eastus2"
+        },
+
+        "policySetName": {
+            "type": "string",
+            "defaultValue" : "ES-AKS-Initiative"
+          },
+
+          "policySetDisplayName": {
+            "type": "string",
+            "defaultValue" : "Azure Policy Initiative for Enterprise Scale for AKS"
+          },
+
+          "policySetDescription": {
+            "type": "string",
+            "defaultValue" : "This policy initiative contains Azure Policies confirming with Enterprise Scale for AKS best practices. This is particularly useful for brownfield deployments to audit the cluster and identify improvment opportunities."
+          }
+      },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/policySetDefinitions",
+            "apiVersion": "2019-09-01",
+            "name": "[parameters('policySetName')]",
+            "location" : "[parameters('location')]",
+            "properties": 
+            {
+                "displayName": "[parameters('policySetDisplayName')]",
+                "description": "[parameters('policySetDescription')]",
+                "policyType": "Custom",
+                "metadata": {
+                    "category": "Tags"
+                },
+                "policyDefinitions": 
+                [
+                   {
+                        "policyDefinitionReferenceId": "Azure Kubernetes Service Private Clusters should be enabled_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/040732e8-d947-40b8-95d6-854c95024bf8",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Azure Policy Add-on for Kubernetes service (AKS) should be installed and enabled on your clusters_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/0a15ec92-a229-4763-bb14-0ea34a568f8d",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Configure Azure Defender for Kubernetes to be enabled_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/133047bf-1369-41e3-a3be-74a11ed1395a",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Azure Defender for Kubernetes should be enabled_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/523b5cd1-3e23-492f-a539-13118b6d1e3a",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Deploy Azure Policy Add-on to Azure Kubernetes Service clusters_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/a8eff44f-8c92-45c3-a3fb-9880802d67a7",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes clusters should not allow container privilege escalation_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/1c6e92c9-99f0-4e55-9cf2-0c234dc48f99",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes clusters should use internal load balancers_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/3fc4dc25-5baf-40d8-9b05-7fe74c1bc64e",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes cluster should not allow privileged containers_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/95edb821-ddaf-4404-9732-666045e056b4",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes cluster containers should not use forbidden sysctl interfaces_1",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/56d0a13f-712f-466b-8416-56fb354fb823",
+                        "parameters": {
+                        "forbiddenSysctls": {
+                        "value": [
+                        "test"
+                        ]
+                        }
+                        },
+                        "groupNames": []
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/policyAssignments",
+            "name": "ESLZ-AKS-initiative assignment",
+            "apiVersion": "2019-09-01",
+            "location" : "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Authorization/policySetDefinitions', parameters('policySetName'))]"
+            ],
+            "identity": {
+                "type": "SystemAssigned"
+              },
+            "properties": {
+            "enforcementMode": "DoNotEnforce",
+              "scope": "[subscription().id]",
+              "policyDefinitionId": "[resourceId('Microsoft.Authorization/policySetDefinitions', parameters('policySetName'))]"
+            }
+          }
+    ],
+    "outputs": {
+        "resourceID": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Authorization/policySetDefinitions', parameters('policySetName'))]"
+        }
+    }
+}

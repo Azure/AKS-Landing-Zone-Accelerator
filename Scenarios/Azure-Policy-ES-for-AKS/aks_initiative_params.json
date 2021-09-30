@@ -1,0 +1,18 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "policySetName":{
+            "value": "ES-AKS-Initiative"
+        },
+        "policySetDisplayName":{
+            "value": "Azure Policy Initiative for ES AKS"
+        },
+        "policySetDescription":{
+            "value": "This policy initiative contains Azure Policies confirming with Enterprise Scale for AKS best practices. This is particularly useful for brownfield deployments to audit the cluster and identify improvement opportunities."
+        },
+        "location":{
+            "value": "eastus2"
+        }
+        }
+    }
