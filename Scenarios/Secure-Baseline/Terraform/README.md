@@ -11,7 +11,7 @@ The code here is purposely written to avoid loops, complex variables and logic. 
 In this example, state is stored in an Azure Storage account that was created out-of-band.  All deployments reference this storage account to either store state or reference variables from other parts of the deployment however you may choose to use other tools for state managment, like Terraform Cloud after making the necessary code changes.
 
 ## Getting Started 
-This section is organized using folders that match the steps outlined below. Make any necessary adjustments to the variables and settings within that folder to match the needs of your deployment. 
+This section is organized using folders that match the steps outlined below. Make any necessary adjustments to the variables and settings within that folder to match the needs of your deployment. They are also used in our [GitHub Actions Pipeline](./workflows/README.md).
 
 1. Preqs - Clone this repo, install Azure CLI, install Terraform
 2. [Creation of Azure Storage Account for State Management](./02-state-storage.md)
