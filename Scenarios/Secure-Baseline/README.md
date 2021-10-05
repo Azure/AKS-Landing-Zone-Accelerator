@@ -44,8 +44,8 @@ A deployment of AKS-hosted workloads typically experiences a separation of dutie
 ## Next
 Pick one of the IaC options below and follow the instructions to deploy the AKS reference implementation.
 
-:arrow_forward: [ARM (coming soon)](./ARM)
-
 :arrow_forward: [Terraform](./Terraform)
 
 :arrow_forward: [Bicep (still in development)](./Bicep)
+
+:arrow_forward: [For ARM, use official AKS Secure Baseline RI](https://github.com/mspnp/aks-secure-baseline)

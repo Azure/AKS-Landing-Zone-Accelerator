@@ -1,46 +1,41 @@
 {
-	"name": "constructionsets",
-	"dockerFile": "Dockerfile",
-	"runArgs": [
-	"--init",
-	"--privileged"
-	],
-	"overrideCommand": false,
+    "name": "CAF Starter Terraform landing zones",
 
-	// some base images require a specific user name
-	"remoteUser": "vscode",
+    // Update the 'dockerComposeFile' list if you have more compose files or use different names.
+    "dockerComposeFile": "docker-compose.yml",
 
-	// Set container specific settings
-	"settings": {
-		"terminal.integrated.defaultProfile.linux": "zsh"
-	},
+    // Container user to use in VSCode Online and GitHub Codespaces
+    "containerUser" : "vscode",
+    "remoteUser" : "vscode",
 
-	// forward ports for the app
-	"forwardPorts": [
-		30000,
-		30080,
-		30088,
-		32000
-	],
+    // The 'service' property is the name of the service for the container that VS Code should
+    // use. Update this value and .devcontainer/docker-compose.yml to the real service name.
+    "service": "rover",
 
-	// add labels
-	"portsAttributes": {
-		"30000": { "label": "Prometheus" },
-		"30080": { "label": "ngsa-app" },
-		"30088": { "label": "WebV" },
-		"32000": { "label": "Grafana" },
-	},
+    // The optional 'workspaceFolder' property is the path VS Code should open by default when
+    // connected. This is typically a volume mount in .devcontainer/docker-compose.yml
+    "workspaceFolder": "/tf/caf",
 
-	// Install extensions
-	"extensions": [
-		"ms-azuretools.vscode-docker",
-		"ms-kubernetes-tools.vscode-kubernetes-tools",
-		"davidanson.vscode-markdownlint",
-		"gruntfuggly.todo-tree",
-		"mutantdino.resourcemonitor",
-		"humao.rest-client"
-	],
+    // Use 'settings' to set *default* container specific settings.json values on container create.
+    // You can edit these settings after create using File > Preferences > Settings > Remote.
+    "settings": {
+        "files.eol": "\n",
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "editor.tabSize": 2,
+        "terminal.integrated.scrollback": 8000,
+    },
 
-	// Use 'postStartCommand' to run commands after the container starts.
-	"postCreateCommand": "/bin/bash -c .devcontainer/post-start.sh"
+    // Uncomment the next line if you want start specific services in your Docker Compose config.
+    // "runServices": [],
+
+    // Uncomment this like if you want to keep your containers running after VS Code shuts down.
+    // "shutdownAction": "none",
+
+    // Uncomment the next line to run commands after the container is created.
+    "postCreateCommand": "sudo cp -R /tmp/.ssh-localhost/* ~/.ssh && sudo chown -R $(whoami):$(whoami) /tf/caf && sudo chmod 400 ~/.ssh/* && git config --global core.editor vi && pre-commit install && pre-commit autoupdate",
+    // Add the IDs of extensions you want installed when the container is created in the array below.
+    "extensions": [
+        "4ops.terraform",
+        "mutantdino.resourcemonitor"
+    ]
 }
