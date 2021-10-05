@@ -22,9 +22,9 @@ The reference implementation is provided by three repos that all build on top of
 
 ### This repo
 
-In this repo, you get access to various customer [scenarios](./Scenarios) that can help accelerate the development and deployment of AKS clusters that conform with Enterprise-Scale for AKS best practices and guidelines. Each scenario aims to represent common customer experiences with the goal of accelerating the process of developing and deploying conforming AKS clusters using IaC as well as providing a step by step learning experience. Each scenario will eventually have a Terraform, ARM and Bicep version. They will also include GitHub Actions CI/CD pipelines to help automate deployment and management of these clusters and the workload that run in them.
+In this repo, you get access to various customer [scenarios](./Scenarios) that can help accelerate the development and deployment of AKS clusters that conform with Enterprise-Scale for AKS best practices and guidelines. Each scenario aims to represent common customer experiences with the goal of accelerating the process of developing and deploying conforming AKS clusters using Infrastructure-As-Code (IaC). They also provide a step by step learning experience for deploying AKS in an actual Enterprise environment. Each scenario will eventually have a Terraform, ARM and Bicep version. They will also include GitHub Actions CI/CD pipelines to help automate deployment and management of these clusters and the workload that run in them.
 
-Use this repo is you would like step by step guidance on how to deploy secure well architected AKS clusters using our scenario based model that promotes a separation of duties, modularized IaC so you can pick and choose components you want to build with your cluster and has implementations in ARM, Terraform and Bicep. It is the best starting point for customers new to Azure or AKS.
+Use this repo is you would like step by step guidance on how to deploy secure and well architected AKS clusters using our scenario based model. This model promotes a separation of duties, modularized IaC so you can pick and choose components you want to build with your cluster and has implementations in ARM, Terraform and Bicep. It is the best starting point for customers new to Azure or AKS.
 
 ### Bicep AKS Accelerator
 
@@ -37,13 +37,13 @@ Use this repo if you would like to use a guided experience to rapidly create you
 
 ### CAF Terraform Landingzones
 
-A [reference implementation](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) for Enterprise-Scale for AKS using CAF terraform module that abstracts away having to manually write terraform code and makes use of the Rover devcontainer.
+A [reference implementation](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) for Enterprise-Scale for AKS using CAF terraform module that abstracts away the need for writing terraform code and makes use of the Rover devcontainer.
 
-This reference implementation is great for customers who want use an advanced well thought out model for using terraform modules and/or are familiar with CAF terraform modules or want to get familiar with it.
+This reference implementation is great for customers who want to use an advanced and well thought out model for using terraform modules and/or are familiar with CAF terraform modules or want to get familiar with it.
 
 ## Steps of Implementation for Enterprise-Scale for AKS
 
-A deployment of AKS-hosted workloads typically experiences a separation of duties and lifecycle management in the area of prerequisites, the host network, the cluster infrastructure, and finally the workload itself. This reference implementation is similar. Also, be aware our primary purpose is to illustrate the topology and decisions of an AKS cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (team roles, organizational standards, etc), and will be implemented as appropriate for your needs.
+A deployment of AKS-hosted workloads typically requires a separation of duties and lifecycle management in different areas, such as prerequisites, the host network, the cluster infrastructure, the shared services and finally the workload itself. This reference implementation is no different. Also, be aware that our primary purpose is to illustrate the topology and decisions involved in the deployment of an AKS cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and will give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (organizational structures, standards, processes and tools), and will be implemented as appropriate for your needs.
 
 ### Next step
 
