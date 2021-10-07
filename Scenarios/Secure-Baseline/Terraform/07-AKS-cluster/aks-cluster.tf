@@ -56,6 +56,7 @@ module "aks" {
   resource_group_name           = azurerm_resource_group.rg-aks.name
   location            = azurerm_resource_group.rg-aks.location
   prefix              = "aks-${var.prefix}"
+  net_plugin          = var.net_plugin
   vnet_subnet_id = data.terraform_remote_state.existing-lz.outputs.aks_subnet_id
   mi_aks_cp_id           = azurerm_user_assigned_identity.mi-aks-cp.id
   la_id = azurerm_log_analytics_workspace.aks.id

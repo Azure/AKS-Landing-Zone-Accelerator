@@ -18,6 +18,10 @@ variable "mi_aks_cp_id" {
   
 }
 
+variable "net_plugin" {
+  
+}
+
 # variable "mi_aks_kubelet_id" {
   
 # }
