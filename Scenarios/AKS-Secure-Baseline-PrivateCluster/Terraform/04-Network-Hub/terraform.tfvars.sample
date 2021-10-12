@@ -2,3 +2,8 @@ admin_password = "change me"
 admin_username = "sysadmin"
 location="eastus"
 hub_prefix="escs-hub"
+source_address_prefix= <Public IP of local machine>
+ssh_key_settings = {
+    username   = <admin_username>
+    public_key = <Public Key>
+}

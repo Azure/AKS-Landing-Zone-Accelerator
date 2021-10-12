@@ -7,7 +7,7 @@ resource "azurerm_linux_virtual_machine" "compute" {
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication //Set to true if using SSH key
-  
+
 
   tags = var.tags
 
@@ -20,12 +20,9 @@ resource "azurerm_linux_virtual_machine" "compute" {
     storage_account_type = var.storage_account_type
   }
 
-  dynamic "admin_ssh_key" {
-    for_each = var.ssh_key_settings
-    content {
-      username = ssh_key_settings.value["admin_username"]
-      public_key =  file(ssh_key_settings.value["public_key"])
-    }
+  admin_ssh_key {
+    username   = var.ssh_key_settings.username
+    public_key = var.ssh_key_settings.public_key
   }
 
   source_image_reference {
@@ -39,6 +36,14 @@ resource "azurerm_linux_virtual_machine" "compute" {
   boot_diagnostics {
     storage_account_uri = null
   }
+}
+
+resource "azurerm_public_ip" "pip" {
+    name                         = "dev-pip"
+    location                     = var.location
+    resource_group_name          = var.resource_group_name
+    allocation_method            = var.allocation_method
+    sku                          = "Standard"
 }
 
 
@@ -55,6 +60,7 @@ resource "azurerm_network_interface" "compute" {
     name                          = "internal"
     subnet_id                     = var.vnet_subnet_id
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.pip.id
   }
 }
 
@@ -64,6 +70,7 @@ variable "admin_username" {
 }
 
 variable "admin_password" {
+  default = "changeme"
 }
 
 variable "server_name" {
@@ -91,7 +98,7 @@ variable "os_version" {
   default = "latest"
 }
 variable "disable_password_authentication" {
-  default = false
+  default = true #leave as true if using ssh key, if using a password make the value false
 }
 variable "enable_accelerated_networking" {
   default = "false"
@@ -110,10 +117,10 @@ variable "tags" {
   }
 }
 variable "ssh_key_settings" {
-  type = list(object({
-    username   = string
-    public_key = string
-  }))
-  default = []
+  type    = map(string)
+  default =  null
 }
 
+variable "allocation_method" {
+  default = "Static"
+}
