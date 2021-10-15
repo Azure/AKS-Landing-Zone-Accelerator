@@ -33,3 +33,8 @@ variable "gateway_name" {
 variable "gateway_id" {
 
 }
+
+
+variable "private_dns_zone_id" {
+
+}

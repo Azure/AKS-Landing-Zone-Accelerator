@@ -16,7 +16,7 @@ resource "azurerm_resource_group" "rg" {
 # These outputs are used by later deployments
 
 output "hub_rg_location" {
-  value = var.location
+  value = azurerm_resource_group.rg.location
 }
 
 output "hub_rg_name" {

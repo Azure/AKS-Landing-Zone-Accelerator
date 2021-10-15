@@ -77,8 +77,3 @@ output "kubelet_id" {
 output "agic_id" {
   value = azurerm_kubernetes_cluster.akscluster.addon_profile[0].ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
 }
-
-
-
-
-

@@ -37,7 +37,7 @@ resource "azurerm_role_assignment" "aks-to-vnet" {
 
 # Role assignment to to create Private DNS zone for cluster
 resource "azurerm_role_assignment" "aks-to-dnszone" {
-  scope                = data.terraform_remote_state.existing-lz.outputs.aks_private_zone_id
+  scope                = azurerm_private_dns_zone.aks-dns.id
   role_definition_name = "Private DNS Zone Contributor"
   principal_id         = azurerm_user_assigned_identity.mi-aks-cp.principal_id
 }
@@ -57,7 +57,8 @@ resource "azurerm_log_analytics_workspace" "aks" {
 module "aks" {
   source = "./modules/aks"
   depends_on = [
-    azurerm_role_assignment.aks-to-vnet
+    azurerm_role_assignment.aks-to-vnet,
+    azurerm_role_assignment.aks-to-dnszone
   ]
 
   resource_group_name           = azurerm_resource_group.rg-aks.name
@@ -68,7 +69,7 @@ module "aks" {
   la_id = azurerm_log_analytics_workspace.aks.id
   gateway_name = data.terraform_remote_state.existing-lz.outputs.gateway_name
   gateway_id = data.terraform_remote_state.existing-lz.outputs.gateway_id
-  private_dns_zone_id = data.terraform_remote_state.existing-lz.outputs.aks_private_zone_id
+  private_dns_zone_id = azurerm_private_dns_zone.aks-dns.id
 
 }
 
