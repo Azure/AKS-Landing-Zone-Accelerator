@@ -76,7 +76,7 @@ When the server-dev-linux vm is provisioned with the inbound NSG rule allowing y
 
 Enter the username needed to login into the VM and the Public IP address of the server-dev-linux virtual machine.
 
-![Connect to remote host](../media/connect-to-host-using-pip.png)
+![Connect to remote host using pip](../media/connect-to-host-using-pip.png)
 
 **SSH VS Code Window**
 
