@@ -4,17 +4,21 @@
     "parameters": {
         "location": {
           "type": "string",
-          "defaultValue" : "eastus2"
+          "defaultValue" : "eastus"
         },
 
         "policySetName": {
             "type": "string",
-            "defaultValue" : "ES-AKS-Initiative"
+            "defaultValue" : "AKS-EnterpriseScale-Initiative"
+          },
+          "policyAssignmentName": {
+            "type": "string",
+            "defaultValue" : "AKS-EnterpriseScale-Initiative-Assignment"
           },
 
           "policySetDisplayName": {
             "type": "string",
-            "defaultValue" : "Azure Policy Initiative for Enterprise Scale for AKS"
+            "defaultValue" : "Enterprise Scale AKS - Azure Policy Initiative"
           },
 
           "policySetDescription": {
@@ -27,7 +31,6 @@
             "type": "Microsoft.Authorization/policySetDefinitions",
             "apiVersion": "2019-09-01",
             "name": "[parameters('policySetName')]",
-            "location" : "[parameters('location')]",
             "properties": 
             {
                 "displayName": "[parameters('policySetDisplayName')]",
@@ -103,7 +106,7 @@
         },
         {
             "type": "Microsoft.Authorization/policyAssignments",
-            "name": "ESLZ-AKS-initiative assignment",
+            "name": "[parameters('policyAssignmentName')]",
             "apiVersion": "2019-09-01",
             "location" : "[parameters('location')]",
             "dependsOn": [
@@ -114,7 +117,6 @@
               },
             "properties": {
             "enforcementMode": "DoNotEnforce",
-              "scope": "[subscription().id]",
               "policyDefinitionId": "[resourceId('Microsoft.Authorization/policySetDefinitions', parameters('policySetName'))]"
             }
           }
