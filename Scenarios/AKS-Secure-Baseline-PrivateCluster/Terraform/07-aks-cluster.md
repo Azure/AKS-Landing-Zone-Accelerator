@@ -31,7 +31,7 @@ terraform plan
 terraform apply
 ```
 
-
+If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
 
 ## The Key Vault Add-On
 The AKS Key Vault Add-On is not currently supported for deployment with Terraform. Configure that separately on the cluster after it is deployed. 
@@ -39,8 +39,9 @@ The AKS Key Vault Add-On is not currently supported for deployment with Terrafor
 We start by creating some environment variables. The AKS cluster name can be found in the portal or in the variables file. The value is aks-<prefix value>. 
 
 ```
-AKSCLUSTERNAME=aksclustername
-AKSRESOURCEGROUP=aksrgname
+AKSCLUSTERNAME=<AKS cluster name>
+AKSRESOURCEGROUP=<AKS RG name>
+KV_NAME-<Key vault name>
 ```
 
 
@@ -103,7 +104,7 @@ az aks enable-addons --addons azure-keyvault-secrets-provider --name $AKSCLUSTER
 
 Update the permissions on the Key Vault to allow access from the newly created identity. The object-type can be key or secret. In this case it should be secret.
 ```
-az keyvault set-policy -n <keyvault name> --<object type>-permissions get --spn <client-id>
+az keyvault set-policy -n $KV_NAME --<object type>-permissions get --spn <client-id>
 ```
 
 ## Grant access from hub network to private link created for keyvault

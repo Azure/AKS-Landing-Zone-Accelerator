@@ -62,38 +62,6 @@ terraform plan
 terraform apply
 ```
 
-**Connecting into the server-dev-linux vm using SSH**
-
-When the server-dev-linux vm is provisioned with the inbound NSG rule allowing your local machine's public IP to connect to the it, navigate to the lower left hand of your screen and click on the Remote - SSH.
-
-![Open SSH icon in vs code](../media/remote-ssh.png)
-
-**Click connect to Host**
-
-![Connect to Host](../media/connect-to-host.png)
-
-**Connect to the remote host**
-
-Enter the username needed to login into the VM and the Public IP address of the server-dev-linux virtual machine.
-
-![Connect to remote host using pip](../media/connect-to-host-using-pip.png)
-
-**SSH VS Code Window**
-
-When the username and pip are entered a new SSH VS Code window will open. When the window appears, at the top select `Linux` as the platform for the remote host.
-
-![Linux Host](../media/linux-platform.png)
-
-**Verify Fingerprint**
-
-When the Fingerprint drop down appears, select continue.
-
-![Fingerprint](../media/fingerprint.png)
-
-**Successfully connecting to the remote host**
-
-When connected to the server-dev-linux vm using an SSH tunnel, in the bottom left hand corner you will see that you are connected to the VM using SSH and the Public IP address assigned to the server-dev-linux vm.
-
-![Successful connection](../media/ssh-connected.png)
+If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
 
 :arrow_forward: [Creation of Spoke Network & its respective Components](./05-network-lz.md)

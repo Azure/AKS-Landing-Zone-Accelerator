@@ -44,5 +44,6 @@ terraform plan
 terraform apply
 ```
 
+If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
 
 :arrow_forward: [Creation of AKS & enabling Addons](./07-aks-cluster.md)

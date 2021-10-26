@@ -24,6 +24,9 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
       enabled = true 
       gateway_id = var.gateway_id  
     }
+    azure_policy {
+      enabled = true
+    }
   }
 
   default_node_pool {

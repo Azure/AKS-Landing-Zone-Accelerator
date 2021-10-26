@@ -4,7 +4,41 @@ This application is provided by Microsoft Learning and is used as part of a self
 
 Because the infrastructure has been deployed in a secure manner, only the API server to the AKS Private Cluster is accessible from inside of the private network.  You will need to perform the majority of the application deployment from the Dev Jumpbox in the Hub VNET, connect via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well.
 
-## Connecting to the Bastion Host
+### Option 1: Connecting into the server-dev-linux vm using SSH and VS Code
+
+Since we will need to make changes to Kubernetes manifest files to deploy the workload, it is easier to use VS code to SSH into the linux vm. If you are unable to install VS code or the required Remote Development VS code package onto your installed VS code, feel free to use option 2 below. It will be more difficult to manipulate the manifest files using that option. When the server-dev-linux vm is provisioned with the inbound NSG rule allowing your local machine's public IP to connect to the it, navigate to the lower left hand of your screen and click on the Remote - SSH.
+
+![Open SSH icon in vs code](../media/remote-ssh.png)
+
+**Click connect to Host**
+
+![Connect to Host](../media/connect-to-host.png)
+
+**Connect to the remote host**
+
+Enter the username needed to login into the VM and the Public IP address of the server-dev-linux virtual machine.
+
+![Connect to remote host using pip](../media/connect-to-host-using-pip.PNG)
+
+**SSH VS Code Window**
+
+When the username and pip are entered a new SSH VS Code window will open. When the window appears, at the top select `Linux` as the platform for the remote host.
+
+![Linux Host](../media/linux-platform.png)
+
+**Verify Fingerprint**
+
+When the Fingerprint drop down appears, select continue.
+
+![Fingerprint](../media/fingerprint.png)
+
+**Successfully connecting to the remote host**
+
+When connected to the server-dev-linux vm using an SSH tunnel, in the bottom left hand corner you will see that you are connected to the VM using SSH and the Public IP address assigned to the server-dev-linux vm.
+
+![Successful connection](../media/ssh-connected.png)
+
+### Option 2: Connecting to the Bastion Host
 
 1. Log into Azure portal and find the virtual machine you created in the create hub network step. It should be in the *escs-hub-rg-dev* resource group if you used the default naming convention
 2. Click on **Connect** at the top of the screen and select **Bastion**
@@ -14,7 +48,7 @@ Because the infrastructure has been deployed in a secure manner, only the API se
 
 Once you connect ensure you permit the site to read the content of your clipboard
 
-Install the following applications:
+## Install the following applications:
 
 1. AZ CLIto 
 
@@ -33,13 +67,13 @@ sudo apt install docker.io -y
 4. [Helm]([Helm | Installing Helm](https://helm.sh/docs/intro/install/))
 
 Once connected, install the Azure CLI and log into Azure. You must be a member of the appropriate
-group (AKS App Dev Users, AKS Operations) to access the cluster. 
+group created or imported during step 3 (AKS App Dev Users, AKS Operations) to access the cluster. 
 
 ```
 az login -t <tenant id>
 ```
 
-**NOTE**: When you run az login, do not attempt to copy the code from the jump box as entering ctrl+c to copy it may cancel the login process. Instead, manually enter the code into https://www.microsoft.com/devicelogin page.
+**NOTE**: When you run az login using Bastion option, do not attempt to copy the code from the jump box as entering ctrl+c to copy it may cancel the login process. Instead, manually enter the code into https://www.microsoft.com/devicelogin page.
 
 ensure you are connected to the correct subscription
 
@@ -91,8 +125,9 @@ Since the Container registry can only be accessed via private link, we need to c
 Set your environmental variables
 
 ```
-AKSCLUSTERNAME=aks-aks
-AKSRESOURCEGROUP=aks-lz01-rg-aks
+AKSCLUSTERNAME=<AKS cluster name>
+AKSRESOURCEGROUP=<AKS cluster RG>
+KV_NAME = <Key vault name>
 ```
 
 Clone the required repos to the Dev Jumpbox:
@@ -126,7 +161,7 @@ sudo az acr login -n <acrname>
 Push the images into the container registry. Ensure you are logged in u
 
 ```
-sudo docker push <acrname>.azurecr.io/ratings-web:v1
+sudo docker push <acrname>.azurecr.io/ratings-api:v1
 sudo docker push <acrname>.azurecr.io/ratings-web:v1
 ```
 
@@ -135,7 +170,7 @@ sudo docker push <acrname>.azurecr.io/ratings-web:v1
 Create the secret in keyvault if you havent already. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chat in the next steps.
 
 ```
-az keyvault secret set --name mongodburi --vault-name <acr name> --value "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
+az keyvault secret set --name mongodburi --vault-name $KV_NAME --value "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
 ```
 
 ## Deploy the database into the cluster
@@ -172,12 +207,13 @@ helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=
 
 ## Deploy the workload into the cluster
 
-The steps below can be completed from the dev jumpbox since we are deploying a private cluster.
+The steps below must be completed from the linux vm since we are deploying a private cluster.
 
-On your computer, navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder. 
+Clone the repository into the linux vm and navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder. 
 
 ```
-cd ../../Apps/RatingsApp
+git clone https://github.com/Azure/Enterprise-Scale-for-AKS
+cd Enterprise-Scale-for-AKS/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp
 ```
 Log into the cluster on your computer
 
@@ -243,7 +279,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
    kubectl get ingress -n ratingsapp
    ```
 
-## Allow access to the application gateway via port 80 (Will be updated to https soon)
+### Optional: Allow access to the application gateway via port 80 
 
 1. Go to Azure portal and in the lz resource group you'll find the appgwSubnet NSG
 
@@ -259,7 +295,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 5. Click on **Add**
 
-## Check your deployed workload
+**Check your deployed workload**
 
 1. Get the ip address of your ingress controller
 
@@ -283,7 +319,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -ke
 
 openssl pkcs12 -export -out aks-ingress-tls.pfx -in aks-ingress-tls.crt -inkey aks-ingress-tls.key -passout pass:
 
-az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name <keyvault>
+az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name $KV_NAME
 ```
 3. Update the web-secret-class-provider.yaml with your keyvault name, user assigned identity for the keyvault add-on and the tenant ID. Deploy it.
 
