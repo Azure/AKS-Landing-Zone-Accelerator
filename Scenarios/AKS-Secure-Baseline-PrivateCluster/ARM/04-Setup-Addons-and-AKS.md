@@ -21,63 +21,63 @@ cd ../../../AKS-Deployment
 <br/>
 
 * Deploy **AKS**
-```json
+```bash
 az deployment group create --name AKS_Deployment --resource-group $AKS_RESOURCEGROUP --template-file aks-eslz-aks.template.json --parameters @aks-eslz-aks.parameters.json
 ```
 ## Enabling Addons
  > **Pod Identity** - Azure Active Directory pod-managed identities uses Kubernetes primitives to associate managed identities for Azure resources and identities in Azure Active Directory (AAD) with pods
 
 >> Pod Identities
-```json
+```bash
 az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
 ```
 >> Install the aks-preview extension
-```json
+```bash
 az extension add --name aks-preview
 ```
 
 >> Update the extension to make sure you have the latest version installed
-```json
+```bash
 az extension update --name aks-preview
 ```
 >> Use az aks get-credentials to sign in to your AKS cluster
-```json
+```bash
 az aks get-credentials --resource-group $AKS_RESOURCEGROUP --name aks-eslz1
 ```
 >> Update an existing AKS cluster with Azure CNI to include pod-managed identity.
-```json
+```bash
 az aks update -g $AKS_RESOURCEGROUP -n aks-eslz1 --enable-pod-identity
 ```
 > **Application Gateway Addon** - The Application Gateway Ingress Controller (AGIC) is a Kubernetes application, which makes it possible for Azure Kubernetes Service (AKS) customers to leverage Azure's native Application Gateway L7 load-balancer to expose cloud software to the Internet.
-```json
+```bash
 az aks enable-addons -n aks-eslz1 -g $AKS_RESOURCEGROUP -a ingress-appgw --appgw-id $(az network application-gateway show -n app_gateway -g $AKS_RESOURCEGROUP -o tsv --query "id")
 ```
 
 > **Enable CSI**
 
-```json
+```bash
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
 ```
 >> It takes a few minutes for the status to show Registered. Verify the registration status by using the az feature list command
-```json
+```bash
  az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-AzureKeyVaultSecretsProvider')].{Name:name,State:properties.state}"
  ```
 >> When ready, refresh the registration of the Microsoft.ContainerService resource provider by using the az provider register command
-```json
+```bash
  az provider register --namespace Microsoft.ContainerService
 ```
 
 >> Install the aks-preview extension
-```json
+```bash
  az extension add --name aks-preview
 ```
 >> Update the extension to make sure you have the latest version installed
-```json
+```bash
  az extension update --name aks-preview
 ```
 
 >> To upgrade an existing AKS cluster with Secrets Store CSI Driver capability, use the az aks enable-addons command with the addon azure-keyvault-secrets-provider
-```json
+```bash
  az aks enable-addons --addons azure-keyvault-secrets-provider --name aks-eslz1 --resource-group $AKS_RESOURCEGROUP
 ```
 
