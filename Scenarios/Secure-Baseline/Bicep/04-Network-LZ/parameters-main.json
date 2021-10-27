@@ -1,0 +1,83 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "rgName": {
+      "value": "ESLZ-SPOKE"
+    },
+    "vnetSpokeName": {
+      "value": "VNet-SPOKE"
+    },
+    "spokeVNETaddPrefixes": {
+      "value": [
+        "10.1.0.0/16"
+      ]
+    },
+    "spokeSubnets": {
+      "value": [
+        {
+          "name": "default",
+          "properties": {
+            "addressPrefix": "10.1.0.0/24"
+          }
+        },
+        {
+          "name": "AKS",
+          "properties": {
+            "addressPrefix": "10.1.1.0/24"
+          }
+        },
+        {
+          "name": "AppGWSubnet",
+          "properties": {
+            "addressPrefix": "10.1.2.0/27"
+          }
+        },
+        {
+          "name": "vmsubnet",
+          "properties": {
+            "addressPrefix": "10.1.3.0/24"
+          }
+        },
+        {
+          "name": "servicespe",
+          "properties": {
+            "addressPrefix": "10.1.4.0/24",
+            "privateEndpointNetworkPolicies": "Disabled"
+          }
+        }                          
+      ]
+    },
+    "rtAKSSubnetName": {
+      "value": "AKS-RT"
+    },
+    "firewallIP": {
+      "value": "10.0.1.4"
+    },
+    "vnetHubName": {
+      "value": "VNet-HUB"
+    },
+    "appGatewayName": {
+      "value": "APPGW"
+    },
+    "appGatewaySubnetName": {
+      "value": "AppGWSubnet"
+    },
+    "vnetHUBRGName": {
+      "value": "ESLZ-HUB"
+    },
+    "nsgAKSName": {
+      "value": "AKS-NSG"
+    },
+    "nsgAppGWName": {
+      "value": "APPGW-NSG"
+    },
+    "dhcpOptions": {
+      "value": {
+        "dnsServers": [
+          "10.0.1.4"
+        ]
+      }
+    }   
+  }
+}

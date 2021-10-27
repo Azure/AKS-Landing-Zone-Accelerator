@@ -1,1 +1,0 @@
-az deployment group create --resource-group '' --template-file $PSScriptRoot\acr.bicep
