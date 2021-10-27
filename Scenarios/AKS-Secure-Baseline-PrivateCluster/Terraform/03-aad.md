@@ -5,7 +5,7 @@ Depending on the needs of your organization, you may have a choice of existing g
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/03-AAD" folder, either "03-AAD-create" or "03-AAD-import"
 ```
-cd ./Scenarios/Secure-Baseline/Terraform/03-AAD-import
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/03-AAD-import
 ```
 
 In the "variables.tf" file, update the defaults to reflect the display names as needed to either match existing groups or create names that fit your requirements.  
@@ -23,6 +23,8 @@ terraform plan
 ```
 terraform apply
 ```
+
+If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
 
 ## Ensure you are part of the AAD group you just created or pointed to
 

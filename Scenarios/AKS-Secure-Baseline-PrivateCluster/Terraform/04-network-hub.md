@@ -19,7 +19,9 @@ To get started, you need to have done the following steps:
 When the Remote-SSH vs code extension is installed you should see the following icon in the lower left screen of your vs code windows
 ![Open SSH icon in vs code](../media/remote-ssh.png)
 
-To access and further lockdown the server-dev-linux vm change the `source_address_prefix` variable in the terraform.tfvars file to the public ip address that your local computer is using. The default value for `source_address_prefix` is `*` which means any inbound connection using port 22 will be able to hit the vm. To find the public IP address of your local machine use the following link : whatismypublicip.com
+To access and further lockdown the server-dev-linux vm change the `source_address_prefix` variable in the terraform.tfvars file to the public ip address that your local computer is using. The default value for `source_address_prefix` is `*` which means any inbound connection using port 22 will be able to hit the vm. To find the public IP address of your local machine use the following link : 
+
+**whatismypublicip.com**
 
 **Generate keys with ssh-keygen command**
 
@@ -37,7 +39,7 @@ ssh_key_settings = {
 }
 ```
 
-
+**NOTE**: If your id_rsa.pub ends with your region\yourUserName eg `NORTHAMERICA\username@DESKTOP-JQ99YPF`, you can remove thethe region and \ and save it to avoid having a Terraform error so your result should look similar to this `NORTHAMERICA\username@DESKTOP-JQ99YPF`.
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/04-Network-Hub" folder
 ```

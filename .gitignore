@@ -24,3 +24,7 @@
 *.tfvars
 *.hcl
 *.vs
+
+
+.vscode*
+
