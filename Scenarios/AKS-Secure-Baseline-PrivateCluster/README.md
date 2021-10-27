@@ -46,6 +46,6 @@ Pick one of the IaC options below and follow the instructions to deploy the AKS 
 
 :arrow_forward: [ARM](./ARM)
 
-:arrow_forward: [Terraform (still in review)](./Terraform)
+:arrow_forward: [Terraform](./Terraform)
 
 :arrow_forward: [Bicep](./Bicep)
