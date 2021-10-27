@@ -138,4 +138,3 @@ The next step is to update the host file of the virtual machine so that the *az 
     ```bash
     kubectl get nodes
     ```
-    ![Updated hosts file](../media/cluster-now-accessible.PNG)
