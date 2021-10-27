@@ -68,7 +68,7 @@ az aks enable-addons --addons azure-keyvault-secrets-provider --name $AKSCLUSTER
       }
     }
 
-Update the permissions on the Key Vault to allow access from the newly created identity. The object-type can be key or secret. In this case it should be secret.
+Update the permissions on the Key Vault to allow access from the newly created identity. The object-type can be key, certificate or secret. Run the command below for each of the object types.
 ```
 az keyvault set-policy -n <keyvault name> --<object type>-permissions get --spn <client-id>
 ```
