@@ -97,7 +97,7 @@ az keyvault secret set --name mongodburi --vault-name <keyvault name> --value "m
 
 ## Deploy the database into the cluster
 
-You can deploy the workload into the cluster using your local computer since this is not a private cluster. This is not a very secure option. For better security, use a private cluster. We have a private cluster scenario in this repository. We are using a non private cluster for training purposes and for cases where you may not want to use a private cluster. It is easier to perform the following steps using your local computer since, it would be easy to modify the deployment files as needed.
+You can deploy the workload into the cluster using the dev jumpbox or a computer that is on the private network since this is a private cluster. AKS Private Clusters provide better security and can only be accessed from inside your private network.
 
 Get the connection credentials for the cluster:
 
