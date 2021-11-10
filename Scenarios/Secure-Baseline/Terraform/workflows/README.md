@@ -58,9 +58,7 @@ When the service principal is created, it will output details about the service 
 
 ## Update Deployment files
 
-1. Clone your repo unto your local computer
-
-2. In the .devcontainer/deployInfrastructure.yml (the pipeline that deploys stages 4,5 and 6 in our deployment step) file, update the values for TF_VAR_hub_prefix, TF_VAR_lz_prefix, TF_VAR_prefix,TF_VAR_state_sa_name, TFSTATE_RG, STORAGEACCOUNTNAME and CONTAINERNAME and save the file. 
+In the *.github/workflows/deployInfrastructure.yml* (the pipeline that deploys stages 4,5 and 6 in our deployment step) file, update the values for TF_VAR_hub_prefix, TF_VAR_lz_prefix, TF_VAR_prefix,TF_VAR_state_sa_name, TFSTATE_RG, STORAGEACCOUNTNAME and CONTAINERNAME and save the file. 
 
    **IMPORTANT**: Make sure you update the value for the two jobs in the pipeline.
 
