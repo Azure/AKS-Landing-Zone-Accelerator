@@ -59,7 +59,7 @@ az network vnet subnet update --disable-private-endpoint-network-policies true -
 az deployment group create --name VirtualMachine --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
 ```
 
-* Optional Connectivity (via VS code)
+## Optional Connectivity to Virtual-Machine (Through Visual studio code)
 
 In case you're looking to connect to VM through VS code -
 As your hub network has been setup and you have a vm you can use to connect to the resources in the private cluster you are about to build.
