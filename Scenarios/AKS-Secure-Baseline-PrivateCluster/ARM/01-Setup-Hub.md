@@ -59,6 +59,8 @@ az network vnet subnet update --disable-private-endpoint-network-policies true -
 az deployment group create --name VirtualMachine --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
 ```
 
+#### We have deployed Bastion Connectivity for secured connectivity 
+
 ## Optional Connectivity to Virtual-Machine (Through Visual studio code)
 
 In case you're looking to connect to VM through VS code -
@@ -77,9 +79,11 @@ When the Remote-SSH vs code extension is installed you should see the following 
 ![https://github.com/Azure/Enterprise-Scale-for-AKS/blob/main/Scenarios/AKS-Secure-Baseline-PrivateCluster/media/remote-ssh.png](https://github.com/Azure/Enterprise-Scale-for-AKS/blob/main/Scenarios/AKS-Secure-Baseline-PrivateCluster/media/remote-ssh.png)
 
 
-To access and further lockdown the server-dev-linux vm change the `source_address_prefix` variable in the terraform.tfvars file to the public ip address that your local computer is using. The default value for `source_address_prefix` is `*` which means any inbound connection using port 22 will be able to hit the vm. To find the public IP address of your local machine use the following link : 
+Inbound NSG of the VM has to whitelist your Public IP in order to reach the VM , therefore please add Public IP of your local machine in the Inbound NSG for Port 22 (Linux) to have a SSH connection
 
 **whatismypublicip.com**
+
+## Use SSHKeys for Login in Place of Passwords
 
 **Generate keys with ssh-keygen command**
 
@@ -87,7 +91,46 @@ To generate your private key that will be installed on your local machine and th
 
 The following command will created an 4096 bit RSA key pair (must use at a minimum 2048 bit) : ***ssh-keygen -t rsa -b 4096***. 
 
-The private key will be placed in the `C:\Users\User\.ssh\id_rsa` directory on your local machine. The public key will be placed in the `~/.ssh/id_rsa.pub` directory. You will take the contents of the id_rsa.pub file, copy it & you can in place of the password if required.
+The private key will be placed in the `C:\Users\User\.ssh\id_rsa` directory on your local machine. The public key will be placed in the `~/.ssh/id_rsa.pub` directory. You will take the contents of the id_rsa.pub file, copy it & you can use this in place of the password if required.
+
+
+Comment the password parameters in VM deployment files
+
+Edit below in Template File
+```json
+"adminPassword": {
+        "type": "secureString",
+        "minLength": 12,
+        "metadata": {
+          "description": "Password for the Virtual Machine."
+        }
+```
+
+Comment below in Parameters file
+```json
+"adminPassword": {
+            "value": ""
+        }
+```
+
+
+In VM Template , please add the below
+
+```json
+"adminPublicKey": {
+      "type": "string",
+      "metadata": {
+        "description": "Specifies the SSH rsa public key file as a string. Use \"ssh-keygen -t rsa -b 2048\" to generate your SSH key pairs."
+      }
+```
+In VM Parameters , please edit the below
+
+```json
+"adminPublicKey": {
+      "value": ""
+    }
+```
+
 
 ### Next step
 
