@@ -59,7 +59,7 @@ az network vnet subnet update --disable-private-endpoint-network-policies true -
 az deployment group create --name VirtualMachine --resource-group $HUB_RESOURCEGROUP --template-file ../Templates/aks-eslz-virtualmachine.template.json --parameters @aks-eslz-virtualmachine.parameters.json
 ```
 
-#### We have deployed Bastion Connectivity for secured connectivity 
+**Note: We have deployed Bastion Connectivity for secured connectivity**
 
 ## Optional Connectivity to Virtual-Machine (Through Visual studio code)
 
