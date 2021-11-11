@@ -55,7 +55,7 @@ az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --
 
 <br/>
 
-1. Connecting to Private AKS via the Bastion (**Recommended** A secure approach to use)
+## 1. Connecting to Private AKS via the Bastion (**Recommended** A secure approach to use)
 * Update <ins>Network Policies for AzureManagementSubnet</ins>
 ```bash
 az network vnet subnet update --disable-private-endpoint-network-policies true --name AzureManagementSubnet --resource-group $HUB_RESOURCEGROUP --vnet-name vnet_hub_arm 
@@ -68,9 +68,9 @@ az deployment group create --name VirtualMachine --resource-group $HUB_RESOURCEG
 
 **Note: We have deployed Bastion Connectivity for secured connectivity**
 
-2. Connecting to Private AKS using Public IP VM through VS code (insecure approach , for training puurposes only)
+## 2. Connecting to Private AKS using Public IP VM through VS code (insecure approach , for training puurposes only)
 
-## Optional Connectivity to Virtual-Machine (Through Visual studio code)
+#### Optional Connectivity to Virtual-Machine (Through Visual studio code)
 
 In case you're looking to connect to VM through VS code -
 As your hub network has been setup and you have a vm you can use to connect to the resources in the private cluster you are about to build.
