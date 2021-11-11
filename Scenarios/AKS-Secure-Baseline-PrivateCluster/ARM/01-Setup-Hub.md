@@ -68,7 +68,7 @@ az deployment group create --name VirtualMachine --resource-group $HUB_RESOURCEG
 
 **Note: We have deployed Bastion Connectivity for secured connectivity**
 
-## 2. Connecting to Private AKS using Public IP VM through VS code (insecure approach , for training puurposes only)
+## 2. Connecting to Private AKS using Public IP VM through VS code (insecure approach , for training purposes only)
 
 #### Optional Connectivity to Virtual-Machine (Through Visual studio code)
 
