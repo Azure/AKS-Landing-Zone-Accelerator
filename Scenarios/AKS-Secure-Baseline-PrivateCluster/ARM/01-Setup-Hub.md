@@ -47,8 +47,15 @@ az deployment group create --name Bastion --resource-group $HUB_RESOURCEGROUP --
 
 
 ### Setup optional VM within the Hub virtual network to connect with Private Cluster
+#### We have described the methods listed below for your choice
+1. Connecting to Private AKS via the Bastion virtual machine (**A secure approach to use**)
+2. Connecting to Private AKS using Public IP VM through VS code (**insecure approach , for training purposes only**)
+
 **Optional Components** : For management of resources in private cluster, we're providing the sample for a VM creation
 
+<br/>
+
+1. Connecting to Private AKS via the Bastion (**Recommended** A secure approach to use)
 * Update <ins>Network Policies for AzureManagementSubnet</ins>
 ```bash
 az network vnet subnet update --disable-private-endpoint-network-policies true --name AzureManagementSubnet --resource-group $HUB_RESOURCEGROUP --vnet-name vnet_hub_arm 
@@ -60,6 +67,8 @@ az deployment group create --name VirtualMachine --resource-group $HUB_RESOURCEG
 ```
 
 **Note: We have deployed Bastion Connectivity for secured connectivity**
+
+2. Connecting to Private AKS using Public IP VM through VS code (insecure approach , for training puurposes only)
 
 ## Optional Connectivity to Virtual-Machine (Through Visual studio code)
 
@@ -78,10 +87,13 @@ When the Remote-SSH vs code extension is installed you should see the following 
 
 ![https://github.com/Azure/Enterprise-Scale-for-AKS/blob/main/Scenarios/AKS-Secure-Baseline-PrivateCluster/media/remote-ssh.png](https://github.com/Azure/Enterprise-Scale-for-AKS/blob/main/Scenarios/AKS-Secure-Baseline-PrivateCluster/media/remote-ssh.png)
 
+You also have to attach Public IP to your Virtual Machine which can be used to establish connectivity between your machine & Public VM deployed
 
 Inbound NSG of the VM has to whitelist your Public IP in order to reach the VM , therefore please add Public IP of your local machine in the Inbound NSG for Port 22 (Linux) to have a SSH connection
 
 **whatismypublicip.com**
+
+---
 
 ## Use SSHKeys for Login in Place of Passwords
 
