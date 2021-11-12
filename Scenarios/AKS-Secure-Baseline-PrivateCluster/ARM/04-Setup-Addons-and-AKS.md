@@ -140,4 +140,4 @@ The next step is to update the host file of the virtual machine so that the *az 
     ```
 ---
 ## Deploy Workload
-:arrow_forward: [Workload](https://github.com/Azure/Enterprise-Scale-for-AKS/blob/main/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/08-workload.md)
+:arrow_forward: [Workload Deployment](https://github.com/Azure/Enterprise-Scale-for-AKS/blob/main/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/08-workload.md)
