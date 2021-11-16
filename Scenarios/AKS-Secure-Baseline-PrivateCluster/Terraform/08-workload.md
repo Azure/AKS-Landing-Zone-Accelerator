@@ -50,7 +50,7 @@ Once you connect ensure you permit the site to read the content of your clipboar
 
 ## Install the following applications:
 
-1. AZ CLIto 
+1. AZ CLI 
 
 ```
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -111,7 +111,7 @@ Since the Container registry can only be accessed via private link, we need to c
 
 ## Provide yourself Access to Create Secrets in your Key vault
 
-1. Go to the Azure portal and find your container registry. This should be in the landing zone resource group (escs-lz01-rg for example)
+1. Go to the Azure portal and find your Key Vault. This should be in the landing zone resource group (escs-lz01-rg for example)
 2. You should see your pod-identity-example managed identity  as well as the azurekeyvaultsecrets identity. The pod identity will provide pods access to the pull secrets from the keyvault. The azurekeyvaultsecrets identity will be used by the keyvault driver. If either of these are missing, perhaps you are missing a step. 
 3. Click on **Access policies** under **Settings** in the left blade![add access policy](../media/add-access-policy-acr.png)
 4. Select the required access policies ![add access policy](../media/add-access-policy-acr2.png)
@@ -127,7 +127,7 @@ Set your environmental variables
 ```
 AKSCLUSTERNAME=<AKS cluster name>
 AKSRESOURCEGROUP=<AKS cluster RG>
-KV_NAME = <Key vault name>
+KV_NAME=<Key vault name>
 ```
 
 Clone the required repos to the Dev Jumpbox:

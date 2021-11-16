@@ -41,7 +41,7 @@ We start by creating some environment variables. The AKS cluster name can be fou
 ```
 AKSCLUSTERNAME=<AKS cluster name>
 AKSRESOURCEGROUP=<AKS RG name>
-KV_NAME-<Key vault name>
+KV_NAME=<Key vault name>
 ```
 
 
