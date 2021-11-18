@@ -20,6 +20,16 @@ Review "parameters-updateUDR.json" and "parameters-deploy-vm.json" to update any
 
 Note: "parameters-deploy-vm.json" file contains public key value with a default value. We recommend to use your own ssh key pair for troubleshooting the cluster through the VM.
 
+
+**Generate keys with ssh-keygen command**
+
+To generate your private key that will be installed on your local machine and the public key to be placed of the server-dev-linux vm use the ssh-keygen command running on an elevated shell (admin shell).
+
+The following command will created an 4096 bit RSA key pair (must use at a minimum 2048 bit) :  
+```
+ssh-keygen -t rsa -b 4096
+```
+
 Once the files are updated, deploy using az cli or Az PowerShell.
 
 # [CLI](#tab/CLI)
