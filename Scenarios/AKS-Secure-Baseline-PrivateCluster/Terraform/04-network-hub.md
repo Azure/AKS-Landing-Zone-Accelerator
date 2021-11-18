@@ -27,7 +27,10 @@ To access and further lockdown the server-dev-linux vm change the `source_addres
 
 To generate your private key that will be installed on your local machine and the public key to be placed of the server-dev-linux vm use the ssh-keygen command running on an elevated shell (admin shell).
 
-The following command will created an 4096 bit RSA key pair (must use at a minimum 2048 bit) : ***ssh-keygen -t rsa -b 4096***. 
+The following command will created an 4096 bit RSA key pair (must use at a minimum 2048 bit) :  
+```
+ssh-keygen -t rsa -b 4096
+```
 
 The private key will be placed in the `C:\Users\User\.ssh\id_rsa` directory on your local machine. The public key will be placed in the `~/.ssh/id_rsa.pub` directory. You will take the contents of the id_rsa.pub file, copy it, and paste the value inside the the ssh_key_settings map located in the terraform.tfvars file.
 example :
