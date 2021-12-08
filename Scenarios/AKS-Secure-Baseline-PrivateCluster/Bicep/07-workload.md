@@ -226,6 +226,8 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 ### Create the self signed certificate using openssl
 
 Create the self signed certificate using openssl. Note that these steps need to be created by a computer within the hub or spoke network since the Key vault is private. Head back to your jump box and enter these commands.
+   
+*IMPORTANT* make sure you replace the <FQDN of App Gateway> in the command below with the FQDN you just created
 
 ```bash
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<FQDN of App Gateway>/O=AKS-INGRESS-TLS"
