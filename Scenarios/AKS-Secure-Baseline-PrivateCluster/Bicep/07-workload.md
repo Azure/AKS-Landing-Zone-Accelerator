@@ -211,7 +211,7 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
 ### Creating Public IP address for your Application Gateway
 
-1. Find your application gateway in your landing zone resource group and click on it. By default is has the name *lzappgw*.
+1. Find your application gateway in your landing zone resource group and click on it. By default it should be in the spoke or landingzone resource group.
 
 2. Click on the *Frontend public IP address* 
 
