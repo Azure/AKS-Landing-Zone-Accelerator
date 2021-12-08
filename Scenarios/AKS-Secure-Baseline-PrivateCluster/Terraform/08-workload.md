@@ -93,15 +93,15 @@ Since the Container registry can only be accessed via private link, we need to c
 
 1. Go to Azure portal
 
-2. Find the Private DNS zone created for keyvault. This should be in the landing zone resource group (escs-lz01-rg for example)
+2. Find the Private DNS zone created for acr. This should be in the landing zone resource group (escs-lz01-rg for example)
 
-   ![Location of private link for keyvault](../media/acr-privatelink-location.png)
+   ![Location of private link for acr](../media/acr-privatelink-location.png)
 
 3. Click on **Virtual network links** in the left blade under **Settings**
 
 4. Click on **+ Add** in the in the top left of the next screen
 
-5. enter a name for the link eg *hub_to_kv*
+5. enter a name for the link eg *hub_to_acr*
 
 6. Select the hub virtual network for the **Virtual network** field
 
