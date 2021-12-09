@@ -62,7 +62,9 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
   params: {
-    aadGroupdIds: aadGroupdIds
+    aadGroupdIds: [
+      aksadminaccessprincipalId
+    ]
     clusterName: clusterName
     logworkspaceid: akslaworkspace.outputs.laworkspaceId
     privateDNSZoneId: pvtdnsAKSZone.id

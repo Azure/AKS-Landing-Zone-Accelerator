@@ -37,7 +37,11 @@ When ready, refresh the registration of the *Microsoft.ContainerService* resourc
 az provider register --namespace Microsoft.ContainerService
 ```
 
-Review "parameters-main.json" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell
+Review "parameters-main.json" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell.
+
+There are two groups you need to change in parameters-main.json: 
+    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId.
+    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksadminaccessprincipalId.
 
 # [CLI](#tab/CLI)
 

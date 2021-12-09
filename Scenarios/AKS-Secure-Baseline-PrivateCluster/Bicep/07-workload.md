@@ -245,7 +245,7 @@ az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault
 
 Now that you have created the certificate in  Key vault you can switch back to your computer and redeploy the workload using HTTPS
 
-1. Update the web-secret-class-provider.yaml with your keyvault name, user assigned identity for the keyvault add-on, the tenant ID and the user assigned identity. Deploy it.
+1. Update the web-secret-provider-class.yaml with your keyvault name, user assigned identity for the keyvault add-on, the tenant ID and the user assigned identity. Deploy it.
 
    ```bash
    kubectl apply -f web-secret-provider-class.yaml -n ratingsapp

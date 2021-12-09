@@ -5,11 +5,6 @@
     "rgName": {
       "value": "ESLZ-SPOKE"
     },
-    "aadGroupdIds": {
-      "value": [
-        "e822cf30-7f5e-4968-a215-5cc48d538580"
-      ]
-    },
     "clusterName": {
       "value": "eslzakscluster"
     },
