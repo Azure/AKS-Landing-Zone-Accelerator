@@ -1,7 +1,6 @@
 targetScope = 'subscription'
 
 param rgName string
-param aadGroupdIds array
 param clusterName string
 param akslaWorkspaceName string
 param vnetName string
@@ -62,7 +61,9 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
   params: {
-    aadGroupdIds: aadGroupdIds
+    aadGroupdIds: [
+      aksadminaccessprincipalId
+    ]
     clusterName: clusterName
     logworkspaceid: akslaworkspace.outputs.laworkspaceId
     privateDNSZoneId: pvtdnsAKSZone.id

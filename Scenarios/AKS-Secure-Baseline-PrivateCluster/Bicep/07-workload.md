@@ -91,6 +91,8 @@ sudo docker push <acrname>.azurecr.io/ratings-web:v1
 
 Create the secret in keyvault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps.
 
+**Note:** Passwords with special characters in a connection string might break the connection because of wrong encoding.
+
 ```bash
 az keyvault secret set --name mongodburi --vault-name <keyvault name> --value "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
 ```
@@ -127,25 +129,48 @@ helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=
 
 ## Deploy the workload into the cluster
 
-Navigate to "/Scenarios/Secure-Baseline/Apps/RatingsApp" folder.
+In this section you will be manipulating some deployment yaml files, replacing some entries related with Azure Key Vault, Azure Container Registry and Azure Active Directory references like ClientID, TenantID.
 
-Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vault name, Client ID for the AKS Key Vault Add-on and the Tenant ID for the subscription.  
+All files will be under the following folder: "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp"
 
-> If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
+You will have to carefully update the following files:
 
-1. Deploy the edited yaml file.
+- [api-secret-provider-class.yaml](../Apps/RatingsApp/api-secret-provider-class.yaml)
+- [1-ratings-api-deployment.yaml](../Apps/RatingsApp/1-ratings-api-deployment.yaml)
+- [3a-ratings-web-deployment.yaml](../Apps/RatingsApp/3a-ratings-web-deployment.yaml)
+- [4-ratings-web-service.yaml](../Apps/RatingsApp/4-ratings-web-service.yaml)
 
+### Deploy workload
+
+Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder.
+
+1. Updading **api-secret-provider-class.yaml**
+
+   Update the **"api-secret-provider-class.yaml"** file to reflect the correct value for the following items:
+   
+   - Key Vault name
+   - Client ID for the AKS Key Vault Add-on
+   - Tenant ID for the subscription.
+   
+   > If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
+   
+   Deploy the edited yaml file.
+   
    ```bash
    kubectl apply -f api-secret-provider-class.yaml -n ratingsapp
    ```
 
-2. Update the "1-ratings-api-deployment.yaml" file to reflect the correct name for the Azure Container Registry.  Deploy the file.
+2. Updading **1-ratings-api-deployment.yaml**
+
+   Update the **"1-ratings-api-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
    ```bash
    kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
    ```
 
-3. Ensure the ratings-api deployment was successful. If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity.
+3. Ensure the ratings-api deployment was successful. 
+
+   If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity.
 
    You can troubleshoot container creation issues by running
 
@@ -154,13 +179,17 @@ Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vaul
    kubectl logs <pod name> -n ratingsapp
    ```
 
-4. Deploy the "2-ratings-api-service.yaml" file.
+4. Updading **2-ratings-api-service.yaml**
+
+   Deploy the "2-ratings-api-service.yaml" file.
 
    ```bash
    kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp
    ```
 
-5. Update the "3a-ratings-web-deployment.yaml" file to reflect the correct name for the Azure Container Registry. Deploy the file.
+5. Updading **3a-ratings-web-deployment.yaml**
+
+   Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
    ```bash
    kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp
@@ -172,11 +201,11 @@ Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vaul
    kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp
    ```
 
-## (Optional) Deploy the Ingress using without support for HTTPS
+## **(Optional)** Deploy the Ingress without support for HTTPS
 
 This step is optional. If you would like to go straight to using https which is the secure option, skip this section and go straight to the **Update the Ingress to support HTTPS traffic** section.
 
-1. Deploy the "5a-ratings-web-ingress.yaml" file.
+1. Deploy the **"5a-ratings-web-ingress.yaml"** file.
 
    ```bash
    kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp
@@ -200,9 +229,7 @@ This step is optional. If you would like to go straight to using https which is 
 
    ![deployed workload](../media/deployed-workload.png)
 
-After you are done testing the workload, go back to the NSG and disable the inbound rule you just created.
-
-## Update the Ingress to support HTTPS traffic
+## Deploy the Ingress with HTTPS support
 
 A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway.
 
@@ -241,11 +268,24 @@ Create the secret in Key vault
 az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name <KeyVault Name>
 ```
 
-### Redeploy the workload using HTTPS
+### **Redeploy the workload using HTTPS**
 
-Now that you have created the certificate in  Key vault you can switch back to your computer and redeploy the workload using HTTPS
+Now that you have created the certificate in Key vault you can switch back to your computer and redeploy the workload using HTTPS
 
-1. Update the web-secret-class-provider.yaml with your keyvault name, user assigned identity for the keyvault add-on, the tenant ID and the user assigned identity. Deploy it.
+You will have to carefully update the following files:
+
+- [web-secret-provider-class.yaml](../Apps/RatingsApp/web-secret-provider-class.yaml)
+- [1-ratings-api-deployment.yaml](../Apps/RatingsApp/1-ratings-api-deployment.yaml)
+- [3b-ratings-web-deployment.yaml](../Apps/RatingsApp/3b-ratings-web-deployment.yaml)
+- [5-https-ratings-web-ingress.yaml](../Apps/RatingsApp/5-https-ratings-web-ingress.yaml)
+
+1. Updating **web-secret-provider-class.yaml**
+
+   Update the **"web-secret-provider-class.yaml"** file to reflect the correct value for the following items:
+   
+   - Key Vault name
+   - Client ID for the AKS Key Vault Add-on
+   - Tenant ID for the subscription.
 
    ```bash
    kubectl apply -f web-secret-provider-class.yaml -n ratingsapp
@@ -257,17 +297,23 @@ Now that you have created the certificate in  Key vault you can switch back to y
     kubectl delete -f 3a-ratings-web-deployment.yaml -n ratingsapp
    ```
 
-   Update the  "3b-ratings-web-deployment.yaml" file with the ACR name and redeploy the web application using the this file, which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
+3. Updating **3b-ratings-web-deployment.yaml**
+
+   Update the **"3b-ratings-web-deployment.yaml"** file with the ACR name and redeploy the web application using the this file, which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
 
    ```bash
    kubectl apply -f 3b-ratings-web-deployment.yaml -n ratingsapp
    ```
 
-   Update the "5-https-ratings-web-ingress.yaml" file to use the FQDN that matches the certificate and application gateway public IP address.  Delete the previous ingress and redeploy the ingress with this file. 
+4. If you have deployed the optional HTTP version you must delete the previous Ingress resource
 
    ```bash
    kubectl delete -f 5-http-ratings-web-ingress.yaml -n ratingsapp
    ```
+
+5. Updating **5-https-ratings-web-ingress.yaml**
+   
+   Update the **"5-https-ratings-web-ingress.yaml"** file to use the **FQDN that matches the certificate** and application gateway public IP address. Deploy the https ingress.
 
    ```bash
    kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp 

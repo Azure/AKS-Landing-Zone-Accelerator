@@ -7,9 +7,11 @@ param vnetName string
 param subnetName string
 param privateDNSZoneACRName string
 param privateDNSZoneKVName string
+param acrName string = 'eslzacr${uniqueString('acrvws',utcNow('u'))}'
+param keyvaultName string = 'eslz-kv-${uniqueString('acrvws',utcNow('u'))}'
 
-var acrName = 'eslzacr${uniqueString(rgName, deployment().name)}'
-var keyvaultName = 'eslz-kv-${uniqueString(rgName, deployment().name)}'
+//var acrName = 'eslzacr${uniqueString(rgName, deployment().name)}'
+//var keyvaultName = 'eslz-kv-${uniqueString(rgName, deployment().name)}'
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
