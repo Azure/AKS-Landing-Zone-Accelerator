@@ -1,7 +1,6 @@
 targetScope = 'subscription'
 
 param rgName string
-param aadGroupdIds array
 param clusterName string
 param akslaWorkspaceName string
 param vnetName string
