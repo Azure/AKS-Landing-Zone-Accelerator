@@ -37,6 +37,24 @@ When ready, refresh the registration of the *Microsoft.ContainerService* resourc
 az provider register --namespace Microsoft.ContainerService
 ```
 
+There are a few additional Azure Providers and features that needs to be registered as well. Follow the same steps above for the following providers and features:
+
+- Microsoft.ContainerService
+- EnablePodIdentityPreview
+- AKS-AzureKeyVaultSecretsProvider
+- Microsoft.OperationsManagement
+- Microsoft.OperationalInsights
+
+Here is a list with all required providers or features to be registered:
+
+```bash
+az provider register --namespace Microsoft.ContainerService
+az provider register --namespace Microsoft.OperationsManagement
+az provider register --namespace Microsoft.OperationalInsights
+az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
+az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
+```
+
 Review "parameters-main.json" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell.
 
 There are two groups you need to change in parameters-main.json: 
