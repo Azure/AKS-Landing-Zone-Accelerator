@@ -19,7 +19,7 @@ az ad group create --display-name $aksops --mail-nickname $aksops
 ```
 
 # [PowerShell](#tab/PowerShell)
-To run the command below, you will need to install the New-AzADGroup cmdlet. More details can be found [here](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.0.0).
+Running the command to create the new AAD groups requires the New-AzADGroup cmdlet. More details can be found [here](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.0.0).
 
 Install New-AzADGroup cmdlet
 ```azurepowershell
