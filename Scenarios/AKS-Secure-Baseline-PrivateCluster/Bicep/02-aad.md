@@ -27,7 +27,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 ```
 
-Run the command below to create two new AAD groups in your tenant. These groups will be given permission to access your cluster. If you already have groups you would like to use for this, you can skip this step. You will need to be a part of the group to be able to access the cluster.
+Run the command below to create two new AAD groups in your tenant. 
 
 ```azurepowershell
 ./ad_groups.ps1 -appdevs <App Dev Group> -aksops <AKS Operations Team>
