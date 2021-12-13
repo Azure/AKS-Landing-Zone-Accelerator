@@ -19,6 +19,15 @@ az ad group create --display-name $aksops --mail-nickname $aksops
 ```
 
 # [PowerShell](#tab/PowerShell)
+Running the command to create the new AAD groups requires the New-AzADGroup cmdlet. More details can be found [here](https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.0.0).
+
+Install New-AzADGroup cmdlet
+```azurepowershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+```
+
+Run the command below to create two new AAD groups in your tenant. 
 
 ```azurepowershell
 ./ad_groups.ps1 -appdevs <App Dev Group> -aksops <AKS Operations Team>
