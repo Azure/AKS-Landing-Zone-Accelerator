@@ -11,8 +11,8 @@ Use az cli or Az PowerShell to create the AD groups. Replace the AAD group names
 # [CLI](#tab/CLI)
 
 ```azurecli
-appdevs=''
-aksops=''
+appdevs=<AAD group name>
+aksops=<AAD group name>
 
 az ad group create --display-name $appdevs --mail-nickname $appdevs
 az ad group create --display-name $aksops --mail-nickname $aksops
