@@ -90,7 +90,7 @@ module acraksaccess 'modules/Identity/acrrole.bicep' = {
   }
 }
 
-module aksPvtNetworkContrib 'modules/Identity/networkcontributorRole.bicep' = {
+module aksPvtNetworkContrib 'modules/Identity/networkcontributorrole.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksPvtNetworkContrib'
   params: {
