@@ -6,7 +6,7 @@ Depending on the needs of your organization, you may have a choice of existing g
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-AAD" folder
 
-Use az cli or Az PowerShell to create the AD groups
+Use az cli or Az PowerShell to create the AD groups. Replace the AAD group names below with the name of the AAD groups you want to create eg AKS_ES_dev, AKS_ES_ops. There should be no space in the names.
 
 # [CLI](#tab/CLI)
 
