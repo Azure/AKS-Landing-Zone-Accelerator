@@ -2,3 +2,4 @@ access_key = "XXXXXX"
 state_sa_name = <storage account name>
 container_name = "akscs"
 prefix = "escs"
+private_dns_zone_name = "privatelink.XXXXXXXXX.azmk8s.io"
