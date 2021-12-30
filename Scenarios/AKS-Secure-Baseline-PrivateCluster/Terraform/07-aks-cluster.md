@@ -42,6 +42,7 @@ We start by creating some environment variables. The AKS cluster name can be fou
 AKSCLUSTERNAME=<AKS cluster name>
 AKSRESOURCEGROUP=<AKS RG name>
 KV_NAME=<Key vault name>
+KV_RESOURCEGROUP=<KV RG name>
 ```
 
 
@@ -104,7 +105,7 @@ az aks enable-addons --addons azure-keyvault-secrets-provider --name $AKSCLUSTER
 
 Update the permissions on the Key Vault to allow access from the newly created identity. The object-type can be certificate, key or secret. In this case, it should be all 3. Run the command below 3 times, one for each of the options.
 ```
-az keyvault set-policy -n $KV_NAME --<object type>-permissions get --spn <client-id>
+az keyvault set-policy -n $KV_NAME -g $KV_RESOURCEGROUP --<object type>-permissions get --spn <client-id>
 ```
 
 ## Grant access from hub network to private link created for keyvault
