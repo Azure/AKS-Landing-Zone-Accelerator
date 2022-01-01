@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 # Local .terraform directories
 **/.terraform/*
-=======
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -21,12 +19,10 @@
 # Local .terraform directories
 **/.terraform/*
 .terraform
->>>>>>> a0faf4aeaab8d8e6bfc41fc3bc241b759defde01
 
 # .tfstate files
 *.tfstate
 *.tfstate.*
-<<<<<<< HEAD
 
 # Crash log files
 crash.log
@@ -50,7 +46,6 @@ override.tf.json
 
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
-=======
 *.tfvars
 *.hcl
 *.vs
@@ -58,4 +53,3 @@ override.tf.json
 
 .vscode*
 
->>>>>>> a0faf4aeaab8d8e6bfc41fc3bc241b759defde01
