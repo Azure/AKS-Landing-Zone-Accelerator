@@ -1,5 +1,7 @@
 # AKS Landing Zone Accelerator
 
+**Enterprise-scale for AKS has now been renamed AKS Landing Zone Accelerator. Please bare with us as we complete the transition. If you find any inconsistencies in the repository regarding the name change, please submit an issue to help us make the necessary improvments.**
+
 Enterprise-scale is an architectural approach and a reference implementation that enables effective construction and operationalization of landing zones on Azure, at scale. This approach aligns with the Azure roadmap and the Cloud Adoption Framework for Azure.
 
 Enterprise-scale for AKS represents the strategic design path and target technical state for an Azure Kubernetes Service (AKS) deployment. This solution provides an architectural approach and reference implementation to prepare landing zone subscriptions for a scalable Azure Kubernetes Service (AKS) cluster. For the architectural guidance, check out [Enterprise-scale for AKS](https://docs.microsoft.com/azure/cloud-adoption-framework/scenarios/aks/enterprise-scale-landing-zone) in Microsoft Docs.
@@ -60,5 +62,3 @@ Pick one of the scenarios below to get started on a reference implementation
 :arrow_forward: [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction#getting-started)
 
 :arrow_forward: [CAF Terraform landingzones](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline)
-
-> > > > > > > a0faf4aeaab8d8e6bfc41fc3bc241b759defde01
