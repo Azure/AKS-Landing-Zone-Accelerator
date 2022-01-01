@@ -13,13 +13,11 @@ Navigate to "/Scenarios/Secure-Baseline/Terraform/07-AKS-cluster" folder
 cd ../07-AKS-cluster 
 ```
 
-This deployment will need to reference data objects from the Hub deployment and will need access to the pre-existing state file, update the variables as needed.  This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. 
+This deployment will need to reference data objects from the Landing Zone and AKS-Supporting deployments and will need access to the pre-existing state files, update the variables as needed.  This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. 
 
 The default deployment of the cluster uses Azure CNI as the networking plug-in. If Kubenet is desired it can be changed in the variable.tf file. 
 
 Once again, A sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
-
-
 
 Once the files are updated, deploy using Terraform Init, Plan and Apply. 
 

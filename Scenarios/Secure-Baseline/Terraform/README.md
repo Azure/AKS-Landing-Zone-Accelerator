@@ -22,6 +22,11 @@ This section is organized using folders that match the steps outlined below. Mak
 7. [Creation of AKS & enabling Addons](./07-aks-cluster.md)
 8. [Deploy a Basic Workload](./08-workload.md)
 
+## Deploying AKS into Existing Infrastructure
+The steps above assume that you will be creating the Hub and Spoke (Landing Zone) Network and supporting components using the code provided, where each step refers to state file information from the previous steps.  
+
+To deploy AKS into an existing network, use the [AKS for Existing Cluster](./07-AKS-cluster_existingInfra) folder.  Update the "existinginfra.variables.tf" file to reference the names and resource IDs of the pre-existing infrastructure. 
+
 ## Next Steps
 
 You can deploy the resources in one of two ways. 
