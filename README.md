@@ -1,6 +1,6 @@
 # AKS Landing Zone Accelerator
 
-**Enterprise-scale for AKS has now been renamed AKS Landing Zone Accelerator. Please bare with us as we complete the transition. If you find any inconsistencies in the repository regarding the name change, please submit an issue to help us make the necessary improvments.**
+**Enterprise-scale for AKS has now been renamed AKS Landing Zone Accelerator. Please bare with us as we complete the transition. If you find any inconsistencies in the repository regarding the name change, please submit an issue to help us make the necessary improvements.**
 
 Enterprise-scale is an architectural approach and a reference implementation that enables effective construction and operationalization of landing zones on Azure, at scale. This approach aligns with the Azure roadmap and the Cloud Adoption Framework for Azure.
 
