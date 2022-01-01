@@ -1,0 +1,64 @@
+cd Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep
+
+# AZ CLI
+# 03 Network HUB
+az deployment sub create -n "ESLZ-HUB-AKS" -l "CentralUS" -f 03-Network-Hub/main.bicep -p 03-Network-Hub/parameters-main.json
+az deployment sub create -n "ESLZ-AKS-HUB-UDR" -l "CentralUS" -f 03-Network-Hub/updateUDR.bicep -p 03-Network-Hub/parameters-updateUDR.json
+az deployment sub create -n "ESLZ-HUB-VM" -l "CentralUS" -f 03-Network-Hub/deploy-vm.bicep -p 03-Network-Hub/parameters-deploy-vm.json
+
+# 04 Network LZ
+az deployment sub create -n "ESLZ-Spoke-AKS" -l "CentralUS" -f 04-Network-LZ/main.bicep -p 04-Network-LZ/parameters-main.json
+# Wait until App Gateway get deployed. It takes a few mins to complete. at least 10 min
+az deployment sub create -n "ESLZ-AKS-SPOKE-UDRNSG" -l "CentralUS" -f 04-Network-LZ/updateUDR-NSG.bicep -p 04-Network-LZ/parameters-updateUDR-NSG.json
+
+# 05 AKS Supporting Infrastructure
+az deployment sub create -n "ESLZ-AKS-Supporting" -l "CentralUS" -f 05-AKS-supporting/main.bicep -p 05-AKS-supporting/parameters-main.json
+
+# 06 AKS Cluster Deployment
+acrName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.acrName.value -o tsv)
+keyVaultName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv)
+
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 06-AKS-cluster/main.bicep -p 06-AKS-cluster/parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName
+
+# Clean Up
+# Delete Resource Groups
+az group delete -n ESLZ-HUB -y
+az group delete -n ESLZ-SPOKE -y
+# Delete Deployments
+az deployment sub delete -n ESLZ-HUB-AKS
+az deployment sub delete -n ESLZ-AKS-HUB-UDR
+az deployment sub delete -n ESLZ-HUB-VM
+az deployment sub delete -n ESLZ-Spoke-AKS
+az deployment sub delete -n ESLZ-AKS-SPOKE-UDRNSG
+az deployment sub delete -n ESLZ-AKS-Supporting
+az deployment sub delete -n ESLZ-AKS-CLUSTER
+
+
+# AZ PowerShell
+# 03 Network HUB
+New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\main.bicep -TemplateParameterFile .\03-Network-Hub\parameters-main.json -Location "CentralUS" -Name ESLZ-HUB-AKS
+New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\updateUDR.bicep -TemplateParameterFile .\03-Network-Hub\parameters-updateUDR.json -Location "CentralUS" -Name ESLZ-AKS-HUB-UDR
+New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\deploy-vm.bicep -TemplateParameterFile .\03-Network-Hub\parameters-deploy-vm.json -Location "CentralUS" -Name ESLZ-HUB-VM
+
+# 04 Network LZ
+New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\main.bicep -TemplateParameterFile .\04-Network-LZ\parameters-main.json -Location "CentralUS" -Name ESLZ-Spoke-AKS
+New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\updateUDR-NSG.bicep -TemplateParameterFile .\04-Network-LZ\parameters-updateUDR-NSG.json -Location "CentralUS" -Name ESLZ-AKS-SPOKE-UDRNSG
+
+# 05 AKS Supporting Infrastructure
+New-AzSubscriptionDeployment -TemplateFile .\05-AKS-supporting\main.bicep -TemplateParameterFile .\05-AKS-supporting\parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-Supporting
+
+# 06 AKS Cluster Deployment
+New-AzSubscriptionDeployment -TemplateFile .\06-AKS-cluster\main.bicep -TemplateParameterFile .\06-AKS-cluster\parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-CLUSTER
+
+# Clean Up
+# Delete Resource Groups
+Remove-AzResourceGroup -Name ESLZ-HUB
+Remove-AzResourceGroup -Name ESLZ-SPOKE
+# Delete Deployments
+Remove-AzSubscriptionDeployment -Name ESLZ-HUB-AKS
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-HUB-UDR
+Remove-AzSubscriptionDeployment -Name ESLZ-HUB-VM
+Remove-AzSubscriptionDeployment -Name ESLZ-Spoke-AKS
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-SPOKE-UDRNSG
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-Supporting
+Remove-AzSubscriptionDeployment -Name ESLZ-AKS-CLUSTER

@@ -1,0 +1,41 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "laName": {
+            "type": "string",
+            "metadata": {
+                "description": "Log Analytics name"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2020-06-01",
+            "name": "pid-526622e4-fc47-11eb-9a03-0242ac130003",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+            "mode": "Incremental",
+            "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "resources": []
+            }
+            }
+        },
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2015-11-01-preview",
+            "name": "[parameters('LaName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "name": "PerGB2018"
+                },
+                "retentionInDays": 30
+            }
+        }
+    ],
+    "outputs": {}
+}

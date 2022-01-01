@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Scenarios",
+    "\\Scenarios\\AKS-Secure-Baseline-Modular",
+    "\\Scenarios\\AKS-Secure-Baseline-Modular\\ARM",
+    "\\Scenarios\\AKS-Secure-Baseline-Modular\\ARM\\Infrastructure-Deployment",
+    "\\Scenarios\\AKS-Secure-Baseline-Modular\\ARM\\Infrastructure-Deployment\\Hub",
+    "\\Scenarios\\AKS-Secure-Baseline-Modular\\ARM\\Infrastructure-Deployment\\Shared Components",
+    "\\Scenarios\\AKS-Secure-Baseline-Modular\\ARM\\Infrastructure-Deployment\\Spoke"
+  ],
+  "SelectedNode": "\\Scenarios\\AKS-Secure-Baseline-Modular\\ARM\\Infrastructure-Deployment\\Shared Components",
+  "PreviewInSolutionExplorer": false
+}

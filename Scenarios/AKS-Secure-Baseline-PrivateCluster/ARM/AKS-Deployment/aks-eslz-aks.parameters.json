@@ -1,0 +1,65 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "value": "aks-eslz1"
+        },
+        "location": {
+            "value": "eastus"
+        },
+        "dnsPrefix": {
+            "value": "aks-eslz2-dns"
+        },
+        "kubernetesVersion": {
+            "value": "1.19.11"
+        },
+        "networkPlugin": {
+            "value": "azure"
+        },
+        "enableRBAC": {
+            "value": true
+        },
+        "adminGroupObjectIDs": {
+            "value": [
+                "a4ec4dc6-e2c5-469e-8917-9fc642a4e2b1"
+            ]
+        },
+        "enablePrivateCluster": {
+            "value": true
+        },
+        "enableHttpApplicationRouting": {
+            "value": false
+        },
+        "enableAzurePolicy": {
+            "value": true
+        },
+        "vmssNodePool": {
+            "value": true
+        },
+        "vnetSubnetID": {
+            "value": "/subscriptions/82e70289-bf40-45f9-8476-eab93d2031f4/resourceGroups/aks-eslz-arm/providers/Microsoft.Network/virtualNetworks/vnet_spoke_arm/subnets/aksClusterSubnet"
+        },
+        "serviceCidr": {
+            "value": "10.240.5.0/26"
+        },
+        "dnsServiceIP": {
+            "value": "10.240.5.10"
+        },
+        "dockerBridgeCidr": {
+            "value": "172.17.0.1/16"
+        },
+        "workspaceName": {
+            "value": "la-aks-arm"
+        },
+        "networkPolicy": {
+            "value": "azure"
+        },
+        "acrName": {
+            "value": "acreslz1"
+        },
+        "acrResourceGroup": {
+            "value": "aks-eslz-arm"
+        }
+    }
+}

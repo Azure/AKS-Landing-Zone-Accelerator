@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "registryName": {
+            "value": "acreslz1"
+        },
+        "registryLocation": {
+            "value": "eastus"
+        },
+        "zoneRedundancy": {
+            "value": "disabled"
+        },
+        "registryApiVersion": {
+            "value": "2020-11-01-preview"
+        },
+        "tags": {
+            "value": {}
+        },
+        "publicNetworkAccess": {
+            "value": "Disabled"
+        },
+        "acrPESubnetId" : {
+            "value": "/subscriptions/82e70289-bf40-45f9-8476-eab93d2031f4/resourceGroups/aks-eslz-arm/providers/Microsoft.Network/virtualNetworks/vnet_spoke_arm/subnets/privateEndpointSubnet"
+        }
+        
+    }
+}
