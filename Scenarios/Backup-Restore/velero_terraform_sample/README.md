@@ -217,9 +217,10 @@ velero_default_values = {
     #"podLabels.aadpodidbinding"                                 = local.velero_identity_name
   }
 
-
 ```
 
+
+:arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
 
 
 
