@@ -57,5 +57,6 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 	* Cluster configuration (storage classes, volumesnapshotclasses, technical pods)
 	*  Persistent Volumes (Azure Disk & Azure Fileshare)
 	*  Application Configuration (bound to the restored persistent volumes)
+	--> A tool such as Velero simplifies the process fo backup & restore for statefull applications
 
 
