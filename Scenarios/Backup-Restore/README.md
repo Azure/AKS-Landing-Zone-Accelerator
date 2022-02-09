@@ -217,6 +217,6 @@ terraform apply
 
 
 ## Coming Soon !
-* Snapshot based Backups using Velero CSI Plugin 
+* Accelerator for Snapshot based Backups using Velero CSI Plugin 
 * Deploy Velero as part of the AKS-Secure-Baseline-PrivateCluster
 
