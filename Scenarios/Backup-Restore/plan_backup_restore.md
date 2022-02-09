@@ -43,7 +43,7 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 	  -  Use [Node Pool Snapshot](https://docs.microsoft.com/en-us/azure/aks/node-pool-snapshot) (currently in Preview with [limitations](https://docs.microsoft.com/en-us/azure/aks/node-pool-snapshot#limitations))
 
 
-	-  Prepapre Applications Persistent volumes : 
+	-  Prepare Applications Persistent volumes : 
 	  	-  Prepare StorageClasses & VolumeSnapshotClasses (naming, sku, topology aware configuration, binding mode)
 
 * Run a Drill Tests:
