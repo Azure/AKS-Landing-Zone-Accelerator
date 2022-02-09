@@ -130,7 +130,7 @@ terraform apply
   
   
 
-* Create a backup for primary AKS cluster:
+* Create a backup for primary AKS cluster: (You can [filter resources to backup](https://velero.io/docs/v1.8/resource-filtering/))
 
    ```bash
   velero backup create manual-backup1  -w
@@ -161,7 +161,7 @@ terraform apply
     ```
      ![Velero check install screenshot](./media/list_backups.png)
   
-  - Restore from backup : (you may get a partially failed status when trying to restore existing objects, such as kube-system resources)
+  - Restore from backup : (you may get a partially failed status when trying to restore existing objects, such as kube-system resources). 
     ```bash
     velero restore create restore1 --from-backup manual-backup1 -w
     ```
