@@ -2,7 +2,7 @@
 
 This topic describes how to back up and restore AKS clusters using Velero tool and Azure Blob (as the storage location). 
 
-Velero is an open-source community standard tool for backing up and restoring Kubernetes cluster objects and persistent volumes, and it supports a variety of storage providers to store its backups.
+[Velero](https://velero.io) is an open-source community standard tool for backing up and restoring Kubernetes cluster objects and persistent volumes, and it supports a variety of storage providers to store its backups.
 
 If a workload cluster crashes and fails to recover, you can use a Velero backup to restore its contents and internal API objects to a new cluster.
 
@@ -20,16 +20,18 @@ Check out How Velero works  https://www.youtube.com/watch?v=8skHGzUBZ-Q
 
 ## See it in action (it takes 15 minutes) !
 
-The sample code provides a Terraform module to install & confiugre Velero.
+The sample code provides a **Terraform module** to install & configure Velero.
 
 
-The implemented scenario using this sample, shows how to backup a primary AKS cluster, and restore it to a seconday cluster (in a secondary region):
+The implemented scenario using this sample code, shows how to backup a primary AKS cluster, and restore it to a seconday cluster (in a secondary region).
 
-**In the Primary Region (WestEurope in the sample)**
+The Terraform code does the following:
+
+**1 - In the Primary Region (WestEurope in the sample)**
 - Creates a primary AKS cluster named **primary-aks1**, configured with Availability zones
 - Installs and configures Velero in primary cluster **primary-aks1** (referencing backup location in secondary Region)
 
-**In the Secondary / Backup Region (NorthEurope)**
+**2 - In the Secondary / Backup Region (NorthEurope)**
 - Creates a secondary AKS cluster named **aks-dr**, configured with Availability zones
 - Creates a storage location (Azure Storage Account) to store backups 
 - Installs and configures Velero in secondary cluster **aks-dr** (Velero referencing the same backup location in secondary Region)
