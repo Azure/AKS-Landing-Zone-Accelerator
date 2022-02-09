@@ -57,6 +57,8 @@ Pick one of the scenarios below to get started on a reference implementation
 
 :arrow_forward: [Azure Policy initiative for Enterprise Scale for AKS (Brownfield scenario)](./Scenarios/Azure-Policy-ES-for-AKS)
 
+:arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
+
 ### Other two repos
 
 :arrow_forward: [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction#getting-started)
