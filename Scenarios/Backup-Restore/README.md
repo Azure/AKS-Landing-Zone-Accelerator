@@ -161,7 +161,7 @@ terraform apply
     ```
      ![Velero check install screenshot](./media/list_backups.png)
   
-  - Restore from backup : (you may get a partially failed status when trying to restore existing objects)
+  - Restore from backup : (you may get a partially failed status when trying to restore existing objects, such as kube-system resources)
     ```bash
     velero restore create restore1 --from-backup manual-backup1 -w
     ```
