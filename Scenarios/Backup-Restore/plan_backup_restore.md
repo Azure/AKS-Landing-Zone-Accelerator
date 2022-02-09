@@ -59,5 +59,9 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 	*  Application Configuration (bound to the restored persistent volumes)
 	
 	➡️ A tool such as Velero simplifies the process fo backup & restore for statefull applications
+	
+	:arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
+
+
 
 
