@@ -47,7 +47,7 @@ The Terraform code does the following:
     git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator.git
     ```
 
-* Go to the Backup & Restore directory:
+* Navigate to the Backup & Restore directory:
 ```bash
 cd AKS-Landing-Zone-Accelerator/Scenarios/Backup-Restore/velero_terraform_sample
 ```
