@@ -1,0 +1,62 @@
+---
+apiVersion: storage.k8s.io/v1 
+kind: StorageClass 
+metadata: 
+  name: my.file.lrs 
+provisioner: kubernetes.io/azure-file
+parameters: 
+  skuName: Standard_LRS  
+reclaimPolicy: Delete 
+volumeBindingMode: WaitForFirstConsumer
+mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=0
+  - gid=0
+  - mfsymlinks
+  - cache=strict
+  - actimeo=30
+  - nouser_xattr # for restic integration with Azure File
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: file-lrs
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  namespace: file-lrs
+  name: nginx-file-lrs
+  annotations:
+    backup.velero.io/backup-volumes: filelrs #annotation for velero Restic (filesystem backup): use volumename as value
+spec:
+  nodeSelector:
+    kubernetes.io/os: linux
+  containers:
+    - image: nginx
+      name: nginx
+      command: [ "sleep", "1000000" ]
+      volumeMounts:
+        - name: filelrs
+          mountPath: "/mnt/azuredisk"
+  volumes:
+    - name: filelrs
+      persistentVolumeClaim:
+        claimName: pvc-file-lrs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: file-lrs
+  name: pvc-file-lrs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: my.file.lrs
+---
