@@ -16,8 +16,6 @@ Each sample uses a different storage class configuration to configure persisent 
   - statefulset-disk.yaml (statefulset)
 
 In theses samples, a POD annotation is used to explicitly enable filesystem backup with Velero/Restic, for a disk mounted to the application / POD. 
-- See https://velero.io/docs/v1.8/restic/#how-backup-and-restore-work-with-restic
-- Use [Backup Hooks](https://velero.io/docs/v1.8/backup-hooks/) for freezing a file system, to ensure that all pending disk I/O operations have completed prior to taking a snapshot, 
 ```
 kind: Pod
 apiVersion: v1
@@ -27,4 +25,6 @@ metadata:
   annotations:
     backup.velero.io/backup-volumes: <volume-name>
 ```
+- See https://velero.io/docs/v1.8/restic/#how-backup-and-restore-work-with-restic
 
+- Use [Backup Hooks](https://velero.io/docs/v1.8/backup-hooks/) for freezing a file system, to ensure that all pending disk I/O operations have completed prior to taking a snapshot, 
