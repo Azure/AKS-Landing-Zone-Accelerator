@@ -1,3 +1,10 @@
+### Articles in the Backup Restore Scenario
+🚩 This page: AKS Backup & Restore, using open source tool [Velero](https://velero.io) 
+
+:arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
+
+:arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
+
 ## Overview
 
 This topic describes how to back up and restore AKS clusters using Velero tool and Azure Blob (as the storage location). 
@@ -204,9 +211,10 @@ terraform apply
 
 ### Next steps
 
+:arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
+
 :arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
 
-:arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
 ## Coming Soon !
 * Snapshot based Backups using Velero CSI Plugin 
