@@ -71,7 +71,8 @@ Velero’s backups are split into 2 pieces :
    -    Note on <a href="https://docs.microsoft.com/en-us/azure/aks/availability-zones#azure-disk-availability-zone-support" target="_blank">Azure Disk Availability Zone support</a>
            - Volumes that use Azure managed LRS disks are not zone-redundant resources, those volumes cannot be attached across zones and must be co-located in the same zone as a given node hosting the target pod   
            - Kubernetes is aware of Azure availability zones since version 1.12. You can deploy a PersistentVolumeClaim object referencing an Azure Managed Disk in a multi-zone AKS cluster and Kubernetes will take care of scheduling any pod that claims this PVC in the correct availability zone.
-           - for LRS Disks, you can use filesystem backup with Restic, which is not impacted by availability zones
+           - See How to use Availability Zones in your StorageClasses: https://kubernetes-sigs.github.io/cloud-provider-azure/topics/availability-zones/
+           - for backing up LRS Disks, you can use filesystem backup with Restic, which is not impacted by availability zones
 
 
 
