@@ -49,7 +49,7 @@ Velero’s backups are split into 2 pieces :
 
   -  Velero has a concept of *BackupStorageLocation* : defined as a container (in an Azure Storage Account), in which all Velero data is stored. (You can define multiple BackupStorageLocations for different backup destinations)
 
-  -  On Azure, you would use `velero-plugin-for-microsoft-azure`, *in addition* to a plugin/configuration for persisent volumes backups.
+  -  On Azure, you would use `velero-plugin-for-microsoft-azure` for storing Velero data, *in addition* to a plugin/configuration for persisent volumes backups.
 
    - See <a href="https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure/blob/main/backupstoragelocation.md" target="_blank">addiotnal parameters</a> for the `--backup-location-config` flag.
 
