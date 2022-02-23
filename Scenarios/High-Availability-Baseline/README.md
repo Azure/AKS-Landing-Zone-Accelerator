@@ -60,7 +60,7 @@ But what about external traffic? how would it reach your AKS cluster? this is ou
 
 `Restart policy(spec.restartPolicy)`: the restart policy applies to all containers in the Pod. if this attribute is set to Never , then there should be a valid justification for that. (some containers contact a license server each time they start, and we might want to avoid additional costs caused by excessive restarts)
 
-`Pre-stop hooks (spec.containers.lifecycle.preStop)`: pre-stop hooks are executed right before a sigterm is sent to the container. A pre-stop script can be as simple as a sleep command for 30 seconds. You might be wondering what good this might do? Imagine your application is scaling down (e.g., it is managed by an HPA). Unless you have an sigterm handler in the application code that completes serving the in-progress requests before exiting, they might be abruptly terminated. When the pre-stop handle is executed, the pod endpoint is removed from the service endpoint and therefore the DNS. This means that while the pre-stop handle is executing, no new requests are sent to the pod. This allows the pod to finish processing its in0-progress requests, without receiving new ones. Think of pre-stop hooks as a simple way to minimize dropped requests without modifying the application code.
+`Pre-stop hooks (spec.containers.lifecycle.preStop)`: pre-stop hooks are executed right before a sigterm is sent to the container. A pre-stop script can be as simple as a sleep command for 30 seconds. You might be wondering what good this might do? Imagine your application is scaling down (e.g., it is managed by an HPA). Unless you have an sigterm handler in the application code that completes serving the in-progress requests before exiting, they might be abruptly terminated. When the pre-stop handle is executed, the pod endpoint is removed from the service endpoint and therefore the DNS. This means that while the pre-stop handle is executing, no new requests are sent to the pod. This allows the pod to finish processing its in-progress requests, without receiving new ones. Think of pre-stop hooks as a simple way to minimize dropped requests without modifying the application code.
 
 ### Checkpointing:
 
@@ -72,7 +72,7 @@ The application state can be persisted in three levels:
 `File system level`: is typically used to replicate the DB files (e.g., WAL files). Most cloud providers offer plugins for their solutions such as [Azure Files](https://kubernetes.io/docs/concepts/storage/volumes/#azurefile).
 
 `Disk level`: finally, data can be persisted at the block level, which gives the flexibility to define the filesystem to be used as in [Azure Disks](https://kubernetes.io/docs/concepts/storage/volumes/#azuredisk).
-With Kubernetes volumes, persistent volumes, and persistent volume claims, the state of the application can be persisted at the File system or disk level. Albeit this is not a common pattern to store state, the more dominant is the first level using the data tier.
+With Kubernetes volumes, persistent volumes, and persistent volume claims, the state of the application can be persisted at the File system or disk level. Albeit this is not a common pattern to store state, the more dominant is the first level using the data records level.
 
 
 ## Conclusion:
