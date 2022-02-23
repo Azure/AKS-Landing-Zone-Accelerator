@@ -1,6 +1,6 @@
 # High Availability (HA) Baseline for Enterprise-grade applications on AKS
 
-Consider a simple multi-tiered application, what it would take to enable it for high availability?
+Consider a simple multi-tiered application, what would it take to enable it for high availability?
 
 
 ![application](./media/multi-tier-app.png) 
@@ -14,20 +14,24 @@ There are two fundamental questions to be answered here:
 
 ## The Four Pillars of High Availability
 
-There are four pillars of High Availability that appear in virtually every highly available system one way or another. Regardless whether the system is a database management system, or a large application like a social networking service with billions of users. The difference would be the scope (cluster/zone/region) where the solution is applied. The scope would also determine the difference between high availability and disaster recovery.
+Eliminating single points of failures requires a High Availability solution. There are four pillars of High Availability that appear in virtually every highly available system one way or another. Regardless whether the system is a database management system, or a large application like a social networking service with billions of users. The difference would be the scope (cluster/zone/region) where the solution is applied. The scope would also determine the difference between high availability and disaster recovery.
 
 ![HA](./media/HA-principles.png) 
 
-## Identifying single points of failure:
+## Identifying and Eliminating Single Points of Failure:
 
 We start by identifiying the critical path between the client requests and the components involved in serving those requests. 
 
 Any component on this path that is not managed according to the four principles (three if it is a stateless component without checkpointing) is considered a single point of failure.
 
+To eliminate single points of failures, we transforme our application by replicating our critical path components, employ load balancers, monitoring and recovery mechanisms. Luckily, Kubernetes can handle all the those aspects for us.
+
+
+![checklist](./media/replicated.png) 
 
 ## The Kuberenetes Four Pillars of HA Checklist:
 
-K8s offers several constructs (e.g., Services with load balancing) and mechanism (e.g., liveness probes) to help monitor and recover applications. They are mainly divided into four categories:
+Kubernetes offers several constructs (e.g., Services with load balancing) and mechanism (e.g., liveness probes) to help monitor and recover applications. They are mainly divided into four categories:
 
 ![checklist](./media/checklist.png) 
 
@@ -66,3 +70,9 @@ The application state can be persisted in three levels:
 With Kubernetes volumes, persistent volumes, and persistent volume claims, the state of the application can be persisted at the File system or disk level. Albeit this is not a common pattern to store state, the more dominant is the first level using the data tier.
 
 A deployment of AKS-hosted workloads typically experiences a separation of duties and lifecycle management in the area of prerequisites, the host network, the cluster infrastructure, and finally the workload itself. This reference implementation is similar. Also, be aware our primary purpose is to illustrate the topology and decisions of a baseline cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (team roles, organizational standards, etc), and will be implemented as appropriate for your needs.
+
+## Conclusion:
+
+As an Site Reliabity Engineer (SRE), you should check for the absence of the above mechanisms/constructs. The above checklist is a common list of configuration patterns that are typically leveraged to make the most out of K8s HA management. State management aside, K8s does an exceptional job in maintaining the application high availability.
+
+An example of building HA application running on K8s can be found [here](https://alikanso.medium.com/building-highly-available-applications-with-kubernetes-c57cc04b5b0d).
