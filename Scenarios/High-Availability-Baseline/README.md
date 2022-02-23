@@ -24,7 +24,7 @@ We start by identifiying the critical path between the client requests and the c
 
 Any component on this path that is not managed according to the four principles (three if it is a stateless component without checkpointing) is considered a single point of failure.
 
-To eliminate single points of failures, we transforme our application by replicating our critical path components, employ load balancers, monitoring and recovery mechanisms. Luckily, Kubernetes can handle all the those aspects for us.
+To eliminate single points of failures, we shoudl deploy our application in such a way to replicate our critical path components, and employ load balancers, monitoring and recovery mechanisms. Luckily, Kubernetes can handle all the those aspects for us.
 
 
 ![checklist](./media/replicated.png) 
@@ -38,7 +38,8 @@ Kubernetes offers several constructs (e.g., Services with load balancing) and me
 ### Redundancy:
 
 `Controller type (kind: Deployment)`: K8s offers several controllers that can manage the lifecycle of your application’s pod. By far, the most popular one is the deployment. But other controllers include the statefulset, which comes in handy when maintaining the pod identity after a recovery is important. Other controllers such as replicasets do not offer the same useful functionality (such as rollbacks) that the deployment offers.
-Number of replicas (spec.replicas): if the number of replicas is only 1, then this is a deliberate decision to use a cold standby model. This means that when a failure happens, a new instance will be started from scratch. This might work for components with low volume workload, but for stateless components with high volumes, a single replica is something to reconsider.
+
+`Number of replicas (spec.replicas)`: if the number of replicas is only 1, then this is a deliberate decision to use a cold standby model. This means that when a failure happens, a new instance will be started from scratch. This might work for components with low volume workload, but for stateless components with high volumes, a single replica is something to reconsider.
 
 `Scheduling anti-affinity (spec.affinity.podAntiAffinity)`: in a typical production level cluster of Kubernetes you would have nodes spread across multiple availability zones (expressed using a topologyKey), and you would want the pod’s of the same deployment to have preferred (soft) anti-affinity with each other. This will ensure they scheduled on nodes in different availability zones.
 
