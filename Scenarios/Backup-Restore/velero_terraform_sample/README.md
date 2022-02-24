@@ -64,8 +64,8 @@ Velero’s backups are split into 2 pieces :
           - It might be simpler to use filesystem backup with Restic as it works with Azure File & Azure Disk.
        
 
-   -    If you are using StorageClasses with provisioners `disk.csi.azure.com` and `file.csi.azure.com`:
-          - using CSI drivers for Azure Disk and Azure File is the standard, with ZRS sku for availbility zone support.
+   -    If you are using StorageClasses with provisioner `disk.csi.azure.com`:
+          - use CSI drivers for Azure Disk with **ZRS sku** for availbility zone support.
           - You can use CSI Snapshots to restore to a cluster in the same Region.
           - Regional volume snapshot with CSI Driver is coming soon ! --> to Restore to a cluster in a secondary region, use Restic for now
 
