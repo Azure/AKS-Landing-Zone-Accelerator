@@ -17,11 +17,12 @@ Velero is a plugin based tool. You can use the following plugins to run Velero o
  <a href="https://github.com/vmware-tanzu/velero-plugin-for-csi" target="_blank">velero-plugin-for-csi</a>
   - **A volume snapshotter plugin** for CSI backed PVCs using the CSI beta snapshot APIs for Kubernetes. 
   - See [how Velero supports CSI Snapshot API](https://velero.io/docs/v1.8/csi/)
-  - It supports <a href="https://docs.microsoft.com/en-us/azure/aks/azure-disk-csi" target="_blank">Azure Disks</a> `disk.csi.azure.com` and <a href="https://docs.microsoft.com/en-us/azure/aks/azure-files-csi" target="_blank">Azure Files</a> `file.csi.azure.com`
+  - It supports <a href="https://docs.microsoft.com/en-us/azure/aks/azure-disk-csi" target="_blank">Azure Disks</a> `disk.csi.azure.com`
   - Volume snapshots are configured using a VolumeSnapshotClass:
         - <a href="https://github.com/kubernetes-sigs/azuredisk-csi-driver/blob/master/deploy/example/snapshot/storageclass-azuredisk-snapshot.yaml" target="_blank">Azure Disk VolumeSnapshotClass</a>
-        - <a href="https://github.com/kubernetes-sigs/azurefile-csi-driver/blob/master/deploy/example/snapshot/volumesnapshotclass-azurefile.yaml" target="_blank">Azure File VolumeSnapshotClass</a>
-  - Limitation: Currently CSI snapshots in a different region from the primary AKS cluster, is not suppored -> Coming Soon !
+  - Limitation: 
+      - Currently CSI snapshots in a different region from the primary AKS cluster, is not suppored -> Coming Soon !
+      - Azure File is not yet fully supported: https://github.com/kubernetes-sigs/azurefile-csi-driver/tree/master/deploy/example/snapshot
 
   <a href="https://velero.io/docs/v1.8/restic/" target="_blank">restic</a>
   - **A filesystem backup plugin** (also called block to block copy, which does not rely on snapshots) --> Velero’s Restic integration backs up data from volumes by accessing the node’s filesystem, on which the pod is running.
