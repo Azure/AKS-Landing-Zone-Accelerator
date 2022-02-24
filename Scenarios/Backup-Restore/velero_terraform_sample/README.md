@@ -63,7 +63,9 @@ Velero’s backups are split into 2 pieces :
    -    If you are using StorageClasses with provisioners `kubernetes.io/azure-disk` and `kubernetes.io/azure-file`:
           - It might be simpler to use filesystem backup with Restic as it works with Azure File & Azure Disk.
        
-
+   -    If you are using StorageClasses with provisioner `file.csi.azure.com`:
+          - Use filesystem backup with Restic (due to correct limitation for Azure File CSI Driver snapshots).
+       
    -    If you are using StorageClasses with provisioner `disk.csi.azure.com`:
           - use CSI drivers for Azure Disk with **ZRS sku** for availbility zone support.
           - You can use CSI Snapshots to restore to a cluster in the same Region.
