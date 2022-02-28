@@ -48,7 +48,7 @@ EOF
   }
 
   velero_credentials = local.credentials
-  #velero_values      = local.velero_default_values
+
   velero_values      = merge(local.velero_default_values, var.velero_values)
 
   #velero_identity_name = try(var.velero_azureidentity_name, "velero")
