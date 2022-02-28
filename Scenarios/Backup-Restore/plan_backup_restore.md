@@ -5,6 +5,9 @@
 First, check out [Best practices for business continuity and disaster recovery in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/operator-best-practices-multi-region)
 
 ## High Availability Considerations
+
+Checkout the repo section on [High Availability Baseline](https://github.com/Azure/AKS-Landing-Zone-Accelerator/tree/velero-backup-restore/Scenarios/High-Availability-Baseline)
+
 * **AKS Cluster Configuration**:
 	- Enable [Uptime SLA](https://docs.microsoft.com/en-us/azure/aks/uptime-sla) for production workloads
 	- Use [Availability Zones](https://docs.microsoft.com/en-us/azure/aks/availability-zones) (with Standard Load Balancer)
