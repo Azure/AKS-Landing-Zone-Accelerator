@@ -42,7 +42,7 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 
 	- Prepare Cluster Node Pools :
 	  - Create Nodes & re-deploy Node Configuration
-	  -  Use [GitOps!](https://docs.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2)
+	  - Use Automated configuration using CICD or [GitOps!](https://docs.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2)
 
 
 	-  Prepare Applications Persistent volumes : 
