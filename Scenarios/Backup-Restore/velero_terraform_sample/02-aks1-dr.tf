@@ -52,21 +52,3 @@ resource "azurerm_role_assignment" "aksdr_mc_rg" {
   scope                = format("/subscriptions/%s/resourceGroups/%s", data.azurerm_subscription.current.subscription_id, azurerm_kubernetes_cluster.aks_dr.node_resource_group)
   role_definition_name = "Contributor"
 }
-
-
-#module "prepkubedr" {
-#  source = "./modules/aadpodid"
-#
-#  providers = {
-#    kubernetes = kubernetes.aksdr-module
-#    helm       = helm.aksdr-module
-#  }
-#
-#  aks_resource_group_name = azurerm_kubernetes_cluster.aks_dr.node_resource_group #references AKS DR MC_ managed RG
-#  location                = azurerm_kubernetes_cluster.aks_dr.location
-#
-#  aadpodidentity_chart_version    = var.aadpodidentity_chart_version
-#  aadpodidentity_chart_repository = var.aadpodidentity_chart_repository
-#  aadpodidentity_namespace        = var.aadpodidentity_namespace
-#  aadpodidentity_values           = var.aadpodidentity_values
-#}
