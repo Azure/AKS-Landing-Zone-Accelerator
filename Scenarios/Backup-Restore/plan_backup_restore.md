@@ -35,6 +35,7 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 * Plan for Backup & Restore
 	-  Prepare Cluster & POD Identities
 	- Plan network segmentation & DNS resolution
+	- Prepare Subscription for storing backups (optional but recommended)
 	- Prepare storage location in BAckup Region to store backups
 
 	- Prepare Cluster Node Pools :
