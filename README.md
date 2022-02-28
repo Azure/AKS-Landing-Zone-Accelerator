@@ -47,6 +47,12 @@ This reference implementation is great for customers who want to use an advanced
 
 A deployment of AKS-hosted workloads typically requires a separation of duties and lifecycle management in different areas, such as prerequisites, the host network, the cluster infrastructure, the shared services and finally the workload itself. This reference implementation is no different. Also, be aware that our primary purpose is to illustrate the topology and decisions involved in the deployment of an AKS cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and will give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (organizational structures, standards, processes and tools), and will be implemented as appropriate for your needs.
 
+### AKS Backup & Restore
+
+A terraform module (code accelerator) to deploy and use Open source tool Velero, for Backup & Restore of AKS stateful applications. 
+
+**Coming Soon!** Perform Backup for Persistent Volume of AKS clusters using [Azure Backup](https://azure.microsoft.com/en-us/updates/akspvbackupprivatepreview/)
+
 ### Next step
 
 Pick one of the scenarios below to get started on a reference implementation
