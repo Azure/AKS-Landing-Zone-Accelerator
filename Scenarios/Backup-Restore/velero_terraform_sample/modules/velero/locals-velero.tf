@@ -43,8 +43,6 @@ EOF
     "image.repository"                                          = "velero/velero"
     "image.tag"                                                 = "v1.4.0"
     "image.pullPolicy"                                          = "IfNotPresent"
-    #"podAnnotations.aadpodidbinding"                            = local.velero_identity_name
-    #"podLabels.aadpodidbinding"                                 = local.velero_identity_name
   }
 
   velero_credentials = local.credentials
