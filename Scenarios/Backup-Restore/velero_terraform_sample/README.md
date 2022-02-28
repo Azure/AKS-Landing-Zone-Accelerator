@@ -146,7 +146,7 @@ module "velero" {
   - Creates an AKS Cluster (used as primary)
 
 
- <a href="./02-aks-dr.tf" target="_blank">02-aks-dr.tf</a>:
+ <a href="./02-aks1-dr.tf" target="_blank">02-aks-dr.tf</a>:
   - Creates a Resource Group in Secondary Region
   - Creates an AKS Cluster (used as secondary, to restore backup)
 
