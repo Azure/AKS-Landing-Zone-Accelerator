@@ -49,7 +49,7 @@ A deployment of AKS-hosted workloads typically requires a separation of duties a
 
 ### AKS Backup & Restore
 
-A terraform module (code accelerator) to deploy and use Open source tool Velero, for Backup & Restore of AKS stateful applications. 
+This repo provides An accelerator (Terraform module) to deploy and use Open source tool Velero, for Backup & Restore of AKS stateful applications. 
 
 **Coming Soon!** Perform Backup for Persistent Volume of AKS clusters using [Azure Backup](https://azure.microsoft.com/en-us/updates/akspvbackupprivatepreview/)
 
