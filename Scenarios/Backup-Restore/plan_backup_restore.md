@@ -43,7 +43,7 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 
 
 	-  Prepare Applications Persistent volumes : 
-	  	-  Prepare StorageClasses & VolumeSnapshotClasses (naming, sku, topology aware configuration, binding mode)
+	  	-  Prepare StorageClasses & VolumeSnapshotClasses 
 
 * Run a Drill Tests:
 	* Create secondary AKS ecosystem (ACR, Keyvault, App Gateway, Firewall, NSG)
