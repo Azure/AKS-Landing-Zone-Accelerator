@@ -82,11 +82,7 @@ resource "azurerm_role_assignment" "sp_velero_backup_rg" {
   principal_id         = data.azuread_service_principal.velero_sp.object_id
 }
 
-#resource "azurerm_role_assignment" "msi_aks_cp_velero_rg" {
-#  scope                = format("/subscriptions/%s/resourceGroups/%s", data.azurerm_subscription.current.subscription_id, var.resource_group_name)
-#  principal_id         = data.azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
-#  role_definition_name = "Managed Identity Operator"
-#}
+
 
 #Deploy Velero on source cluster AKS1
 module "velero" {
