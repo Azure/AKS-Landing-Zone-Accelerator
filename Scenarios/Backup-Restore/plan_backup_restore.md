@@ -15,7 +15,7 @@
 * **Applications**: 
   - Configure applications [requests & limits](https://docs.microsoft.com/en-us/azure/aks/developer-best-practices-resource-management#define-pod-resource-requests-and-limits)
   - to ensure the PVs are located in the same zone as the pods:
-     - Use Volume Binding Mode: WaitForFirstConsumer
+     - Use Volume Binding Mode: WaitForFirstConsumer (In your storage classes)
      - Use StatefulSets
      - Use Zone-Redundant (ZRS) Disks (preview)
    - to optimally route traffic within the same zone to avoid unnecessary latency: 
