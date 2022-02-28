@@ -16,7 +16,6 @@ EOF
     "configuration.backupStorageLocation.config.storageAccount" = try(var.backups_stracc_name, "")
     "configuration.backupStorageLocation.name"                  = "default"
     "configuration.provider"                                    = "azure"
-    #"configuration.volumeSnapshotLocation.config.resourceGroup" = "backups-aks1"
     "configuration.volumeSnapshotLocation.config.resourceGroup" = try(var.backups_rg_name, "")
     "configuration.volumeSnapshotLocation.name"                 = "default"
     "credentials.existingSecret"                                = try(kubernetes_secret.velero.metadata[0].name, "")
