@@ -55,12 +55,12 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 	To restore **Stateless** Application: 
 	* Redeploy Application Configuration using Devops CICD
 
-	To restore **statefull** Application, you need to backup and restore:
+	To restore **stateful** Application, you need to backup and restore:
 	* Cluster configuration (storage classes, volumesnapshotclasses, technical pods)
 	*  Persistent Volumes (Azure Disk & Azure Fileshare)
 	*  Application Configuration (bound to the restored persistent volumes)
 	
-	➡️ A tool such as Velero simplifies the process fo backup & restore for statefull applications
+	➡️ A tool such as Velero simplifies the process fo backup & restore for stateful applications
 	
 	:arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
