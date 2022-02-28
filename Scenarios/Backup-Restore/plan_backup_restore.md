@@ -30,9 +30,9 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 	- Use Azure File with ZRS
 
 
-## Disaster Recovey Considerations
+## Backup & Restore Considerations
 
-* Plan for Disaster Recovery
+* Plan for Backup & Restore
 	-  Prepare Cluster & POD Identities
 	- Plan network segmentation & DNS resolution
 	- Prepare storage location in DR Region to store backups
