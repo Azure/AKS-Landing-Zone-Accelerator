@@ -2,6 +2,8 @@
 
 ![Plan Backup Restore](./media/plan_backup_restore.png)
 
+First, check out [Best practices for business continuity and disaster recovery in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/operator-best-practices-multi-region)
+
 ## High Availability Considerations
 * **AKS Cluster Configuration**:
 	- Enable [Uptime SLA](https://docs.microsoft.com/en-us/azure/aks/uptime-sla) for production workloads
