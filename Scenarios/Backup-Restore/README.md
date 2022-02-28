@@ -103,7 +103,7 @@ terraform apply
   
   
 
-* Deploy [sample statefull applications](./applications_samples/) in the primary cluster:
+* Deploy [sample stateful applications](./applications_samples/) in the primary cluster:
 
    ```bash
     kubectl apply -f ../applications_samples/
