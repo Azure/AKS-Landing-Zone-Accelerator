@@ -29,10 +29,3 @@ resource "azurerm_storage_container" "velero" {
   container_access_type = "private"
 }
 
-
-#Optional: Uncomment to create secondary container, for backing up backup cluster
-#resource "azurerm_storage_container" "velerodr" {
-#  name                  = "velerobackupofbackup"
-#  storage_account_name  = azurerm_storage_account.aks1_backups.name
-#  container_access_type = "private"
-#}
