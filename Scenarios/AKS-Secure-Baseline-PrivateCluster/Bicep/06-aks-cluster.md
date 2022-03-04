@@ -55,19 +55,63 @@ az feature register --name EnablePodIdentityPreview --namespace Microsoft.Contai
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
 ```
 
-Review "parameters-main.json" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell.
+Don't move ahead to the next steps until all providers are registered.
+
+Review "**parameters-main.json**" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell (code snippets are below).
 
 There are two groups you need to change in parameters-main.json: 
-    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId.
-    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksadminaccessprincipalId.
+    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
+        - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
 
+**AKS Networking Choices**
+
+You can choose which AKS network plugin you want to deploy the cluster: azure or kubenet.
+For the Azure network plugin, each pod in the cluster will have an IP from the AKS Subnet CIDR. This allows Application Gateway and any other external service to reach the pod using this IP.
+
+For kubenet plugin, all the PODs get an IP address from POD-CIDR within the cluster. To route traffic to these pods, the TCP/UDP flow must go to the node where the pod resides. By default, AKS will maintain the User Defined Route (UDR) associated with the subnet where it belongs to always be updated with the CIDR /24 of the respective POD/Node IP address.
+
+The Application Gateway Ingress Controller (AGIC) is deployed in a dedicated subnet without any UDR associated to it. This means the Application Gateway doesn't know how to route the traffic of a POD backend pool in a AKS cluster when you are using the kubenet plugin. Because of this limitation, you cannot associate the default AKS UDR to the Application Gateway subnet since an AKS cluster with egress controller requires a 0.0.0.0/0 route. It's possible to create a manual route table to address this problem but once a node scale operation happens, the route needs to be updated again and this would require a manual update. 
+
+It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps. Azure Application Gateway v2 (the only supported version with AGIC) currently doesn't support a route 0.0.0.0/0 association to a route table. 
+
+Reference:
+
+Step 1:
+
+[How to setup networking between Application Gateway and AKS](https://azure.github.io/application-gateway-kubernetes-ingress/how-tos/networking/)
+
+Step 2: (Optional - *if you don't do this, you'll have to manually update the route table after scaling changes in the cluster*)
+
+[Using AKS kubenet egress control with AGIC](https://github.com/Welasco/AKS-AGIC-UDR-AutoUpdate)
+
+More info:
+
+[Use kubenet networking with your own IP address ranges in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/configure-kubenet)
+[Application Gateway infrastructure configuration](https://docs.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#supported-user-defined-routes)
+
+The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
+
+```azurecli
+az aks get-versions -l <region>
+```
 # [CLI](#tab/CLI)
 
 ```azurecli
 acrName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.acrName.value -o tsv)
 keyVaultName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv)
 
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName
+#-----------------------------------------------------------------------------------------------
+#NOTE: USE THIS COMMAND ONLY WHEN USING THE AZURE CNI NETWORK PLUGIN
+# Deploy Using Azure Network CNI plugin
+#-----------------------------------------------------------------------------------------------
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 06-AKS-cluster/main.bicep -p 06-AKS-cluster/parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=azure
+
+
+#-----------------------------------------------------------------------------------------------
+#NOTE: USE THIS COMMAND ONLY WHEN USING THE KUBENET NETWORK PLUGIN
+# Deploy using Azure Network Kunet plugin
+#-----------------------------------------------------------------------------------------------
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 06-AKS-cluster/main.bicep -p 06-AKS-cluster/parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
 ```
 
 # [PowerShell](#tab/PowerShell)

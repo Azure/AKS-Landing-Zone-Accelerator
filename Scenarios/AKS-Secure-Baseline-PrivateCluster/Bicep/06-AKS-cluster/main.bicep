@@ -9,8 +9,16 @@ param appGatewayName string
 param aksuseraccessprincipalId string
 param aksadminaccessprincipalId string
 param aksIdentityName string
+param kubernetesVersion string
+param rtAKSName string
 param acrName string //User to provide each time
 param keyvaultName string //user to provide each time
+
+@allowed([
+  'azure'
+  'kubenet'
+])
+param networkPlugin string = 'azure'
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -65,6 +73,8 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
       aksadminaccessprincipalId
     ]
     clusterName: clusterName
+    kubernetesVersion: kubernetesVersion
+    networkPlugin: networkPlugin
     logworkspaceid: akslaworkspace.outputs.laworkspaceId
     privateDNSZoneId: pvtdnsAKSZone.id
     subnetId: aksSubnet.id
@@ -77,7 +87,18 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     aksPvtDNSContrib
     aksPvtNetworkContrib
     aksPodIdentityRole
+    aksRouteTableRole
   ]
+}
+
+module aksRouteTableRole 'modules/Identity/rtrole.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksRouteTableRole'
+  params: {
+    principalId: aksIdentity.properties.principalId
+    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
+    rtName: rtAKSName
+  }
 }
 
 module acraksaccess 'modules/Identity/acrrole.bicep' = {

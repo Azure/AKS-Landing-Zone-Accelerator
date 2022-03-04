@@ -8,6 +8,15 @@
     "clusterName": {
       "value": "eslzakscluster"
     },
+    "kubernetesVersion": {
+      "value": "1.22.6"
+    },    
+    "networkPlugin": {
+      "value": "azure"
+    },
+    "rtAKSName": {
+      "value": "AKS-RT"
+    },    
     "akslaWorkspaceName": {
       "value": "eslzlaworkspace"
     },

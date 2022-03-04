@@ -5,6 +5,13 @@ param aadGroupdIds array
 param subnetId string
 param identity object
 param appGatewayResourceId string
+param kubernetesVersion string
+
+@allowed([
+  'azure'
+  'kubenet'
+])
+param networkPlugin string = 'azure'
 //param appGatewayIdentityResourceId string
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
@@ -15,10 +22,13 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
     userAssignedIdentities: identity
   }
   properties: {
-    kubernetesVersion: '1.21.1'
+    kubernetesVersion: kubernetesVersion
     nodeResourceGroup: '${clusterName}-aksInfraRG'
-    podIdentityProfile: {
+    podIdentityProfile: networkPlugin == 'azure' ?{
       enabled: true
+    }:{
+      enabled: true
+      allowNetworkPluginKubenet: true
     }
     dnsPrefix: '${clusterName}aks'
     agentPoolProfiles: [
@@ -32,13 +42,21 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
         vnetSubnetID: subnetId
       }
     ]
-    networkProfile: {
+    networkProfile: networkPlugin == 'azure' ? {
       networkPlugin: 'azure'
       outboundType: 'userDefinedRouting'
-      dockerBridgeCidr: '172.17.0.1/16'
+      dockerBridgeCidr: '172.16.1.1/30'
       dnsServiceIP: '192.168.100.10'
       serviceCidr: '192.168.100.0/24'
       networkPolicy: 'calico'
+    }:{
+      networkPlugin: 'kubenet'
+      outboundType: 'userDefinedRouting'
+      dockerBridgeCidr: '172.16.1.1/30'
+      dnsServiceIP: '192.168.100.10'
+      serviceCidr: '192.168.100.0/24'
+      networkPolicy: 'calico'      
+      podCidr: '172.17.0.0/16'
     }
     apiServerAccessProfile: {
       enablePrivateCluster: true
