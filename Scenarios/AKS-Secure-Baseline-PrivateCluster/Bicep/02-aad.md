@@ -11,6 +11,10 @@ Use az cli or Az PowerShell to create the AD groups. Replace the AAD group names
 # [CLI](#tab/CLI)
 
 ```azurecli
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-AAD
+```
+
+```azurecli
 appdevs=<AAD group name>
 aksops=<AAD group name>
 
