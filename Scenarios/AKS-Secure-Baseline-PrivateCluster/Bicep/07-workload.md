@@ -21,13 +21,13 @@ Because the infrastructure has been deployed in a private AKS cluster setup, you
 * Clone it on the jumpbox.
 
    ```bash
-   git clone https://github.com/Azure/Enterprise-Scale-for-AKS
+   git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
    ```
 
-* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "Enterprise-Scale-for-AKS/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub" folder.
+* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub" folder.
 
    ```bash
-   cd Enterprise-Scale-for-AKS/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub
+   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub
    chmod +x script.sh
    sudo ./script.sh
    ```
