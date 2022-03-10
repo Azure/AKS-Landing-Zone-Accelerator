@@ -75,13 +75,20 @@ terraform apply
 
 * Check that the install is successfull: 
   - First, install Velero client (CLI) to interact with Velero Server (pods deployed on AKS cluster):
-       - You can download the client binary for linux : https://github.com/vmware-tanzu/velero/releases/tag/v1.7.1
+       - You can download the client binary for linux : https://github.com/vmware-tanzu/velero/releases/tag/v1.7.1. An example code is provided below.
+       ```bash
+       wget -c https://github.com/vmware-tanzu/velero/releases/download/v1.7.1/velero-v1.7.1-linux-amd64.tar.gz -O - | tar -xz
+       ```
        - Or checkout other options for Windows & MAC  https://velero.io/docs/v1.7/basic-install/#install-the-cli
 
     If you are using Azure Cloud Shell, you cannot run "sudo" commands. Instead, you can download velero binary and use an alias to reference it
      ```bash
      alias velero=/home/path-to-velero-client-binary
     ``` 
+    an example is provided below
+    ```bash
+    alias velero=./velero-v1.7.1-linux-amd64/velero
+    ```
 
 
   - Connect to the Primary AKS Cluster (following the sample code as is): 
@@ -109,33 +116,48 @@ terraform apply
     kubectl apply -f ../applications_samples/
   ```
 
-   - Wait for the applications to be running, and then create some data files (to test backups and restores):
+   - Wait for the applications to be running
+    ```bash
+    kubectl get pods --all-namespaces -w
+    ```
+   - Create some data files (to test backups and restores):
   ```bash
-    kubectl exec -it nginx-csi-disk-zrs -n csi-disk-zrs -- touch /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginx-csi-disk-lrs -n csi-disk-lrs -- touch /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginx-csi-file-zrs -n csi-file-zrs -- touch /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginx-file-lrs -n file-lrs -- touch /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- touch /mnt/azuredisk/some-data-file.txt
+  kubectl exec -it nginx-csi-disk-zrs -n csi-disk-zrs -- touch /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-csi-disk-lrs -n csi-disk-lrs -- touch /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-csi-file-zrs -n csi-file-zrs -- touch /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-file-lrs -n file-lrs -- touch /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- touch /mnt/azuredisk/some-data-file.txt
   ```
 
-     - Chek that data is created :
+
+
+    
+  
+
+     - Check that data is created :
   ```bash
-    kubectl exec -it nginx-csi-disk-zrs -n csi-disk-zrs -- ls /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginx-csi-disk-lrs -n csi-disk-lrs -- ls /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginx-csi-file-zrs -n csi-file-zrs -- ls /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginx-file-lrs -n file-lrs -- ls /mnt/azuredisk/some-data-file.txt
-
-    kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /mnt/azuredisk/some-data-file.txt
+  kubectl exec -it nginx-csi-disk-zrs -n csi-disk-zrs -- ls /mnt/azuredisk/some-data-file.txt
   ```
-  
-  
+  ```bash
+  kubectl exec -it nginx-csi-disk-lrs -n csi-disk-lrs -- ls /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-csi-file-zrs -n csi-file-zrs -- ls /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-file-lrs -n file-lrs -- ls /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /mnt/azuredisk/some-data-file.txt
+  ```
 
 * Create a backup for primary AKS cluster: (You can [filter resources to backup](https://velero.io/docs/v1.8/resource-filtering/))
 
@@ -157,7 +179,7 @@ terraform apply
     az aks get-credentials --name aks-dr --overwrite-existing --resource-group aks-dr
     ```
 
-  - Chek running pods :
+  - Check running pods :
     ```bash
     kubectl get pods --all-namespaces
     ```
@@ -192,20 +214,23 @@ terraform apply
         velero restore logs restore1
         ```
   
-   - Chek that data is restored (verify existence of data files):
-    ```bash
-      kubectl exec -it nginx-csi-disk-zrs -n csi-disk-zrs -- ls /mnt/azuredisk/some-data-file.txt
-
-      kubectl exec -it nginx-csi-disk-lrs -n csi-disk-lrs -- ls /mnt/azuredisk/some-data-file.txt
-
-      kubectl exec -it nginx-csi-file-zrs -n csi-file-zrs -- ls /mnt/azuredisk/some-data-file.txt
-
-      kubectl exec -it nginx-file-lrs -n file-lrs -- ls /mnt/azuredisk/some-data-file.txt
-
-      kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /mnt/azuredisk/some-data-file.txt
-    ```
+   - Check that data is restored (verify existence of data files):
+  ```bash
+  kubectl exec -it nginx-csi-disk-zrs -n csi-disk-zrs -- ls /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-csi-disk-lrs -n csi-disk-lrs -- ls /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-csi-file-zrs -n csi-file-zrs -- ls /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginx-file-lrs -n file-lrs -- ls /mnt/azuredisk/some-data-file.txt
+  ```
+  ```bash
+  kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /m
   
-  ![Ceck Restore](./media/check_restore.png)
+  ![Check Restore](./media/check_restore.png)
   
   
 
