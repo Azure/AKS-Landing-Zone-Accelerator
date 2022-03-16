@@ -30,7 +30,7 @@ Use this repo is you would like step by step guidance on how to deploy secure an
 
 A flexible templating approach using Bicep that enables multiple scenarios using a Web based tool. It provides tangible artifacts to **quickly** enable AKS deployments through CLI or in your CI/CD pipeline.
 
-Driving the configuration experience is a [wizard](https://azure.github.io/Aks-Construction/?default=es) to guide your decision making, it provides presets for the main Enterprise-Scale deployment modes (Sandbox, Corp & Online). The output of this wizard experience are the parameters and CLI commands to immediately deploy using our maintained Bicep template to deploy your customized AKS environment in one step.
+Driving the configuration experience is a [wizard](https://azure.github.io/Aks-Construction/?default=es) to guide your decision making, it provides presets for the main Azure Landing Zone deployment modes (Sandbox, Corp & Online). The output of this wizard experience are the parameters and CLI commands to immediately deploy using our maintained Bicep template to deploy your customized AKS environment in one step.
 [Pipeline examples](https://github.com/Azure/Aks-Construction#devops---github-actions) are provided that show best practices for your AKS Infrastructure as Code deployments.
 
 Use this repo if you would like to use a guided experience to rapidly create your environment with a maintained Bicep template based on the architecture of the AKS Secure Baseline.
@@ -59,7 +59,7 @@ Pick one of the scenarios below to get started on a reference implementation
 
 :arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-PrivateCluster)
 
-:arrow_forward: [Azure Policy initiative for Enterprise Scale for AKS (Brownfield scenario)](./Scenarios/Azure-Policy-ES-for-AKS)
+:arrow_forward: [Azure Policy initiative for AKS Landing Zone Accelerator (Brownfield scenario)](./Scenarios/Azure-Policy-ES-for-AKS)
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
 
