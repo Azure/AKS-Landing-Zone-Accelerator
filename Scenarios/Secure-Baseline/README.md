@@ -46,6 +46,6 @@ Pick one of the IaC options below and follow the instructions to deploy the AKS 
 
 :arrow_forward: [Terraform](./Terraform)
 
-:arrow_forward: [Bicep (still in development)](./Bicep)
+:arrow_forward: [Bicep](./Bicep)
 
 :arrow_forward: [For ARM, use official AKS Secure Baseline RI](https://github.com/mspnp/aks-secure-baseline)
