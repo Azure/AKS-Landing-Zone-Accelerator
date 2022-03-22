@@ -14,15 +14,14 @@ The AKS Landing Zone Accelerator is only concerned with what gets deployed in th
 
 ## Choosing a Deployment Model
 
-The reference implementation is provided by three repos that all build on top of the [AKS Secure Baseline](https://docs.microsoft.com/azure/architecture/reference-architectures/containers/aks/secure-baseline-aks).
+The reference implementation is provided by two repos that all build on top of the [AKS Secure Baseline](https://docs.microsoft.com/azure/architecture/reference-architectures/containers/aks/secure-baseline-aks).
 
 1. This one
 1. The [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction)
-1. The [CAF-Terraform-Landingzones AKS construction set](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) reference implementation.
 
 ### This repo
 
-In this repo, you get access to various customer [scenarios](./Scenarios) that can help accelerate the development and deployment of AKS clusters that conform with AKS Landing Zone Accelerator best practices and guidelines. Each scenario aims to represent common customer experiences with the goal of accelerating the process of developing and deploying conforming AKS clusters using Infrastructure-As-Code (IaC). They also provide a step by step learning experience for deploying AKS in an actual Enterprise environment. Each scenario will eventually have a Terraform, ARM and Bicep version. They will also include GitHub Actions CI/CD pipelines to help automate deployment and management of these clusters and the workload that run in them.
+In this repo, you get access to step by step guide covering various customer [scenarios](./Scenarios) that can help accelerate the development and deployment of AKS clusters that conform with AKS Landing Zone Accelerator best practices and guidelines. This is a good starting point if you are **new** to AKS or IaC. Each scenario aims to represent common customer experiences with the goal of accelerating the process of developing and deploying conforming AKS clusters using Infrastructure-As-Code (IaC). They also provide a step by step learning experience for deploying AKS in an actual Enterprise environment. Each scenario will eventually have a Terraform, ARM and Bicep version. They will also include GitHub Actions CI/CD pipelines to help automate deployment and management of these clusters and the workload that run in them.
 
 Use this repo is you would like step by step guidance on how to deploy secure and well architected AKS clusters using our scenario based model. This model promotes a separation of duties, modularized IaC so you can pick and choose components you want to build with your cluster and has implementations in ARM, Terraform and Bicep. It is the best starting point for customers new to Azure or AKS.
 
