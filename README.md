@@ -35,12 +35,6 @@ Driving the configuration experience is a [wizard](https://azure.github.io/Aks-C
 
 Use this repo if you would like to use a guided experience to rapidly create your environment with a maintained Bicep template based on the architecture of the AKS Secure Baseline.
 
-### CAF Terraform Landingzones
-
-A [reference implementation](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline) for AKS Landing Zone Accelerator using CAF terraform module that abstracts away the need for writing terraform code and makes use of the Rover devcontainer.
-
-This reference implementation is great for customers who want to use an advanced and well thought out model for using terraform modules and/or are familiar with CAF terraform modules or want to get familiar with it.
-
 ## Steps of Implementation for AKS Landing Zone Accelerator
 
 A deployment of AKS-hosted workloads typically requires a separation of duties and lifecycle management in different areas, such as prerequisites, the host network, the cluster infrastructure, the shared services and finally the workload itself. This reference implementation is no different. Also, be aware that our primary purpose is to illustrate the topology and decisions involved in the deployment of an AKS cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and will give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (organizational structures, standards, processes and tools), and will be implemented as appropriate for your needs.
@@ -53,7 +47,7 @@ This repo provides An accelerator (Terraform module) to deploy and use Open sour
 
 ## Next steps
 
-### Follow a scenario driven tutorial
+### Follow a scenario driven tutorial within this repo
 
 Pick one of the scenarios below to get started on a reference implementation
 
@@ -65,8 +59,7 @@ Pick one of the scenarios below to get started on a reference implementation
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
 
-### Leverage one of the Landing Zone Accelerator implementations
+### Leverage one of the Landing Zone Accelerator implementations from our other repos
 
 :arrow_forward: [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction#getting-started)
 
-:arrow_forward: [CAF Terraform landingzones](https://github.com/Azure/caf-terraform-landingzones-starter/tree/starter/enterprise_scale/construction_sets/aks/online/aks_secure_baseline)
