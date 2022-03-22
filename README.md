@@ -51,7 +51,9 @@ This repo provides An accelerator (Terraform module) to deploy and use Open sour
 
 **Coming Soon!** Perform Backup for Persistent Volume of AKS clusters using [Azure Backup](https://azure.microsoft.com/en-us/updates/akspvbackupprivatepreview/)
 
-### Next step
+## Next steps
+
+### Follow a scenario driven tutorial
 
 Pick one of the scenarios below to get started on a reference implementation
 
@@ -63,7 +65,7 @@ Pick one of the scenarios below to get started on a reference implementation
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
 
-### Other two repos
+### Leverage one of the Landing Zone Accelerator implementations
 
 :arrow_forward: [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction#getting-started)
 
