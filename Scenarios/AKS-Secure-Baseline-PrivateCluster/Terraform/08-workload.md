@@ -50,7 +50,7 @@ Once you connect ensure you permit the site to read the content of your clipboar
 
 ## Install the following applications:
 
-1. AZ CLI 
+1. AZ CLI
 
 ```
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -67,7 +67,7 @@ sudo apt install docker.io -y
 4. [Helm]([Helm | Installing Helm](https://helm.sh/docs/intro/install/))
 
 Once connected, install the Azure CLI and log into Azure. You must be a member of the appropriate
-group created or imported during step 3 (AKS App Dev Users, AKS Operations) to access the cluster. 
+group created or imported during step 3 (AKS App Dev Users, AKS Operations) to access the cluster.
 
 ```
 az login -t <tenant id>
@@ -89,7 +89,7 @@ az login --service-principal --username "${applicationId}" --password "${passwor
 
 ## Connect the Container Registry Private link to the Hub network
 
-Since the Container registry can only be accessed via private link, we need to connect it to the network where jumpbox or whichever computer we are using to create the container images resides. We already added the container registry to the spoke network where the cluster resides using terraform. 
+Since the Container registry can only be accessed via private link, we need to connect it to the network where jumpbox or whichever computer we are using to create the container images resides. We already added the container registry to the spoke network where the cluster resides using terraform.
 
 1. Go to Azure portal
 
@@ -112,7 +112,7 @@ Since the Container registry can only be accessed via private link, we need to c
 ## Provide yourself Access to Create Secrets in your Key vault
 
 1. Go to the Azure portal and find your Key Vault. This should be in the landing zone resource group (escs-lz01-rg for example)
-2. You should see your pod-identity-example managed identity  as well as the azurekeyvaultsecrets identity. The pod identity will provide pods access to the pull secrets from the keyvault. The azurekeyvaultsecrets identity will be used by the keyvault driver. If either of these are missing, perhaps you are missing a step. 
+2. You should see your pod-identity-example managed identity  as well as the azurekeyvaultsecrets identity. The pod identity will provide pods access to the pull secrets from the keyvault. The azurekeyvaultsecrets identity will be used by the keyvault driver. If either of these are missing, perhaps you are missing a step.
 3. Click on **Access policies** under **Settings** in the left blade![add access policy](../media/add-access-policy-acr.png)
 4. Select the required access policies ![add access policy](../media/add-access-policy-acr2.png)
 5. Under **Select principal** click on the **None selected** link and select the user group(s) you created for this to provide you and everyone in the group access to the Key vault
@@ -134,7 +134,7 @@ Clone the required repos to the Dev Jumpbox:
 
 1. This repo. Feel free to use your forked repo as well.
 ```
-git clone https://github.com/Azure/Enterprise-Scale-for-AKS
+git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
 ```
 2. The Ratings API repo
 ```
@@ -191,7 +191,7 @@ kubectl get nodes
 
 ![cluster access granted](../media/access-granted-to-cluster.png)
 
-On the Kubernetes cluster, create a namespace for the Ratings Application. 
+On the Kubernetes cluster, create a namespace for the Ratings Application.
 
 ```
 kubectl create namespace ratingsapp
@@ -209,11 +209,11 @@ helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=
 
 The steps below must be completed from the linux vm since we are deploying a private cluster.
 
-Clone the repository into the linux vm and navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder. 
+Clone the repository into the linux vm and navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder.
 
 ```
-git clone https://github.com/Azure/Enterprise-Scale-for-AKS
-cd Enterprise-Scale-for-AKS/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp
+git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
+cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp
 ```
 Log into the cluster on your computer
 
@@ -223,7 +223,7 @@ az aks get-credentials -g $AKSRESOURCEGROUP -n $AKSCLUSTERNAME
 
 
 
-Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vault name, Client ID for the AKS Key Vault Add-on you saved earlier and the Tenant ID for the subscription.  
+Update the "api-secret-provider-class.yaml" file to reflect the correct Key Vault name, Client ID for the AKS Key Vault Add-on you saved earlier and the Tenant ID for the subscription.
 
 > If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
 
@@ -239,7 +239,7 @@ kubectl apply -f api-secret-provider-class.yaml -n ratingsapp
 kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 ```
 
-3. Ensure the ratings-api deployment was successful. If you dont get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity. 
+3. Ensure the ratings-api deployment was successful. If you dont get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azure secret identity.
 
    ![cluster access granted](../media/api-pod-deployed.png)
 
@@ -255,7 +255,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
    kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp
    ```
 
-6. Update the "3a-ratings-web-deployment.yaml" file to reflect the correct name for the Azure Container Registry. Deploy the file. 
+6. Update the "3a-ratings-web-deployment.yaml" file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
    ```
    kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp
@@ -279,7 +279,7 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
    kubectl get ingress -n ratingsapp
    ```
 
-### Optional: Allow access to the application gateway via port 80 
+### Optional: Allow access to the application gateway via port 80
 
 1. Go to Azure portal and in the lz resource group you'll find the appgwSubnet NSG
 
@@ -309,11 +309,11 @@ kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
 
 ## Update the Ingress to support HTTPS traffic
 
-A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demostrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway. 
+A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demostrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway.
 
 1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customprefix>.<region>.cloudapp.azure.com
 
-2. Create a certificate using the FQDN and store it in KeyVault. 
+2. Create a certificate using the FQDN and store it in KeyVault.
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<fqdn_of_appgw_public_ip>/O=AKS-INGRESS-TLS"
 
@@ -325,7 +325,7 @@ az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault
 
 4. Redeploy the web application using the "3b-ratings-web-deployment.yaml", which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
 
-5. Update the "5-https-ratings-web-ingress.yaml" file to use the FQDN that matches the certificate and application gateway public IP address.  Redeploy the ingress with this file. 
+5. Update the "5-https-ratings-web-ingress.yaml" file to use the FQDN that matches the certificate and application gateway public IP address.  Redeploy the ingress with this file.
 
 
 ## Next Step

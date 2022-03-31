@@ -1,6 +1,6 @@
 # Create or Import Azure Active Directory Groups for AKS
 
-Before creating the Azure Active Directory integrated cluster, groups must be created that can be later mapped to the Built-In Roles of "Azure Kubernetes Service Cluster User Role" and "Azure Kubernetes Service RBAC Cluster Admin".
+Before creating the Azure Active Directory integrated cluster, groups must be created that can be later mapped to the Built-In Roles of "Azure Kubernetes Service Cluster User Role" and "Azure Kubernetes Service RBAC Cluster Admin". **If you already have one available, you can go ahead and skip the step below.**
 
 Depending on the needs of your organization, you may have a choice of existing groups to use or a new groups may need to be created for each cluster deployment.  
 
@@ -11,8 +11,8 @@ Use az cli or Az PowerShell to create the AD groups
 # [CLI](#tab/CLI)
 
 ```azurecli
-appdevs=''
-aksops=''
+appdevs=<group name to create for devs>
+aksops=<group name to create for admin>
 
 az ad group create --display-name $appdevs --mail-nickname $appdevs
 az ad group create --display-name $aksops --mail-nickname $aksops

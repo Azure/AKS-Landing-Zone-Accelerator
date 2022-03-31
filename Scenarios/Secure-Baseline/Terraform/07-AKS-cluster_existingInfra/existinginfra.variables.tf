@@ -15,7 +15,7 @@ variable "existing_vnet_rg_location" {
 }
 
 variable "existing_vnet_id" {
-    default = 
+    default = "change_me"
 }
 
 variable "existing_aks_subnet_id" {

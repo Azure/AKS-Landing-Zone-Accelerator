@@ -1,0 +1,54 @@
+---
+apiVersion: storage.k8s.io/v1 
+kind: StorageClass 
+metadata: 
+  name: my.csi.file.zrs 
+provisioner: file.csi.azure.com 
+parameters: 
+  skuName: Standard_ZRS  # available values: Standard_LRS, Standard_GRS, Standard_ZRS, Standard_RAGRS, Premium_LRS
+  fsType: ext4  # available values: cifs, ext4, ext3, ext2, xfs
+reclaimPolicy: Delete 
+volumeBindingMode: WaitForFirstConsumer
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: csi-file-zrs
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  namespace: csi-file-zrs
+  name: nginx-csi-file-zrs
+  annotations:
+    backup.velero.io/backup-volumes: csifilezrs #annotation for velero Restic (filesystem backup): use volumename as value
+spec:
+  nodeSelector:
+    kubernetes.io/os: linux
+  containers:
+    - image: nginx
+      name: nginx
+      command: [ "sleep", "1000000" ]
+      volumeMounts:
+        - name: csifilezrs
+          mountPath: "/mnt/azuredisk"
+  volumes:
+    - name: csifilezrs
+      persistentVolumeClaim:
+        claimName: pvc-csi-file-zrs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: csi-file-zrs
+  name: pvc-csi-file-zrs
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: my.csi.file.zrs
+---

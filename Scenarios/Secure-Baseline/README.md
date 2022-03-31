@@ -3,7 +3,7 @@ This reference implementation demonstrates the recommended starting (baseline) i
 
 By the end of this, you would have deployed a secure AKS cluster, complient with Enterprise-scale for AKS guidance and best practices. We will also be deploying a workload known as the Ratings app that is also featured in the [Azure Kubernetes Services Workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/). Check out the workshop for some intermediate level training on AKS.
 
-For this scenario, we have various IaC technology that you can choose from depending on your preference. At this time only the Terraform version is available. Below is an architectural diagram of this scenario.
+For this scenario, we have various IaC technology that you can choose from depending on your preference. Below is an architectural diagram of this scenario.
 
 ![Architectural diagram for the secure baseline scenario.](./media/aks-securebaseline.png)
 
@@ -46,6 +46,4 @@ Pick one of the IaC options below and follow the instructions to deploy the AKS 
 
 :arrow_forward: [Terraform](./Terraform)
 
-:arrow_forward: [Bicep (still in development)](./Bicep)
-
-:arrow_forward: [For ARM, use official AKS Secure Baseline RI](https://github.com/mspnp/aks-secure-baseline)
+:arrow_forward: [Bicep](./Bicep)
