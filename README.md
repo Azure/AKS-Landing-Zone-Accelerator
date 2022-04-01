@@ -47,13 +47,13 @@ Pick one of two options below
 
 Pick one of the scenarios below to get started on a reference implementation
 
-:arrow_forward: [AKS Secure Baseline](./Scenarios/Secure-Baseline)
-
 :arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-PrivateCluster)
 
 :arrow_forward: [Azure Policy initiative for AKS Landing Zone Accelerator (Brownfield scenario)](./Scenarios/Azure-Policy-ES-for-AKS)
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
+
+:arrow_forward: [AKS Secure Baseline](./Scenarios/Secure-Baseline)
 
 ### Or leverage one of the Landing Zone Accelerator implementations from our other repos
 
