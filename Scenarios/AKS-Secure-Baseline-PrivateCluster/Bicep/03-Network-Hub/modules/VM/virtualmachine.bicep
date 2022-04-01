@@ -1,21 +1,24 @@
 param subnetId string
 param publicKey string
+param location string = resourceGroup().location
+param adminUsername string = 'azureuser'
 //param script64 string
 
 module jbnic '../vnet/nic.bicep' = {
   name: 'jbnic'
   params: {
+    location: location
     subnetId: subnetId
   }
 }
 
 resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   name: 'jumpbox'
-  location: resourceGroup().location
+  location: location
   properties: {
     osProfile: {
       computerName: 'jumpbox'
-      adminUsername: 'azureuser'
+      adminUsername: adminUsername
       linuxConfiguration: {
         ssh: {
           publicKeys: [

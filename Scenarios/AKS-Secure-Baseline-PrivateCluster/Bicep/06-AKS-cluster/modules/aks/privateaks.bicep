@@ -6,6 +6,7 @@ param subnetId string
 param identity object
 param appGatewayResourceId string
 param kubernetesVersion string
+param location string = resourceGroup().location
 
 @allowed([
   'azure'
@@ -16,7 +17,7 @@ param networkPlugin string = 'azure'
 
 resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
   name: clusterName
-  location: resourceGroup().location
+  location: location
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: identity
@@ -55,7 +56,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
       dockerBridgeCidr: '172.16.1.1/30'
       dnsServiceIP: '192.168.100.10'
       serviceCidr: '192.168.100.0/24'
-      networkPolicy: 'calico'      
+      networkPolicy: 'calico'
       podCidr: '172.17.0.0/16'
     }
     apiServerAccessProfile: {

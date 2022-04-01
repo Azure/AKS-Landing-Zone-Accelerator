@@ -1,6 +1,7 @@
 param appgwname string
 param subnetid string
 param appgwpip string
+param location string = resourceGroup().location
 
 var frontendPortName = 'HTTP-80'
 var frontendIPConfigurationName = 'appGatewayFrontendIP'
@@ -10,7 +11,7 @@ var backendHttpSettingsCollectionName = 'backend-http-settings'
 
 resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
   name: appgwname
-  location: resourceGroup().location
+  location: location
   properties: {
     sku: {
       tier: 'Standard_v2'
@@ -36,13 +37,13 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
           }
         }
       }
-    ]    
+    ]
     frontendPorts: [
       {
         name: frontendPortName
         properties: {
           port: 80
-        }        
+        }
       }
     ]
     backendAddressPools: [
@@ -89,7 +90,7 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
           }
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appgwname, backendHttpSettingsCollectionName)
-          }          
+          }
         }
       }
     ]
