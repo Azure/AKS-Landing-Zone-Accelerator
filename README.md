@@ -14,7 +14,7 @@ The AKS Landing Zone Accelerator is only concerned with what gets deployed in th
 
 ## Choosing a Deployment Model
 
-The reference implementation is provided by two repos that all build on top of the [AKS Secure Baseline](https://docs.microsoft.com/azure/architecture/reference-architectures/containers/aks/secure-baseline-aks).
+The reference implementations are spread across three repos that all build on top of the [AKS Secure Baseline](https://docs.microsoft.com/azure/architecture/reference-architectures/containers/aks/secure-baseline-aks) and Azure Landing Zones.
 
 1. This one
 1. The [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction)
@@ -45,15 +45,13 @@ Pick one of two options below
 
 ### Follow a scenario driven tutorial within this repo
 
-Pick one of the scenarios below to get started on a reference implementation
+Pick one of the scenarios below to get started on a reference implementation. For the AKS secure baseline with non-private cluster, use the [AKS baseline](https://github.com/mspnp/aks-baseline) reference implementation.
 
 :arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-PrivateCluster)
 
 :arrow_forward: [Azure Policy initiative for AKS Landing Zone Accelerator (Brownfield scenario)](./Scenarios/Azure-Policy-ES-for-AKS)
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
-
-:arrow_forward: [AKS Secure Baseline](./Scenarios/Secure-Baseline)
 
 ### Or leverage one of the Landing Zone Accelerator implementations from our other repos
 
