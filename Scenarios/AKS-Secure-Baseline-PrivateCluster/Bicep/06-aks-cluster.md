@@ -59,7 +59,7 @@ Don't move ahead to the next steps until all providers are registered.
 
 Review "**parameters-main.json**" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell (code snippets are below).
 
-There are two groups you need to change in parameters-main.json: 
+There are two groups you need to change in parameters-main.json:
     - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
         - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
 
@@ -70,9 +70,13 @@ For the Azure network plugin, each pod in the cluster will have an IP from the A
 
 For kubenet plugin, all the PODs get an IP address from POD-CIDR within the cluster. To route traffic to these pods, the TCP/UDP flow must go to the node where the pod resides. By default, AKS will maintain the User Defined Route (UDR) associated with the subnet where it belongs to always be updated with the CIDR /24 of the respective POD/Node IP address.
 
-The Application Gateway Ingress Controller (AGIC) is deployed in a dedicated subnet without any UDR associated to it. This means the Application Gateway doesn't know how to route the traffic of a POD backend pool in a AKS cluster when you are using the kubenet plugin. Because of this limitation, you cannot associate the default AKS UDR to the Application Gateway subnet since an AKS cluster with egress controller requires a 0.0.0.0/0 route. It's possible to create a manual route table to address this problem but once a node scale operation happens, the route needs to be updated again and this would require a manual update. 
+Currently Application Gateway does not support any scenario where a route 0.0.0.0/0 needs to be redirected through any virtual appliance, a hub/spoke virtual network, or on-premises (forced tunneling). Since Application Gateway doesn't support UDR with a route 0.0.0.0/0 and it's a requirement for AKS egress control you cannot use the same route table for both subnets (Application Gateway subnet and AKS subnet).
 
-It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps. Azure Application Gateway v2 (the only supported version with AGIC) currently doesn't support a route 0.0.0.0/0 association to a route table. 
+This means the Application Gateway doesn't know how to route the traffic of a POD backend pool in a AKS cluster when you are using the kubenet plugin. Because of this limitation, you cannot associate the default AKS UDR to the Application Gateway subnet since an AKS cluster with egress controller requires a 0.0.0.0/0 route. It's possible to create a manual route table to address this problem but once a node scale operation happens, the route needs to be updated again and this would require a manual update.
+
+For the purpose of this deployment when used with kubenet a UDR will be created during the deployment pointing the expected address prefix (CIDR) to the respective AKS worker node. This UDR will not be auto managed and in case of a cluster scale operation it should be manually updated.
+
+It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps.
 
 Reference:
 
