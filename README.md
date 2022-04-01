@@ -40,15 +40,8 @@ This reference implementation demonstrates recommended ways to automate the depl
 
 Use [this repo](https://github.com/Azure/aks-baseline-automation) if you would like to learn how to quickly setup and get access to templates to help setup your own DevOps environments for AKS workloads. 
 
-## Steps of Implementation for AKS Landing Zone Accelerator
-
-A deployment of AKS-hosted workloads typically requires a separation of duties and lifecycle management in different areas, such as prerequisites, the host network, the cluster infrastructure, the shared services and finally the workload itself. This reference implementation is no different. Also, be aware that our primary purpose is to illustrate the topology and decisions involved in the deployment of an AKS cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and will give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (organizational structures, standards, processes and tools), and will be implemented as appropriate for your needs.
-
-### AKS Backup & Restore
-
-[This scenario](./Scenarios/Backup-Restore) provides An accelerator (Terraform module) to deploy and use Open source tool Velero, for Backup & Restore of AKS stateful applications. 
-
-## Next steps
+## Next Steps to implement AKS Landing Zone Accelerator
+Pick one of two options below
 
 ### Follow a scenario driven tutorial within this repo
 
