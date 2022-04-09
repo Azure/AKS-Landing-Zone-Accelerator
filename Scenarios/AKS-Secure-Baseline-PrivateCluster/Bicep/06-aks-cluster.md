@@ -59,7 +59,7 @@ Review "parameters-main.json" file and update the values as required. Please mak
 
 There are two groups you need to change in parameters-main.json: 
     - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId.
-    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksadminaccessprincipalId.
+    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
 
 # [CLI](#tab/CLI)
 
