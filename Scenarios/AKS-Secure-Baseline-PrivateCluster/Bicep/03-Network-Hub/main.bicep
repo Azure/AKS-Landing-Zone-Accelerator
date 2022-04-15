@@ -10,12 +10,13 @@ param rtVMSubnetName string
 param fwapplicationRuleCollections array
 param fwnetworkRuleCollections array
 param fwnatRuleCollections array
+param location string = deployment().location
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
   params: {
     rgName: rgName
-    location: deployment().location
+    location: location
   }
 }
 
@@ -23,6 +24,7 @@ module vnethub 'modules/vnet/vnet.bicep' = {
   scope: resourceGroup(rg.name)
   name: vnetHubName
   params: {
+    location: location
     vnetAddressSpace: {
         addressPrefixes: hubVNETaddPrefixes
     }
@@ -38,15 +40,16 @@ module publicipfw 'modules/vnet/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'AZFW-PIP'
   params: {
+    location: location
     publicipName: 'AZFW-PIP'
     publicipproperties: {
-      publicIPAllocationMethod: 'Static'      
+      publicIPAllocationMethod: 'Static'
     }
     publicipsku: {
       name: 'Standard'
-      tier: 'Regional'      
+      tier: 'Regional'
     }
-  } 
+  }
 }
 
 resource subnetfw 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
@@ -58,6 +61,7 @@ module azfirewall 'modules/vnet/firewall.bicep' = {
   scope: resourceGroup(rg.name)
   name: azfwName
   params: {
+    location: location
     fwname: azfwName
     fwipConfigurations: [
       {
@@ -75,22 +79,23 @@ module azfirewall 'modules/vnet/firewall.bicep' = {
     fwapplicationRuleCollections: fwapplicationRuleCollections
     fwnatRuleCollections: fwnatRuleCollections
     fwnetworkRuleCollections: fwnetworkRuleCollections
-  } 
+  }
 }
 
 module publicipbastion 'modules/vnet/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'publicipbastion'
   params: {
+    location: location
     publicipName: 'bastion-pip'
     publicipproperties: {
-      publicIPAllocationMethod: 'Static'      
+      publicIPAllocationMethod: 'Static'
     }
     publicipsku: {
       name: 'Standard'
-      tier: 'Regional'      
+      tier: 'Regional'
     }
-  } 
+  }
 }
 
 resource subnetbastion 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
@@ -102,6 +107,7 @@ module bastion 'modules/VM/bastion.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'bastion'
   params: {
+    location: location
     bastionpipId: publicipbastion.outputs.publicipId
     subnetId: subnetbastion.id
   }
@@ -111,8 +117,9 @@ module routetable 'modules/vnet/routetable.bicep' = {
   scope: resourceGroup(rg.name)
   name: rtVMSubnetName
   params: {
+    location: location
     rtName: rtVMSubnetName
-  } 
+  }
 }
 
 module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
@@ -124,7 +131,7 @@ module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
     properties: {
       nextHopType: 'VirtualAppliance'
       nextHopIpAddress: azfirewall.outputs.fwPrivateIP
-      addressPrefix: '0.0.0.0/0'      
+      addressPrefix: '0.0.0.0/0'
     }
   }
 }

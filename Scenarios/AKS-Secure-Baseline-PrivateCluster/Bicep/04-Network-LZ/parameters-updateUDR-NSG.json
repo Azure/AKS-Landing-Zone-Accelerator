@@ -22,6 +22,9 @@
     },
     "nsgAppGWName": {
       "value": "APPGW-NSG"
+    },
+    "rtAppGWSubnetName" :{
+      "value": "AppGWSubnet-RT"
     }
   }
 }

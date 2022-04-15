@@ -45,7 +45,7 @@
             "addressPrefix": "10.1.4.0/24",
             "privateEndpointNetworkPolicies": "Disabled"
           }
-        }                          
+        }
       ]
     },
     "rtAKSSubnetName": {
@@ -63,6 +63,9 @@
     "appGatewaySubnetName": {
       "value": "AppGWSubnet"
     },
+    "rtAppGWSubnetName" :{
+      "value": "AppGWSubnet-RT"
+    },
     "vnetHUBRGName": {
       "value": "ESLZ-HUB"
     },
@@ -78,6 +81,6 @@
           "10.0.1.4"
         ]
       }
-    }   
+    }
   }
 }

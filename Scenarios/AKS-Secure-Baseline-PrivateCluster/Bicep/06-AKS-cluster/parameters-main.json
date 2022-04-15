@@ -8,6 +8,15 @@
     "clusterName": {
       "value": "eslzakscluster"
     },
+    "kubernetesVersion": {
+      "value": "1.22.6"
+    },
+    "networkPlugin": {
+      "value": "azure"
+    },
+    "rtAKSName": {
+      "value": "AKS-RT"
+    },
     "akslaWorkspaceName": {
       "value": "eslzlaworkspace"
     },
@@ -19,6 +28,9 @@
     },
     "appGatewayName": {
       "value": "APPGW"
+    },
+    "rtAppGWSubnetName" :{
+      "value": "AppGWSubnet-RT"
     },
     "aksuseraccessprincipalId": {
       "value": "e822cf30-7f5e-4968-a215-5cc48d538580"

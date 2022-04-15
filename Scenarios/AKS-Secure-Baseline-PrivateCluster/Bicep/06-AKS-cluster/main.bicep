@@ -6,17 +6,33 @@ param akslaWorkspaceName string
 param vnetName string
 param subnetName string
 param appGatewayName string
+param rtAppGWSubnetName string
 param aksuseraccessprincipalId string
 param aksadminaccessprincipalId string
 param aksIdentityName string
+param kubernetesVersion string
+param rtAKSName string
 param acrName string //User to provide each time
 param keyvaultName string //user to provide each time
+param location string = deployment().location
+
+@allowed([
+  'azure'
+  'kubenet'
+])
+param networkPlugin string = 'azure'
+
+var akskubenetpodcidr = '172.17.0.0/24'
+var ipdelimiters = [
+  '.'
+  '/'
+]
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
   params: {
     rgName: rgName
-    location: deployment().location
+    location: location
   }
 }
 
@@ -35,7 +51,7 @@ module aksPodIdentityRole 'modules/Identity/role.bicep' = {
 }
 
 resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  name: 'privatelink.${toLower(deployment().location)}.azmk8s.io'
+  name: 'privatelink.${toLower(location)}.azmk8s.io'
   scope: resourceGroup(rg.name)
 }
 
@@ -43,6 +59,7 @@ module akslaworkspace 'modules/laworkspace/la.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'akslaworkspace'
   params: {
+    location: location
     workspaceName: akslaWorkspaceName
   }
 }
@@ -61,10 +78,13 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
   params: {
+    location: location
     aadGroupdIds: [
       aksadminaccessprincipalId
     ]
     clusterName: clusterName
+    kubernetesVersion: kubernetesVersion
+    networkPlugin: networkPlugin
     logworkspaceid: akslaworkspace.outputs.laworkspaceId
     privateDNSZoneId: pvtdnsAKSZone.id
     subnetId: aksSubnet.id
@@ -77,7 +97,18 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     aksPvtDNSContrib
     aksPvtNetworkContrib
     aksPodIdentityRole
+    aksRouteTableRole
   ]
+}
+
+module aksRouteTableRole 'modules/Identity/rtrole.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksRouteTableRole'
+  params: {
+    principalId: aksIdentity.properties.principalId
+    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
+    rtName: rtAKSName
+  }
 }
 
 module acraksaccess 'modules/Identity/acrrole.bicep' = {
@@ -104,6 +135,7 @@ module aksPvtDNSContrib 'modules/Identity/pvtdnscontribrole.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksPvtDNSContrib'
   params: {
+    location: location
     principalId: aksIdentity.properties.principalId
     roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
   }
@@ -166,3 +198,23 @@ module keyvaultAccessPolicy 'modules/keyvault/keyvault.bicep' = {
     vaultName: keyvaultName
   }
 }
+
+resource rtAppGW 'Microsoft.Network/routeTables@2021-02-01' existing ={
+  scope: resourceGroup(rgName)
+  name: rtAppGWSubnetName
+}
+
+
+module appgwroutetableroutes 'modules/vnet/routetableroutes.bicep' = [for i in range(0,3): if(networkPlugin == 'kubenet'){
+  scope: resourceGroup(rg.name)
+  name: 'aks-vmss-appgw-pod-node-${i}'
+  params: {
+    routetableName: rtAppGW.name
+    routeName: 'aks-vmss-appgw-pod-node-${i}'
+    properties: {
+      nextHopType: 'VirtualAppliance'
+      nextHopIpAddress: '${split(aksSubnet.properties.addressPrefix, ipdelimiters)[0]}.${split(aksSubnet.properties.addressPrefix, ipdelimiters)[1]}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[2])}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[3])+i+4}'
+      addressPrefix: '${split(akskubenetpodcidr, ipdelimiters)[0]}.${split(akskubenetpodcidr, ipdelimiters)[1]}.${int(split(akskubenetpodcidr, ipdelimiters)[2])+i}.${split(akskubenetpodcidr, ipdelimiters)[3]}/${split(akskubenetpodcidr, ipdelimiters)[4]}'
+    }
+  }
+}]

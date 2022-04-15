@@ -13,13 +13,15 @@ param appGatewaySubnetName string
 param vnetHUBRGName string
 param nsgAKSName string
 param nsgAppGWName string
+param rtAppGWSubnetName string
 param dhcpOptions object
+param location string = deployment().location
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
   params: {
     rgName: rgName
-    location: deployment().location
+    location: location
   }
 }
 
@@ -27,6 +29,7 @@ module vnetspoke 'modules/vnet/vnet.bicep' = {
   scope: resourceGroup(rg.name)
   name: vnetSpokeName
   params: {
+    location: location
     vnetAddressSpace: {
         addressPrefixes: spokeVNETaddPrefixes
     }
@@ -43,6 +46,7 @@ module nsgakssubnet 'modules/vnet/nsg.bicep' = {
   scope: resourceGroup(rg.name)
   name: nsgAKSName
   params: {
+    location: location
     nsgName: nsgAKSName
   }
 }
@@ -51,8 +55,9 @@ module routetable 'modules/vnet/routetable.bicep' = {
   scope: resourceGroup(rg.name)
   name: rtAKSSubnetName
   params: {
+    location: location
     rtName: rtAKSSubnetName
-  } 
+  }
 }
 
 module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
@@ -64,7 +69,7 @@ module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
     properties: {
       nextHopType: 'VirtualAppliance'
       nextHopIpAddress: firewallIP
-      addressPrefix: '0.0.0.0/0'      
+      addressPrefix: '0.0.0.0/0'
     }
   }
   dependsOn: [
@@ -89,12 +94,12 @@ module vnetpeeringhub 'modules/vnet/vnetpeering.bicep' = {
       remoteVirtualNetwork: {
         id: vnetspoke.outputs.vnetId
       }
-    }    
+    }
   }
   dependsOn: [
     vnethub
     vnetspoke
-  ]  
+  ]
 }
 
 module vnetpeeringspoke 'modules/vnet/vnetpeering.bicep' = {
@@ -109,12 +114,12 @@ module vnetpeeringspoke 'modules/vnet/vnetpeering.bicep' = {
       remoteVirtualNetwork: {
         id: vnethub.id
       }
-    }    
+    }
   }
   dependsOn: [
     vnethub
     vnetspoke
-  ]    
+  ]
 }
 
 module privatednsACRZone 'modules/vnet/privatednszone.bicep' = {
@@ -155,7 +160,7 @@ module privatednsAKSZone 'modules/vnet/privatednszone.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'
   params: {
-    privateDNSZoneName: 'privatelink.${toLower(deployment().location)}.azmk8s.io'
+    privateDNSZoneName: 'privatelink.${toLower(location)}.azmk8s.io'
   }
 }
 
@@ -172,15 +177,16 @@ module publicipappgw 'modules/vnet/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'APPGW-PIP'
   params: {
+    location: location
     publicipName: 'APPGW-PIP'
     publicipproperties: {
-      publicIPAllocationMethod: 'Static'      
+      publicIPAllocationMethod: 'Static'
     }
     publicipsku: {
       name: 'Standard'
-      tier: 'Regional'      
+      tier: 'Regional'
     }
-  } 
+  }
 }
 
 resource appgwSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
@@ -192,6 +198,7 @@ module appgw 'modules/vnet/appgw.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'appgw'
   params: {
+    location: location
     appgwname: appGatewayName
     appgwpip: publicipappgw.outputs.publicipId
     subnetid: appgwSubnet.id
@@ -202,6 +209,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
   scope: resourceGroup(rg.name)
   name: nsgAppGWName
   params: {
+    location: location
     nsgName: nsgAppGWName
     securityRules: [
       {
@@ -216,7 +224,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
-      }      
+      }
       {
         name: 'Allow80InBound'
         properties: {
@@ -229,7 +237,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
-      }    
+      }
       {
         name: 'AllowControlPlaneV1SKU'
         properties: {
@@ -242,7 +250,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
-      }          
+      }
       {
         name: 'AllowControlPlaneV2SKU'
         properties: {
@@ -255,7 +263,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
           sourcePortRange: '*'
           destinationAddressPrefix: '*'
         }
-      }    
+      }
       {
         name: 'AllowHealthProbes'
         properties: {
@@ -270,5 +278,14 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
         }
       }
     ]
+  }
+}
+
+module appgwroutetable 'modules/vnet/routetable.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: rtAppGWSubnetName
+  params: {
+    location: location
+    rtName: rtAppGWSubnetName
   }
 }
