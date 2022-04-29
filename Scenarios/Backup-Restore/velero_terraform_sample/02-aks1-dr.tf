@@ -16,14 +16,13 @@ resource "azurerm_kubernetes_cluster" "aks_dr" {
     name       = "default"
     node_count = 3
     vm_size    = "Standard_DS3_v2"
-    availability_zones = ["1", "2", "3"]
+    zones = ["1", "2", "3"]
   }
 
+ kubernetes_version = "1.21" 
 
- role_based_access_control {
-    enabled = true
+ role_based_access_control_enabled = true
 
-  }
 
   identity {
     type                      = "SystemAssigned"

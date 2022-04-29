@@ -62,7 +62,7 @@ cd AKS-Landing-Zone-Accelerator/Scenarios/Backup-Restore/velero_terraform_sample
 * Create the Service Principal, representing Velero, to perform backups & restores:
 
 ```bash
-az ad sp create-for-rbac --name sp-velero-aks1 --role Reader
+az ad sp create-for-rbac --name sp-velero-aks1 --role Reader --scopes /subscriptions/{subscriptionId}
 ```
 
 * Deploy the Terraform sample code:
@@ -229,6 +229,7 @@ terraform apply
   ```
   ```bash
   kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /m
+  ```
   
   ![Check Restore](./media/check_restore.png)
   
