@@ -101,14 +101,7 @@ terraform apply
     kubectl get pods -n velero
     ```
      ![Velero check pods screenshot](./media/velero_check_pods.png)
-  
-  - You should see a first backup performed upon deployment using the sample code:
-    ```bash
-    velero backup get
-    ```
-    ![Velero check install screenshot](./media/velero_check_install.png)
-  
-  
+    
 
 * Deploy [sample stateful applications](./applications_samples/) in the primary cluster:
 
@@ -240,9 +233,5 @@ terraform apply
 :arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
 :arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
-
-
-## Coming Soon !
-* Accelerator for Snapshot based Backups using Velero CSI Plugin 
 
 
