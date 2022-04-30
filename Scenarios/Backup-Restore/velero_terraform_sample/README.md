@@ -95,7 +95,10 @@ Velero’s backups are split into 2 pieces :
   - https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure#compatibility
   - https://github.com/vmware-tanzu/velero-plugin-for-csi#compatibility
 
-
+  - This sample code installs velero using Helm Chart: to see available versions for Velero Chart use the command     
+  ```bash
+   helm search repo  vmware-tanzu/velero --versions
+  ```
 
 ## Using the module
 
