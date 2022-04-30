@@ -228,7 +228,7 @@ terraform apply
   kubectl exec -it nginx-file-lrs -n file-lrs -- ls /mnt/azuredisk/some-data-file.txt
   ```
   ```bash
-  kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /m
+  kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /mnt/azuredisk/some-data-file.txt
   ```
   
   ![Check Restore](./media/check_restore.png)

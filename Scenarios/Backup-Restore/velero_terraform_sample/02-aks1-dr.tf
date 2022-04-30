@@ -19,7 +19,7 @@ resource "azurerm_kubernetes_cluster" "aks_dr" {
     zones = ["1", "2", "3"]
   }
 
- kubernetes_version = "1.21" 
+ #kubernetes_version = "1.22" 
 
  role_based_access_control_enabled = true
 

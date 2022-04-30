@@ -121,7 +121,7 @@ variable "velero_namespace" {
 variable "velero_chart_version" {
   description = "Velero helm chart version to use"
   type        = string
-  default     = "2.12.13"
+  default     = "2.29.3"
 }
 
 
