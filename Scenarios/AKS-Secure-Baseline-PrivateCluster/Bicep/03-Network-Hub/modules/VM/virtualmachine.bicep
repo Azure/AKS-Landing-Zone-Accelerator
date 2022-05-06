@@ -1,5 +1,6 @@
 param subnetId string
 param publicKey string
+param vmSize string
 param location string = resourceGroup().location
 param adminUsername string = 'azureuser'
 //param script64 string
@@ -32,7 +33,7 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       }
     }
     hardwareProfile: {
-      vmSize: 'Standard_A2'
+      vmSize: vmSize
     }
     storageProfile: {
       osDisk: {
