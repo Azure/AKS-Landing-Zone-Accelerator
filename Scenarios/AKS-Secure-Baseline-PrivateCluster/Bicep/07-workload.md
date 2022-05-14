@@ -35,7 +35,8 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
 * Login to Azure
 
    ```bash
-   az login -t <tenant id>
+   TENANTID=<tenant id>
+   az login -t $TENANTID
    ```
 
 * Ensure you are connected to the correct subscription
