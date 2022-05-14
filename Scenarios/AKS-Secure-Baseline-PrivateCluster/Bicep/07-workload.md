@@ -64,10 +64,12 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 Navigate to each of the application code directories, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
 
 ```bash
+# enter the name of your ACR below
+ACRNAME=<acr name>
 cd mslearn-aks-workshop-ratings-api
-sudo docker build . -t <acrname>.azurecr.io/ratings-api:v1
+sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
 cd ../mslearn-aks-workshop-ratings-web
-sudo docker build . -t <acrname>.azurecr.io/ratings-web:v1
+sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
 ```
 
 Log into ACR
@@ -79,8 +81,8 @@ sudo az acr login -n <acrname>
 Push the images into the container registry. Ensure you are logged into the Azure Container Registry, you should show a successful login from the command above.
 
 ```bash
-sudo docker push <acrname>.azurecr.io/ratings-api:v1
-sudo docker push <acrname>.azurecr.io/ratings-web:v1
+sudo docker push $ACRNAME.azurecr.io/ratings-api:v1
+sudo docker push $ACRNAME.azurecr.io/ratings-web:v1
 ```
 
 Create the secret in key vault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps.
@@ -88,7 +90,11 @@ Create the secret in key vault. You may use anything you'd like for the username
 **Note:** Passwords with special characters in a connection string might break the connection because of wrong encoding.
 
 ```bash
-az keyvault secret set --name mongodburi --vault-name <keyvault name> --value "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
+# update keyvault name, username and password before running the command below
+KEYVAULTNAME=<keyvault name>
+PGUSERNAME=<postgres db user name>
+PGPASSWORD=<postgres db password>
+az keyvault secret set --name mongodburi --vault-name $KEYVAULTNAME --value "mongodb://$PGUSERNAME:$PGPASSWORD@ratings-mongodb.ratingsapp:27017/ratingsdb"
 ```
 
 # The following Steps can be performed using AKS Run Commands from your local machine provided you have the correct permissions.
@@ -98,21 +104,26 @@ az keyvault secret set --name mongodburi --vault-name <keyvault name> --value "m
 The following steps can be performed using AKS Run Commands from your local machine provided you have the correct permissions.
 
 Ensure the AKS run commands are working as expected.
+```bash
+# create environment variable for cluster and its resource group name
+ClusterRGName=<cluster resource group name>
+ClusterName=<AKS cluster name>
+```
 
 ```bash
-az aks command invoke --resource-group <ClusterRGName> --name <ClusterName>   --command "kubectl get nodes"
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get nodes"
 ```
 
 On the Kubernetes cluster, create a namespace for the Ratings Application.
 
 ```bash
-az aks command invoke --resource-group <ClusterRGName> --name <ClusterName>   --command "kubectl create namespace ratingsapp"
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl create namespace ratingsapp"
 ```
 
 The MongoDB backend application is installed using Helm. Your username and password must be the same username and password using in the connection string secret that was created in Key vault in the previous step.
 
 ```bash
-az aks command invoke --resource-group <ClusterRGName> --name <ClusterName>   --command "helm repo add bitnami https://charts.bitnami.com/bitnami && helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=<username>,auth.password=<password>,auth.database=ratingsdb"
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add bitnami https://charts.bitnami.com/bitnami && helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=$PGUSERNAME,auth.password=$PGPASSWORD,auth.database=ratingsdb"
 ```
 
 ## Deploy the workload into the cluster
@@ -145,7 +156,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    Deploy the edited yaml file.
    
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl apply -f api-secret-provider-class.yaml -n ratingsapp" --file api-secret-provider-class.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f api-secret-provider-class.yaml -n ratingsapp" --file api-secret-provider-class.yaml
    ```
 
 2. Updating **1-ratings-api-deployment.yaml**
@@ -153,7 +164,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    Update the **"1-ratings-api-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp" --file 1-ratings-api-deployment.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp" --file 1-ratings-api-deployment.yaml
    ```
 
 3. Ensure the ratings-api deployment was successful. 
@@ -163,8 +174,8 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    You can troubleshoot container creation issues by running
 
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl describe pod <pod name> -n ratingsapp"
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl logs <pod name> -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl describe pod <pod name> -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl logs <pod name> -n ratingsapp"
    ```
 
 4. Updating **2-ratings-api-service.yaml**
@@ -172,7 +183,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    Deploy the "2-ratings-api-service.yaml" file.
 
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp" --file 2-ratings-api-service.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp" --file 2-ratings-api-service.yaml
    ```
 
 5. Updating **3a-ratings-web-deployment.yaml**
@@ -180,13 +191,13 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
    ```
 
 6. Deploy the "4-ratings-web-service.yaml" file.
 
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
    ```
 
 ## **(Optional)** Deploy the Ingress without support for HTTPS
@@ -196,13 +207,13 @@ This step is optional. If you would like to go straight to using https which is 
 1. Deploy the **"5-ratings-web-ingress.yaml"** file.
 
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp" --file 5-http-ratings-web-ingress.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp" --file 5-http-ratings-web-ingress.yaml
    ```
 
 2. Get the ip address of your ingress controller
 
    ```bash
-   az aks command invoke --resource-group ESLZ-SPOKE --name eslzakscluster   --command "kubectl get ingress -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get ingress -n ratingsapp"
    ```
 
 ### Check your deployed workload
@@ -249,7 +260,7 @@ openssl pkcs12 -export -out aks-ingress-tls.pfx -in aks-ingress-tls.crt -inkey a
 Create the secret in Key vault
 
 ```bash
-az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name <KeyVault Name>
+az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name $KEYVAULTNAME
 ```
 
 ### **Redeploy the workload using HTTPS**
