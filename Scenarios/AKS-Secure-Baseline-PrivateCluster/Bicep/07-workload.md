@@ -65,7 +65,8 @@ Navigate to each of the application code directories, build and tag the containe
 
 ```bash
 # enter the name of your ACR below
-ACRNAME=<acr name>
+SPOKERG=<resource group name for spoke>
+ACRNAME=$(az acr list -g $SPOKERG --query "[0].name")
 cd mslearn-aks-workshop-ratings-api
 sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
 cd ../mslearn-aks-workshop-ratings-web
@@ -91,7 +92,7 @@ Create the secret in key vault. You may use anything you'd like for the username
 
 ```bash
 # update keyvault name, username and password before running the command below
-KEYVAULTNAME=<keyvault name>
+KEYVAULTNAME= $(az keyvault list -g $SPOKERG --query "[0].name")
 PGUSERNAME=<postgres db user name>
 PGPASSWORD=<postgres db password>
 az keyvault secret set --name mongodburi --vault-name $KEYVAULTNAME --value "mongodb://$PGUSERNAME:$PGPASSWORD@ratings-mongodb.ratingsapp:27017/ratingsdb"
