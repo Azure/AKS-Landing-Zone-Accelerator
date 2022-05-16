@@ -31,7 +31,7 @@ EOF
     "serviceAccount.server.create"                              = "true"
     "snapshotsEnabled"                                          = "false"
     "initContainers[0].name"                                    = "velero-plugin-for-azure"
-    "initContainers[0].image"                                   = "velero/velero-plugin-for-microsoft-azure:v1.1.1"
+    "initContainers[0].image"                                   = "velero/velero-plugin-for-microsoft-azure:v1.4.1"
     "initContainers[0].volumeMounts[0].mountPath"               = "/target"
     "initContainers[0].volumeMounts[0].name"                    = "plugins"
     #"initContainers[1].name"                                    = "velero-plugin-for-csi"
@@ -40,7 +40,7 @@ EOF
     #"initContainers[1].volumeMounts[0].name"                    = "plugins"
     #"features"                                                  = "EnableCSI"
     "image.repository"                                          = "velero/velero"
-    "image.tag"                                                 = "v1.4.0"
+    "image.tag"                                                 = "v1.8.1"
     "image.pullPolicy"                                          = "IfNotPresent"
   }
 
