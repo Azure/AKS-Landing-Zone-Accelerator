@@ -9,7 +9,7 @@
             "value": "EnterpriseScale AKS - Azure Policy Initiative"
         },
         "policySetDescription":{
-            "value": "This policy initiative contains Azure Policies confirming with Enterprise Scale for AKS best practices. This is particularly useful for brownfield deployments to audit the cluster and identify improvement opportunities."
+            "value": "This policy initiative contains Azure Policies confirming with Enterprise Scale for AKS best practices. This is particularly useful for brownfield deployments to audit the cluster and identify improvement opportunities for security and compliance."
         },
         "policyAssignmentName":{
             "value": "AKS-EnterpriseScale Initiative Assignment"
