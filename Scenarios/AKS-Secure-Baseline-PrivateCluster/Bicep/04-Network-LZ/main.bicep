@@ -213,32 +213,6 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
     nsgName: nsgAppGWName
     securityRules: [
       {
-        name: 'Allow443InBound'
-        properties: {
-          priority: 100
-          sourceAddressPrefix: '*'
-          protocol: 'Tcp'
-          destinationPortRange: '443'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-        }
-      }
-      {
-        name: 'Allow80InBound'
-        properties: {
-          priority: 101
-          sourceAddressPrefix: '*'
-          protocol: 'Tcp'
-          destinationPortRange: '80'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-        }
-      }
-      {
         name: 'AllowControlPlaneV1SKU'
         properties: {
           priority: 110

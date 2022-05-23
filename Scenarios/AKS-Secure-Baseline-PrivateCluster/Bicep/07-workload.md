@@ -208,6 +208,15 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
 
 This step is optional. If you would like to go straight to using https which is the secure option, skip this section and go straight to the **Update the Ingress to support HTTPS traffic** section.
 
+It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
+
+```bash
+   az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
+      --source-address-prefixes * --source-port-ranges 80 \
+      --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
+      --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
+```
+
 1. Deploy the **"5-ratings-web-ingress.yaml"** file.
 
    ```bash
@@ -227,6 +236,15 @@ This step is optional. If you would like to go straight to using https which is 
    ![deployed workload](../media/deployed-workload.png)
 
 ## Deploy the Ingress with HTTPS support
+
+It is important to first configure the NSG for the Application Gateway to accept traffic on port 443 if using the HTTPS option. Run the following command to allow HTTPS.
+
+```bash
+   az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
+      --source-address-prefixes * --source-port-ranges 443 \
+      --destination-address-prefixes '*' --destination-port-ranges 443 --access Allow \
+      --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 443"
+```
 
 A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway.
 
@@ -269,7 +287,7 @@ az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault
 
 ### **Redeploy the workload using HTTPS**
 
-Now that you have created the certificate in Key vault you can redeploy the workload using HTTPS.
+Now that you have created the certificate in Key vault you can redeploy the workload using HTTPS. This can be done on your local machine similar to the above steps using AKS Run Commands.
 
 You will have to carefully update the following files:
 
@@ -278,38 +296,38 @@ You will have to carefully update the following files:
 - [3b-ratings-web-deployment.yaml](../Apps/RatingsApp/3b-ratings-web-deployment.yaml)
 - [5-https-ratings-web-ingress.yaml](../Apps/RatingsApp/5-https-ratings-web-ingress.yaml)
 
-1. Updating **web-secret-provider-class.yaml** (you should still be in the Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp folder). Update the file to reflect the correct value for the following items:
+1. Updating **web-secret-provider-class.yaml** (make sure you are in the Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp folder). Update the file to reflect the correct value for the following items:
 
    - Key Vault name
    - Client ID for the AKS Key Vault Add-on
    - Tenant ID for the subscription.
    
    ```bash
-   kubectl apply -f web-secret-provider-class.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f web-secret-provider-class.yaml -n ratingsapp" --file web-secret-provider-class.yaml
    ```
    
 2. Delete the previous ratings-web deployment.
 
    ```bash
-    kubectl delete -f 3a-ratings-web-deployment.yaml -n ratingsapp
+    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl delete -f 3a-ratings-web-deployment.yaml -n ratingsapp"
    ```
 
 3. Update the **"3b-ratings-web-deployment.yaml"** file with the ACR name and redeploy the web application using the this file, which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
 
    ```bash
-   kubectl apply -f 3b-ratings-web-deployment.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 3b-ratings-web-deployment.yaml -n ratingsapp"
    ```
    
 4. If you have deployed the optional HTTP version you must delete the previous Ingress resource
 
    ```bash
-   kubectl delete -f 5-http-ratings-web-ingress.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl delete -f 5-http-ratings-web-ingress.yaml -n ratingsapp" --file 5-http-ratings-web-ingress.yaml
    ```
 
 5. Update the **"5-https-ratings-web-ingress.yaml"** file to use the **FQDN that matches the certificate** and application gateway public IP address. Deploy the https ingress.
    
    ```bash
-   kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp 
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
    ```
 
 Now you can access the website using using your FQDN. When you navigate to the website using your browser you will see a warning stating the destination is not safe. This is because you are using a self signed certificate which we used for illustration purposes. Do not use a self signed certificate in production. Go ahead and proceed to the destination to get access to your deployment.
