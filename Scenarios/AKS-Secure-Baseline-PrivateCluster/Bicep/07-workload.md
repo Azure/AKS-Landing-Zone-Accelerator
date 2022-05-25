@@ -77,7 +77,7 @@ sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
 Log into ACR
 
 ```bash
-sudo az acr login -n <acrname>
+sudo az acr login -n $ACRNAME
 ```
 
 Push the images into the container registry. Ensure you are logged into the Azure Container Registry, you should show a successful login from the command above.
