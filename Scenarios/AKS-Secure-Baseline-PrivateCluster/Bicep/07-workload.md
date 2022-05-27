@@ -267,7 +267,7 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
    ![creating nds](../media/dns-created.png)
 
-### Create the self-signed certificate using openssl
+### Create the self-signed certificate using Lets Encrypt
 
 We are going to use Lets Encrypt and Cert-Manager to provide easy to use certificate management for the application within AKS. Cert-Manager will also handle future certificate renewals removing any manual processes.
 
