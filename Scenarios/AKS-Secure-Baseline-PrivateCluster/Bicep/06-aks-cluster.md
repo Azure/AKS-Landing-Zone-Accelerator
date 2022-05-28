@@ -78,7 +78,7 @@ For the purpose of this deployment when used with kubenet a UDR will be created 
 
 It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps.
 
-Reference:
+## Reference: Follow steps 1 and 2 only if you are going with the Kubenet option
 
 Step 1:
 
