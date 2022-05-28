@@ -78,7 +78,7 @@ For the purpose of this deployment when used with kubenet a UDR will be created 
 
 It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps.
 
-## Reference: Follow steps 1 and 2 only if you are going with the Kubenet option
+### Reference: Follow steps 1 and 2 below only if you are going with the Kubenet option
 
 Step 1:
 
@@ -93,6 +93,7 @@ More info:
 [Use kubenet networking with your own IP address ranges in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/configure-kubenet)
 [Application Gateway infrastructure configuration](https://docs.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#supported-user-defined-routes)
 
+## Deploy the cluster
 The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
 
 ```azurecli
