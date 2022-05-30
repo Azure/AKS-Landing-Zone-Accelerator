@@ -307,8 +307,9 @@ After updating the ingress, A request will be sent to letsEncrypt to provide a '
 If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
 
 ```bash
-   kubectl get certificaterequest -n ratingsapp
-   kubectl describe certificaterequest <certificaterequestname> -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificaterequest -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl describe certificaterequest <certificaterequestname> -n ratingsapp"
+   
 ```
 
 Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate. If you have got this far, continue to the next step to remediate this issue.
@@ -322,7 +323,7 @@ Upon navigating to your new FQDN you will see you receive a certificate warning 
 Re-apply the updated file
 
 ```bash
-   kubectl apply -f certificateIssuer.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
 ```
 
 5. The next step is to change the ingress to point to the production certificateIssuer. At the moment it is still pointing to the old staging issuer.
@@ -334,7 +335,8 @@ Edit '5-https-ratings-web-ingress.yaml' and replace the following values:
 Re-apply the updated file
 
 ```bash
-   kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
+   
 ```
 
 
