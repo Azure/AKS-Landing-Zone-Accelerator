@@ -195,19 +195,6 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp" --file 2-ratings-api-service.yaml
    ```
 
-5. Updating **3a-ratings-web-deployment.yaml**
-
-   Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
-   ```
-
-6. Deploy the "4-ratings-web-service.yaml" file.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
-   ```
 
 ## **(Optional)** Deploy the Ingress without support for HTTPS
 
@@ -221,14 +208,26 @@ It is important to first configure the NSG for the Application Gateway to accept
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```
+1. Updating **3a-ratings-web-deployment.yaml**
 
+   Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
+
+   ```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
+   ```
+
+1. Deploy the "4-ratings-web-service.yaml" file.
+
+   ```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
+   ```
 1. Deploy the **"5-ratings-web-ingress.yaml"** file.
 
    ```bash
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp" --file 5-http-ratings-web-ingress.yaml
    ```
 
-2. Get the ip address of your ingress controller
+1. Get the ip address of your ingress controller
 
    ```bash
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get ingress -n ratingsapp"
