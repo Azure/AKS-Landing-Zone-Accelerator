@@ -90,6 +90,7 @@ sudo docker push $ACRNAME.azurecr.io/ratings-web:v1
 Create the secret in key vault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps.
 
 **Note:** Passwords with special characters in a connection string might break the connection because of wrong encoding.
+**Note:** Ensure you have access to create passwords in keyvault by going to the Key vault in Azure Portal, clicking on Access Policies and Add Access Policy. **Don't forget to hit "Save" after adding yourself or user group to Key vault access**
 
 ```bash
 # update keyvault name, username and password before running the command below
