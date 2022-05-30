@@ -239,6 +239,7 @@ It is important to first configure the NSG for the Application Gateway to accept
 
    ![deployed workload](../media/deployed-workload.png)
 
+** the optional steps end here**
 ## Deploy the Ingress with HTTPS support
 
 It is important to first configure the NSG for the Application Gateway to accept traffic on port 443 if using the HTTPS option. Run the following command to allow HTTPS.
