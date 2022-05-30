@@ -93,7 +93,7 @@ Create the secret in key vault. You may use anything you'd like for the username
 
 ```bash
 # update keyvault name, username and password before running the command below
-KEYVAULTNAME=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv
+KEYVAULTNAME=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv)
 PGUSERNAME=<postgres db user name>
 PGPASSWORD=<postgres db password>
 az keyvault secret set --name mongodburi --vault-name $KEYVAULTNAME --value "mongodb://$PGUSERNAME:$PGPASSWORD@ratings-mongodb.ratingsapp:27017/ratingsdb"
