@@ -274,7 +274,8 @@ We are going to use Lets Encrypt and Cert-Manager to provide easy to use certifi
 1. First of all, you will need to install cert-manager into your cluster.
 
 ```bash
-   kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml" 
+   
 ```
 First of all this will create a new namespace called cert-manager which is where all of the resources for cert-manager will be kept. This will then go ahead and download some CRDs (CustomResourceDefinitions) which provides extra functionality in the cluster for the creation of certificates.
 
@@ -285,7 +286,7 @@ We will then proceed to test this certificate process with a staging certificate
 Deploy certificateIssuer.yaml
 
 ```bash
-   kubectl apply -f certificateIssuer.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
 ```
 
 3. Edit the '5-https-ratings-web-ingress.yaml' file with the FQDN of your host that you created earlier on the public IP of the Application Gateway.
@@ -293,13 +294,14 @@ Deploy certificateIssuer.yaml
 Deploy 5-https-ratings-web-ingress.yaml
 
 ```bash
-   kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
+   
 ```
 
 After updating the ingress, A request will be sent to letsEncrypt to provide a 'staging' certificate. This can take a few minutes. You can check on the progress by running the below command. When the status Ready = True. You should be able to browse to the same URL you configured on the PIP of the Application Gateway earlier.
 
 ```bash
-   kubectl get certificate -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificate -n ratingsapp" 
 ```
 
 If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
