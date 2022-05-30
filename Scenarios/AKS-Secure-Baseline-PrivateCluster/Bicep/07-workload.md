@@ -204,7 +204,7 @@ It is important to first configure the NSG for the Application Gateway to accept
 
 ```bash
    az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
-      --source-address-prefixes * --source-port-ranges 80 \
+      --source-address-prefixes '*' --source-port-ranges 80 \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```
@@ -239,17 +239,14 @@ It is important to first configure the NSG for the Application Gateway to accept
 
    ![deployed workload](../media/deployed-workload.png)
 
-**the optional steps end here**
-## Deploy the Ingress with HTTPS support
-
-It is important to first configure the NSG for the Application Gateway to accept traffic on port 443 if using the HTTPS option. Run the following command to allow HTTPS.
+It is important to delete the rule that allows HTTP traffic to keep the cluster safe since we have completed the test. 
 
 ```bash
-   az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
-      --source-address-prefixes * --source-port-ranges 443 \
-      --destination-address-prefixes '*' --destination-port-ranges 443 --access Allow \
-      --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 443"
+   az network nsg rule delete -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound 
 ```
+**the optional steps end here**
+
+## Deploy the Ingress with HTTPS support
 
 A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway.
 
