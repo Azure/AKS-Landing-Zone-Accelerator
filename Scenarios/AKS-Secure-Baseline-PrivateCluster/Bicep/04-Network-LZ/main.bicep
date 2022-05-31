@@ -215,7 +215,7 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
       {
         name: 'Allow443InBound'
         properties: {
-          priority: 101
+          priority: 102
           sourceAddressPrefix: '*'
           protocol: 'Tcp'
           destinationPortRange: '443'
