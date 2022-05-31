@@ -343,8 +343,9 @@ Re-apply the updated file
 ```
 
 
-Now you can access the website using using your FQDN. When you navigate to the website using your browser you will see a warning stating the destination is not safe. This is because you are using a self signed certificate which we used for illustration purposes. Do not use a self signed certificate in production. Go ahead and proceed to the destination to get access to your deployment.
+Now you can access the website using using your FQDN. When you navigate to the website using your browser you might see a warning stating the destination is not safe. Give it a few minutes and this should clear out. However, for production you want to use Certified Authority (CA) certificates. 
 
+![deployed workload https more secure](../media/deployed-workload-https-secure.png)
 
 
 ## Next Step
