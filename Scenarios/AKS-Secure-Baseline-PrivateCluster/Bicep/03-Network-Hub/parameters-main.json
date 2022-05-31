@@ -145,6 +145,7 @@
                   "grafana.com",
                   "stats.grafana.org",
                   "github.com",
+                  "charts.bitnami.com",
                   "raw.githubusercontent.com",
                   "*.letsencrypt.org",
                   "usage.projectcalico.org",

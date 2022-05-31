@@ -12,8 +12,6 @@ param aksadminaccessprincipalId string
 param aksIdentityName string
 param kubernetesVersion string
 param rtAKSName string
-param acrName string //User to provide each time
-param keyvaultName string //user to provide each time
 param location string = deployment().location
 
 @allowed([
@@ -27,6 +25,8 @@ var ipdelimiters = [
   '.'
   '/'
 ]
+param acrName string //User to provide each time
+param keyvaultName string //user to provide each time
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -196,6 +196,7 @@ module keyvaultAccessPolicy 'modules/keyvault/keyvault.bicep' = {
   params: {
     keyvaultManagedIdentityObjectId: aksCluster.outputs.keyvaultaddonIdentity
     vaultName: keyvaultName
+    aksuseraccessprincipalId: aksuseraccessprincipalId
   }
 }
 

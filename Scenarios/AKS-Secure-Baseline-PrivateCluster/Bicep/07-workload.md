@@ -2,21 +2,25 @@
 
 This application is provided by Microsoft Learning and is used as part of a self-paced Kubernetes training [workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/). You may find reviewing that workshop helpful as it presents some alternative deployment options and features using different architecture requirements. The application consists of a web frontend, an API service and a MongoDB database.
 
-Because the infrastructure has been deployed in a private AKS cluster setup, you will need to perform the application deployment from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well.
+Because the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
 
 ## Prepare your Jumpbox VM with tools
 
-* Add a rule in the Firewall to allow internet access to the VM's private IP. Verify the VM's private IP and update if necessary.
+* Add a rule in the Firewall to allow internet access to the VM's private IP. Verify VM's private IP and update if necessary
 
    ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --destination-addresses '*' --priority 201 --source-addresses '10.0.3.4/32'
+   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
    ```
+* Add a rule in the Firewall to allow internet access to the your VM or computer's  IP. Verify VM's private IP and update if necessary
 
+   ```bash
+   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '<your vm or computer's ip>'
+   ```
 ## Connecting to the Bastion Host
 
 1. Use Bastion Host to connect to the jumpbox.
 2. Enter the username and password. If you have used a public key, then select upload private key (corresponding to the public key) to connect.
-3. Once you connect, ensure you permit the site to read the content of your clipboard. 
+3. Once you connect ensure you permit the site to read the content of your clipboard
 
 * Clone it on the jumpbox.
 
@@ -32,26 +36,18 @@ Because the infrastructure has been deployed in a private AKS cluster setup, you
    sudo ./script.sh
    ```
 
-* Once the script above finishes executing, login to Azure.
+* Login to Azure
 
    ```bash
-   az login -t <tenant id>
+   TENANTID=<tenant id>
+   az login -t $TENANTID
    ```
 
-* Ensure you are connected to the correct subscription.
+* Ensure you are connected to the correct subscription
 
    ```bash
    az account set --subscription <subscription id>
    ```
-
-## Provide yourself Access to Create Secrets in your Azure Key vault
-
-1. Go to the Azure portal and find your Key vault.
-2. Click on **Access policies** under **Settings** in the left blade![add access policy](../media/add-access-policy-acr.png)
-3. Select the required access policies ![add access policy](../media/add-access-policy-acr2.png)
-4. Under **Select principal** click on the **None selected** link and select the AAD user group(s) you created for this to provide you and everyone in the group access to the Key vault.
-5. Click **Select** at the bottom of the the screen.
-6. **IMPORTANT**: Click **Save** at the top of the next screen to save the changes. ![add access policy](../media/add-access-policy-acr2.png)
 
 ## Build Container Images
 
@@ -73,63 +69,68 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 Navigate to each of the application code directories, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
 
 ```bash
+# enter the name of your ACR below
+SPOKERG=<resource group name for spoke>
+ACRNAME=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.acrName.value -o tsv)
 cd mslearn-aks-workshop-ratings-api
-sudo docker build . -t <acrname>.azurecr.io/ratings-api:v1
-
+sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
 cd ../mslearn-aks-workshop-ratings-web
-sudo docker build . -t <acrname>.azurecr.io/ratings-web:v1
+sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
 ```
 
-Log into ACR.
+Log into ACR
 
 ```bash
-sudo az acr login -n <acrname>
+sudo az acr login -n $ACRNAME
 ```
 
 Push the images into the container registry. Ensure you are logged into the Azure Container Registry, you should show a successful login from the command above.
 
 ```bash
-
-sudo docker push <acrname>.azurecr.io/ratings-api:v1
-sudo docker push <acrname>.azurecr.io/ratings-web:v1
+sudo docker push $ACRNAME.azurecr.io/ratings-api:v1
+sudo docker push $ACRNAME.azurecr.io/ratings-web:v1
 ```
 
-Create the secret in key vault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps. 
+Create the secret in key vault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps.
 
 **Note:** Passwords with special characters in a connection string might break the connection because of wrong encoding.
+**Note:** Ensure you have access to create passwords in keyvault by going to the Key vault in Azure Portal, clicking on Access Policies and Add Access Policy. **Don't forget to hit "Save" after adding yourself or user group to Key vault access**
 
 ```bash
-az keyvault secret set --name mongodburi --vault-name <keyvault name> --value "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
+# update keyvault name, username and password before running the command below
+KEYVAULTNAME=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv)
+PGUSERNAME=<postgres db user name>
+PGPASSWORD=<postgres db password>
+az keyvault secret set --name mongodburi --vault-name $KEYVAULTNAME --value "mongodb://$PGUSERNAME:$PGPASSWORD@ratings-mongodb.ratingsapp:27017/ratingsdb"
 ```
+
+# The following Steps can be performed using AKS Run Commands from your local machine provided you have the correct permissions.
 
 ## Deploy the database into the cluster
 
-You can deploy the workload into the cluster using the dev jumpbox or a computer that is on the private network since this is a private cluster. AKS Private Clusters provide better security and can only be accessed from inside your private network.
+The following steps can be performed using AKS Run Commands from your local machine provided you have the correct permissions.
 
-Get the connection credentials for the cluster:
-
+Ensure the AKS run commands are working as expected.
 ```bash
-az aks get-credentials --name <Cluster Name> --resource-group <Resource group Name>
+# create environment variable for cluster and its resource group name
+ClusterRGName=<cluster resource group name>
+ClusterName=<AKS cluster name>
 ```
 
-Ensure you have access to the cluster. You will be asked to log in to your Azure subscription.
-
 ```bash
-kubectl get nodes
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get nodes"
 ```
 
 On the Kubernetes cluster, create a namespace for the Ratings Application.
 
 ```bash
-kubectl create namespace ratingsapp
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl create namespace ratingsapp"
 ```
 
-The MongoDB backend application is installed using Helm. Your username and password must be the same username and password used in the connection string secret that was created in Key vault in the previous step.
+The MongoDB backend application is installed using Helm. Your username and password must be the same username and password using in the connection string secret that was created in Key vault in the previous step.
 
 ```bash
-sudo helm repo add bitnami https://charts.bitnami.com/bitnami
-
-sudo helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=<username>,auth.password=<password>,auth.database=ratingsdb
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add bitnami https://charts.bitnami.com/bitnami && helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=$PGUSERNAME,auth.password=$PGPASSWORD,auth.database=ratingsdb"
 ```
 
 ## Deploy the workload into the cluster
@@ -149,8 +150,10 @@ You will have to carefully update the following files:
 
 Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder.
 
-1. Update the **"api-secret-provider-class.yaml"** file to reflect the correct value for the following items:
+1. Updating **api-secret-provider-class.yaml**
 
+   Update the **"api-secret-provider-class.yaml"** file to reflect the correct value for the following items:
+   
    - Key Vault name
    - Client ID for the AKS Key Vault Add-on
    - Tenant ID for the subscription.
@@ -160,71 +163,89 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    Deploy the edited yaml file.
    
    ```bash
-   kubectl apply -f api-secret-provider-class.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f api-secret-provider-class.yaml -n ratingsapp" --file api-secret-provider-class.yaml
    ```
-   
-2. Update the **"1-ratings-api-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
+
+1. Updating **1-ratings-api-deployment.yaml**
+
+   Update the **"1-ratings-api-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
    ```bash
-   kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp
+      az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp" --file 1-ratings-api-deployment.yaml
    ```
-   
-3. Ensure the ratings-api deployment was successful by running **kubectl get pods -n ratingsapp**.
 
-   If you don't get a running state then it is likely that the pod was unable to get the secret from the Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity.
+1. Ensure the ratings-api deployment was successful. 
 
+   If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity.
+   ```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get pods -n ratingsapp"
+   ```
    You can troubleshoot container creation issues by running
 
    ```bash
-   kubectl describe pod <pod name> -n ratingsapp
-   kubectl logs <pod name> -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl describe pod <pod name> -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl logs <pod name> -n ratingsapp"
    ```
 
-4. Deploy the "**2-ratings-api-service.yaml**" file.
+1. Updating **2-ratings-api-service.yaml**
 
-   ```bash
-   kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp
-   ```
-   
-5. Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
+   Deploy the "2-ratings-api-service.yaml" file.
 
    ```bash
-   kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp" --file 2-ratings-api-service.yaml
    ```
-   
-6. Deploy the "**4-ratings-web-service.yaml**" file.
+1. Updating **3a-ratings-web-deployment.yaml**
+
+   Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
    ```bash
-   kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
    ```
+
+1. Deploy the "4-ratings-web-service.yaml" file.
+
+   ```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
+   ```
+
 
 ## **(Optional)** Deploy the Ingress without support for HTTPS
 
 This step is optional. If you would like to go straight to using https which is the secure option, skip this section and go straight to the **Update the Ingress to support HTTPS traffic** section.
 
-1. Deploy the **"5-http-ratings-web-ingress.yaml"** file.
+It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
+
+```bash
+   az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
+      --source-address-prefixes '*' --source-port-ranges 80 \
+      --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
+      --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
+```
+
+1. Deploy the **"5-ratings-web-ingress.yaml"** file.
 
    ```bash
-   kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp" --file 5-http-ratings-web-ingress.yaml
    ```
-
-2. Get the ip address of your ingress controller
-
-   ```bash
-   kubectl get ingress -n ratingsapp
-   ```
-
-### Check your deployed workload
 
 1. Get the ip address of your ingress controller
 
    ```bash
-   kubectl get ingress -n ratingsapp
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get ingress -n ratingsapp"
    ```
 
-2. Copy the ip address displayed, open a browser, navigate to that address and explore your website
+### Check your deployed workload
+
+1. Copy the ip address displayed, open a browser, navigate to the IP address obtained above from the ingress controller and explore your website
 
    ![deployed workload](../media/deployed-workload.png)
+
+It is important to delete the rule that allows HTTP traffic to keep the cluster safe since we have completed the test. 
+
+```bash
+   az network nsg rule delete -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound 
+```
+**the optional steps end here**
 
 ## Deploy the Ingress with HTTPS support
 
@@ -249,72 +270,84 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
    ![creating nds](../media/dns-created.png)
 
-### Create the self-signed certificate using openssl
+### Create the self-signed certificate using Lets Encrypt
 
-Create the self-signed certificate using openssl. Note that these steps need to be created by a computer within the hub or spoke network since the Key vault is private. Head back to your jump box and enter these commands.
+We are going to use Lets Encrypt and Cert-Manager to provide easy to use certificate management for the application within AKS. Cert-Manager will also handle future certificate renewals removing any manual processes.
 
-*IMPORTANT* make sure you replace the <FQDN of App Gateway> in the command below with the FQDN you just created
-
-```bash
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -out aks-ingress-tls.crt -keyout aks-ingress-tls.key -subj "/CN=<FQDN of App Gateway>/O=AKS-INGRESS-TLS"
-
-openssl pkcs12 -export -out aks-ingress-tls.pfx -in aks-ingress-tls.crt -inkey aks-ingress-tls.key -passout pass:
-```
-
-Create the secret in Key vault
+1. First of all, you will need to install cert-manager into your cluster.
 
 ```bash
-az keyvault certificate import -f aks-ingress-tls.pfx -n aks-ingress-tls --vault-name <KeyVault Name>
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml" 
+   
+```
+First of all this will create a new namespace called cert-manager which is where all of the resources for cert-manager will be kept. This will then go ahead and download some CRDs (CustomResourceDefinitions) which provides extra functionality in the cluster for the creation of certificates.
+
+We will then proceed to test this certificate process with a staging certificate to begin with, before moving on to deploying a production certificate.
+
+2. Edit the 'certificateIssuer.yaml' file and include your email address. This will be used for certificate renewal notifications.
+
+Deploy certificateIssuer.yaml
+
+```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
 ```
 
-### **Redeploy the workload using HTTPS**
+3. Edit the '5-https-ratings-web-ingress.yaml' file with the FQDN of your host that you created earlier on the public IP of the Application Gateway.
 
-Now that you have created the certificate in Key vault you can redeploy the workload using HTTPS.
+Deploy 5-https-ratings-web-ingress.yaml
 
-You will have to carefully update the following files:
-
-- [web-secret-provider-class.yaml](../Apps/RatingsApp/web-secret-provider-class.yaml)
-- [1-ratings-api-deployment.yaml](../Apps/RatingsApp/1-ratings-api-deployment.yaml)
-- [3b-ratings-web-deployment.yaml](../Apps/RatingsApp/3b-ratings-web-deployment.yaml)
-- [5-https-ratings-web-ingress.yaml](../Apps/RatingsApp/5-https-ratings-web-ingress.yaml)
-
-1. Updating **web-secret-provider-class.yaml** (you should still be in the Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp folder). Update the file to reflect the correct value for the following items:
-
-   - Key Vault name
-   - Client ID for the AKS Key Vault Add-on
-   - Tenant ID for the subscription.
+```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
    
-   ```bash
-   kubectl apply -f web-secret-provider-class.yaml -n ratingsapp
-   ```
+```
+
+After updating the ingress, A request will be sent to letsEncrypt to provide a 'staging' certificate. This can take a few minutes. You can check on the progress by running the below command. When the status Ready = True. You should be able to browse to the same URL you configured on the PIP of the Application Gateway earlier.
+
+```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificate -n ratingsapp" 
+```
+
+If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
+
+```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificaterequest -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl describe certificaterequest <certificaterequestname> -n ratingsapp"
    
-2. Delete the previous ratings-web deployment.
+```
 
-   ```bash
-    kubectl delete -f 3a-ratings-web-deployment.yaml -n ratingsapp
-   ```
-
-3. Update the **"3b-ratings-web-deployment.yaml"** file with the ACR name and redeploy the web application using the this file, which includes the necessary volume mounts to create the Kubernetes secret containing the certificate that will be used by the ingress controller.
-
-   ```bash
-   kubectl apply -f 3b-ratings-web-deployment.yaml -n ratingsapp
-   ```
-   
-4. If you have deployed the optional HTTP version you must delete the previous Ingress resource
-
-   ```bash
-   kubectl delete -f 5-http-ratings-web-ingress.yaml -n ratingsapp
-   ```
-
-5. Update the **"5-https-ratings-web-ingress.yaml"** file to use the **FQDN that matches the certificate** and application gateway public IP address. Deploy the https ingress.
-   
-   ```bash
-   kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp 
-   ```
-
-Now you can access the website using using your FQDN. When you navigate to the website using your browser you will see a warning stating the destination is not safe. This is because you are using a self signed certificate which we used for illustration purposes. Do not use a self signed certificate in production. Go ahead and proceed to the destination to get access to your deployment.
-
+Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate. If you have got this far, continue to the next step to remediate this issue.
 ![deployed workload https](../media/deployed-workload-https.png)
+
+4. Edit the 'certificateIssuer.yaml' file and replace the following:
+
+    Change the metadata name to letsencrypt-prod
+    Change the server to https://acme-v02.api.letsencrypt.org/directory
+    change the privateKeySecretRef to letsencrypt-prod
+
+Re-apply the updated file
+
+```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
+```
+
+5. The next step is to change the ingress to point to the production certificateIssuer. At the moment it is still pointing to the old staging issuer.
+
+Edit '5-https-ratings-web-ingress.yaml' and replace the following values:
+
+    cert-manager.io/issuer: letsencrypt-prod
+
+Re-apply the updated file
+
+```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
+   
+```
+
+
+Now you can access the website using using your FQDN. When you navigate to the website using your browser you might see a warning stating the destination is not safe. Give it a few minutes and this should clear out. However, for production you want to use Certified Authority (CA) certificates. 
+
+![deployed workload https more secure](../media/deployed-workload-https-secure.png)
+
 
 ## Next Step
 
