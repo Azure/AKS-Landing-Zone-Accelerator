@@ -315,6 +315,7 @@ If you notice the status is not changing after a few minutes, there could be a p
 ```
 
 Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate. If you have got this far, continue to the next step to remediate this issue.
+![deployed workload https](../media/deployed-workload-https.png)
 
 4. Edit the 'certificateIssuer.yaml' file and replace the following:
 
@@ -344,7 +345,7 @@ Re-apply the updated file
 
 Now you can access the website using using your FQDN. When you navigate to the website using your browser you will see a warning stating the destination is not safe. This is because you are using a self signed certificate which we used for illustration purposes. Do not use a self signed certificate in production. Go ahead and proceed to the destination to get access to your deployment.
 
-![deployed workload https](../media/deployed-workload-https.png)
+
 
 ## Next Step
 
