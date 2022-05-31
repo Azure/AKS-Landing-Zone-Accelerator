@@ -166,7 +166,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f api-secret-provider-class.yaml -n ratingsapp" --file api-secret-provider-class.yaml
    ```
 
-2. Updating **1-ratings-api-deployment.yaml**
+1. Updating **1-ratings-api-deployment.yaml**
 
    Update the **"1-ratings-api-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
@@ -174,7 +174,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
       az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp" --file 1-ratings-api-deployment.yaml
    ```
 
-3. Ensure the ratings-api deployment was successful. 
+1. Ensure the ratings-api deployment was successful. 
 
    If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity.
    ```bash
@@ -187,12 +187,25 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl logs <pod name> -n ratingsapp"
    ```
 
-4. Updating **2-ratings-api-service.yaml**
+1. Updating **2-ratings-api-service.yaml**
 
    Deploy the "2-ratings-api-service.yaml" file.
 
    ```bash
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp" --file 2-ratings-api-service.yaml
+   ```
+1. Updating **3a-ratings-web-deployment.yaml**
+
+   Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
+
+   ```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
+   ```
+
+1. Deploy the "4-ratings-web-service.yaml" file.
+
+   ```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
    ```
 
 
@@ -208,19 +221,7 @@ It is important to first configure the NSG for the Application Gateway to accept
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```
-1. Updating **3a-ratings-web-deployment.yaml**
 
-   Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
-   ```
-
-1. Deploy the "4-ratings-web-service.yaml" file.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
-   ```
 1. Deploy the **"5-ratings-web-ingress.yaml"** file.
 
    ```bash
