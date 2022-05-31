@@ -31,7 +31,7 @@ module vnetspoke 'modules/vnet/vnet.bicep' = {
   params: {
     location: location
     vnetAddressSpace: {
-        addressPrefixes: spokeVNETaddPrefixes
+      addressPrefixes: spokeVNETaddPrefixes
     }
     vnetName: vnetSpokeName
     subnets: spokeSubnets
@@ -191,7 +191,7 @@ module publicipappgw 'modules/vnet/publicip.bicep' = {
 
 resource appgwSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
   scope: resourceGroup(rg.name)
-  name:  '${vnetSpokeName}/${appGatewaySubnetName}'
+  name: '${vnetSpokeName}/${appGatewaySubnetName}'
 }
 
 module appgw 'modules/vnet/appgw.bicep' = {
@@ -212,6 +212,19 @@ module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
     location: location
     nsgName: nsgAppGWName
     securityRules: [
+      {
+        name: 'Allow443InBound'
+        properties: {
+          priority: 101
+          sourceAddressPrefix: '*'
+          protocol: 'Tcp'
+          destinationPortRange: '443'
+          access: 'Allow'
+          direction: 'Inbound'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+        }
+      }
       {
         name: 'AllowControlPlaneV1SKU'
         properties: {
