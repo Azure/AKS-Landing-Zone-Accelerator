@@ -1,5 +1,3 @@
-> The H1 title is a noun phrase that describes the scenario. Don't enter it here, but as the **name** value in the corresponding YAML file.
-
 What happen when you need to upgrade the kubernetes version in a cluster or even better when you need to change kubernetes platform components like: ingress gateway, service mesh, operators and so on, but you don't want to have impact on the workloads/applications that are running on the cluster itself?
 The answer that will make all happy from infra to apps is blue green deployment at Kubernetes infra level.
 With modern principles and availability of cloud services like:
@@ -48,23 +46,63 @@ This solution is a generalized architecture pattern, which can be used for many 
 
 ## Architecture
 
-> Architecture diagram goes here
+Below the high level architecture that describes the pattern and related services invovled. In the [Worklfow section](#workflow) are descrbied in detail the steps for the implementation of the pattern and in particular also the sequence of events to have the proper swtich between the clusters.
+![Blue Green Patter High Level Design](../media/hl-bg-arch.png)
 
-> Under the architecture diagram, include this sentence and a link to the Visio file or the PowerPoint file: 
+An important point to mention that the region of the deployment is an invariant, that means that you can deploy the two cluster in different regions or in the same region; in the later case are requred certain prerequisties:
+- VNET and Subnet sizing to host two clusters
+- Azure capacity for the subscription
 
-*Download a [Visio file](https://arch-center.azureedge.net/[filename].vsdx) of this architecture.*
+*Download* a [Visio file](https://arch-center.azureedge.net/[filename].vsdx) of this architecture.*
 
-### Dataflow
+### Workflow
 
 > An alternate title for this sub-section is "Workflow" (if data isn't really involved).
 > In this section, include a numbered list that annotates/describes the dataflow or workflow through the solution. Explain what each step does. Start from the user or external data source, and then follow the flow through the rest of the solution (as shown in the diagram).
 
-Examples:
-1. Admin 1 adds, updates, or deletes an entry in Admin 1's fork of the Microsoft 365 config file.
-2. Admin 1 commits and syncs the changes to Admin 1's forked repository.
-3. Admin 1 creates a pull request (PR) to merge the changes to the main repository.
-4. The build pipeline runs on the PR.
+Before start the explanation of the workflow to implement the blue gren deployment for AKS, it is importnant to highlight that we need to see at this patter like a state machine in which blue and green cluster are on at the same time only for a limitied period of time, this is done to optmize the costs and operational effort.
+Assuming this we can summarizie the pattern in 5 stages:
+1. T0: Blue Cluster is On
+2. T1: Green Cluster Deployment
+3. T2: Sync K8S State between Blue and Green cluster
+4. T3: Traffic Switch to the green cluster
+5. T4: Blue cluster is destroyed
 
+The workkfow then will start again for the next planned release of the cluster, and the flow will start from the green cluster one.
+This pattern is flexible on the netwrok discoverabiity of the clusters, in fact you can have multiple options:
+- A DNS record dedicated to the blue and green clusters IP
+- A DNS record dedicated to the blue green cluster pointing to the App Gateway IP
+
+
+#### T0: Blue Cluster is On
+
+The initial stage of the pattern is to  have the existing live cluster on, let assume that is the blue one. At this stage we are preparing for the deployment of the new version of the cluster.
+
+![Step0](../media/bg-step0.png)
+
+#### T1: Green Cluster Deployment
+
+At this time the deployment of the new version is started, and the first step is to deploy the new cluster in parallel to the existing one. At this time the new cluster is only deplyed, the live traffic is still routed in the blue cluster, that is the live site. 
+
+![Step0](../media/bg-step1.png)
+
+#### T2: Sync K8S State between Blue and Green cluster
+
+At this stage there is the alignment between the two clusters, that means that all:
+- applications
+- operators
+- K8S resources
+are deployed in the green cluster, the ultimate goal is that at the end of the sync the clusters are equivalent.
+There are multiple solutions/approaches to replicate/sync K8S state on clusters:
+- Redeployment via Ci/CD
+- GitOps with solutions promoted in CNCF
+- Customized solution that store the K8S configs and resources, usually databses and K8S manifests generators
+
+![Step0](../media/bg-step2.png)
+
+Usually to facilitate the sync the deployment of new applications is not permitted the deployment in the live cluster, this menas there there is a prediod of time that start from the sync and finish when the switch to the green is completed. This period can be avoided if there are advaanced mechanism to manage the K8S state in multiple clusters.
+
+When the sync is completed is required to perform a test/validation of the cluster from an infra to applications, this include also a check on the monitoring and logging platforms, to validate the healthy of the cluster. Usually the Green cluster is exposed on the App Gateway or External LB with an internal URL.
 ### Components
 
 > A bullet list of components in the architecture (including all relevant Azure services) with links to the product service pages. This is for lead generation (what business, marketing, and PG want). It helps drive revenue.
