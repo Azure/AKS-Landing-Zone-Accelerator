@@ -7,7 +7,7 @@ Velero exposes [Metrics](https://github.com/vmware-tanzu/velero/blob/main/pkg/me
 
 On Azure, You don't need to setup your own Prometheus server: Azure Container Insights knows how to scrape Prometheus Metrics, and you can export your metrics to Azure seamlessly.
 
-![azure-container-insights-prometheus](./media/monitoring-kubernetes-architecture.png)
+![azure-container-insights-prometheus](../media/monitoring-kubernetes-architecture.png)
 
 Read the documentation on Prometheus Integration: 
 https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-prometheus-integration
