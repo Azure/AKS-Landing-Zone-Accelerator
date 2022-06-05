@@ -53,9 +53,13 @@ Checkout the repo section on [High Availability Baseline](https://github.com/Azu
 - Velero (blob) Container is configured with [Object Replication](https://docs.microsoft.com/en-us/azure/storage/blobs/object-replication-overview?tabs=powershell), to the secondary storage account 
 
 
-### consider backing up your backup cluster / Data:
-- So you can persist any changes of your data, while on failover on the secondary cluster. Then you can then failback and restore data to the primary Region/cluster.
+## Integrate Velero with your infrastructure:
+- You can see the example in the provided Velero module, which requires a storage account access as a dependency. 
+- You can prepare your storage accounts and integrate them with the code. [Check out the example](./velero_terraform_sample#using-the-module): 
 
+## Scheduling backups:
+- You can run backups for the CICD / Devops Chain 
+- Or Run them on a schedule: https://velero.io/docs/v1.6/how-velero-works/#scheduled-backups
 
 
 ## Backup & Restore Planning
