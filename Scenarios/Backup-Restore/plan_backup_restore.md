@@ -35,7 +35,7 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 
 Checkout the repo section on [High Availability Baseline](https://github.com/Azure/AKS-Landing-Zone-Accelerator/tree/velero-backup-restore/Scenarios/High-Availability-Baseline)
 
-## Bakckup & Restore architecture
+## Backup & Restore architecture
 
 ### Scenario 1: using a shared storage between the primary and secondary AKS Clusters
 ![architecture_velerol](./media/architecture_velero.png)
