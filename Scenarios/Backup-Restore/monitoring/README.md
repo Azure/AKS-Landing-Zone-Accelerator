@@ -64,5 +64,5 @@ You can create an Alert When the **value** of velero_backup_failure_total exceed
 
 ## Monitoring Backups & Restores
 
-You will need to setup the Log Analytics workspaces for both the source AKS (where backups are taken), and the target (where they are restored).
-If you plan to you Azure Container Insights, You'll need to setup the ConfigMap (monitoring) configuration on both clusters.
+- You will need to setup the Log Analytics workspaces for both the source AKS (where backups are taken), and the target (where they are restored).
+- If you plan to you Azure Container Insights, You'll need to setup the ConfigMap (monitoring) configuration on both clusters.
