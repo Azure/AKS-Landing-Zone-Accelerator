@@ -17,7 +17,7 @@ https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insigh
 
 ## How to enable Azure Container Insights for scraping Prometheus metrics ?
 
-To enable scraping with Container insights, you simply need to configure a ConfigMap related to metrics & data collection.
+To enable scraping with Container insights, you simply need to deploy a ConfigMap related to metrics & data collection.
 
 
 You can find [an example, in this repository](./container-azm-ms-agentconfig.yaml) for testing purposes (we recommend to download the latest version from the documentation link above).
@@ -30,7 +30,10 @@ In this example, we simply *enable monitoring_kubernetes_pods*, and that's it !
         # ex. monitor_kubernetes_pods_namespaces = ["velero"]
 ```
 
-
+   - Run the following command to deploy the configMap to the AKS cluster: 
+    ```bash
+    kubectl  apply -f  container-azm-ms-agentconfig.yaml
+    ```
 
 ## Viewing  Velero Metrics in Azure
 
