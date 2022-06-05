@@ -13,6 +13,8 @@ Read the documentation on Prometheus Integration:
 https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-prometheus-integration
 
 
+
+
 ## How to enable Azure Container Insights for scraping Prometheus metrics ?
 
 To enable scraping with Container insights, you simply need to configure a ConfigMap related to metrics & data collection.
@@ -28,12 +30,16 @@ In this example, we simply *enable monitoring_kubernetes_pods*, and that's it !
         # ex. monitor_kubernetes_pods_namespaces = ["velero"]
 ```
 
+
+
 ## Viewing  Velero Logs in Azure
 
 You can access Insights on Velero Metrics, by viewing the *InsightsMetrics* of your AKS cluster.
 
 
 ![list_velero_metrics_azure](../media/list_velero_metrics_azure.png)
+
+
 
 
 ## Viewing Metrics for failed backups
@@ -44,12 +50,16 @@ You can simply filter the name for the metric: velero_backup_failure_total
 ![list_velero_metrics_azure](../media/backup_failure_velero_metrics_azure.png)
 
 
+
+
 ## Creating an Alert for failed backups
 
 You can create an Alert When the **value** of velero_backup_failure_total exceeds a threshold (example >=1)
 
 
 ![list_velero_metrics_azure](../media/backup_alert_rule.png)
+
+
 
 
 ## Monitoring Backups & Restores
