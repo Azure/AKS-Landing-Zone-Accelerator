@@ -22,7 +22,7 @@ To enable scraping with Container insights, you simply need to deploy a ConfigMa
 
 You can find [an example, in this repository](./container-azm-ms-agentconfig.yaml) for testing purposes (we recommend to download the latest version from the documentation link above).
 
-In this example, we simply *enable monitoring_kubernetes_pods*, and that's it !
+In this example (because Velero already exports the monitoring metrics), we simply *enable monitoring_kubernetes_pods* in the ConfigMap, and that's it !
 ```bash
         monitor_kubernetes_pods = true
         ## Restricts Kubernetes monitoring to namespaces for pods that have annotations set and are scraped using the monitor_kubernetes_pods setting.
