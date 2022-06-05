@@ -1,6 +1,6 @@
 # Monitoring Velero with Azure 
 
-## Velero Monitoring Metrics
+## Monitoring Velero
 
 Velero exposes [Metrics](https://github.com/vmware-tanzu/velero/blob/main/pkg/metrics/metrics.go) for monitoring, available for scraping with a tool such as Prometheus.
 
