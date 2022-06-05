@@ -30,7 +30,7 @@ In this example, we simply *enable monitoring_kubernetes_pods*, and that's it !
         # ex. monitor_kubernetes_pods_namespaces = ["velero"]
 ```
 
-   - Run the following command to deploy the configMap to the AKS cluster: 
+   - Run the following command to deploy the sample configMap to the AKS cluster: 
     ```bash
     kubectl  apply -f  container-azm-ms-agentconfig.yaml
     ```
