@@ -28,4 +28,31 @@ In this example, we simply *enable monitoring_kubernetes_pods*, and that's it !
         # ex. monitor_kubernetes_pods_namespaces = ["velero"]
 ```
 
+## Viewing  Velero Logs in Azure
 
+You can access Insights on Velero Metrics, by viewing the *InsightsMetrics* of your AKS cluster.
+
+
+![list_velero_metrics_azure](../media/list_velero_metrics_azure.png)
+
+
+## Viewing Metrics for failed backups
+
+You can simply filter the name for the metric: velero_backup_failure_total
+
+
+![list_velero_metrics_azure](../media/backup_failure_velero_metrics_azure.png)
+
+
+## Creating an Alert for failed backups
+
+You can create an Alert When the **value** of velero_backup_failure_total exceeds a threshold (example >=1)
+
+
+![list_velero_metrics_azure](../media/backup_alert_rule.png)
+
+
+## Monitoring Backups & Restores
+
+You will need to setup the Log Analytics workspaces for both the source AKS (where backups are taken), and the target (where they are restored).
+If you plan to you Azure Container Insights, You'll need to setup the ConfigMap (monitoring) configuration on both clusters.
