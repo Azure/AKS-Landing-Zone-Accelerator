@@ -32,7 +32,7 @@ In this example, we simply *enable monitoring_kubernetes_pods*, and that's it !
 
 
 
-## Viewing  Velero Logs in Azure
+## Viewing  Velero Metrics in Azure
 
 You can access Insights on Velero Metrics, by viewing the *InsightsMetrics* of your AKS cluster.
 
