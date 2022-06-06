@@ -236,7 +236,7 @@ terraform apply
 ### Next steps
 :arrow_forward: [Monitoring Velero with azure Container Insights](./monitoring/README.md)
 
-:arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
+:arrow_forward: [Plan your AKS Backup & Restore](./plan_backup_restore.md)
 
 :arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
