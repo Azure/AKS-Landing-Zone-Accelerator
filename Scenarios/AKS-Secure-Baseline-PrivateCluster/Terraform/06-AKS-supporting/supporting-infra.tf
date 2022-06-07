@@ -20,10 +20,10 @@ module "create_acr" {
 
 module "create_kv" {
   source                   = "./modules/kv-private"
-  
+
   name                     = "kv${random_integer.deployment.result}-${var.prefix}"
-  resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
-  location            = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
+  resource_group_name      = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
+  location                 = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
   tenant_id                = data.azurerm_client_config.current.tenant_id
   vnet_id                  = data.terraform_remote_state.existing-lz.outputs.lz_vnet_id
   dest_sub_id              = data.terraform_remote_state.existing-lz.outputs.aks_subnet_id

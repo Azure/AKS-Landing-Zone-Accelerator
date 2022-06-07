@@ -66,34 +66,23 @@ resource "azurerm_application_gateway" "agw" {
     http_listener_name         = local.listener_name
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
+    priority                   = 1 //priority arguement required as of 3.6.0 release. 1 is the highest priority and 20000 is the lowest priority.
   }
 }
 
 # Variables
 
-variable "appgw_name" {
+variable "appgw_name" {}
 
-}
+variable "resource_group_name" {}
 
-variable "resource_group_name" {
+variable "location" {}
 
-}
+variable "frontend_subnet" {}
 
-variable "location" {
+variable "virtual_network_name" {}
 
-}
-
-variable "frontend_subnet" {
-
-}
-
-variable "virtual_network_name" {
-
-}
-
-variable "appgw_pip" {
-
-}
+variable "appgw_pip" {}
 
 output "gateway_name" {
   value = azurerm_application_gateway.agw.name

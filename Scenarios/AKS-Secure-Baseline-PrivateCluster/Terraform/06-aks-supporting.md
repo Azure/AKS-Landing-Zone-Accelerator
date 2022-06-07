@@ -4,7 +4,6 @@ The following will be created:
 * Azure Container Registry (supporting-infra.tf)
 * Azure Key Vault (supporting-infra.tf)
 * Private Link Endpoints for ACR and Key Vault
-* Mongo DB Secret (mongo-secret.tf) -- OPTIONAL
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/06-AKS-supporting" folder
 ```
@@ -14,12 +13,6 @@ cd ../06-AKS-supporting
 This deployment will need to reference data objects from the Hub deployment and will need access to the pre-existing state file, update the variables as needed in the .tfvars sample file.  This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo. 
 
 Once again, A sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
-
-## OPTIONAL: A Note about MongoDB
-
-Sample code is provided to add a secret for the MongoDB connection string to the Azure Key Vault, which would be referenced by the application workload later. However, this is a "data plane" operation and networking restrictions on the Key Vault deployment will not allow this code to succeed if from a client machine outside of the hub or spoke virtual network. If you are running this from a machine within the hub or spoke virtual network, for example by using the jumpbox vm created earlier, feel free to rename the mongo-secret.tf.sample file to mongo-secret.tf to create the mongodb secret and grant access to the current user.
-
-Otherwise skip this part for now, we will create the secret manually using Azure CLI later.
 
 ### Add the Access key variable to terraform.tfvars
 

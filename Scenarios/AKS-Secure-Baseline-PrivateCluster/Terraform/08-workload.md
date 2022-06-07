@@ -4,41 +4,9 @@ This application is provided by Microsoft Learning and is used as part of a self
 
 Because the infrastructure has been deployed in a secure manner, only the API server to the AKS Private Cluster is accessible from inside of the private network.  You will need to perform the majority of the application deployment from the Dev Jumpbox in the Hub VNET, connect via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well.
 
-### Option 1: Connecting into the server-dev-linux vm using SSH and VS Code
 
-Since we will need to make changes to Kubernetes manifest files to deploy the workload, it is easier to use VS code to SSH into the linux vm. If you are unable to install VS code or the required Remote Development VS code package onto your installed VS code, feel free to use option 2 below. It will be more difficult to manipulate the manifest files using that option. When the server-dev-linux vm is provisioned with the inbound NSG rule allowing your local machine's public IP to connect to the it, navigate to the lower left hand of your screen and click on the Remote - SSH.
 
-![Open SSH icon in vs code](../media/remote-ssh.png)
-
-**Click connect to Host**
-
-![Connect to Host](../media/connect-to-host.png)
-
-**Connect to the remote host**
-
-Enter the username needed to login into the VM and the Public IP address of the server-dev-linux virtual machine.
-
-![Connect to remote host using pip](../media/connect-to-host-using-pip.PNG)
-
-**SSH VS Code Window**
-
-When the username and pip are entered a new SSH VS Code window will open. When the window appears, at the top select `Linux` as the platform for the remote host.
-
-![Linux Host](../media/linux-platform.png)
-
-**Verify Fingerprint**
-
-When the Fingerprint drop down appears, select continue.
-
-![Fingerprint](../media/fingerprint.png)
-
-**Successfully connecting to the remote host**
-
-When connected to the server-dev-linux vm using an SSH tunnel, in the bottom left hand corner you will see that you are connected to the VM using SSH and the Public IP address assigned to the server-dev-linux vm.
-
-![Successful connection](../media/ssh-connected.png)
-
-### Option 2: Connecting to the Bastion Host
+### Option 1: Connecting to the Bastion Host
 
 1. Log into Azure portal and find the virtual machine you created in the create hub network step. It should be in the *escs-hub-rg-dev* resource group if you used the default naming convention
 2. Click on **Connect** at the top of the screen and select **Bastion**
@@ -173,36 +141,32 @@ Create the secret in keyvault if you havent already. You may use anything you'd 
 az keyvault secret set --name mongodburi --vault-name $KV_NAME --value "mongodb://<username>:<password>@ratings-mongodb.ratingsapp:27017/ratingsdb"
 ```
 
-## Deploy the database into the cluster
 
-You can deploy the workload into the cluster using the dev jumpbox or a computer that is on the private network since this is a private cluster. AKS Private Clusters provide better security and can only be accessed from inside your private network.
+## Deploy the database into the cluster (Run commands)
 
-Get the connection credentials for the cluster:
+The following steps can be performed using AKS Run Commands from your local machine provided you have the correct permissions.
 
-```
-az aks get-credentials --name $AKSCLUSTERNAME --resource-group $AKSRESOURCEGROUP
-```
-
-Ensure you have access to the cluster
-
-```
-kubectl get nodes
+Ensure the AKS run commands are working as expected.
+```bash
+# create environment variable for cluster and its resource group name
+ClusterRGName=<cluster resource group name>
+ClusterName=<AKS cluster name>
 ```
 
-![cluster access granted](../media/access-granted-to-cluster.png)
+```bash
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get nodes"
+```
 
 On the Kubernetes cluster, create a namespace for the Ratings Application.
 
-```
-kubectl create namespace ratingsapp
+```bash
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl create namespace ratingsapp"
 ```
 
 The MongoDB backend application is installed using Helm. Your username and password must be the same username and password using in the connection string secret that was created in Key vault in the previous step.
 
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-
-helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=<username>,auth.password=<password>,auth.database=ratingsdb
+```bash
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add bitnami https://charts.bitnami.com/bitnami && helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=$PGUSERNAME,auth.password=$PGPASSWORD,auth.database=ratingsdb"
 ```
 
 ## Deploy the workload into the cluster
