@@ -117,7 +117,12 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 Navigate to each of the application code directories, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
 
 ```
+cd mslearn-aks-workshop-ratings-api
 sudo docker build . -t $ACR_NAME.azurecr.io/ratings-api:v1
+```
+
+```
+cd ../mslearn-aks-workshop-ratings-web
 sudo docker build . -t $ACR_NAME.azurecr.io/ratings-web:v1
 ```
 
