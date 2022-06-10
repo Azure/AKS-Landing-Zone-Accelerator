@@ -34,11 +34,11 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 
   network_profile {
-    network_plugin = "azure"
-    # network_policy = "azure"
-    outbound_type = "userDefinedRouting"
-    dns_service_ip = "192.168.100.10"
-    service_cidr = "192.168.100.0/24"
+    network_plugin     = "azure"
+    # network_policy   = "azure"
+    outbound_type      = "userDefinedRouting"
+    dns_service_ip     = "192.168.100.10"
+    service_cidr       = "192.168.100.0/24"
     docker_bridge_cidr = "172.17.0.1/16"
 
   }
@@ -47,7 +47,7 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
 
   azure_active_directory_role_based_access_control {
       managed            = true
-    //  admin_group_object_ids = talk to Ayo about this one, this arg could reduce code other places possibly 
+    //  admin_group_object_ids = talk to Ayo about this one, this arg could reduce code other places possibly
       azure_rbac_enabled = true
     }
 

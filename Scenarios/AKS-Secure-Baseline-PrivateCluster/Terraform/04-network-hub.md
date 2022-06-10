@@ -5,7 +5,6 @@ The following will be created:
 * Hub Network (hub-networking.tf)
 * Azure Firewall (firewall.tf)
 * Azure Bastion Host (hub-networking.tf)
-* Resource Group for Dev Jumpbox (dev-setup.tf)
 * Virtual Machine (dev-setup.tf)
 
 
