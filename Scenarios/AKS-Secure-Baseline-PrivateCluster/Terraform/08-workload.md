@@ -32,7 +32,7 @@ sudo apt install docker.io -y
 
 3. [Kubernetes CLI](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/)
 
-4. [Helm]([Helm | Installing Helm](https://helm.sh/docs/intro/install/))
+4. [Helm](https://helm.sh/docs/intro/install/)
 
 Once connected, install the Azure CLI and log into Azure. You must be a member of the appropriate
 group created or imported during step 3 (AKS App Dev Users, AKS Operations) to access the cluster.
