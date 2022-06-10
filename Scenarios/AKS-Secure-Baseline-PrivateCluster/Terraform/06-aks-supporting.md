@@ -17,9 +17,7 @@ Once again, A sample terraform.tfvars.sample file is included. Update the requir
 ### Add the Access key variable to terraform.tfvars
 
 1. Open the *terraform.tfvars.sample* file and add the access key as the value of the access_key variable.  Update the other storage related variables. 
-
-2. Modify the connection string for mongodb if you would like to add the secret to Azure Key Vault using terraform per the instructions above.
-3. Rename the file to *terraform.tfvars*
+1. Rename the file to *terraform.tfvars*
 
 ## Deploy the Supporting Services 
 
