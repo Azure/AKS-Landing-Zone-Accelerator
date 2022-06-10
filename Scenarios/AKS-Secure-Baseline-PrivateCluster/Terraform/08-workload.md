@@ -90,12 +90,13 @@ Since the Container registry can only be accessed via private link, we need to c
 
 ## Build Container Images
 
-Set your environmental variables
+Set your environmental variables. You may run the commands assuming you only have one cluster, Key vault and ACR in the resource group otherwise you might have to check their names in the portal
 
 ```
-AKSCLUSTERNAME=<AKS cluster name>
-AKSRESOURCEGROUP=<AKS cluster RG>
-KV_NAME=<Key vault name>
+AKSRESOURCEGROUP=<spoke rg name>
+AKSCLUSTERNAME=$(az aks list -g $AKSRESOURCEGROUP --query [0].name -o tsv)
+KV_NAME=$(az keyvault list -g $AKSRESOURCEGROUP --query [0].name -o tsv)
+ACR_NAME=$(az acr list -g $AKSRESOURCEGROUP --query [0].name -o tsv)
 ```
 
 Clone the required repos to the Dev Jumpbox:
@@ -116,21 +117,21 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 Navigate to each of the application code directories, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
 
 ```
-sudo docker build . -t <acrname>.azurecr.io/ratings-api:v1
-sudo docker build . -t <acrname>.azurecr.io/ratings-web:v1
+sudo docker build . -t $ACR_NAME.azurecr.io/ratings-api:v1
+sudo docker build . -t $ACR_NAME.azurecr.io/ratings-web:v1
 ```
 
 Log into ACR
 
 ```
-sudo az acr login -n <acrname>
+sudo az acr login -n $ACR_NAME
 ```
 
 Push the images into the container registry. Ensure you are logged in u
 
 ```
-sudo docker push <acrname>.azurecr.io/ratings-api:v1
-sudo docker push <acrname>.azurecr.io/ratings-web:v1
+sudo docker push $ACR_NAME.azurecr.io/ratings-api:v1
+sudo docker push $ACR_NAME.azurecr.io/ratings-web:v1
 ```
 
 
@@ -150,7 +151,7 @@ Ensure the AKS run commands are working as expected.
 ```bash
 # create environment variable for cluster and its resource group name
 ClusterRGName=<cluster resource group name>
-ClusterName=<AKS cluster name>
+ClusterName=$(az aks list -g $AKSRESOURCEGROUP --query [0].name -o tsv)
 ```
 
 ```bash
