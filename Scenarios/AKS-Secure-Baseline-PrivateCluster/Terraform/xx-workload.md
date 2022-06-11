@@ -258,7 +258,8 @@ This step is optional. If you would like to go straight to using https which is 
 It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
 
 ```bash
-   az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
+   APPGWSUBNSG=<Name of NSG for AppGwy>
+   az network nsg rule create -g $SPOKERG --nsg-name $APPGWSUBNSG -n AllowHTTPInbound --priority 1000 \
       --source-address-prefixes '*' --source-port-ranges '*' \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
@@ -285,7 +286,7 @@ It is important to first configure the NSG for the Application Gateway to accept
 It is important to delete the rule that allows HTTP traffic to keep the cluster safe since we have completed the test.
 
 ```bash
-   az network nsg rule delete -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound
+   az network nsg rule delete -g $SPOKERG --nsg-name $APPGWSUBNSG -n AllowHTTPInbound
 ```
 **the optional steps end here**
 
