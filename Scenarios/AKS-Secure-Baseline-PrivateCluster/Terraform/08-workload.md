@@ -291,6 +291,7 @@ It is important to delete the rule that allows HTTP traffic to keep the cluster 
 **the optional steps end here**
 
 ## Deploy the Ingress with HTTPS support
+** Please note: This section is still in development **
 
 A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway.
 
