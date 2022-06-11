@@ -71,7 +71,7 @@ Navigate to each of the application code directories, build and tag the containe
 ```bash
 # enter the name of your ACR below
 SPOKERG=<resource group name for spoke>
-ACRNAME=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.acrName.value -o tsv)
+ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
 cd mslearn-aks-workshop-ratings-api
 sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
 cd ../mslearn-aks-workshop-ratings-web
