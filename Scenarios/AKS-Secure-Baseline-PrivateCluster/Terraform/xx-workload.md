@@ -259,7 +259,7 @@ It is important to first configure the NSG for the Application Gateway to accept
 
 ```bash
    az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
-      --source-address-prefixes '*' --source-port-ranges 80 \
+      --source-address-prefixes '*' --source-port-ranges '*' \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```
