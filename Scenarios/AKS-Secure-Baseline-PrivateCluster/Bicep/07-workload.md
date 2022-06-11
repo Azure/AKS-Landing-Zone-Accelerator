@@ -216,8 +216,8 @@ This step is optional. If you would like to go straight to using https which is 
 It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
 
 ```bash
-   az network nsg rule create -g $SPOKERG --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 209 \
-      --source-address-prefixes '*' --source-port-ranges 80 \
+   az network nsg rule create -g $SPOKERG --nsg-name vnet-escs-lz01-appgwSubnet-nsg -n AllowHTTPInbound --priority 222 \
+      --source-address-prefixes '*' --source-port-ranges '*' \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```
