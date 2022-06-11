@@ -1,6 +1,6 @@
 resource "azurerm_network_security_group" "appgw-nsg" {
   name                = var.nsg_name
-  resource_group_name                            = var.resource_group_name
+  resource_group_name = var.resource_group_name
   location            = var.location
 }
 
@@ -82,13 +82,9 @@ resource "azurerm_network_security_rule" "DenyAllInBound" {
 # }
 
 
-variable "location" {
+variable "location" {}
 
-}
-
-variable "resource_group_name" {
-
-}
+variable "resource_group_name" {}
 
 variable "nsg_name" {}
 

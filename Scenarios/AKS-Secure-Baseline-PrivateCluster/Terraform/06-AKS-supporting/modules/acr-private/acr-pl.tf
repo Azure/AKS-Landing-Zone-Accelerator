@@ -1,25 +1,23 @@
 resource "azurerm_container_registry" "acr" {
-  name                = var.acrname
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  sku                 = "Premium"
+  name                          = var.acrname
+  resource_group_name           = var.resource_group_name
+  location                      = var.location
+  sku                           = "Premium"
   public_network_access_enabled = false
-  admin_enabled = true
-
+  admin_enabled                 = true
 }
 
 resource "azurerm_private_endpoint" "acr-endpoint" {
   name                = "${var.acrname}-to_aks"
   location            = var.location
-  resource_group_name   = var.resource_group_name
+  resource_group_name = var.resource_group_name
   subnet_id           = var.aks_sub_id
 
   private_service_connection {
-    name                = "${var.acrname}-privateserviceconnection"
+    name                           = "${var.acrname}-privateserviceconnection"
     private_connection_resource_id = azurerm_container_registry.acr.id
-    subresource_names = ["registry"]
-    is_manual_connection              = false
-
+    subresource_names              = ["registry"]
+    is_manual_connection           = false
   }
 
   private_dns_zone_group {
@@ -38,22 +36,12 @@ output "custom_dns_configs" {
 
 # Variables
 
-variable "acrname" {
+variable "acrname" {}
 
-}
-variable "resource_group_name" {
-    
-}
-variable "location" {
-    
-}
+variable "resource_group_name" {}
 
-variable "aks_sub_id" {
-  
-}
+variable "location" {}
 
-variable "private_zone_id" {
+variable "aks_sub_id" {}
 
-}
-
-
+variable "private_zone_id" {}

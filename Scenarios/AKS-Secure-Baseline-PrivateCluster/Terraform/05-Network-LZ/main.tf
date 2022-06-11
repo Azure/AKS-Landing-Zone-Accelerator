@@ -9,7 +9,6 @@ data "terraform_remote_state" "existing-hub" {
     key                  = "hub-net"
     access_key = var.access_key
   }
-
 }
 
 

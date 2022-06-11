@@ -12,9 +12,7 @@ variable "vnet_subnet_id" {}
 
 variable "mi_aks_cp_id" {}
 
-# variable "mi_aks_kubelet_id" {
-  
-# }
+# variable "mi_aks_kubelet_id" {}
 
 variable "la_id" {}
 

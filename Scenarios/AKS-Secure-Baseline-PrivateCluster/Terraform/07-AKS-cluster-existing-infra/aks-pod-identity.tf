@@ -1,11 +1,11 @@
-# These resources will set up the required permissions for 
+# These resources will set up the required permissions for
 # AAD Pod Identity (v1)
 
 
 # Managed Identity for Pod Identity
 resource "azurerm_user_assigned_identity" "aks_pod_identity" {
-  resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
-  location            = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
+  resource_group_name = var.existing_spoke_vnet_rg_name
+  location            = var.existing_spoke_vnet_rg_location
   name                = "pod-identity-example"
 }
 
@@ -25,7 +25,7 @@ resource "azurerm_role_assignment" "aks_vm_contributor" {
 
 # Azure Key Vault Access Policy for Managed Identity for AAD Pod Identity
 resource "azurerm_key_vault_access_policy" "aad_pod_identity" {
-  key_vault_id = data.terraform_remote_state.aks-support.outputs.key_vault_id
+  key_vault_id = var.existing_key_vault_id // change to data call
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_user_assigned_identity.aks_pod_identity.principal_id
 
