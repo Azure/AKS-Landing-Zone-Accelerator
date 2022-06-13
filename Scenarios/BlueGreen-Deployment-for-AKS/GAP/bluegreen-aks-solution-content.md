@@ -1,5 +1,5 @@
 What happen when you need to upgrade the kubernetes version in a cluster or even better when you need to change kubernetes platform components like: ingress gateway, service mesh, operators and so on, but you don't want to have impact on the workloads/applications that are running on the cluster itself?
-The answer that will make all happy from infra to apps is blue green deployment at Kubernetes infra level.
+The answer that will make everyone happy from business into infra to apps is blue green deployment at Kubernetes infra level.
 With modern principles and availability of cloud services like:
 - [IaC](https://docs.microsoft.com/en-us/devops/deliver/what-is-infrastructure-as-code)
 - [Immutable Infrastructure](https://www.hashicorp.com/resources/what-is-mutable-vs-immutable-infrastructure)
@@ -7,14 +7,14 @@ With modern principles and availability of cloud services like:
 - [Continuous Delivery](https://docs.microsoft.com/en-us/devops/deliver/what-is-continuous-delivery)
 
 Blue Green deployment is become a de-facto standard pattern for the release management and operation at infra and application level in kubernetes environments.
-In this article is described the design and implementaation of the blue green deployment for AKS laveraging Azure Cloud managed services and native kuberneetes features. With the adoption of this pattern improve the reliability and availability during the deployment of changes/upgrade of AKS clusters.
+In this article is described the design and implementaation of the blue green deployment for AKS laveraging Azure Cloud managed services and native kubernetes features. With the adoption of this pattern improves the operation and availability during the deployment of changes/upgrades of AKS clusters.
 The main benefits of the solution are:
 - Minimized downtime during the release
 - Rollback strategy out of the box
-- Improved control during the release and deployment of AKS changes and upgrades
+- Improved control and operation during the release and deployment of AKS changes and upgrades
 - Test for DR procedure
 
-The Azure services that are part of the pattern are:
+The Azure services that are part of the pattern are listed into the section [components](#components), below the main ones:
 - AKS
 - Azure Application Gateway
 - Azure Private DNS
@@ -23,26 +23,11 @@ From an automation and CI/CD perspective the solution can be implemented in mult
 - Bicep or Terraform  for the IaC
 - Azure Pipelines or Github Actions for the CI/CD
 
-
-> This should be an introduction of the business problem and why this scenario was built to solve it.
->> What prompted them to solve the problem?
->> What services were used in building out this solution?
->> What does this example scenario show? What are the customer's goals?
-
-> What were the benefits of implementing the solution described below?
-
 ## Potential use cases
-
-> What industry is the customer in? 
-> Are there any other use cases or industries where this would be a fit?
-> How similar or different are they to what's in this article?
-
-> Because this is a generalized architecture pattern, use the following language to link to the other architectures (likely solution ideas) that build off of it, as shown below.
 
 This solution is a generalized architecture pattern, which can be used for many different scenarios and industries; in particular can be applied in most of the AKS deployment and is also used for [Mission Critical scenario](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster) See the following example solutions that build off of this core architecture:
 
 - [Link to first solution idea or other architecture that builds off this solution](filepath.yml)
-
 
 ## Architecture
 
@@ -57,34 +42,36 @@ An important point to mention that the region of the deployment is an invariant,
 
 ### Workflow
 
-> An alternate title for this sub-section is "Workflow" (if data isn't really involved).
-> In this section, include a numbered list that annotates/describes the dataflow or workflow through the solution. Explain what each step does. Start from the user or external data source, and then follow the flow through the rest of the solution (as shown in the diagram).
-
-Before start the explanation of the workflow to implement the blue gren deployment for AKS, it is importnant to highlight that we need to see at this patter like a state machine in which blue and green cluster are on at the same time only for a limitied period of time, this is done to optmize the costs and operational effort.
+Before start the explanation of the workflow to implement the blue gren deployment for AKS, it is importnant to highlight that we need to see at this patter like a state machine in which blue or green cluster are on at the same time only for a limitied period of time, this is done to optmize the costs and operational effort.
 Assuming this we can summarizie the pattern in 5 stages:
 1. T0: Blue Cluster is On
 2. T1: Green Cluster Deployment
-3. T2: Sync K8S State between Blue and Green cluster
+3. T2: Sync K8S State between Blue and Green clusters
 4. T3: Traffic Switch to the green cluster
 5. T4: Blue cluster is destroyed
 
 The workkfow then will start again for the next planned release of the cluster, and the flow will start from the green cluster one.
-This pattern is flexible on the netwrok discoverabiity of the clusters, in fact you can have multiple options:
+The triggers to transition in the multiples stages can be programtically configured and executed, this is usually the desired end state, that start from a manual/semi-automatic implementation. The triggers are related to functional parameters together with SLO/SLI defined at operation levele to cover apps and infra aspects.
+This pattern is flexible on the network discoverabiity of the clusters, in fact you can have multiple options:
 - A DNS record dedicated to the blue and green clusters IP
 - A DNS record dedicated to the blue green cluster pointing to the App Gateway IP
 
 
 #### T0: Blue Cluster is On
 
-The initial stage of the pattern is to  have the existing live cluster on, let assume that is the blue one. At this stage we are preparing for the deployment of the new version of the cluster.
+The initial stage of the pattern is to have the existing live cluster on, let assume that is the blue one. At this stage we are preparing for the deployment of the new version of the cluster.
 
 ![Step0](../media/bg-step0.png)
+
+The trigger condition for the [next stage](#t1-green-cluster-deployment) is the release of a new version of the clusters.
 
 #### T1: Green Cluster Deployment
 
 At this time the deployment of the new version is started, and the first step is to deploy the new cluster in parallel to the existing one. At this time the new cluster is only deplyed, the live traffic is still routed in the blue cluster, that is the live site. 
 
 ![Step1](../media/bg-step1.png)
+
+The trigger to move into the [T2 stage](#t2-sync-k8s-state-between-blue-and-green-cluster) is the validation of AKS at platform level, usually are used native metrics avaiaable in Azure Monitor and CLI commands to check the healthy of the deployment.
 
 #### T2: Sync K8S State between Blue and Green cluster
 
@@ -102,8 +89,8 @@ There are multiple solutions/approaches to replicate/sync K8S state on clusters:
 
 Usually to facilitate the sync the deployment of new applications is not permitted the deployment in the live cluster, this menas there there is a prediod of time that start from the sync and finish when the switch to the green is completed. This period can be avoided if there are advaanced mechanism to manage the K8S state in multiple clusters, which are the solutions and how to implement this, is not part of this article.
 
-When the sync is completed is required to perform a test/validation of the cluster from an infra to applications, this include also a check on the monitoring and logging platforms, to validate the healthy of the cluster. Usually the Green cluster is exposed on the App Gateway or External LB with an internal URL.
-
+When the sync is completed is required to perform a test/validation of the cluster from an infra to applications, this include also a check on the monitoring and logging platforms, to validate the healthy of the cluster. Usually the Green cluster is exposed on the App Gateway or External LB with an internal URL, that is not visibile for external users.
+This test/validation stage is used as a trigger for the [next state](#t3-traffic-switch-to-the-green-cluster) of the pattern.
 #### T3: Traffic Switch to the green cluster
 
 After that the sync is complete and Green cluster has been vaidated at platform and application then it is ready to be promoted as primary to start receive the live traffic and manage live transactions. The switch is mainly related to networking level, often the workloads are stateless but if the workloads are statefull then is required to put in place the proper solution to mantain the state and caching when the switch happen between the 2 clusters.
@@ -121,6 +108,7 @@ The Blue and Green cluster hosts are mainly used for:
 - Test and Validate the specific cluster, like mentioned in [Step 2](#t2-sync-k8s-state-between-blue-and-green-cluster)
 - The switch of the live traffic, mainly the hosts are used for the backend pools configuration at Application Gateway level, in this way the switch is transparent for the end user of the workloads
 For the testing and validation purpose the hosts are also exposed at Application Gateway level with dedicated endpoints and also at AKS Ingress controller level to manage the TLS in the proper way.
+At this stage the validation is based on the infra and app monitoring metrics and official SLO and SLI, when avaialble. If the validation gate is satisfied than is possible to move in the [last state](#t4-blue-cluster-is-destroyed) of the pattern.
 
 #### T4: Blue cluster is destroyed
 
@@ -141,11 +129,6 @@ Below the main components and azure services that are part of the blue green dep
 - [KeyVault](https://azure.microsoft.com/services/key-vault/), it is required to manage in the proper way the secrets and certificates that need to be use at AKS level.
 
 ### Alternatives
-
-> Use this section to talk about alternative Azure services or architectures that you might consider for this solution. Include the reasons why you might choose these alternatives. Customers find this valuable because they want to know what other services or technologies they can use as part of this architecture.
-
-> What alternative technologies were considered and why didn't we use them?
-> List all "children" architectures (likely solution ideas) that build off this GAP architecture
 
 From a pattern perspective there altrenative scenarios to implement a more controlled switch between the cluster, that means that the core pattern remin the same, and the main change is on the traffic switch method, just as example is possible to have a *canary release* with traffic rules based on:
 - percentage of the incoming traffic
@@ -170,13 +153,6 @@ The following alternative solutions provide scenario-focused lenses to build off
 
 ## Considerations
 
-> Include a statement to introduce this section, like this:
-> "These considerations implement the pillars of the Azure Well-Architected Framework, which is a set of guiding tenets that can be used to improve the quality of a workload. For more information, see [Microsoft Azure Well-Architected Framework](/azure/architecture/framework)."
-
-> Are there any lessons learned from running this that would be helpful for new customers?  What went wrong when building it out?  What went right?
-> How do I need to think about managing, maintaining, and monitoring this long term?
-> REQUIREMENT: Note that you must have "Cost optimization" and at least two of the other H3 sub-sections/pillars.
-
 The following considerations have their basis on the [Microsoft Azure Well-Architected Framework](/azure/architecture/framework) and [Cloud Adoption Framework](addlink).
 One of the main consideration is that this pattern can be adopted in a full automated scenario, like 0 touch deployment. Usually the basic implementation has manual triggere to activate the different steps decribed. Along the way and with the proper matutiry and monitoring features is possible to automate also the triggers, that means that there are automated testing and specific metrics, SLA and SLO to automatize the triggers.
 
@@ -190,12 +166,8 @@ It is important to highlight that a succesfull implementation of the pattern is 
 
 ### Reliability
 
-> This includes resiliency and availability.
-> Are there any key resiliency and reliability considerations (past the typical)?
-> Include a link to the [Overview of the reliability pillar](/azure/architecture/framework/resiliency/overview).
-
 The blue green pattern has a direct and positive impact on the availability of AKS platform and workloads. In particular the pattern improve the availability during the deployment of the AKS platform changes, in particular downtime is near to zero and it can be affected by how user sessions are managed. Moreover the blue green provide also covergae for reliability during the deployment because by default there is the option to fallback in the previous version of the AKS cluster. 
-
+Here more detail about the resiliency and avalaibility pillar defined in the [Well Architected Framework](/azure/architecture/framework/resiliency/overview).
 
 ### Cost optimization
 
@@ -213,6 +185,7 @@ The blue green pattern has a direct and positive impact on the availability of A
 
 As described before on of the main advantages and benefits of the blue green deployment is to mantain a control and optimization of the costs without impacting the resiliency, availability, continuous delivery of the workloads and apps. This is achieved with the automation of the destroyment of the old cluster after that the switch is completed and validated. Another important point to mention is that to cotinue to have the same cost baseline the two clusters are usually hosted in the same subnet, in this way all the network connections and access to the resources/services is the same, that means that all the azure services and resources remain the same during the blue green deployment.
 If we should quantify the azure costs to implement this pattern we can say that you shoudl double the costs of the AKS services during the time of the blue green deployment, that usually happen in hours; this also another reason to explain the large adoption of this pattern.
+If you are courios and want to have more insight about cost optmization you can [here](/azure/architecture/framework/cost/overview).
 
 ### Operational excellence
 
@@ -224,7 +197,7 @@ As we all know automation, continous delivery, reslient deployment are fundament
 Automation is a key pre requirements to implement, manage and mantain the blue green pattern along the time.
 One of the key aspect of the Continuos Delivery is to be able to iteratively deliver increments of platform and workloads, with the blue green patter for AKS platform you can unlock the continous delivery at AKS level providing a controlled and safety experience.
 Resiliency during the deployment is one of the main benefits of the pattern, because natively there is the fallback option of the previous cluster.
-
+The key benefits mentioned before are also part of the [Well Architected Framework](/azure/architecture/framework/devops/overview).
 
 ## Deploy this scenario
 
