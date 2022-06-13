@@ -102,108 +102,27 @@
                         "groupNames": []
                     },
                     {
-                        "policyDefinitionReferenceId": "Kubernetes cluster pods should only use approved host network and port range",
-                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/82985f06-dc18-4a48-bc1c-b9f4f0098cfe",
-                        "parameters": {
-                            "allowHostNetwork": {
-                                "type": "Boolean",
-                                "metadata": {
-                                  "displayName": "Allow host network usage",
-                                  "description": "Set this value to true if pod is allowed to use host network otherwise false."
-                                },
-                                "defaultValue": false
-                              },
-                              "minPort": {
-                                "type": "Integer",
-                                "metadata": {
-                                  "displayName": "Min host port",
-                                  "description": "The minimum value in the allowable host port range that pods can use in the host network namespace."
-                                },
-                                "defaultValue": 0
-                              },
-                              "maxPort": {
-                                "type": "Integer",
-                                "metadata": {
-                                  "displayName": "Max host port",
-                                  "description": "The maximum value in the allowable host port range that pods can use in the host network namespace."
-                                },
-                                "defaultValue": 0
-                              }
-                        },
-                        "groupNames": []
-                    },
-                    {
                         "policyDefinitionReferenceId": "Kubernetes cluster containers should not share host process ID or host IPC namespace",
                         "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/47a1ee2f-2a2a-4576-bf2a-e0e36709c2b8",
                         "parameters": {},
                         "groupNames": []
                     },
                     {
-                        "policyDefinitionReferenceId": "Kubernetes cluster pod hostPath volumes should only use allowed host paths",
-                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/098fc59e-46c7-4d99-9b16-64990e543d75",
-                        "parameters": {
-                            "allowedHostPaths": {
-                                "type": "Object",
-                                "metadata": {
-                                  "displayName": "Allowed host paths",
-                                  "description": "The host paths allowed for pod hostPath volumes to use. Provide an empty paths list to block all host paths."
-                                },
-                                "defaultValue": {
-                                  "paths": []
-                                },
-                                "schema": {
-                                  "type": "object",
-                                  "properties": {
-                                    "paths": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "object",
-                                        "properties": {
-                                          "pathPrefix": {
-                                            "type": "string"
-                                          },
-                                          "readOnly": {
-                                            "type": "boolean"
-                                          }
-                                        },
-                                        "required": [
-                                          "pathPrefix",
-                                          "readOnly"
-                                        ],
-                                        "additionalProperties": false
-                                      }
-                                    }
-                                  },
-                                  "required": [
-                                    "paths"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              }        
-                        },
+                        "policyDefinitionReferenceId": "Kubernetes cluster containers should only use allowed capabilities",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c26596ff-4d70-4e6a-9a30-c2506bd2f80c",
+                        "parameters": {},
                         "groupNames": []
                     },
                     {
-                        "policyDefinitionReferenceId": "Kubernetes cluster containers should only use allowed capabilities",
-                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c26596ff-4d70-4e6a-9a30-c2506bd2f80c",
-                        "parameters": {
-                            "allowedCapabilities": {
-                                "type": "Array",
-                                "metadata": {
-                                  "displayName": "Allowed capabilities",
-                                  "description": "The list of capabilities that are allowed to be added to a container. Provide empty list as input to block everything."
-                                },
-                                "defaultValue": []
-                              },
-                              "requiredDropCapabilities": {
-                                "type": "Array",
-                                "metadata": {
-                                  "displayName": "Required drop capabilities",
-                                  "description": "The list of capabilities that must be dropped by a container."
-                                },
-                                "defaultValue": []
-                              }
-                        },
+                        "policyDefinitionReferenceId": "Kubernetes cluster pod hostPath volumes should only use allowed host paths",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/098fc59e-46c7-4d99-9b16-64990e543d75",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes cluster pods should only use approved host network and port range",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/82985f06-dc18-4a48-bc1c-b9f4f0098cfe",
+                        "parameters": {},
                         "groupNames": []
                     }
                 ]
