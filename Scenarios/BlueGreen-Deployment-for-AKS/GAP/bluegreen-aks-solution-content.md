@@ -1,4 +1,7 @@
+## Overview 
+
 What happen when you need to upgrade the kubernetes version in a cluster or even better when you need to change kubernetes platform components like: ingress gateway, service mesh, operators and so on, but you don't want to have impact on the workloads/applications that are running on the cluster itself?
+
 The answer that will make everyone happy from business into infra to apps is blue green deployment at Kubernetes infra level.
 With modern principles and availability of cloud services like:
 - [IaC](https://docs.microsoft.com/en-us/devops/deliver/what-is-infrastructure-as-code)
@@ -6,35 +9,37 @@ With modern principles and availability of cloud services like:
 - [Cloud Elasticity](https://azure.microsoft.com/en-us/overview/what-is-elastic-computing/)
 - [Continuous Delivery](https://docs.microsoft.com/en-us/devops/deliver/what-is-continuous-delivery)
 
-Blue Green deployment is become a de-facto standard pattern for the release management and operation at infra and application level in kubernetes environments.
-In this article is described the design and implementaation of the blue green deployment for AKS laveraging Azure Cloud managed services and native kubernetes features. With the adoption of this pattern improves the operation and availability during the deployment of changes/upgrades of AKS clusters.
+Blue Green deployment has become a de-facto standard pattern for the release management and operation at infra and application level in kubernetes environments.
+
+In this article is described the design and implementation of the blue green deployment for AKS leveraging Azure Cloud managed services and native kubernetes features. Adoption of this pattern improves the operation and availability during the deployment of changes/upgrades of AKS clusters.
+
 The main benefits of the solution are:
 - Minimized downtime during the release
 - Rollback strategy out of the box
 - Improved control and operation during the release and deployment of AKS changes and upgrades
 - Test for DR procedure
 
-The Azure services that are part of the pattern are listed into the section [components](#components), below the main ones:
+The Azure services that are part of the pattern are listed in the [components](#components) section; below are the main ones:
 - AKS
 - Azure Application Gateway
 - Azure Private DNS
 
-From an automation and CI/CD perspective the solution can be implemented in multiple ways, our suggestions are:
-- Bicep or Terraform  for the IaC
+From an automation and CI/CD perspective the solution can be implemented in multiple ways. We suggest:
+- Bicep or Terraform for the IaC
 - Azure Pipelines or Github Actions for the CI/CD
 
 ## Potential use cases
 
-This solution is a generalized architecture pattern, which can be used for many different scenarios and industries; in particular can be applied in most of the AKS deployment and is also used for [Mission Critical scenario](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster) See the following example solutions that build off of this core architecture:
+This solution is a generalized architecture pattern, which can be used for many different scenarios and industries. In particular it can be applied in AKS deployments and is also used for [Mission Critical scenario](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster). See the following example solutions that build off of this core architecture:
 
 - [Link to first solution idea or other architecture that builds off this solution](filepath.yml)
 
 ## Architecture
 
-Below the high level architecture that describes the pattern and related services invovled. In the [Worklfow section](#workflow) are descrbied in detail the steps for the implementation of the pattern and in particular also the sequence of events to have the proper swtich between the clusters.
-![Blue Green Patter High Level Design](../media/hl-bg-arch.png)
+Below is the high level architecture that describes the pattern and related services invovled. The [Worklfow section](#workflow) describ in detail the steps for the implementation of the pattern and in particular the sequence of events to have the proper switch between the clusters.
+![Blue Green Pattern High Level Design](../media/hl-bg-arch.png)
 
-An important point to mention that the region of the deployment is an invariant, that means that you can deploy the two cluster in different regions or in the same region; in the later case are requred certain prerequisties:
+An important point to mention is the region of the deployment is an invariant, that means that you can deploy the two clusters in different regions or in the same region. Deploying into the same region require certain prerequisties:
 - VNET and Subnet sizing to host two clusters
 - Azure capacity for the subscription
 
