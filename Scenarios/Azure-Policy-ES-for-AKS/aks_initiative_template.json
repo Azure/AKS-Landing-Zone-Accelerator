@@ -100,6 +100,30 @@
                         }
                         },
                         "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes cluster containers should not share host process ID or host IPC namespace",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/47a1ee2f-2a2a-4576-bf2a-e0e36709c2b8",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes cluster containers should only use allowed capabilities",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/c26596ff-4d70-4e6a-9a30-c2506bd2f80c",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes cluster pod hostPath volumes should only use allowed host paths",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/098fc59e-46c7-4d99-9b16-64990e543d75",
+                        "parameters": {},
+                        "groupNames": []
+                    },
+                    {
+                        "policyDefinitionReferenceId": "Kubernetes cluster pods should only use approved host network and port range",
+                        "policyDefinitionId": "/providers/Microsoft.Authorization/policyDefinitions/82985f06-dc18-4a48-bc1c-b9f4f0098cfe",
+                        "parameters": {},
+                        "groupNames": []
                     }
                 ]
             }
