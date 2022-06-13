@@ -33,10 +33,20 @@ New-AzSubscriptionDeployment -Location eastus -TemplateFile .\aks_initiative_tem
 az deployment sub create --location eastus --template-file .\aks_initiative_template.json --parameters aks_initiative_params.json
 ```
 
+You may change the deployment scope to Management Groups, Resource group etc based on the scope of policy enforcement.  
+
+### Validation
+
+#### Initiative:
+Once the custom initiative is created, it will come up under the Azure Policies - Initiatives like the below:
+
+Example:
+![image](https://user-images.githubusercontent.com/40350122/173335477-7eaf30ba-b32e-465e-8544-b735ea4dc078.png)
+
+#### Compliance
 Once the initiative is assigned, you can verify the compliance details from the Azure portal. 
 
 Example:
-
 ![ES AKS Initiative Compliance Example:](./media/es-aks-initiative.png)
               
 
