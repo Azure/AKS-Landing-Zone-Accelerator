@@ -1,8 +1,8 @@
 # Blue Green Deployment for AKS
 This scenario is dedicated to the blue green deployment at AKS level, the main purpose is to provide a reliable and high availability solution when:
 - K8S version update
-- NodePools update, like chnage VM size
-- AKS netwroking changes
+- NodePools update, like change VM size
+- AKS networking changes
 - Kubernetes Operators or Platform componennts changes like: Service Mesh, DAPR, Ingress Gateway, OPA, etc.
 
 In the above mentioned scenario the desidered outcome is to apply these changes without affecting the applications and/workloads hosted in the AKS cluster.
