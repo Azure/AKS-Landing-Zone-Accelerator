@@ -55,6 +55,12 @@ resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing =
   scope: resourceGroup(rg.name)
 }
 
+module aksPolicy 'modules/policy/policy.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksPolicy'
+  params: {}
+}
+
 module akslaworkspace 'modules/laworkspace/la.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'akslaworkspace'
@@ -98,6 +104,7 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     aksPvtNetworkContrib
     aksPodIdentityRole
     aksRouteTableRole
+    aksPolicy
   ]
 }
 

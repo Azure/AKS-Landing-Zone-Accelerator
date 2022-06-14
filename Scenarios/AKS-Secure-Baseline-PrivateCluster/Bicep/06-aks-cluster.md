@@ -44,6 +44,7 @@ There are a few additional Azure Providers and features that needs to be registe
 - AKS-AzureKeyVaultSecretsProvider
 - Microsoft.OperationsManagement
 - Microsoft.OperationalInsights
+- EncryptionAtHost
 
 Here is a list with all required providers or features to be registered:
 
@@ -53,6 +54,7 @@ az provider register --namespace Microsoft.OperationsManagement
 az provider register --namespace Microsoft.OperationalInsights
 az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
+az feature register --namespace Microsoft.Compute --name EncryptionAtHost
 ```
 
 Don't move ahead to the next steps until all providers are registered.

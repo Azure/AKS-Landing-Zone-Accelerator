@@ -15,7 +15,7 @@ param location string = resourceGroup().location
 param networkPlugin string = 'azure'
 //param appGatewayIdentityResourceId string
 
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
+resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-01-02-preview' = {
   name: clusterName
   location: location
   identity: {
@@ -36,6 +36,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2021-07-01' = {
       {
         name: 'defaultpool'
         mode: 'System'
+        enableEncryptionAtHost: true
         count: 3
         vmSize: 'Standard_DS2_v2'
         osDiskSizeGB: 30
