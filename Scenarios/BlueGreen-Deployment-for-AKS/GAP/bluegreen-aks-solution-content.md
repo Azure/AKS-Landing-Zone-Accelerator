@@ -139,13 +139,13 @@ From a pattern perspective there altrenative scenarios to implement a more contr
 - http headers
 - Cookies
 
-Another alternative that has more impact on the blast radius of the deployment is to have a ring based deployments, that means that instead of just blue and green cluster is possible to have more clusters, that are called rings, usually each ring enlarge the number of users that have access to the new version/config of the AKS. As for the blue green pattern described than the rings can be removed to have the proper cost optimization and control.
+Another alternative that has more impact on the blast radius of the deployment is to have a ring based deployments. Instead of just blue and green clusters, it is possible to have more clusters called rings. Each ring is large enought for the number of users that have access to the new version/config of the AKS. As for the blue green pattern described, the rings can be removed to have the proper cost optimization and control.
 
 There are two Azure Servies listed in the [Componets Section](#components), for which is possible to use also alternative products and/or OSS solutions. The two services are:
 - [Application Gateway](https://azure.microsoft.com/services/application-gateway/)
 - [Container Registry](https://azure.microsoft.com/services/container-registry/)
 
-The intent of the article is not to provide a curated list of alternatives, but is to empathize the message that is possible to adopt different components to achieve the same implementation of the patern.
+The intent of the article is not to provide a curated list of alternatives, but is to emphasize that is possible to adopt different components to achieve the same implementation of the patern.
 Just to give some example possible alternatives are:
 - NGINX, HAProxy, etc.. instead of Application Gateway
 - Harbor, etc.. instead of Container Registry
@@ -155,28 +155,28 @@ The following alternative solutions provide scenario-focused lenses to build off
 - [Link to first solution idea or other architecture that builds off this solution](filepath.yml)
 - [Second solution idea that builds off this solution](filepath.yml)
 
+
 ## Considerations
-
 The following considerations have their basis on the [Microsoft Azure Well-Architected Framework](/azure/architecture/framework) and [Cloud Adoption Framework](addlink).
-One of the main consideration is that this pattern can be adopted in a full automated scenario, like 0 touch deployment. Usually the basic implementation has manual triggere to activate the different steps decribed. Along the way and with the proper matutiry and monitoring features is possible to automate also the triggers, that means that there are automated testing and specific metrics, SLA and SLO to automatize the triggers.
+One main consideration is that this pattern can be adopted in a full automated scenario, like a zero touch deployment. Usually the basic implementation has a manual trigger to activate the different steps described. Along the way and with the proper maturity and monitoring features is possible to automate also the triggers, that means that there are automated testing and specific metrics, SLA and SLO to automatize the triggers.
 
-One important lesson learnt is to have dedicated hostnames for the blue green clusters and also have a dedicated endpoints configuration on the Gateway/Load Balancer in front of the clusters, this is critical to improve the reliability and validity of the deployment of the new cluster, in this way the validation of the deployment happen with the same architecture and configurations of a standard production cluster.
+One important lesson learned is to have dedicated hostnames for the blue green clusters and also have a dedicated endpoints configuration on the Gateway/Load Balancer in front of the clusters. This is critical to improve the reliability and validity of the deployment of the new cluster. In this way the validation of the deployment happen with the same architecture and configurations of a standard production cluster.
 
 The blue green pattern is also an enabler to implement and test BC/DR solutions for AKS and related workloads.
 
-A key aspect is related to the *Cost Optimization*, in detail the blue green cluster pattern is widely adopted in the cloud for the native elasticiy provided by cloud providers, in particular Azure, this include the cost saving and control to manage and mantain the blue green cluster deploymentm; in paritcular as described the main action is to destroy the cluster that is no longer needed.
+A key aspect is related to the **Cost Optimization**, in detail the blue green cluster pattern is widely adopted in the cloud for the native elasticiy provided by cloud providers, in particular Azure, this include the cost saving and control to manage and mantain the blue green cluster deploymentm; in paritcular as described the main action is to destroy the cluster that is no longer needed.
 
 It is important to highlight that a succesfull implementation of the pattern is related to the fact that the all the aspects like automation, monitoring and validation need to be applied at AKS Platform levele but also the workloads/apps deployed on top of it; only with the E2E coverge is possible to really benefit of the value of the blue green pattern.
 
-### Reliability
 
-The blue green pattern has a direct and positive impact on the availability of AKS platform and workloads. In particular the pattern improve the availability during the deployment of the AKS platform changes, in particular downtime is near to zero and it can be affected by how user sessions are managed. Moreover the blue green provide also covergae for reliability during the deployment because by default there is the option to fallback in the previous version of the AKS cluster. 
+### Reliability
+The blue green pattern has a direct and positive impact on the availability of AKS platform and workloads. In particular the pattern improves the availability during the deployment of the AKS platform changes, in particular downtime is near to zero and it can be affected by how user sessions are managed. Moreover the blue green provide also covergae for reliability during the deployment because by default there is the option to fallback in the previous version of the AKS cluster. 
 Here more detail about the resiliency and avalaibility pillar defined in the [Well Architected Framework](/azure/architecture/framework/resiliency/overview).
 
+
 ### Cost optimization
-
 > REQUIRED: This section is required. Cost is of the utmost importance to our customers.
-
+> 
 > How much will this cost to run? See if you can answer this without dollar amounts.
 > Are there ways I could save cost?
 > If it scales linearly, than we should break it down by cost/unit. If it does not, why?
@@ -191,8 +191,8 @@ As described before on of the main advantages and benefits of the blue green dep
 If we should quantify the azure costs to implement this pattern we can say that you shoudl double the costs of the AKS services during the time of the blue green deployment, that usually happen in hours; this also another reason to explain the large adoption of this pattern.
 If you are courios and want to have more insight about cost optmization you can [here](/azure/architecture/framework/cost/overview).
 
-### Operational excellence
 
+### Operational excellence
 > This includes DevOps, monitoring, and diagnostics.
 > How do I need to think about operating this solution?
 > Include a link to the [Overview of the operational excellence pillar](/azure/architecture/framework/devops/overview).
@@ -225,6 +225,7 @@ An implemented example and template is available at [AKS Landing Zone Accelerato
 
 **Other contributors:** > Include contributing (but not primary) authors, major editors (not minor edits), and technical reviewers. Listed alphabetically by last name. Use this format: Fname Lname. It's okay to add in newer contributors.
 
+ * [Scott Simock](https://www.linkedin.com/in/scottsimock) | Cloud Solution Architect
  * [Contributor 1 Name](http://linkedin.com/ProfileURL) | (Title, such as "Cloud Solution Architect")
 
 ## Next steps
