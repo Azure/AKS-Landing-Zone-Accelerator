@@ -43,32 +43,31 @@ An important point to mention is the region of the deployment is an invariant, t
 - VNET and Subnet sizing to host two clusters
 - Azure capacity for the subscription
 
-*Download* a [Visio file](https://arch-center.azureedge.net/[filename].vsdx) of this architecture.*
+BROKENLINK--> *Download* a [Visio file](https://arch-center.azureedge.net/[filename].vsdx) of this architecture.*
 
 ### Workflow
 
-Before start the explanation of the workflow to implement the blue gren deployment for AKS, it is importnant to highlight that we need to see at this patter like a state machine in which blue or green cluster are on at the same time only for a limitied period of time, this is done to optmize the costs and operational effort.
-Assuming this we can summarizie the pattern in 5 stages:
+It is importnant to highlight that this pattern is like a state machine. The blue or green clusters are both on at the same time, but only for a limitied period of time. This is done to optmize the costs and operational effort.
+
+5 stages of the Pattern:
 1. T0: Blue Cluster is On
 2. T1: Green Cluster Deployment
 3. T2: Sync K8S State between Blue and Green clusters
 4. T3: Traffic Switch to the green cluster
 5. T4: Blue cluster is destroyed
 
-The workkfow then will start again for the next planned release of the cluster, and the flow will start from the green cluster one.
-The triggers to transition in the multiples stages can be programtically configured and executed, this is usually the desired end state, that start from a manual/semi-automatic implementation. The triggers are related to functional parameters together with SLO/SLI defined at operation levele to cover apps and infra aspects.
+Once implemented, the workflow will start at the next planned release of the cluster beginning with T1: Green Cluster Deployment. The triggers to transition in the multiples stages can be programtically configured and executed, this is usually the desired end state, that start from a manual/semi-automatic implementation. The triggers are related to functional parameters together with SLO/SLI defined at operation levele to cover apps and infra aspects.
 This pattern is flexible on the network discoverabiity of the clusters, in fact you can have multiple options:
 - A DNS record dedicated to the blue and green clusters IP
 - A DNS record dedicated to the blue green cluster pointing to the App Gateway IP
 
-
 #### T0: Blue Cluster is On
 
-The initial stage of the pattern is to have the existing live cluster on, let assume that is the blue one. At this stage we are preparing for the deployment of the new version of the cluster.
+The initial stage of the pattern is to have the existing live cluster on, which is called the Blue Cluster. At this stage we are preparing for the deployment of the new version of the cluster.
 
 ![Step0](../media/bg-step0.png)
 
-The trigger condition for the [next stage](#t1-green-cluster-deployment) is the release of a new version of the clusters.
+The trigger condition for the [next stage](#t1-green-cluster-deployment) is the release of a new version of the cluster.
 
 #### T1: Green Cluster Deployment
 
@@ -76,17 +75,14 @@ At this time the deployment of the new version is started, and the first step is
 
 ![Step1](../media/bg-step1.png)
 
-The trigger to move into the [T2 stage](#t2-sync-k8s-state-between-blue-and-green-cluster) is the validation of AKS at platform level, usually are used native metrics avaiaable in Azure Monitor and CLI commands to check the healthy of the deployment.
+The trigger to move into the [T2 stage](#t2-sync-k8s-state-between-blue-and-green-cluster) is the validation of AKS at platform level, usually are used native metrics available in Azure Monitor and CLI commands to check the healthy of the deployment.
 
 #### T2: Sync K8S State between Blue and Green cluster
 
-At this stage there is the alignment between the two clusters, that means that all:
-- applications
-- operators
-- K8S resources
-are deployed in the green cluster, the ultimate goal is that at the end of the sync the clusters are equivalent.
+At this stage there is an alignment between the two clusters, meaning all **applications**, **operators** and **K8S resources** are newly deployed in the green cluster. The ultimate goal is that at the end of the sync the clusters are equivalent.
+
 There are multiple solutions/approaches to replicate/sync K8S state on clusters:
-- Redeployment via Ci/CD
+- Redeployment via CI/CD
 - GitOps with solutions promoted in CNCF
 - Customized solution that store the K8S configs and resources, usually databses and K8S manifests generators
 
