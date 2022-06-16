@@ -42,7 +42,7 @@ An important point to mention is the region of the deployment is an invariant, t
 - VNET and Subnet sizing to host two clusters
 - Azure capacity for the subscription
 
-BROKENLINK--> *Download* a [Visio file](https://arch-center.azureedge.net/[filename].vsdx) of this architecture.*
+*Download* a [Visio file](../media/blue-green-diagrams.vsdx) of this architecture.*
 
 
 ### Workflow
@@ -175,17 +175,6 @@ Here more detail about the resiliency and avalaibility pillar defined in the [We
 
 
 ### Cost optimization
-> REQUIRED: This section is required. Cost is of the utmost importance to our customers.
-> 
-> How much will this cost to run? See if you can answer this without dollar amounts.
-> Are there ways I could save cost?
-> If it scales linearly, than we should break it down by cost/unit. If it does not, why?
-> What are the components that make up the cost?
-> How does scale affect the cost?
-> Include a link to the [Overview of the cost optimization pillar](/azure/architecture/framework/cost/overview).
-
-> Link to the pricing calculator with all of the components in the architecture included, even if they're a $0 or $1 usage.
-> If it makes sense, include small/medium/large configurations. Describe what needs to be changed as you move to larger sizes.
 
 As described before on of the main advantages and benefits of the blue green deployment is to mantain a control and optimization of the costs without impacting the resiliency, availability, continuous delivery of the workloads and apps. This is achieved with the automation of the destroyment of the old cluster after that the switch is completed and validated. Another important point to mention is that to cotinue to have the same cost baseline the two clusters are usually hosted in the same subnet, in this way all the network connections and access to the resources/services is the same, that means that all the azure services and resources remain the same during the blue green deployment.
 If we should quantify the azure costs to implement this pattern we can say that you shoudl double the costs of the AKS services during the time of the blue green deployment, that usually happen in hours; this also another reason to explain the large adoption of this pattern.
@@ -193,9 +182,6 @@ If you are courios and want to have more insight about cost optmization you can 
 
 
 ### Operational excellence
-> This includes DevOps, monitoring, and diagnostics.
-> How do I need to think about operating this solution?
-> Include a link to the [Overview of the operational excellence pillar](/azure/architecture/framework/devops/overview).
 
 As we all know automation, continous delivery, reslient deployment are fundamental capabilities for modern applications and products. As described in the [Architecture](#architecture) the blue green pattern brings natively all this capabilities when implemented.
 Automation is a key pre requirements to implement, manage and mantain the blue green pattern along the time.
@@ -205,61 +191,32 @@ The key benefits mentioned before are also part of the [Well Architected Framewo
 
 ## Deploy this scenario
 
-> (Optional, but greatly encouraged)
-
-> Is there an example deployment that can show me this in action?  What would I need to change to run this in production?
-
 An implemented example and template is available at [AKS Landing Zone Accelerator](https://github.com/Azure/AKS-Landing-Zone-Accelerator).
 
 ## Contributors
 
-> (Expected, but this section is optional if all the contributors would prefer to not include it)
-
-> Start with the explanation text (same for every section), in italics. This makes it clear that Microsoft takes responsibility for the article (not the one contributor). Then include the "Pricipal authors" list and the "Additional contributors" list (if there are additional contributors). Link each contributor's name to the person's LinkedIn profile. After the name, place a pipe symbol ("|") with spaces, and then enter the person's title. We don't include the person's company, MVP status, or links to additional profiles (to minimize edits/updates). (The profiles can be linked to from the person's LinkedIn page, and we hope to automate that on the platform in the future). 
-> Implement this format:
-
-*This article is maintained by Microsoft. It was originally written by the following contributors.*
-
 **Principal authors:**
  * [Vincenzo Morra](https://www.linkedin.com/in/vincenzo-morra-29658a20/?locale=en_US) | SAO Incubation Architect
 
-**Other contributors:** > Include contributing (but not primary) authors, major editors (not minor edits), and technical reviewers. Listed alphabetically by last name. Use this format: Fname Lname. It's okay to add in newer contributors.
-
+**Other contributors:**
  * [Scott Simock](https://www.linkedin.com/in/scottsimock) | Cloud Solution Architect
- * [Contributor 1 Name](http://linkedin.com/ProfileURL) | (Title, such as "Cloud Solution Architect")
 
 ## Next steps
 
-> Link to Docs and Learn articles, along with any third-party documentation.
-> Where should I go next if I want to start building this?
-> Are there any relevant case studies or customers doing something similar?
-> Is there any other documentation that might be useful? Are there product documents that go into more detail on specific technologies that are not already linked?
-
-Examples:
+Further reading:
 * [IaC](https://docs.microsoft.com/en-us/devops/deliver/what-is-infrastructure-as-code)
 * [BlueGreen Martin Fowler Article](https://martinfowler.com/bliki/BlueGreenDeployment.html)
-* [AKS Landing Zone Accelerator for Blue Green](https://github.com/Azure/AKS-Landing-Zone-Accelerator)
 * [Azure Kubernetes Service (AKS) documentation](https://azure.microsoft.com/services/kubernetes-service/)
 * [Application Gateway](https://azure.microsoft.com/services/application-gateway/)
 * [Azure Monitor](https://azure.microsoft.com/services/monitor/)
  
-## Related resources
 
-> Use "Related resources" for architecture information that's relevant to the current article. It must be content that the Azure Architecture Center TOC refers to, but may be from a repo other than the AAC repo.
-> Links to articles in the AAC repo should be repo-relative, for example (../../solution-ideas/articles/article-name.yml).
-> Lead this section with links to the solution ideas that connect back to this architecture.
+Examples:
+* [AKS Landing Zone Accelerator for Blue Green](https://github.com/Azure/AKS-Landing-Zone-Accelerator)
+
+## Related resources
 
 This solution is a generalized architecture pattern, which can be used for many different scenarios and industries. See the following example solutions that build off of this core architecture:
 
-- [Link to first solution idea or other architecture that builds off this solution](filepath.yml)
-- [Second solution idea that builds off this solution](filepath.yml)
-
-> Include additional links to AAC articles. Here is an example:
-
-See the following related architecture guides and solutions:
-
-  - [Artificial intelligence (AI) - Architectural overview](/azure/architecture/data-guide/big-data/ai-overview)
-  - [Choosing a Microsoft cognitive services technology](/azure/architecture/data-guide/technology-choices/cognitive-services)
-  - [Chatbot for hotel reservations](/azure/architecture/example-scenario/ai/commerce-chatbot)
-  - [Build an enterprise-grade conversational bot](/azure/architecture/reference-architectures/ai/conversational-bot)
-  - [Speech-to-text conversion](/azure/architecture/reference-architectures/ai/speech-ai-ingestion)
+- [Mission Critical Workloads Pattern](https://docs.microsoft.com/en-us/azure/architecture/framework/mission-critical/mission-critical-architecture-pattern)
+- [Multi Region WebApp](https://docs.microsoft.com/en-us/azure/architecture/example-scenario/sql-failover/app-service-private-sql-multi-region)
