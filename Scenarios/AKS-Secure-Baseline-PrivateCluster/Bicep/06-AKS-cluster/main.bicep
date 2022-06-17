@@ -13,6 +13,9 @@ param aksIdentityName string
 param kubernetesVersion string
 param rtAKSName string
 param location string = deployment().location
+param availabilityZones array
+param enableAutoScaling bool
+param autoScalingProfile object
 
 @allowed([
   'azure'
@@ -84,6 +87,9 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
   params: {
+    autoScalingProfile:autoScalingProfile
+    enableAutoScaling: enableAutoScaling
+    availabilityZones:availabilityZones
     location: location
     aadGroupdIds: [
       aksadminaccessprincipalId

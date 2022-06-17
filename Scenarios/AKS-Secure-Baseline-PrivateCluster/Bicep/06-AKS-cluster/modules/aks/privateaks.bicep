@@ -7,6 +7,9 @@ param identity object
 param appGatewayResourceId string
 param kubernetesVersion string
 param location string = resourceGroup().location
+param availabilityZones array
+param enableAutoScaling bool
+param autoScalingProfile object
 
 @allowed([
   'azure'
@@ -34,16 +37,21 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-01-02-previ
     dnsPrefix: '${clusterName}aks'
     agentPoolProfiles: [
       {
+        enableAutoScaling: enableAutoScaling
         name: 'defaultpool'
+        availabilityZones: !empty(availabilityZones) ? availabilityZones : null
         mode: 'System'
         enableEncryptionAtHost: true
         count: 3
+        minCount: enableAutoScaling ? 1 : null
+        maxCount: enableAutoScaling ? 3 : null
         vmSize: 'Standard_DS2_v2'
         osDiskSizeGB: 30
         type: 'VirtualMachineScaleSets'
         vnetSubnetID: subnetId
       }
     ]
+    autoScalerProfile: enableAutoScaling ? autoScalingProfile : null
     networkProfile: networkPlugin == 'azure' ? {
       networkPlugin: 'azure'
       outboundType: 'userDefinedRouting'
