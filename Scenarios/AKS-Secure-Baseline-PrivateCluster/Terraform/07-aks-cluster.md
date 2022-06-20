@@ -5,6 +5,7 @@ The following will be created:
 * Log Analytics Workspace
 * Managed Identity for AKS Control Plane
 * Managed Identity for Application Gateway Ingress Controller
+* Managed Identity for the Azure key vault secrets provider add on
 * AKS Pod Identity Assignments - OPTIONAL
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/07-AKS-cluster" folder
@@ -33,7 +34,6 @@ terraform apply
 If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
 
 ## The Key Vault Add-On
-The AKS Key Vault Add-On is not currently supported for deployment with Terraform. Configure that separately on the cluster after it is deployed.
 
 We start by creating some environment variables. The AKS cluster name can be found in the portal or in the variables file. The value is aks-<prefix value>.
 
@@ -46,7 +46,7 @@ KV_RESOURCEGROUP=<KV RG name>
 
 
 
-## Enable aks-preview Azure CLI extenstion and add AKS-AzureKeyVaultSecretsProvider preview feature
+## Enable aks-preview Azure CLI extenstion and add AKS-AzureKeyVaultSecretsProvider feature
 
 You also need the *aks-preview* Azure CLI extension version 0.5.9 or later. If you don't already, enter the following in your command line
 
@@ -82,27 +82,9 @@ When ready, refresh the registration of the *Microsoft.ContainerService* resourc
 az provider register --namespace Microsoft.ContainerService
 ```
 
-
-
-##  Enable Keyvault Secrets Provider for your cluster
-
-```
-az aks enable-addons --addons azure-keyvault-secrets-provider --name $AKSCLUSTERNAME --resource-group $AKSRESOURCEGROUP
-```
-
-**IMPORTANT**: When completed, take note of the client-id created for the add-on:
-
-...,
- "addonProfiles": {
-    "azureKeyvaultSecretsProvider": {
-      ...,
-      "identity": {
-        "clientId": "<client-id>",
-        ...
-      }
-    }
-
 Update the permissions on the Key Vault to allow access from the newly created identity. The object-type can be certificate, key or secret. In this case, it should be all 3. Run the command below 3 times, one for each of the options.
+
+
 ```
 az keyvault set-policy -n $KV_NAME -g $KV_RESOURCEGROUP --<object type>-permissions get --spn <client-id>
 ```

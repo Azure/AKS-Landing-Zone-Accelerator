@@ -4,18 +4,6 @@ This application is provided by Microsoft Learning and is used as part of a self
 
 Because the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
 
-## Prepare your Jumpbox VM with tools (run from local machine) // validate this step because of previous error
-
-* Add a rule in the Firewall to allow internet access to the VM's private IP. Verify VM's private IP and update if necessary
-
-   ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'vnet-ESLZ-firewall' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
-   ```
-* Add a rule in the Firewall to allow internet access to the your VM or computer's  IP. Verify VM's private IP and update if necessary
-
-   ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '<your vm or computer's ip>'
-   ```
 ## Connecting to the Bastion Host
 
 1. Use Bastion Host to connect to the jumpbox.
@@ -103,7 +91,7 @@ Navigate to each of the application code directories, build and tag the containe
 ```bash
 # enter the name of your ACR below
 SPOKERG=<resource group name for spoke>
-ACRNAME=$(az acr show --name <ACR NAME> --resource-group $SPOKERG --query "name" --output tsv)
+ACRNAME=<ACR NAME>
 cd mslearn-aks-workshop-ratings-api
 sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
 cd ../mslearn-aks-workshop-ratings-web
@@ -138,7 +126,7 @@ Create the secret in key vault. You may use anything you'd like for the username
 
 ```bash
 # update keyvault name, username and password before running the command below
-KEYVAULTNAME=$(az keyvault show --name <key vault name> --resource-group $SPOKERG --query "name" --output tsv)
+KEYVAULTNAME=<key vault name>
 PGUSERNAME=<postgres db user name>
 PGPASSWORD=<postgres db password>
 az keyvault secret set --name mongodburi --vault-name $KEYVAULTNAME --value "mongodb://$PGUSERNAME:$PGPASSWORD@ratings-mongodb.ratingsapp:27017/ratingsdb"
@@ -200,7 +188,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    - Client ID for the AKS Key Vault Add-on
    - Tenant ID for the subscription.
 
-   > If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
+   > If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets-name of your aks cluster", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
 
    Deploy the edited yaml file.
 

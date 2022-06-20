@@ -55,6 +55,10 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     type         = "UserAssigned"
     identity_ids = [var.mi_aks_cp_id]
   }
+  
+  key_vault_secrets_provider {
+    secret_rotation_enabled = false
+  }
 }
 
 output "aks_id" {
