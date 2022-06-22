@@ -5,6 +5,11 @@
     "rgName": {
       "value": "ESLZ-HUB"
     },
+    "availabilityZones": {
+      "value": [
+        "1"
+      ]
+    },
     "vnetHubName": {
       "value": "VNet-HUB"
     },
@@ -38,7 +43,7 @@
           "properties": {
             "addressPrefix": "10.0.3.0/24"
           }
-        }                        
+        }
       ]
     },
     "azfwName": {
@@ -67,7 +72,7 @@
                   {
                     "port": 443,
                     "protocolType": "Https"
-                  }                
+                  }
                 ],
                 "targetFqdns": [
                   "ifconfig.co",
@@ -82,7 +87,7 @@
               }
             ]
           }
-        },     
+        },
         {
           "name": "AKS-egress-application",
           "properties": {
@@ -97,7 +102,7 @@
                   {
                     "port": 443,
                     "protocolType": "Https"
-                  }                
+                  }
                 ],
                 "targetFqdns": [
                   "*.azmk8s.io",
@@ -117,7 +122,7 @@
                   {
                     "port": 443,
                     "protocolType": "Https"
-                  }   
+                  }
                 ],
                 "targetFqdns": [
                   "*.azurecr.io",
@@ -138,7 +143,7 @@
                   {
                     "port": 443,
                     "protocolType": "Https"
-                  }   
+                  }
                 ],
                 "targetFqdns": [
                   "grafana.net",
@@ -174,10 +179,10 @@
                 "sourceAddresses": [
                   "10.1.1.0/24"
                 ]
-              }                  
+              }
             ]
           }
-        }      
+        }
       ]
     },
     "fwnetworkRuleCollections": {
