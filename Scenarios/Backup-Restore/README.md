@@ -3,7 +3,7 @@
 
 Next Reads:
 
-:arrow_forward: [Monitoring Velero with azure Container Insights](./monitoring/README.md)
+:arrow_forward: [Monitoring Velero with Azure Container Insights](./monitoring/README.md)
 
 :arrow_forward: [Plan your AKS Backup & Restore](./plan_backup_restore.md)
 
