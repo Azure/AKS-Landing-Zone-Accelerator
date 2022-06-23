@@ -79,7 +79,6 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
 ```
 
 2. The Ratings Web repo
-//Note on this step I had to login into github with a personal access token called AKS terraform
 
 
 ```bash

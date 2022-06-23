@@ -57,17 +57,19 @@ module "aks" {
   resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
   location            = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
   prefix              = "aks-${var.prefix}"
-  vnet_subnet_id      = data.terraform_remote_state.existing-lz.outputs.aks_subnet_id
+  vnet_subnet_id      = try(data.terraform_remote_state.existing-lz.outputs.aks_subnet_id, null)
   mi_aks_cp_id        = azurerm_user_assigned_identity.mi-aks-cp.id
   la_id               = azurerm_log_analytics_workspace.aks.id
   gateway_name        = data.terraform_remote_state.existing-lz.outputs.gateway_name
   gateway_id          = data.terraform_remote_state.existing-lz.outputs.gateway_id
   private_dns_zone_id = azurerm_private_dns_zone.aks-dns.id
+  network_plugin      = var.network_plugin
+  pod_cidr            = try(var.pod_cidr, null)
 
 }
 
 # These role assignments grant the groups made in "03-AAD" access to use
-# The AKS cluster. 
+# The AKS cluster.
 resource "azurerm_role_assignment" "appdevs_user" {
   scope                = module.aks.aks_id
   role_definition_name = "Azure Kubernetes Service Cluster User Role"

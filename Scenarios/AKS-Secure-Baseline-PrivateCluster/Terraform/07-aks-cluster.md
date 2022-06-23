@@ -13,6 +13,36 @@ Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/07-AKS-clus
 cd ../07-AKS-cluster
 ```
 
+## AKS Networking Choices
+
+You can choose which AKS network plugin you want to deploy the cluster: azure or kubenet.
+For the Azure network plugin, each pod in the cluster will have an IP from the AKS Subnet CIDR. This allows Application Gateway and any other external service to reach the pod using this IP.
+
+For kubenet plugin, all the PODs get an IP address from POD-CIDR within the cluster. To route traffic to these pods, the TCP/UDP flow must go to the node where the pod resides. By default, AKS will maintain the User Defined Route (UDR) associated with the subnet where it belongs to always be updated with the CIDR /24 of the respective POD/Node IP address.
+
+Currently Application Gateway does not support any scenario where a route 0.0.0.0/0 needs to be redirected through any virtual appliance, a hub/spoke virtual network, or on-premises (forced tunneling). Since Application Gateway doesn't support UDR with a route 0.0.0.0/0 and it's a requirement for AKS egress control you cannot use the same route table for both subnets (Application Gateway subnet and AKS subnet).
+
+This means the Application Gateway doesn't know how to route the traffic of a POD backend pool in a AKS cluster when you are using the kubenet plugin. Because of this limitation, you cannot associate the default AKS UDR to the Application Gateway subnet since an AKS cluster with egress controller requires a 0.0.0.0/0 route. It's possible to create a manual route table to address this problem but once a node scale operation happens, the route needs to be updated again and this would require a manual update.
+
+For the purpose of this deployment when used with kubenet a UDR will be created during the deployment pointing the expected address prefix (CIDR) to the respective AKS worker node. This UDR will not be auto managed and in case of a cluster scale operation it should be manually updated.
+
+It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps.
+
+### Reference: Follow steps 1 and 2 below only if you are going with the Kubenet option
+
+Step 1:
+
+[How to setup networking between Application Gateway and AKS](https://azure.github.io/application-gateway-kubernetes-ingress/how-tos/networking/)
+
+Step 2: (Optional - *if you don't do this, you'll have to manually update the route table after scaling changes in the cluster*)
+
+[Using AKS kubenet egress control with AGIC](https://github.com/Welasco/AKS-AGIC-UDR-AutoUpdate)
+
+More info:
+
+[Use kubenet networking with your own IP address ranges in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/configure-kubenet)
+[Application Gateway infrastructure configuration](https://docs.microsoft.com/en-us/azure/application-gateway/configuration-infrastructure#supported-user-defined-routes)
+
 This deployment will need to reference data objects from the Hub deployment and will need access to the pre-existing state file, update the variables as needed.  This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo.
 
 Once again, A sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
