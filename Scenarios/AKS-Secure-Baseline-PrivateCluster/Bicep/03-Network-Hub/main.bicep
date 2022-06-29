@@ -11,6 +11,7 @@ param fwapplicationRuleCollections array
 param fwnetworkRuleCollections array
 param fwnatRuleCollections array
 param location string = deployment().location
+param availabilityZones array
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -40,6 +41,7 @@ module publicipfw 'modules/vnet/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'AZFW-PIP'
   params: {
+    availabilityZones:availabilityZones
     location: location
     publicipName: 'AZFW-PIP'
     publicipproperties: {
@@ -61,6 +63,7 @@ module azfirewall 'modules/vnet/firewall.bicep' = {
   scope: resourceGroup(rg.name)
   name: azfwName
   params: {
+    availabilityZones: availabilityZones
     location: location
     fwname: azfwName
     fwipConfigurations: [
@@ -82,7 +85,7 @@ module azfirewall 'modules/vnet/firewall.bicep' = {
   }
 }
 
-module publicipbastion 'modules/vnet/publicip.bicep' = {
+module publicipbastion 'modules/VM/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'publicipbastion'
   params: {

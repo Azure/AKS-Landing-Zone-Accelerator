@@ -1,9 +1,14 @@
 ### Articles in the Backup Restore Scenario
 🚩 This page: AKS Backup & Restore, using open source tool [Velero](https://velero.io) 
 
+Next Reads:
+
+:arrow_forward: [Monitoring Velero with Azure Container Insights](./monitoring/README.md)
+
+:arrow_forward: [Plan your AKS Backup & Restore](./plan_backup_restore.md)
+
 :arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
-:arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
 
 ## Overview
 
@@ -229,9 +234,11 @@ terraform apply
   
 
 ### Next steps
+:arrow_forward: [Monitoring Velero with azure Container Insights](./monitoring/README.md)
+
+:arrow_forward: [Plan your AKS Backup & Restore](./plan_backup_restore.md)
 
 :arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
-:arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
 
 

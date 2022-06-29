@@ -135,7 +135,7 @@ module "velero" {
 
 ```
 
- ## Understanding the sample code
+ ## Using the sample code for your own clusters
 
  <a href="./providers.tf" target="_blank">providers.tf</a>:
   - Defines the Terraform providers used to automate the deployment and configuration of resources
@@ -162,7 +162,7 @@ module "velero" {
  <a href="./main.tf" target="_blank">maint.tf</a>:
   - References the created ressources: primary and secondary RGs + AKS clusters + storage account (you should be able to reuse it for your existing resources)
   - Creates RBACs for Velero Service Principal. See this <a href="https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure#set-permissions-for-velero" target="_blank">article</a> for defining minium permissions.  
-  - Installs Velero on the AKS Clusters using the provided module (enable Restic for filesystem backup)
+  - **Installs Velero on the AKS Clusters using the provided module** (enable Restic for filesystem backup)
 
 
 ## Customizing the module

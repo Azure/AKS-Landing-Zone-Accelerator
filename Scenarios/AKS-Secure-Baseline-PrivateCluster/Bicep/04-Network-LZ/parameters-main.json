@@ -5,6 +5,9 @@
     "rgName": {
       "value": "ESLZ-SPOKE"
     },
+    "availabilityZones": {
+      "value": []
+    },
     "vnetSpokeName": {
       "value": "VNet-SPOKE"
     },
@@ -59,6 +62,12 @@
     },
     "appGatewayName": {
       "value": "APPGW"
+    },
+    "appGwyAutoScale": {
+      "value": {
+        "maxCapacity": 2,
+        "minCapacity": 1
+      }
     },
     "appGatewaySubnetName": {
       "value": "AppGWSubnet"

@@ -1,16 +1,8 @@
 
-variable "location" {
+variable "location" {}
 
-}
+variable "resource_group_name" {}
 
-variable "resource_group_name" {
+variable "virtual_network_name" {}
 
-}
-
-variable "virtual_network_name" {
-
-}
-
-variable "subnet_cidr" {
-    
-}
+variable "subnet_cidr" {}

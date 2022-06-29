@@ -7,26 +7,21 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
    ]
   }
 
-  name                = var.prefix
-  dns_prefix          = var.prefix
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  kubernetes_version  = "1.21.1"
+  name                    = var.prefix
+  dns_prefix              = var.prefix
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  kubernetes_version      = "1.23.5"
   private_cluster_enabled = true
   private_dns_zone_id     = var.private_dns_zone_id
+  azure_policy_enabled    = true
 
-  addon_profile {
-    oms_agent {
-      enabled           = true
-      log_analytics_workspace_id = var.la_id
-    }
-    ingress_application_gateway {
-      enabled = true 
-      gateway_id = var.gateway_id  
-    }
-    azure_policy {
-      enabled = true
-    }
+  ingress_application_gateway {
+    gateway_id = var.gateway_id
+  }
+
+  oms_agent {
+    log_analytics_workspace_id = var.la_id
   }
 
   default_node_pool {
@@ -34,8 +29,8 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     vm_size         = "Standard_DS2_v2"
     os_disk_size_gb = 30
     type            = "VirtualMachineScaleSets"
-    node_count = 3
-    vnet_subnet_id = var.vnet_subnet_id
+    node_count      = 3
+    vnet_subnet_id  = var.vnet_subnet_id
   }
 
   network_profile {
@@ -48,18 +43,17 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
 
   }
 
-  role_based_access_control {
-    enabled = true
+  role_based_access_control_enabled = true
 
-    azure_active_directory {
-      managed = true
+  azure_active_directory_role_based_access_control {
+      managed            = true
+    //  admin_group_object_ids = talk to Ayo about this one, this arg could reduce code other places possibly 
       azure_rbac_enabled = true
     }
-  }
 
   identity {
-    type                      = "UserAssigned"
-    user_assigned_identity_id = var.mi_aks_cp_id
+    type         = "UserAssigned"
+    identity_ids = [var.mi_aks_cp_id]
   }
 }
 
@@ -78,5 +72,5 @@ output "kubelet_id" {
 }
 
 output "agic_id" {
-  value = azurerm_kubernetes_cluster.akscluster.addon_profile[0].ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
+  value = azurerm_kubernetes_cluster.akscluster.ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
 }

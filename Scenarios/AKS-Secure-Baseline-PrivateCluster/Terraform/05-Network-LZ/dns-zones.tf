@@ -3,13 +3,12 @@
 
 resource "azurerm_private_dns_zone" "acr-dns" {
   name                = "privatelink.azurecr.io"
-  resource_group_name = azurerm_resource_group.net-rg.name
-
+  resource_group_name = azurerm_resource_group.spoke-rg.name
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "lz_acr" {
   name                  = "lz_to_acrs"
-  resource_group_name   = azurerm_resource_group.net-rg.name
+  resource_group_name   = azurerm_resource_group.spoke-rg.name
   private_dns_zone_name = azurerm_private_dns_zone.acr-dns.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
 }
@@ -26,13 +25,12 @@ output "acr_private_zone_name" {
 
 resource "azurerm_private_dns_zone" "kv-dns" {
   name                = "privatelink.vaultcore.azure.net"
-  resource_group_name = azurerm_resource_group.net-rg.name
-
+  resource_group_name = azurerm_resource_group.spoke-rg.name
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "lz_kv" {
   name                  = "lz_to_kvs"
-  resource_group_name   = azurerm_resource_group.net-rg.name
+  resource_group_name   = azurerm_resource_group.spoke-rg.name
   private_dns_zone_name = azurerm_private_dns_zone.kv-dns.name
   virtual_network_id    = azurerm_virtual_network.vnet.id
 }

@@ -16,6 +16,8 @@ param nsgAppGWName string
 param rtAppGWSubnetName string
 param dhcpOptions object
 param location string = deployment().location
+param availabilityZones array
+param appGwyAutoScale object
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -177,6 +179,7 @@ module publicipappgw 'modules/vnet/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'APPGW-PIP'
   params: {
+    availabilityZones:availabilityZones
     location: location
     publicipName: 'APPGW-PIP'
     publicipproperties: {
@@ -198,6 +201,8 @@ module appgw 'modules/vnet/appgw.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'appgw'
   params: {
+    appGwyAutoScale:appGwyAutoScale
+    availabilityZones:availabilityZones
     location: location
     appgwname: appGatewayName
     appgwpip: publicipappgw.outputs.publicipId

@@ -2,11 +2,10 @@
 
 ![Plan Backup Restore](./media/plan_backup_restore.png)
 
-First, check out [Best practices for business continuity and disaster recovery in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/operator-best-practices-multi-region)
+**First, check out** [Best practices for business continuity and disaster recovery in Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/operator-best-practices-multi-region)
 
 ## High Availability Considerations
 
-Checkout the repo section on [High Availability Baseline](https://github.com/Azure/AKS-Landing-Zone-Accelerator/tree/velero-backup-restore/Scenarios/High-Availability-Baseline)
 
 * **AKS Cluster Configuration**:
 	- Enable [Uptime SLA](https://docs.microsoft.com/en-us/azure/aks/uptime-sla) for production workloads
@@ -34,8 +33,36 @@ Storage Class Configuration (used to create dynamic peristent volumes)
 	- Use Azure Disk with ZRS (currently in Preview) --> available via Azure Disk CSI Driver
 	- Use Azure File with ZRS
 
+Checkout the repo section on [High Availability Baseline](https://github.com/Azure/AKS-Landing-Zone-Accelerator/tree/velero-backup-restore/Scenarios/High-Availability-Baseline)
 
-## Backup & Restore Considerations
+## Backup & Restore architecture
+
+### Scenario 1: using a shared storage between the primary and secondary AKS Clusters
+![architecture_velerol](./media/architecture_velero.png)
+
+- It might be simpler for most cases
+- You can expose the storage account to both regions, in a secure manner, via [Azure private link](https://docs.microsoft.com/en-us/azure/private-link/private-link-overview)
+- The seconday cluster should be configured to have readonly access to the backup storage 
+- to enable Regional Disastery Recovery, Storage account should be configured to have regional redundancy (sku RA-GRS or RA-GZRS)
+
+
+### Scenario 2: using a primary storage account, replicated with a storage account in a seconday region
+![aks-dr-regional](./media/aks-dr.png)
+
+- This scenario offers better security as it ensure a strict isolation of environments
+- Velero (blob) Container is configured with [Object Replication](https://docs.microsoft.com/en-us/azure/storage/blobs/object-replication-overview?tabs=powershell), to the secondary storage account 
+
+
+## Integrate Velero with your infrastructure:
+- You can see the example in the provided Velero module, which requires a storage account access as a dependency. 
+- You can prepare your storage accounts and integrate them with the code. [Check out the example](./velero_terraform_sample#using-the-module): 
+
+## Scheduling backups:
+- You can run backups for the CICD / Devops Chain 
+- Or Run them on a schedule: https://velero.io/docs/v1.6/how-velero-works/#scheduled-backups
+
+
+## Backup & Restore Planning
 
 * Plan for Backup & Restore
 	-  Prepare Cluster & POD Identities

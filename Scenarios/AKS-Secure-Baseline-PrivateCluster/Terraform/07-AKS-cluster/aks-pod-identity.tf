@@ -4,8 +4,8 @@
 
 # Managed Identity for Pod Identity
 resource "azurerm_user_assigned_identity" "aks_pod_identity" {
-  resource_group_name = azurerm_resource_group.rg-aks.name
-  location            = azurerm_resource_group.rg-aks.location
+  resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
+  location            = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
   name                = "pod-identity-example"
 }
 
@@ -18,7 +18,7 @@ resource "azurerm_role_assignment" "aks_identity_operator" {
 }
 
 resource "azurerm_role_assignment" "aks_vm_contributor" {
-  scope = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourcegroups/${module.aks.node_pool_rg}"
+  scope                = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourcegroups/${module.aks.node_pool_rg}"
   role_definition_name = "Virtual Machine Contributor"
   principal_id         = module.aks.kubelet_id
 }
@@ -30,7 +30,7 @@ resource "azurerm_key_vault_access_policy" "aad_pod_identity" {
   object_id    = azurerm_user_assigned_identity.aks_pod_identity.principal_id
 
   secret_permissions = [
-    "get", "list"
+    "Get", "List"
   ]
 }
 

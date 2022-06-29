@@ -71,7 +71,7 @@ Navigate to each of the application code directories, build and tag the containe
 ```bash
 # enter the name of your ACR below
 SPOKERG=<resource group name for spoke>
-ACRNAME=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.acrName.value -o tsv)
+ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
 cd mslearn-aks-workshop-ratings-api
 sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
 cd ../mslearn-aks-workshop-ratings-web
@@ -216,8 +216,8 @@ This step is optional. If you would like to go straight to using https which is 
 It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
 
 ```bash
-   az network nsg rule create -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound --priority 1000 \
-      --source-address-prefixes '*' --source-port-ranges 80 \
+   az network nsg rule create -g $SPOKERG --nsg-name <name of nsg for app gateway subnet> -n AllowHTTPInbound --priority 222 \
+      --source-address-prefixes '*' --source-port-ranges '*' \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```

@@ -19,17 +19,6 @@ resource "azurerm_network_security_group" "dev-nsg" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
 
-      security_rule {
-      name                       = "SSH"
-      priority                   = 1001
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "22"
-      source_address_prefix      = var.source_address_prefix
-      destination_address_prefix = "*"
-  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "subnet" {
@@ -37,27 +26,18 @@ resource "azurerm_subnet_network_security_group_association" "subnet" {
   network_security_group_id = azurerm_network_security_group.dev-nsg.id
 }
 
-# Resource Group for Dev Server
-
-resource "azurerm_resource_group" "dev" {
-  name     = "${var.hub_prefix}-rg-dev"
-  location = azurerm_resource_group.rg.location
-}
-
-
 # Linux Server VM
 
 module "create_linuxsserver" {
   source = "./modules/compute-linux"
 
-  resource_group_name = azurerm_resource_group.dev.name
-  location            = azurerm_resource_group.dev.location
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   vnet_subnet_id      = azurerm_subnet.dev.id
 
   server_name         = "server-dev-linux"
   admin_username      = var.admin_username
   admin_password      = var.admin_password
-  ssh_key_settings    = var.ssh_key_settings
 
 }
 
@@ -71,15 +51,4 @@ variable "admin_password" {
 
 variable "admin_username" {
   default = "sysadmin"
-
-}
-
-variable "ssh_key_settings" {
-  type    = map(string)
-  default =  null
-}
-
-variable "source_address_prefix" {
-  default = "*"
-
 }
