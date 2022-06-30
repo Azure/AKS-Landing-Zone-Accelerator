@@ -10,7 +10,7 @@ With modern principles and availability of cloud services like:
 
 Blue Green deployment has become a de-facto standard pattern for the release management and operation at infra and application level in kubernetes environments.
 
-In this article is described the design and implementation of the blue green deployment for AKS leveraging Azure Cloud managed services and native kubernetes features. Adoption of this pattern improves the operation and availability during the deployment of changes/upgrades of AKS clusters.
+This articles describes the design and implementation of the blue green deployment for AKS leveraging Azure Cloud managed services and native kubernetes features. Adoption of this pattern improves the operation and availability during the deployment of changes/upgrades of AKS clusters.
 
 The main benefits of the solution are:
 - Minimized downtime during the release
@@ -35,7 +35,7 @@ This solution is a generalized architecture pattern, which can be used for many 
 
 
 ## Architecture
-Below is the high level architecture that describes the pattern and related services invovled. The [Worklfow section](#workflow) describ in detail the steps for the implementation of the pattern and in particular the sequence of events to have the proper switch between the clusters.
+Below is the high level architecture that describes the pattern and related services invovled. The [Worklfow section](#workflow) describes in detail the steps for the implementation of the pattern, including the sequence of events to have the proper traffic switch, from networking and app perspcetve, between the blue and green clusters.
 ![Blue Green Pattern High Level Design](../media/hl-bg-arch.png)
 
 An important point to mention is the region of the deployment is an invariant, that means that you can deploy the two clusters in different regions or in the same region. Deploying into the same region require certain prerequisties:
@@ -46,7 +46,8 @@ An important point to mention is the region of the deployment is an invariant, t
 
 
 ### Workflow
-It is importnant to highlight that this pattern is like a state machine. The blue or green clusters are both on at the same time, but only for a limitied period of time. This is done to optmize the costs and operational effort.
+In this section are described the deatils of the implementation of the pattern.
+It is importnant to highlight that this pattern is like a state machine, in which there clear states and transaction. The blue or green clusters are both on at the same time, but only for a limitied period of time. This is done to optmize the costs and operational effort.
 
 5 stages of the Pattern:
 1. T0: Blue Cluster is On
@@ -55,7 +56,7 @@ It is importnant to highlight that this pattern is like a state machine. The blu
 4. T3: Traffic Switch to the green cluster
 5. T4: Blue cluster is destroyed
 
-Once implemented, the workflow will start at the next planned release of the cluster beginning with T1: Green Cluster Deployment. The triggers to transition in the multiples stages can be programtically configured and executed, this is usually the desired end state, that start from a manual/semi-automatic implementation. The triggers are related to functional parameters together with SLO/SLI defined at operation levele to cover apps and infra aspects.
+The pattern is recursive, and blue and green clusters swap roles in different iteration of the pattern; to simplify this menas that in a specific iteration the blue cluster is the current active cluster and then the next iteration the green is the current actvie cluster. The triggers to transition in the multiples stages can be automated, this is usually the desired end state, but the starting point is quite often manual/semi-automatic. The triggers of the transitions are related to specific workload metrics, SLO and SLA, together with Azure Platform metrics in order to have the proper data set to evaluate the status of the workloads and AKS cluster.
 This pattern is flexible on the network discoverabiity of the clusters, in fact you can have multiple options:
 - A DNS record dedicated to the blue and green clusters IP
 - A DNS record dedicated to the blue green cluster pointing to the App Gateway IP
@@ -78,18 +79,18 @@ The trigger to move into the [T2 stage](#t2-sync-k8s-state-between-blue-and-gree
 
 
 #### T2: Sync K8S State between Blue and Green cluster
-At this stage there is an parity between the two clusters, meaning all **applications**, **operators** and **K8S resources** are newly deployed in the green cluster. The ultimate goal is that at the end of the sync the clusters are equivalent.
+At this stage there isn't a parity between the two clusters, meaning that **applications**, **operators** and **K8S resources** are not yet deployed in the green cluster, or at least not all of them are applicable and deployed whne the AKS cluster is provisioned. The ultimate goal of this stage is that at the end of the sync the clusters are equivalent, in this way is possible to validate the status of the new cluster before move in state [Traffic Switch to the green cluster](#t3-traffic-switch-to-the-green-cluster).
 
 There are multiple solutions/approaches to replicate/sync K8S state on clusters:
-- Redeployment via CI/CD
-- GitOps with solutions promoted in CNCF
-- Customized solution that store the K8S configs and resources, usually databases and K8S manifests generators
+- Redeployment via CI/CD, usually is enough to use the same CI/CD pipeliens used for the normal deployment.
+- GitOps with solutions promoted in CNCF, like [Flux](https://www.cncf.io/projects/flux/) and [ArgoCD](https://www.cncf.io/projects/argo/)
+- Customized solution that stores the K8S configs and resources in datastore; usually these solutions are based on K8S manfiests generators starting from metadata definition and then store the generated K8S manifests into a datastore like CosmsoDB; usually are bespoke solutgions because based on the application description framework in use.
 
 ![Step2](../media/bg-step2.png)
 
 Usually syncing the deployment of new applications is not permitted in the live cluster, so there is a period of time that starts with the sync and finishs when the switch to the green is completed. This period can be avoided with advanced mechanisms that manage the K8S state in multiple clusters, but that is not part of this article.
 
-When the sync is completed, a test/validation of the cluster is required. This include a check on the monitoring and logging platforms to validate the health of the cluster. Usually the Green cluster is exposed on the App Gateway or External LB with an internal URL, that is not visibile for external users.
+When the sync is completed, a test/validation of the cluster is required. This includes a check on the monitoring and logging platforms to validate the health of the cluster. Usually the Green cluster is exposed on the App Gateway or External LB with an internal URL, that is not visibile for external users.
 
 This test/validation stage is used as a trigger for the [next state](#t3-traffic-switch-to-the-green-cluster) of the pattern.
 
@@ -112,11 +113,11 @@ The Blue and Green cluster hosts are mainly used for:
 - Test and Validate the specific cluster, like mentioned in [Step 2](#t2-sync-k8s-state-between-blue-and-green-cluster)
 - The switch of the live traffic, mainly the hosts are used for the backend pools configuration at Application Gateway level, in this way the switch is transparent for the end user of the workloads.
 For the testing and validation purpose the hosts are also exposed at Application Gateway level with dedicated endpoints and also at AKS Ingress controller level to manage the TLS in the proper way.
-At this stage the validation is based on the infra and app monitoring metrics and official SLO and SLI, when avaialble. If the validation gate is satisfied than is possible to move in the [last state](#t4-blue-cluster-is-destroyed) of the pattern.
+At this stage the validation is based on the infra and app monitoring metrics and official SLO and SLI, when avaialble. If the validation gate is satisfied then is possible to move in the [last state](#t4-blue-cluster-is-destroyed) of the pattern.
 
 
 #### T4: Blue cluster is destroyed
-The execution of the switch of the traffic bring the pattern in the final stage, in which there is still a validation and monitoring that the green cluster is working as expected also with live traffic; is always important to remember that the valadiation and monitoring cover both platform and application level.
+The execution of the switch of the traffic bring the pattern in the final stage, in which there is still a validation and monitoring that the green cluster is working as expected with live traffic; it is always important to remember that the valadiation and monitoring cover both platform and application level.
 After this validation is completed, then the blue cluster can be destroyed.
 The destruction is a step that is strongly recommended in order to reduce costs and make the proper usage of the elastcity provided by Azure, in particular AKS.
 
@@ -124,13 +125,13 @@ The destruction is a step that is strongly recommended in order to reduce costs 
 
 
 ### Components
-Below the main components and azure services that are part of the blue green deployment for AKS.
+Below are the main components and azure services that are part of the blue green deployment for AKS.
 - [Application Gateway](https://azure.microsoft.com/services/application-gateway/), the main responsability is to act as gateway and Load balancer for the AKS clusters.
-- [AKS](https://azure.microsoft.com/services/kubernetes-service/), is the subject of the patter.
+- [AKS](https://azure.microsoft.com/services/kubernetes-service/), is the core component of the pattern.
 - [Container Registry](https://azure.microsoft.com/services/container-registry/), has the main role to store and distribute the artifacts in the AKS clusters, example of artifacts are Container Images, HELM Charts, etc.. .
-- [Azure Monitor](https://azure.microsoft.com/services/monitor/), is the core monitoring platform for AKS, it is strongly recommended with his native integration with AKS, providing logs, metrics and alerting to manage the different stages of the pattern.
+- [Azure Monitor](https://azure.microsoft.com/services/monitor/), s the core observability platform for AKS and strongly recommended given its native integration with AKS and its ability to provide logging, monitoring and alerting capabilities used to manage the different stages of this pattern.
 - [Azure Firewall](https://azure.microsoft.com/services/azure-firewall/), has the main responsability to manage the egress traffic into the clusters, in partcular in hub and spoke topology and connections with external datacenters or locations.
-- [KeyVault](https://azure.microsoft.com/services/key-vault/), it is required to manage in the proper way the secrets and certificates that need to be use at AKS level.
+- [KeyVault](https://azure.microsoft.com/services/key-vault/), s recommended for securely managing secrets and certificates used by the Azure resources and the applications that depend on them.
 
 
 ### Alternatives
@@ -141,7 +142,7 @@ From a pattern perspective there altrenative scenarios to implement a more contr
 
 Another alternative that has more impact on the blast radius of the deployment is to have a ring based deployments. Instead of just blue and green clusters, it is possible to have more clusters called rings. Each ring is large enought for the number of users that have access to the new version/config of the AKS. As for the blue green pattern described, the rings can be removed to have the proper cost optimization and control.
 
-There are two Azure Servies listed in the [Componets Section](#components), for which is possible to use also alternative products and/or OSS solutions. The two services are:
+There are two Azure Services listed in the [Componets Section](#components), for which is possible to use also alternative products and/or OSS solutions. These two services are:
 - [Application Gateway](https://azure.microsoft.com/services/application-gateway/)
 - [Container Registry](https://azure.microsoft.com/services/container-registry/)
 
@@ -170,7 +171,7 @@ It is important to highlight that a succesfull implementation of the pattern is 
 
 
 ### Reliability
-The blue green pattern has a direct and positive impact on the availability of AKS platform and workloads. In particular the pattern improves the availability during the deployment of the AKS platform changes, in particular downtime is near to zero and it can be affected by how user sessions are managed. Moreover the blue green provide also covergae for reliability during the deployment because by default there is the option to fallback in the previous version of the AKS cluster. 
+The blue green pattern has a direct and positive impact on the availability of AKS platform and workloads. In particular the pattern improves the availability during the deployment of the AKS platform changes, in particular downtime is near to zero and it can be affected by how user sessions are managed. Moreover the blue green provide also coverage for reliability during the deployment because by default there is the option to rollback in the previous version of the AKS cluster if something goes wromg in the new cluster version. 
 Here more detail about the resiliency and avalaibility pillar defined in the [Well Architected Framework](/azure/architecture/framework/resiliency/overview).
 
 
