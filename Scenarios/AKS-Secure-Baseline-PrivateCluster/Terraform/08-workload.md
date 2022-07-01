@@ -312,7 +312,7 @@ We are going to use Lets Encrypt and Cert-Manager to provide easy to use certifi
 ```
 First of all this will create a new namespace called cert-manager which is where all of the resources for cert-manager will be kept. This will then go ahead and download some CRDs (CustomResourceDefinitions) which provides extra functionality in the cluster for the creation of certificates.
 
-We will then proceed to test this certificate process with a staging certificate to begin with, before moving on to deploying a production certificate.
+We will then proceed to test this certificate process with a staging certificate.
 
 2. Edit the 'certificateIssuer.yaml' file and include your email address. This will be used for certificate renewal notifications.
 
@@ -344,38 +344,10 @@ If you notice the status is not changing after a few minutes, there could be a p
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl describe certificaterequest <certificaterequestname> -n ratingsapp"
 ```
 
-Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate. If you have got this far, continue to the next step to remediate this issue.
+Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate.
 ![deployed workload https](../media/deployed-workload-https.png)
 
-4. Edit the 'certificateIssuer.yaml' file and replace the following:
-
-    Change the metadata name to letsencrypt-prod
-    Change the server to https://acme-v02.api.letsencrypt.org/directory
-    change the privateKeySecretRef to letsencrypt-prod
-
-Re-apply the updated file
-
-```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
-```
-
-5. The next step is to change the ingress to point to the production certificateIssuer. At the moment it is still pointing to the old staging issuer.
-
-Edit '5-https-ratings-web-ingress.yaml' and replace the following values:
-
-    cert-manager.io/issuer: letsencrypt-prod
-
-Re-apply the updated file
-
-```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
-```
-
-
-Now you can access the website using using your FQDN. When you navigate to the website using your browser you might see a warning stating the destination is not safe. Give it a few minutes and this should clear out. However, for production you want to use Certified Authority (CA) certificates.
-
-![deployed workload https more secure](../media/deployed-workload-https-secure.png)
-
+**Note: For production clusters, it is better to use a paid for SSL certificate because they can offer better liability and protection than a free SSL certificate.** 
 
 ## Next Step
 

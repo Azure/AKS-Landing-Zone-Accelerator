@@ -9,6 +9,7 @@ metadata:
     cert-manager.io/acme-challenge-type: http01
     # kubernetes.io/ingress.allow-http: 'false'
     appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    acme.cert-manager.io/http01-edit-in-place: "true" #Adding this to get the staging cert to work
 spec:
   tls:
     - hosts:
