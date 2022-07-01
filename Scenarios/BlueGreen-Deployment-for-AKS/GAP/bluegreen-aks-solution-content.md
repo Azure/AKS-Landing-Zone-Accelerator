@@ -56,7 +56,7 @@ It is important to highlight that this pattern is like a state machine, in which
 4. T3: Traffic Switch to the green cluster
 5. T4: Blue cluster is destroyed
 
-The pattern is recursive, and blue and green clusters swap roles in different iteration of the pattern; to simplify this means that in a specific iteration the blue cluster is the current active cluster and then the next iteration the green is the current active cluster. The triggers to transition in the multiples stages can be automated, this is usually the desired end state, but the starting point is quite often manual/semi-automatic. The triggers of the transitions are related to specific workload metrics, SLO and SLA, together with Azure Platform metrics in order to have the proper data set to evaluate the status of the workloads and AKS cluster.
+The pattern is recursive, and blue and green clusters swap roles in different iteration of the pattern; to simplify this means that in a specific iteration the blue cluster is the current active cluster and then the next iteration the green is the current active cluster. The triggers to transition in the multiples stages can be automated, this is usually the desired end state, but the starting point is quite often manual/semi-automatic. The triggers of the transitions are related to specific workload metrics, SLO and SLA, together with Azure Platform metrics in order to have the proper dataset to evaluate the status/healthy of the workloads and AKS cluster.
 This pattern is flexible on the network discoverability of the clusters, in fact you can have multiple options:
 - A DNS record dedicated to the blue and green clusters IP
 - A DNS record dedicated to the blue green cluster pointing to the App Gateway IP
