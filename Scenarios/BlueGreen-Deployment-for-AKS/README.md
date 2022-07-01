@@ -1,5 +1,6 @@
 # Blue Green Deployment for AKS
-This scenario is dedicated to the blue green deployment at AKS level, the main purpose is to provide a reliable and high availability solution when:
+This architectural pattern describes how to properly implement a Blue-Green deployment of an AKS cluster that follows the guiding tenets of the [Azure Well-Architected Framework](https://docs.microsoft.com/en-us/azure/architecture/framework/). For Blue Green deployment at the application level, refer to [this article](https://docs.microsoft.com/en-us/azure/architecture/example-scenario/blue-green-spring/blue-green-spring).
+The main purpose is to provide a reliable and high availability solution when:
 - K8S version update
 - NodePools update, like change VM size
 - AKS networking changes
