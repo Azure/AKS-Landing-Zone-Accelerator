@@ -14,7 +14,7 @@ This is the starting point for the instructions on deploying the [AKS Baseline p
    > * [Contributor role](https://docs.microsoft.com/azure/role-based-access-control/built-in-roles#contributor) is _required_ at the subscription level to have the ability to create resource groups and perform deployments.
    > * [User Access Administrator role](https://docs.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) is _required_ at the subscription level since you'll be performing role assignments to managed identities across various resource groups.
 
-1. **This step only applies if you are creating a new AAD group for this deployment. If you have one already existing amd you are a part of it, you can skip this prerequisite, and the remaining steps in this page, move on to the next page by clicking on the link at the bottom**. 
+1. **This step only applies if you are creating a new AAD group for this deployment. If you have one already existing and you are a part of it, you can skip this prerequisite, and the remaining steps in this page, move on to the next page by clicking on the link at the bottom**. 
    
    An Azure AD tenant to associate your Kubernetes RBAC Cluster API authentication to.
 
@@ -23,7 +23,7 @@ This is the starting point for the instructions on deploying the [AKS Baseline p
    > * Azure AD [User Administrator](https://docs.microsoft.com/azure/active-directory/users-groups-roles/directory-assign-admin-roles#user-administrator-permissions) is _required_ to create a "break glass" AKS admin Active Directory Security Group and User. Alternatively, you could get your Azure AD admin to create this for you when instructed to do so.
    >   * If you are not part of the User Administrator group in the tenant associated to your Azure subscription, please consider [creating a new tenant](https://docs.microsoft.com/azure/active-directory/fundamentals/active-directory-access-create-new-tenant#create-a-new-tenant-for-your-organization) to use while evaluating this implementation. The Azure AD tenant backing your cluster's API RBAC does NOT need to be the same tenant associated with your Azure subscription.
 
-# Create or Import Azure Active Directory Groups for AKS
+# Create Azure Active Directory Groups for AKS
 
 Before creating the Azure Active Directory integrated cluster, groups must be created that can be later mapped to the Built-In Roles of "Azure Kubernetes Service Cluster User Role" and "Azure Kubernetes Service RBAC Cluster Admin".
 
