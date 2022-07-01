@@ -225,7 +225,7 @@ It is important to first configure the NSG for the Application Gateway to accept
 1. Deploy the **"5-ratings-web-ingress.yaml"** file.
 
    ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp" --file 5-http-ratings-web-ingress.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5a-http-ratings-web-ingress.yaml -n ratingsapp" --file 5a-http-ratings-web-ingress.yaml
    ```
 
 1. Get the ip address of your ingress controller
@@ -254,7 +254,6 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 **Objectives**
 
 1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customprefix>.<region>.cloudapp.azure.com
-2. Create a certificate using the FQDN and store it in Key Vault.
 
 ### Creating Public IP address for your Application Gateway
 
@@ -315,40 +314,12 @@ If you notice the status is not changing after a few minutes, there could be a p
    
 ```
 
-Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate. If you have got this far, continue to the next step to remediate this issue.
+Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate.
 ![deployed workload https](../media/deployed-workload-https.png)
 
-4. Edit the 'certificateIssuer.yaml' file and replace the following:
-
-    Change the metadata name to letsencrypt-prod
-    Change the server to https://acme-v02.api.letsencrypt.org/directory
-    change the privateKeySecretRef to letsencrypt-prod
-
-Re-apply the updated file
-
-```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
-```
-
-5. The next step is to change the ingress to point to the production certificateIssuer. At the moment it is still pointing to the old staging issuer.
-
-Edit '5-https-ratings-web-ingress.yaml' and replace the following values:
-
-    cert-manager.io/issuer: letsencrypt-prod
-
-Re-apply the updated file
-
-```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
-   
-```
-
-
-Now you can access the website using using your FQDN. When you navigate to the website using your browser you might see a warning stating the destination is not safe. Give it a few minutes and this should clear out. However, for production you want to use Certified Authority (CA) certificates. 
-
-![deployed workload https more secure](../media/deployed-workload-https-secure.png)
+Please note: Using LetsEncrypt staging certificates for your Application Gateway/Ingress Controller is only advised for non-production environments. If you are using Ingress Controllers in your production workloads, we recommend you to purchase a paid SSL certificate.
 
 
 ## Next Step
 
-:arrow_forward: [Cleanup](./08-cleanup.md)
+:arrow_forward: [DeployNGINXIngress](./08-QuickStartOptionalExtra.md)
