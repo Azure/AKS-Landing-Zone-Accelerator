@@ -163,11 +163,11 @@ One main consideration is that this pattern can be adopted in a full automated s
 
 One important lesson learned is to have dedicated hostnames for the blue green clusters and also have a dedicated endpoints configuration on the Gateway/Load Balancer in front of the clusters. This is critical to improve the reliability and validity of the deployment of the new cluster. In this way the validation of the deployment happens with the same architecture and configurations of a standard production cluster.
 
-The blue green pattern is also an enabler to implement and test BC/DR solutions for AKS and related workloads.
+The blue green pattern is also an enabler to implement and test BC/DR solutions for AKS and related workloads. In paritcular it provide the fundamentals aspects to manage multiple clusters, inclduing when they are located in multiple regions.
 
-A key aspect is related to the **Cost Optimization**, in detail the blue green cluster pattern is widely adopted in the cloud for the native elasticity provided by cloud providers, in particular Azure, this include the cost saving and control to manage and maintain the blue green cluster deployment; in particular ' as described the main action is to destroy the cluster that is no longer needed.
+A key aspect is related to the **Cost Optimization**, in detail, the blue green pattern is widely adopted in Azure due to the native elasticity provided by the cloud; this enables the implementation of the proper behaviours to optmize costs in term of operations and cloud consumption; the action that mainly contribute to the costs saving is the removal of the cluster that is no longer need after the deployment of the new versio of the cluster.
 
-It is important to highlight that a succesfull implementation of the pattern is related to the fact that the all the aspects like automation, monitoring and validation need to be applied at AKS Platform level but also the workloads/apps deployed on top of it; only with the E2E coverage is possible to really benefit of the value of the blue green pattern.
+It is important to highlight that a succesfull implementation of the pattern is related to the fact that the all the aspects like automation, monitoring and validation need to be applied at AKS Platform level, but also the workloads/apps deployed on top of it; only with the E2E coverage is possible to really benefit of the value of the blue green pattern.
 
 
 ### Reliability
@@ -188,6 +188,8 @@ As we all know automation, continuous  delivery, resilient deployment are fundam
 Automation is a key pre requirement to implement, manage and maintain the blue green pattern along the time.
 One of the key aspects of the Continuous Delivery is to be able to iteratively deliver increments of platform and workloads, with the blue green patter for AKS platform you can unlock the continuous delivery at AKS level providing a controlled and safety experience.
 Resiliency during the deployment is one of the main benefits of the pattern, because natively there is the fallback option of the previous cluster.
+Morover the adoption of the pattern has a clear advantage on the business continuity testing, because the blue green pattern intorduce the proper level of automation to reduce the effort related to the BC.
+As highlithed in the [workflow](#workflow) steps, the triggers and validation of the blue green deployment are an extra effort in term of automation and operation in order to manage in the proper way the deployment; in detail is required to have the proper montoring and logging in place to capture metrics and events at infra and apps level to detrmine the healthy of the deployment; for the cloud infra and platform is possible to laverage in the native Azure capabilities, on the apps part they need to be designed based on the app context.
 The key benefits mentioned before are also part of the [Well Architected Framework](/azure/architecture/framework/devops/overview).
 
 ## Deploy this scenario
