@@ -111,20 +111,20 @@ keyVaultName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query propertie
 #NOTE: USE THIS COMMAND ONLY WHEN USING THE AZURE CNI NETWORK PLUGIN
 # Deploy Using Azure Network CNI plugin
 #-----------------------------------------------------------------------------------------------
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 06-AKS-cluster/main.bicep -p 06-AKS-cluster/parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=azure
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=azure
 
 
 #-----------------------------------------------------------------------------------------------
 #NOTE: USE THIS COMMAND ONLY WHEN USING THE KUBENET NETWORK PLUGIN
 # Deploy using Azure Network Kunet plugin
 #-----------------------------------------------------------------------------------------------
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 06-AKS-cluster/main.bicep -p 06-AKS-cluster/parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\06-AKS-cluster\main.bicep -TemplateParameterFile .\06-AKS-cluster\parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-CLUSTER
+New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-CLUSTER
 ```
 
 :arrow_forward: [Deploy a Basic Workload](./07-workload.md)
