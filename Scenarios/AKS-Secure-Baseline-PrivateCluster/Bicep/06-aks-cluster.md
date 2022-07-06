@@ -94,8 +94,8 @@ Review "**parameters-main.json**" file and update the values as required. Please
 
    > :warning: There are two groups you need to change in parameters-main.json:
    >
-    > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
-    > * Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
+   > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
+   > * Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
         
 The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
 
