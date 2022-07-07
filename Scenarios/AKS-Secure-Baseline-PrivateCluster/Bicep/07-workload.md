@@ -79,7 +79,7 @@ sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
 ```
 
 Log into ACR (Azure Container Registry)
-> :note: If you run into issues logging into ACR this way, head to the portal and get login credentials from Access Keys tab in the left plane of your ACR.
+> :warning: If you run into issues logging into ACR this way, head to the portal and get login credentials from Access Keys tab in the left plane of your ACR.
 
 ```bash
 sudo az acr login -n $ACRNAME
