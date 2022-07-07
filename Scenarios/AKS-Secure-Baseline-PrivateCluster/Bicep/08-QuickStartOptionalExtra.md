@@ -32,15 +32,17 @@ First of all, deploy the ES AKS Policy Initative:
 1. cd to /Scenarios/Azure-Policy-ES-for-AKS
 
    ```bash
-   az deployment sub create --location uksouth --template-file .\aks_initiative_template.json --parameters aks_initiative_params.json
+   az deployment sub create --location centralus --template-file aks_initiative_template.json --parameters aks_initiative_params.json
    ```
 
 The next step is to assign the policy initiative to the resource group that contains the AKS cluster:
 
-1. Edit the policy.bicep file and add your Subscription Id where required
-
+1. Edit the policy.bicep file and add your Subscription Id where required then deploy the initiative
    ```bash
-   az deployment group create -g <AKSResourceGroup> -f .\policy.bicep
+   code policy.bicep
+   ```
+   ```bash
+   az deployment group create -g <AKSResourceGroup> -f policy.bicep
    ```
 
 Now that the policy is assigned, you can move onto the next step which is deploying the NGINX Ingress Controller. Note: Please be aware it can take up to 30 minutes for the previously deployed policy to take effect. It is worth waiting 30 minutes before moving on to the next step.
