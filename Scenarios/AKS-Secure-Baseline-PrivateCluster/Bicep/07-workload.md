@@ -14,7 +14,7 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
 * Add a rule in the Firewall to allow internet access to the your VM or computer's  IP. Verify VM's private IP and update if necessary
 
    ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '<your vm or computer's ip>'
+   az network firewall network-rule create --collection-name 'access-VM' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 202 --source-addresses '<your vm or computer's ip>'
    ```
 ## Connecting to the Bastion Host
 
