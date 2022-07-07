@@ -116,6 +116,10 @@ Ensure the AKS run commands are working as expected.
 # create environment variable for cluster and its resource group name
 ClusterRGName=<cluster resource group name>
 ClusterName=<AKS cluster name>
+PGUSERNAME=<postgres db user name>
+PGPASSWORD=<postgres db password>
+echo $PGUSERNAME
+echo $PGPASSWORD
 ```
 
 ```bash
