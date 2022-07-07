@@ -252,7 +252,7 @@ It is important to delete the rule that allows HTTP traffic to keep the cluster 
 ```bash
    az network nsg rule delete -g $SPOKERG --nsg-name $APPGWNSG -n AllowHTTPInbound 
 ```
-A few seconds after you delete the rule, you should no longer be able to access the website with the IP address on a browser
+A few seconds after you delete the rule, you should no longer be able to access the website with the IP address on a **new** browser
 **the optional steps end here**
 
 ## Deploy the Ingress with HTTPS support
