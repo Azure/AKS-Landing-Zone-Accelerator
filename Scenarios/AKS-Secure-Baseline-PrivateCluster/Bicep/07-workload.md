@@ -222,7 +222,8 @@ This step is optional. If you would like to go straight to using https which is 
 It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
 
 ```bash
-   az network nsg rule create -g $SPOKERG --nsg-name <name of nsg for app gateway subnet default APPGW-NSG> -n AllowHTTPInbound --priority 222 \
+   APPGWNSG=<name of nsg for app gateway subnet default APPGW-NSG>
+   az network nsg rule create -g $SPOKERG --nsg-name $APPGWNSG -n AllowHTTPInbound --priority 222 \
       --source-address-prefixes '*' --source-port-ranges '*' \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
@@ -249,8 +250,9 @@ It is important to first configure the NSG for the Application Gateway to accept
 It is important to delete the rule that allows HTTP traffic to keep the cluster safe since we have completed the test. 
 
 ```bash
-   az network nsg rule delete -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound 
+   az network nsg rule delete -g $SPOKERG --nsg-name $APPGWNSG -n AllowHTTPInbound 
 ```
+A few seconds after you delete the rule, you should no longer be able to access the website with the IP address on a browser
 **the optional steps end here**
 
 ## Deploy the Ingress with HTTPS support
