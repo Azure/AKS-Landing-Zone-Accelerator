@@ -257,11 +257,12 @@ A few seconds after you delete the rule, you should no longer be able to access 
 
 ## Deploy the Ingress with HTTPS support
 
-A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway.
+A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a letsencrypt certificate with an FQDN configured on the IP address used by the Application Gateway.
 
 **Objectives**
 
 1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customprefix>.<region>.cloudapp.azure.com
+1. Secure the web application using TLS
 
 ### Creating Public IP address for your Application Gateway
 
