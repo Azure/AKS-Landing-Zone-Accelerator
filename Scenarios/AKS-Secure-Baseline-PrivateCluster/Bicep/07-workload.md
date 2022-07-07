@@ -290,7 +290,7 @@ We are going to use Lets Encrypt and Cert-Manager to provide easy to use certifi
 ```
 First of all this will create a new namespace called cert-manager which is where all of the resources for cert-manager will be kept. This will then go ahead and download some CRDs (CustomResourceDefinitions) which provides extra functionality in the cluster for the creation of certificates.
 
-We will then proceed to test this certificate process with a staging certificate to begin with, before moving on to deploying a production certificate.
+We will then proceed to test this certificate process with a staging certificate. For production, get a certificate from a certified authority.
 
 2. Edit the 'certificateIssuer.yaml' file and include your email address. This will be used for certificate renewal notifications.
 
@@ -326,7 +326,7 @@ If you notice the status is not changing after a few minutes, there could be a p
 Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate.
 ![deployed workload https](../media/deployed-workload-https.png)
 
-Please note: Using LetsEncrypt staging certificates for your Application Gateway/Ingress Controller is only advised for non-production environments. If you are using Ingress Controllers in your production workloads, we recommend you to purchase a paid SSL certificate.
+Please note: Using LetsEncrypt staging certificates for your Application Gateway/Ingress Controller is only advised for non-production environments. If you are using Ingress Controllers in your production workloads, we recommend you to purchase a paid TLS certificate.
 
 
 ## Next Step
