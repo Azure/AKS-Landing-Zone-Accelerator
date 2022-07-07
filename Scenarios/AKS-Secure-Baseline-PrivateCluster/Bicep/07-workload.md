@@ -116,6 +116,7 @@ Ensure the AKS run commands are working as expected.
 # create environment variable for cluster and its resource group name
 ClusterRGName=<cluster resource group name>
 ClusterName=<AKS cluster name>
+SPOKERG=<resource group name of spoke network default same as ClusterRGName>
 PGUSERNAME=<postgres db user name>
 PGPASSWORD=<postgres db password>
 echo $PGUSERNAME
@@ -221,7 +222,7 @@ This step is optional. If you would like to go straight to using https which is 
 It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
 
 ```bash
-   az network nsg rule create -g $SPOKERG --nsg-name <name of nsg for app gateway subnet> -n AllowHTTPInbound --priority 222 \
+   az network nsg rule create -g $SPOKERG --nsg-name <name of nsg for app gateway subnet default APPGW-NSG> -n AllowHTTPInbound --priority 222 \
       --source-address-prefixes '*' --source-port-ranges '*' \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
