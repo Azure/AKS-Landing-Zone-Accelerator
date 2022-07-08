@@ -91,4 +91,4 @@ Please note: Due to this ingress controller being on the internal network, you w
 
 ## Next Step
 
-:arrow_forward: [Cleanup](./09-cleanup.md)
+:arrow_forward: [Cleanup](./08-cleanup.md)
