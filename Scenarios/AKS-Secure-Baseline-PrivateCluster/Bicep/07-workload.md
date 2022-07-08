@@ -331,4 +331,8 @@ Please note: Using LetsEncrypt staging certificates for your Application Gateway
 
 ## Next Step
 
-:arrow_forward: [DeployNGINXIngress](./08-QuickStartOptionalExtra.md)
+:arrow_forward: [Deploy and test Azure Policy for AKS-LZA](./07b-QuickStartOptionalExtra.md)
+   
+or
+
+:arrow_forward: [Cleanup](./08-cleanup.md)
