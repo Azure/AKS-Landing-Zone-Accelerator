@@ -31,16 +31,16 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
     os_disk_size_gb = 30
     type            = "VirtualMachineScaleSets"
     node_count      = 3
-    vnet_subnet_id  = try(var.vnet_subnet_id, null)
+    vnet_subnet_id  = var.vnet_subnet_id
   }
 
   network_profile {
-    network_plugin     = var.network_plugin // option for try function
+    network_plugin     = var.network_plugin
     # network_policy   = "azure"
     outbound_type      = "userDefinedRouting"
     dns_service_ip     = "192.168.100.10"
     service_cidr       = "192.168.100.0/24"
-    docker_bridge_cidr = "172.17.1.0/16"
+    docker_bridge_cidr = "172.16.1.1/30"
     pod_cidr           = var.pod_cidr
 
   }

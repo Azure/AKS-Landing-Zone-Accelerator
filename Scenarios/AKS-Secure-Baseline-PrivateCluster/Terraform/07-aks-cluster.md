@@ -24,7 +24,7 @@ Currently Application Gateway does not support any scenario where a route 0.0.0.
 
 This means the Application Gateway doesn't know how to route the traffic of a POD backend pool in a AKS cluster when you are using the kubenet plugin. Because of this limitation, you cannot associate the default AKS UDR to the Application Gateway subnet since an AKS cluster with egress controller requires a 0.0.0.0/0 route. It's possible to create a manual route table to address this problem but once a node scale operation happens, the route needs to be updated again and this would require a manual update.
 
-For the purpose of this deployment when used with kubenet a UDR will be created during the deployment pointing the expected address prefix (CIDR) to the respective AKS worker node. This UDR will not be auto managed and in case of a cluster scale operation it should be manually updated.
+For the purpose of this deployment when used with kubenet, a Route Table will be applied to the App gateway subnet during the deployment. You will need to create 3 manual routes inside the route table that point the nodes where the pods reside.
 
 It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps.
 
