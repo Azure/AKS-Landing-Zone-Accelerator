@@ -1,21 +1,26 @@
 param appgwname string
 param subnetid string
 param appgwpip string
+param location string = resourceGroup().location
+param appGwyAutoScale object
 
 var frontendPortName = 'HTTP-80'
 var frontendIPConfigurationName = 'appGatewayFrontendIP'
 var httplistenerName = 'httplistener'
 var backendAddressPoolName = 'backend-add-pool'
 var backendHttpSettingsCollectionName = 'backend-http-settings'
+param availabilityZones array
 
 resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
   name: appgwname
-  location: resourceGroup().location
+  location: location
+  zones: !empty(availabilityZones) ? availabilityZones : null
   properties: {
+    autoscaleConfiguration: !empty(appGwyAutoScale) ? appGwyAutoScale : null
     sku: {
       tier: 'Standard_v2'
       name: 'Standard_v2'
-      capacity: 2
+       capacity: empty(appGwyAutoScale) ? 2 : null
     }
     gatewayIPConfigurations: [
       {
@@ -36,13 +41,13 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
           }
         }
       }
-    ]    
+    ]
     frontendPorts: [
       {
         name: frontendPortName
         properties: {
           port: 80
-        }        
+        }
       }
     ]
     backendAddressPools: [
@@ -89,7 +94,7 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
           }
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appgwname, backendHttpSettingsCollectionName)
-          }          
+          }
         }
       }
     ]

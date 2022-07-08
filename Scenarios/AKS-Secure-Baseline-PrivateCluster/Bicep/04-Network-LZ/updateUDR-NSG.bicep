@@ -7,6 +7,7 @@ param rgName string
 param nsgAKSName string
 param appGatewaySubnetName string
 param nsgAppGWName string
+param rtAppGWSubnetName string
 
 resource subnetAKS 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
   scope: resourceGroup(rgName)
@@ -36,7 +37,7 @@ module updateUDR 'modules/vnet/subnet.bicep' = {
       }
       networkSecurityGroup: {
         id: nsgaks.id
-      }      
+      }
     }
   }
 }
@@ -51,6 +52,11 @@ resource nsgAppGW 'Microsoft.Network/networkSecurityGroups@2021-02-01' existing 
   name: nsgAppGWName
 }
 
+resource rtAppGW 'Microsoft.Network/routeTables@2021-02-01' existing ={
+  scope: resourceGroup(rgName)
+  name: rtAppGWSubnetName
+}
+
 module updateNSGUDRAPPGW 'modules/vnet/subnet.bicep' = {
   scope: resourceGroup(rgName)
   name: 'updateNSGAPPGW'
@@ -61,6 +67,9 @@ module updateNSGUDRAPPGW 'modules/vnet/subnet.bicep' = {
       addressPrefix: subnetAPPGW.properties.addressPrefix
       networkSecurityGroup: {
         id: nsgAppGW.id
+      }
+      routeTable: {
+        id: rtAppGW.id
       }
     }
   }

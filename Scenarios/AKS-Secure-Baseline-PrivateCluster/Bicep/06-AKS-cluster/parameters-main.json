@@ -5,8 +5,44 @@
     "rgName": {
       "value": "ESLZ-SPOKE"
     },
+    "availabilityZones": {
+      "value": ["1"]
+    },
     "clusterName": {
       "value": "eslzakscluster"
+    },
+    "enableAutoScaling": {
+      "value": false
+    },
+    "autoScalingProfile": {
+      "value": {
+        "balance-similar-node-groups": "false",
+        "expander": "random",
+        "max-empty-bulk-delete": "10",
+        "max-graceful-termination-sec": "600",
+        "max-node-provision-time": "15m",
+        "max-total-unready-percentage": "45",
+        "new-pod-scale-up-delay": "0s",
+        "ok-total-unready-count": "3",
+        "scale-down-delay-after-add": "10m",
+        "scale-down-delay-after-delete": "10s",
+        "scale-down-delay-after-failure": "3m",
+        "scale-down-unneeded-time": "10m",
+        "scale-down-unready-time": "20m",
+        "scale-down-utilization-threshold": "0.5",
+        "scan-interval": "10s",
+        "skip-nodes-with-local-storage": "false",
+        "skip-nodes-with-system-pods": "true"
+      }
+    },
+    "kubernetesVersion": {
+      "value": "1.22.6"
+    },
+    "networkPlugin": {
+      "value": "azure"
+    },
+    "rtAKSName": {
+      "value": "AKS-RT"
     },
     "akslaWorkspaceName": {
       "value": "eslzlaworkspace"
@@ -20,11 +56,14 @@
     "appGatewayName": {
       "value": "APPGW"
     },
+    "rtAppGWSubnetName" :{
+      "value": "AppGWSubnet-RT"
+    },
     "aksuseraccessprincipalId": {
-      "value": "e822cf30-7f5e-4968-a215-5cc48d538580"
+      "value": "<service principal id for developers AAD user group>"
     },
     "aksadminaccessprincipalId": {
-      "value": "e822cf30-7f5e-4968-a215-5cc48d538580"
+      "value": "<service principal id for admin AAD user group>"
     },
     "aksIdentityName": {
       "value": "aksIdentity"

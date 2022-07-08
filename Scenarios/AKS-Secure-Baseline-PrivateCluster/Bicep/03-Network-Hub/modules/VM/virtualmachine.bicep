@@ -1,21 +1,27 @@
 param subnetId string
 param publicKey string
+param vmSize string
+param location string = resourceGroup().location
+param adminUsername string = 'azureuser'
+param availabilityZones array
 //param script64 string
 
 module jbnic '../vnet/nic.bicep' = {
   name: 'jbnic'
   params: {
+    location: location
     subnetId: subnetId
   }
 }
 
 resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   name: 'jumpbox'
-  location: resourceGroup().location
+  location: location
+  zones: !empty(availabilityZones) ? availabilityZones : null
   properties: {
     osProfile: {
       computerName: 'jumpbox'
-      adminUsername: 'azureuser'
+      adminUsername: adminUsername
       linuxConfiguration: {
         ssh: {
           publicKeys: [
@@ -29,7 +35,7 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       }
     }
     hardwareProfile: {
-      vmSize: 'Standard_A2'
+      vmSize: vmSize
     }
     storageProfile: {
       osDisk: {

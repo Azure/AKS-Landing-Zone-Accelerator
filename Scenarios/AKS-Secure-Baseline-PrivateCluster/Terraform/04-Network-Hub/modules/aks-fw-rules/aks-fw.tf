@@ -26,7 +26,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
         type = "Https"
         port = 443
       }
-      source_addresses  = ["10.1.0.0/16"]
+      source_addresses      = ["10.1.0.0/16"]
       destination_fqdn_tags = ["AzureKubnernetesService"]
     }
   }
@@ -74,12 +74,9 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
 
 }
 
-variable "resource_group_name" {
-    
-}
-variable "location" {
-    
-}
+variable "resource_group_name" {}
+
+variable "location" {}
 
 
 

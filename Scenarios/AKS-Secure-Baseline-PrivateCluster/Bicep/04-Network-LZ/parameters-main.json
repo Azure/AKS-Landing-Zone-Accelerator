@@ -5,6 +5,9 @@
     "rgName": {
       "value": "ESLZ-SPOKE"
     },
+    "availabilityZones": {
+      "value": []
+    },
     "vnetSpokeName": {
       "value": "VNet-SPOKE"
     },
@@ -45,7 +48,7 @@
             "addressPrefix": "10.1.4.0/24",
             "privateEndpointNetworkPolicies": "Disabled"
           }
-        }                          
+        }
       ]
     },
     "rtAKSSubnetName": {
@@ -60,8 +63,17 @@
     "appGatewayName": {
       "value": "APPGW"
     },
+    "appGwyAutoScale": {
+      "value": {
+        "maxCapacity": 2,
+        "minCapacity": 1
+      }
+    },
     "appGatewaySubnetName": {
       "value": "AppGWSubnet"
+    },
+    "rtAppGWSubnetName" :{
+      "value": "AppGWSubnet-RT"
     },
     "vnetHUBRGName": {
       "value": "ESLZ-HUB"
@@ -78,6 +90,6 @@
           "10.0.1.4"
         ]
       }
-    }   
+    }
   }
 }

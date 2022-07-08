@@ -47,7 +47,7 @@ A deployment of AKS-hosted workloads typically experiences a separation of dutie
 ## Next
 Pick one of the IaC options below and follow the instructions to deploy the AKS reference implementation.
 
-:arrow_forward: [ARM](./ARM)
+:arrow_forward: [ARM](./ARM)(Depricated)
 
 :arrow_forward: [Terraform](./Terraform)
 

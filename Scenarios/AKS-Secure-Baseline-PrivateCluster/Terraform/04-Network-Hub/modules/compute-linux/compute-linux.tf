@@ -7,22 +7,15 @@ resource "azurerm_linux_virtual_machine" "compute" {
   admin_username                  = var.admin_username
   admin_password                  = var.admin_password
   disable_password_authentication = var.disable_password_authentication //Set to true if using SSH key
-
-
-  tags = var.tags
+  tags                            = var.tags
 
   network_interface_ids = [
-    azurerm_network_interface.compute.id,
+    azurerm_network_interface.compute.id
   ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = var.storage_account_type
-  }
-
-  admin_ssh_key {
-    username   = var.ssh_key_settings.username
-    public_key = var.ssh_key_settings.public_key
   }
 
   source_image_reference {
@@ -38,15 +31,6 @@ resource "azurerm_linux_virtual_machine" "compute" {
   }
 }
 
-resource "azurerm_public_ip" "pip" {
-    name                         = "dev-pip"
-    location                     = var.location
-    resource_group_name          = var.resource_group_name
-    allocation_method            = var.allocation_method
-    sku                          = "Standard"
-}
-
-
 resource "azurerm_network_interface" "compute" {
 
   name                          = "${var.server_name}-nic"
@@ -60,7 +44,6 @@ resource "azurerm_network_interface" "compute" {
     name                          = "internal"
     subnet_id                     = var.vnet_subnet_id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.pip.id
   }
 }
 
@@ -73,18 +56,13 @@ variable "admin_password" {
   default = "changeme"
 }
 
-variable "server_name" {
+variable "server_name" {}
 
-}
-variable "resource_group_name" {
+variable "resource_group_name" {}
 
-}
-variable "location" {
+variable "location" {}
 
-}
-variable "vnet_subnet_id" {
-
-}
+variable "vnet_subnet_id" {}
 variable "os_publisher" {
   default = "Canonical"
 }
@@ -98,7 +76,7 @@ variable "os_version" {
   default = "latest"
 }
 variable "disable_password_authentication" {
-  default = true #leave as true if using ssh key, if using a password make the value false
+  default = false #leave as true if using ssh key, if using a password make the value false
 }
 variable "enable_accelerated_networking" {
   default = "false"
@@ -115,10 +93,6 @@ variable "tags" {
   default = {
     application = "compute"
   }
-}
-variable "ssh_key_settings" {
-  type    = map(string)
-  default =  null
 }
 
 variable "allocation_method" {

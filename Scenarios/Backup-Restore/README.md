@@ -1,9 +1,14 @@
 ### Articles in the Backup Restore Scenario
 🚩 This page: AKS Backup & Restore, using open source tool [Velero](https://velero.io) 
 
+Next Reads:
+
+:arrow_forward: [Monitoring Velero with Azure Container Insights](./monitoring/README.md)
+
+:arrow_forward: [Plan your AKS Backup & Restore](./plan_backup_restore.md)
+
 :arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
-:arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
 
 ## Overview
 
@@ -62,7 +67,7 @@ cd AKS-Landing-Zone-Accelerator/Scenarios/Backup-Restore/velero_terraform_sample
 * Create the Service Principal, representing Velero, to perform backups & restores:
 
 ```bash
-az ad sp create-for-rbac --name sp-velero-aks1 --role Reader
+az ad sp create-for-rbac --name sp-velero-aks1 --role Reader --scopes /subscriptions/{subscriptionId}
 ```
 
 * Deploy the Terraform sample code:
@@ -101,14 +106,7 @@ terraform apply
     kubectl get pods -n velero
     ```
      ![Velero check pods screenshot](./media/velero_check_pods.png)
-  
-  - You should see a first backup performed upon deployment using the sample code:
-    ```bash
-    velero backup get
-    ```
-    ![Velero check install screenshot](./media/velero_check_install.png)
-  
-  
+    
 
 * Deploy [sample stateful applications](./applications_samples/) in the primary cluster:
 
@@ -228,20 +226,19 @@ terraform apply
   kubectl exec -it nginx-file-lrs -n file-lrs -- ls /mnt/azuredisk/some-data-file.txt
   ```
   ```bash
-  kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /m
+  kubectl exec -it nginxstatefulset-0 -n diskstatefulset -- ls /mnt/azuredisk/some-data-file.txt
+  ```
   
   ![Check Restore](./media/check_restore.png)
   
   
 
 ### Next steps
+:arrow_forward: [Monitoring Velero with azure Container Insights](./monitoring/README.md)
+
+:arrow_forward: [Plan your AKS Backup & Restore](./plan_backup_restore.md)
 
 :arrow_forward: [Deep Dive on Velero configuration for AKS](./velero_terraform_sample)
 
-:arrow_forward: [Plan your AKS Backup & Restore for Disaster Recovery](./plan_backup_restore.md)
-
-
-## Coming Soon !
-* Accelerator for Snapshot based Backups using Velero CSI Plugin 
 
 

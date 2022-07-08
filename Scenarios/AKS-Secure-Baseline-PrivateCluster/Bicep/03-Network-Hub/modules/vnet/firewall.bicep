@@ -4,10 +4,12 @@ param fwapplicationRuleCollections array
 param fwnetworkRuleCollections array
 param fwnatRuleCollections array
 param location string = resourceGroup().location
+param availabilityZones array
 
 resource firewall 'Microsoft.Network/azureFirewalls@2021-02-01' = {
   name: fwname
   location: location
+  zones: !empty(availabilityZones) ? availabilityZones : null
   properties: {
     ipConfigurations: fwipConfigurations
     applicationRuleCollections: fwapplicationRuleCollections

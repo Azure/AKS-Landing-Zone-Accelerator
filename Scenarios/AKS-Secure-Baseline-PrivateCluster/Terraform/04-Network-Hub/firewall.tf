@@ -8,6 +8,8 @@ resource "azurerm_firewall" "firewall" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   firewall_policy_id  = module.firewall_rules_aks.fw_policy_id
+  sku_name            = var.sku_name
+  sku_tier            = var.sku_tier
 
   ip_configuration {
     name                 = "configuration"
@@ -29,5 +31,4 @@ module "firewall_rules_aks" {
 
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-
 }
