@@ -59,6 +59,9 @@ az feature register --namespace Microsoft.Compute --name EncryptionAtHost
 
 Don't move ahead to the next steps until all providers are registered.
 
+There are two groups you need to change in parameters-main.json: 
+    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId.
+    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
 ## AKS Networking Choices
 
 You can choose which AKS network plugin you want to deploy the cluster: azure or kubenet.
