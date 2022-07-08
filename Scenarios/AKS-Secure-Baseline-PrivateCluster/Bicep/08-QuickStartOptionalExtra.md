@@ -78,11 +78,14 @@ Now you have an NGINX ingress controller inside of your network with an internal
 ```
 
 Congratulations, you should now have deployed an internal ingress controller using NGINX and mapped it to the services previously created, in order to access your application. If you run a kubectl get ingress -n ratingsapp command, you should be able to retrieve the internal IP address used by the ingress controller to access your application.
+```bash
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get ingress --all-namespaces"
+```
 ![Displaying ip address](../media/getinternalip.png). 
 You can also see the internal load balancer deployed in your AKS infrastructure resource group in Azure Portal.
 ![Internal Load Balancer](../media/internal-lb.png). 
 
-Please note: Due to this ingress controller being on the internal network, you will only be able to access it from an endpoint within your network. Depending on whether you are using a machine with a GUI or just a shell, you can either run a curl command to the IP address of the Ingress, or you can navigate to the http://IngressIP in your browser.
+Please note: Due to this ingress controller being on the internal network, you will only be able to access it from an endpoint within your network. Depending on whether you are using a machine with a GUI or just a shell, you can either run a curl command to the IP address of the Ingress, or you can navigate to the http://<ingress ip address> in your browser.
 
 ![Curl result non-gui](../media/nonguicurl.png)
 
