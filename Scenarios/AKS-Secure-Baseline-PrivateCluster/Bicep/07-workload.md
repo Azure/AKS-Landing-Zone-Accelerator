@@ -6,10 +6,13 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
 
 ## Prepare your Jumpbox VM with tools
 
-* Add a rule in the Firewall to allow internet access to the VM's private IP. Verify VM's private IP and update if necessary
+* Add a rule in the Firewall to allow internet access to the Jumpbox's private IP and your computer's IP. Verify VM's private IP and update if necessary
 
    ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
+   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
+   ```
+      ```bash
+   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 215 --source-addresses '<your vm or computer's ip>'
    ```
 * Add a rule in the Firewall to allow internet access to the your VM or computer's  IP. Verify VM's private IP and update if necessary
 
@@ -314,6 +317,8 @@ After updating the ingress, A request will be sent to letsEncrypt to provide a '
 ```bash
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificate -n ratingsapp" 
 ```
+
+> :warning: Letsencrypt does not always work. If you continue to encouter issues whereby the status isnt changing to Ready = True, skip this step and test the optional http deployment above instead, then move on to the next step.
 
 If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
 
