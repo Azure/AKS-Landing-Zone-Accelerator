@@ -3,10 +3,14 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "rgName": {
-      "value": "ESLZ-SPOKE"
+      "value": "ESLZ-SPOKE-Matt"
     },
     "availabilityZones": {
-      "value": []
+      "value": [
+        "1",
+        "2",
+        "3"
+      ]
     },
     "vnetSpokeName": {
       "value": "VNet-SPOKE"
@@ -76,7 +80,7 @@
       "value": "AppGWSubnet-RT"
     },
     "vnetHUBRGName": {
-      "value": "ESLZ-HUB"
+      "value": "ESLZ-HUB-Matt"
     },
     "nsgAKSName": {
       "value": "AKS-NSG"

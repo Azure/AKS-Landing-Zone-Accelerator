@@ -3,7 +3,6 @@ param publicKey string
 param vmSize string
 param location string = resourceGroup().location
 param adminUsername string = 'azureuser'
-param availabilityZones array
 //param script64 string
 
 module jbnic '../vnet/nic.bicep' = {
@@ -17,7 +16,6 @@ module jbnic '../vnet/nic.bicep' = {
 resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   name: 'jumpbox'
   location: location
-  zones: !empty(availabilityZones) ? availabilityZones : null
   properties: {
     osProfile: {
       computerName: 'jumpbox'

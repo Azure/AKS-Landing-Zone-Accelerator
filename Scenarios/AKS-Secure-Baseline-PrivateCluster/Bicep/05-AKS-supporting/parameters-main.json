@@ -11,6 +11,9 @@
     "acrPrivateEndpointName": {
       "value": "acr-pvt-ep"
     },
+    "saPrivateEndpointName": {
+      "value": "sa-pvt-ep"
+    },
     "vnetName": {
       "value": "VNet-SPOKE"
     },
@@ -22,6 +25,12 @@
     },
     "privateDNSZoneKVName": {
       "value": "privatelink.vaultcore.azure.net"
+    },
+    "privateDNSZoneSAName": {
+      "value": "privatelink.file.core.windows.net"
+    },
+    "storageAccountType": {
+      "value": "Standard_GZRS"
     }
   }
 }
