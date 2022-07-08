@@ -109,7 +109,7 @@ resource "azurerm_role_assignment" "agic_appgw" {
   principal_id         = module.aks.agic_id
 }
 
-# Route table and routes to support AKS cluster with kubenet network plugin
+# Route table to support AKS cluster with kubenet network plugin
 
 resource "azurerm_route_table" "rt" {
   count = var.network_plugin == "kubenet" ? 1 : 0
