@@ -62,7 +62,7 @@ You will see that this installation of the NGINX ingress controller has failed. 
 To get around this issue, we will need to deploy the ingress controller as an internal ingress controller. To do this, complete the following steps:
 
 1. cd back to /Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps
-2. Edit the internal-ingress.yaml file to include an UNUSED IP Address from your AKS subnet address space.
+2. Edit the internal-ingress.yaml file to include an UNUSED IP Address from your AKS subnet address space. An example would be `10.1.1.120` if you used the defaults to setup the cluster
 3. Run the following command, this time passing in your yaml configuration file stating that the NGINX Ingress resource should be internal.
 
 ```bash
@@ -80,6 +80,8 @@ Now you have an NGINX ingress controller inside of your network with an internal
 Congratulations, you should now have deployed an internal ingress controller using NGINX and mapped it to the services previously created, in order to access your application. If you run a kubectl describe ingress -n ratingsapp command, you should be able to retrieve the internal IP address used by the ingress controller to access your application.
 
 Please note: Due to this ingress controller being on the internal network, you will only be able to access it from an endpoint within your network. Depending on whether you are using a machine with a GUI or just a shell, you can either run a curl command to the IP address of the Ingress, or you can navigate to the http://IngressIP in your browser.
+
+![Curl result non-gui](../media/nonguicurl.png)
 
 ## Next Step
 
