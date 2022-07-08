@@ -92,9 +92,10 @@ More info:
 ## Deploy the cluster
 Review "**parameters-main.json**" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell (code snippets are below).
 
-There are two groups you need to change in parameters-main.json:
-    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
-        - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
+   > :warning: There are two groups you need to change in parameters-main.json:
+   >
+   > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
+   > * Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
         
 The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://docs.microsoft.com/en-us/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
 
@@ -111,20 +112,20 @@ keyVaultName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query propertie
 #NOTE: USE THIS COMMAND ONLY WHEN USING THE AZURE CNI NETWORK PLUGIN
 # Deploy Using Azure Network CNI plugin
 #-----------------------------------------------------------------------------------------------
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 06-AKS-cluster/main.bicep -p 06-AKS-cluster/parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=azure
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=azure
 
 
 #-----------------------------------------------------------------------------------------------
 #NOTE: USE THIS COMMAND ONLY WHEN USING THE KUBENET NETWORK PLUGIN
 # Deploy using Azure Network Kunet plugin
 #-----------------------------------------------------------------------------------------------
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f 06-AKS-cluster/main.bicep -p 06-AKS-cluster/parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\06-AKS-cluster\main.bicep -TemplateParameterFile .\06-AKS-cluster\parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-CLUSTER
+New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-CLUSTER
 ```
 
 :arrow_forward: [Deploy a Basic Workload](./07-workload.md)
