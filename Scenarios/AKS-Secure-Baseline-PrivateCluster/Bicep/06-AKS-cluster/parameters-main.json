@@ -60,10 +60,10 @@
       "value": "AppGWSubnet-RT"
     },
     "aksuseraccessprincipalId": {
-      "value": "e822cf30-7f5e-4968-a215-5cc48d538580"
+      "value": "<service principal id for developers AAD user group>"
     },
     "aksadminaccessprincipalId": {
-      "value": "e822cf30-7f5e-4968-a215-5cc48d538580"
+      "value": "<service principal id for admin AAD user group>"
     },
     "aksIdentityName": {
       "value": "aksIdentity"
