@@ -1,0 +1,22 @@
+### YamlMime:Architecture
+metadata:
+  title: AKS Blue Green Deployment
+  titleSuffix: Azure Architecture Center
+  description: Deploy AKS leveraging the blue green pattern to implement a reliable and high available release process.
+  author: vimorra
+  ms.author: <Contributor's Microsoft alias. Can include multiple contributors, separated by commas. If no alias, use edprice.>
+  ms.date: <Publish or major update date - mm/dd/yyyy>
+  ms.topic: conceptual
+  ms.service: architecture-center
+  ms.subservice: example-scenario
+azureCategories:
+  - containers
+  - devops
+products:
+  - zure-kubernetes-service
+  - azure-application-gateway
+name: Blue Green Deployment for AKS
+summary: Deploy AKS leveraging the blue green pattern to implement a reliable and high available release process.
+thumbnailUrl: /azure/architecture/browse/thumbs/<browse-png-filename>.png
+content: |
+  [!include[](bluegreen-aks-solution-content.md)]
