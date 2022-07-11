@@ -185,11 +185,10 @@ If you are curious and want to have more insight about cost optimization you can
 ### Operational excellence
 
 As we all know automation, continuous  delivery, resilient deployment are fundamental capabilities for modern applications and products. As described in the [Architecture](#architecture) the blue green pattern brings natively all these capabilities when properly implemented.
-Automation is a key pre requirement to implement, manage and maintain the blue green pattern along the time.
-One of the key aspects of the Continuous Delivery is to be able to iteratively deliver increments of platform and workloads, with the blue green patter for AKS platform you can unlock the continuous delivery at AKS level providing a controlled and safety experience.
+One of the key aspects of the Continuous Delivery is to be able to iteratively deliver increments of platform and workloads; with the blue green pattern for AKS you can unlock the continuous delivery at the platform level providing a controlled and safe experience. 
 Resiliency during the deployment is one of the main benefits of the pattern, because natively there is the fallback option of the previous cluster.
 Morover the adoption of the pattern has a clear advantage on the business continuity testing, because the blue green pattern intorduce the proper level of automation to reduce the effort related to the BC.
-As highlithed in the [workflow](#workflow) steps, the triggers and validation of the blue green deployment are an extra effort in term of automation and operation in order to manage in the proper way the deployment; in detail is required to have the proper montoring and logging in place to capture metrics and events at infra and apps level to detrmine the healthy of the deployment; for the cloud infra and platform is possible to laverage in the native Azure capabilities, on the apps part they need to be designed based on the app context.
+As highlithed in the [workflow](#workflow) steps, the triggers and validation of the blue green deployment are an extra effort in term of automation and operation to properly manage the deployment. More specifically, it is required to have the proper monitoring and logging in place to capture metrics and events at infra and apps level to determine the health of the deployment. For the platform it is possible to leverage the native Azure monitoring capabilities. For the apps, they need to be designed based on each app context.
 The key benefits mentioned before are also part of the [Well Architected Framework](/azure/architecture/framework/devops/overview).
 
 ## Deploy this scenario
