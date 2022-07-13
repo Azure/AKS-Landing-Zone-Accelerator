@@ -36,7 +36,6 @@ data "terraform_remote_state" "aad" {
     access_key           = var.access_key
   }
 }
-
 data "terraform_remote_state" "existing-hub" {
   backend = "azurerm"
 
