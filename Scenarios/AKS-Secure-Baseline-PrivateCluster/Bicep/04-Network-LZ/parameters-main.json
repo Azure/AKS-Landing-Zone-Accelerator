@@ -6,7 +6,11 @@
       "value": "ESLZ-SPOKE"
     },
     "availabilityZones": {
-      "value": []
+      "value": [
+        "1",
+        "2",
+        "3"
+      ]
     },
     "vnetSpokeName": {
       "value": "VNet-SPOKE"

@@ -158,6 +158,23 @@ module privateDNSLinkVault 'modules/vnet/privatednslink.bicep' = {
   }
 }
 
+module privatednsSAZone 'modules/vnet/privatednszone.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'privatednsSAZone'
+  params: {
+    privateDNSZoneName: 'privatelink.file.core.windows.net'
+  }
+}
+
+module privateDNSLinkSA 'modules/vnet/privatednslink.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'privateDNSLinkSA'
+  params: {
+    privateDnsZoneName: privatednsSAZone.outputs.privateDNSZoneName
+    vnetId: vnethub.id
+  }
+}
+
 module privatednsAKSZone 'modules/vnet/privatednszone.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'

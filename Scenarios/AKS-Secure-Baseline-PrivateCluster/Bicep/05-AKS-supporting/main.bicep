@@ -3,12 +3,16 @@ targetScope = 'subscription'
 param rgName string
 param keyVaultPrivateEndpointName string
 param acrPrivateEndpointName string
+param saPrivateEndpointName string
 param vnetName string
 param subnetName string
 param privateDNSZoneACRName string
 param privateDNSZoneKVName string
+param privateDNSZoneSAName string
 param acrName string = 'eslzacr${uniqueString('acrvws',utcNow('u'))}'
 param keyvaultName string = 'eslz-kv-${uniqueString('acrvws',utcNow('u'))}'
+param storageAccountName string = 'eslzsa${uniqueString('aks',utcNow('u'))}'
+param storageAccountType string
 param location string = deployment().location
 
 //var acrName = 'eslzacr${uniqueString(rgName, deployment().name)}'
@@ -40,6 +44,16 @@ module keyvault 'modules/keyvault/keyvault.bicep' = {
     keyVaultsku: 'Standard'
     name: keyvaultName
     tenantId: subscription().tenantId
+  }
+}
+
+module storage 'modules/storage/storage.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: storageAccountName
+  params: {
+    location: location
+    storageAccountName: storageAccountName
+    storageAccountType: storageAccountType
   }
 }
 
@@ -78,6 +92,21 @@ module privateEndpointAcr 'modules/vnet/privateendpoint.bicep' = {
   }
 }
 
+module privateEndpointSA 'modules/vnet/privateendpoint.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: saPrivateEndpointName
+  params: {
+    location: location
+    groupIds: [
+      'file'
+    ]
+    privateEndpointName: saPrivateEndpointName
+    privatelinkConnName: '${saPrivateEndpointName}-conn'
+    resourceId: storage.outputs.storageAccountId
+    subnetid: servicesSubnet.id
+  }
+}
+
 resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
   scope: resourceGroup(rg.name)
   name: privateDNSZoneACRName
@@ -103,6 +132,20 @@ module privateEndpointKVDNSSetting 'modules/vnet/privatedns.bicep' = {
   params: {
     privateDNSZoneId: privateDNSZoneKV.id
     privateEndpointName: privateEndpointKeyVault.name
+  }
+}
+
+resource privateDNSZoneSA 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+  scope: resourceGroup(rg.name)
+  name: privateDNSZoneSAName
+}
+
+module privateEndpointSADNSSetting 'modules/vnet/privatedns.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'sa-pvtep-dns'
+  params: {
+    privateDNSZoneId: privateDNSZoneSA.id
+    privateEndpointName: privateEndpointSA.name
   }
 }
 
