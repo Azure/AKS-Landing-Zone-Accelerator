@@ -20,17 +20,7 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     osProfile: {
       computerName: 'jumpbox'
       adminUsername: adminUsername
-      linuxConfiguration: {
-        ssh: {
-          publicKeys: [
-            {
-              path: '/home/azureuser/.ssh/authorized_keys'
-              keyData: publicKey
-            }
-          ]
-        }
-        disablePasswordAuthentication: true
-      }
+      adminPassword: 'Password123'
     }
     hardwareProfile: {
       vmSize: vmSize
