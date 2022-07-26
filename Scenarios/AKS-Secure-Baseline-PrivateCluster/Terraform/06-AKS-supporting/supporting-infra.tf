@@ -32,3 +32,19 @@ module "create_kv" {
   zone_resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
 
 }
+
+# Deploy Public DNS to register application domains hosted in AKS
+resource "azurerm_dns_zone" "public-dns-apps" {
+  name                = var.public_domain
+  resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
+}
+
+# DNS Zone name to map A records
+output "public_dns_zone_apps_name" {
+  value = azurerm_dns_zone.public-dns-apps.name
+}
+
+# DNS Zone ID to reference in other terraform state and/or resources/modules
+output "public_dns_zone_apps_id" {
+  value = azurerm_dns_zone.public-dns-apps.id
+}

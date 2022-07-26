@@ -3,19 +3,44 @@
 # LOCALS #
 #############
 
+/*
+
+locals {
+  Map of the AKS Clusters to deploy
+  aks_clusters = {
+    "aks_blue" = {
+      prefix used to configure unique names and parameter values
+      name_prefix="blue"
+      Boolean flag that enable or disable the deployment of the specific AKS cluster
+      aks_turn_on=true
+      The kubernetes version to use on the cluster
+      k8s_version="1.23.5"
+      Reference Name to the Application gateway that need to be associaated to the AKS Cluster with the AGIC addo-on
+      appgw_name="lzappgw-blue"
+    },
+    "aks_green" = {
+      name_prefix="green"
+      aks_turn_on=false
+      k8s_version="1.23.8"
+      appgw_name="lzappgw-green"
+    }
+  }
+}
+
+*/
 locals {
   aks_clusters = {
     "aks_blue" = {
       name_prefix="blue"
-      aks_is_active=false
-      aks_turn_on=false
+      aks_turn_on=true
       k8s_version="1.23.5"
+      appgw_name="lzappgw-blue"
     },
     "aks_green" = {
       name_prefix="green"
-      aks_is_active=false
       aks_turn_on=true
       k8s_version="1.23.5"
+      appgw_name="lzappgw-green"
     }
   }
 }
@@ -85,8 +110,8 @@ module "aks" {
   vnet_subnet_id      = data.terraform_remote_state.existing-lz.outputs.aks_subnet_id
   mi_aks_cp_id        = azurerm_user_assigned_identity.mi-aks-cp[each.value.name_prefix].id
   la_id               = azurerm_log_analytics_workspace.aks.id
-  gateway_name        = data.terraform_remote_state.existing-lz.outputs.gateway_name
-  gateway_id          = data.terraform_remote_state.existing-lz.outputs.gateway_id
+  gateway_name        = data.terraform_remote_state.existing-lz.outputs.gateway_name[each.value.appgw_name]
+  gateway_id          = data.terraform_remote_state.existing-lz.outputs.gateway_id[each.value.appgw_name]
   private_dns_zone_id = azurerm_private_dns_zone.aks-dns.id
   k8s_version = each.value.k8s_version
   aks_is_active = each.value.aks_is_active
@@ -134,7 +159,7 @@ resource "azurerm_role_assignment" "aks-to-acr" {
 
 resource "azurerm_role_assignment" "agic_appgw" {
   for_each = module.aks
-  scope                = data.terraform_remote_state.existing-lz.outputs.gateway_id
+  scope                = each.value.appgw_id
   role_definition_name = "Contributor"
   principal_id         = each.value.agic_id
 }
