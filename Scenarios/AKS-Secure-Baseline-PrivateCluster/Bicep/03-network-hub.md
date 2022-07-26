@@ -1,5 +1,11 @@
 # Create the Hub Network
 
+If you havent yet, clone the repo and cd to the appropriate folder
+```bash
+git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-AAD
+```
+
 The following will be created:
 
 * Resource Group for Hub Networking
