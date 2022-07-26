@@ -5,9 +5,6 @@
     "rgName" : {
       "value": "ESLZ-HUB"
     },
-    "availabilityZones": {
-      "value": []
-    },
     "vnetSubnetName" : {
       "value": "vmsubnet"
     },

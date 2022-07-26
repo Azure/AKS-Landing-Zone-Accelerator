@@ -6,7 +6,11 @@
       "value": "ESLZ-SPOKE"
     },
     "availabilityZones": {
-      "value": ["1"]
+      "value": [
+        "1",
+        "2",
+        "3"
+      ]
     },
     "clusterName": {
       "value": "eslzakscluster"
