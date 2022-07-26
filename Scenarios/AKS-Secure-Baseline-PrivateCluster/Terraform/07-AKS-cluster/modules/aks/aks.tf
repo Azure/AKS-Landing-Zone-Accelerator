@@ -11,7 +11,7 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   dns_prefix              = var.prefix
   location                = var.location
   resource_group_name     = var.resource_group_name
-  kubernetes_version      = "1.23.5"
+  kubernetes_version      = var.k8s_version
   private_cluster_enabled = true
   private_dns_zone_id     = var.private_dns_zone_id
   azure_policy_enabled    = true
@@ -73,4 +73,8 @@ output "kubelet_id" {
 
 output "agic_id" {
   value = azurerm_kubernetes_cluster.akscluster.ingress_application_gateway[0].ingress_application_gateway_identity[0].object_id
+}
+
+output "appgw_id" {
+  value = var.gateway_id
 }
