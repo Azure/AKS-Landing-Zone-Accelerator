@@ -31,9 +31,10 @@ Once the files are updated, deploy using az cli or Az PowerShell.
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create -n "ESLZ-HUB-AKS" -l "CentralUS" -f main.bicep -p parameters-main.json
-az deployment sub create -n "ESLZ-AKS-HUB-UDR" -l "CentralUS" -f updateUDR.bicep -p parameters-updateUDR.json
-az deployment sub create -n "ESLZ-HUB-VM" -l "CentralUS" -f deploy-vm.bicep -p parameters-deploy-vm.json
+REGION=CentralUS
+az deployment sub create -n "ESLZ-HUB-AKS" -l $REGION -f main.bicep -p parameters-main.json
+az deployment sub create -n "ESLZ-AKS-HUB-UDR" -l $REGION -f updateUDR.bicep -p parameters-updateUDR.json
+az deployment sub create -n "ESLZ-HUB-VM" -l $REGION -f deploy-vm.bicep -p parameters-deploy-vm.json
 ```
 
 # [PowerShell](#tab/PowerShell)
