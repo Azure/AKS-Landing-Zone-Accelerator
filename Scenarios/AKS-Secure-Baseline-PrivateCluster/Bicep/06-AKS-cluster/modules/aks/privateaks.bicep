@@ -71,6 +71,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-01-02-previ
     apiServerAccessProfile: {
       enablePrivateCluster: true
       privateDNSZone: privateDNSZoneId
+      enablePrivateClusterPublicFQDN: false
     }
     enableRBAC: true
     aadProfile: {
