@@ -29,10 +29,7 @@ From an automation and CI/CD perspective the solution can be implemented in mult
 
 
 ## Potential use cases
-This solution is a generalized architecture pattern, which can be used for many different scenarios and industries. In particular it can be applied in AKS deployments and is also used for [Mission Critical scenario](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster). See the following example solutions that build off of this core architecture:
-
-- [Link to first solution idea or other architecture that builds off this solution](filepath.yml)
-
+This solution is a generalized architecture pattern, which can be used for many different scenarios and industries. In particular it can be applied in AKS deployments and is also used for [Mission Critical scenario](https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks-multi-region/aks-multi-cluster).
 
 ## Architecture
 Below is the high level architecture that describes the pattern and related services involved. The [Worklfow section](#workflow) describes in detail the steps for the implementation of the pattern, including the sequence of events to have the proper traffic switch, from networking and app perspective, between the blue and green clusters.
@@ -41,6 +38,13 @@ Below is the high level architecture that describes the pattern and related serv
 An important point to mention is the region of the deployment is an invariant, that means that you can deploy the two clusters in different regions or in the same region. Deploying into the same region requires certain prerequisites:
 - VNET and Subnet sizing to host two clusters
 - Azure capacity for the subscription
+
+The Ingress controller and external load balancer components can have different approaches:
+- A single Ingress Contoller with a dedicated external load balancer, like the reference implementation of tha pattern, that is based on Application Gateway and AGIC addon-on for AKS.
+- A single external load balancer associated to mutiple Ingress Controller deployed on the same cluster or multiple clusters. This scenario is not covered in the reference implementation.
+
+
+
 
 *Download* a [Visio file](../media/blue-green-diagrams.vsdx) of this architecture.*
 
@@ -142,7 +146,7 @@ From a pattern perspective there are alternative scenarios to implement a more c
 
 Another alternative that has more impact on the blast radius of the deployment is to have a ring based deployments. Instead of just blue and green clusters, it is possible to have more clusters called rings. Each ring is large enough for the number of users that have access to the new version/config of the AKS. As for the blue green pattern described, the rings can be removed to have the proper cost optimization and control.
 
-There are two Azure Services listed in the [Componets Section](#components), for which is possible to use also alternative products and/or OSS solutions. These two services are:
+There are two Azure Services listed in the [Components Section](#components), for which is possible to use also alternative products and/or OSS solutions. These two services are:
 - [Application Gateway](https://azure.microsoft.com/services/application-gateway/)
 - [Container Registry](https://azure.microsoft.com/services/container-registry/)
 
@@ -150,12 +154,6 @@ The intent of the article is not to provide a curated list of alternatives, but 
 Just to give some example possible alternatives are:
 - NGINX, HAProxy, etc.. instead of Application Gateway
 - Harbor, etc.. instead of Container Registry
-
-The following alternative solutions provide scenario-focused lenses to build off of this core architecture: 
-
-- [Link to first solution idea or other architecture that builds off this solution](filepath.yml)
-- [Second solution idea that builds off this solution](filepath.yml)
-
 
 ## Considerations
 The following considerations have their basis on the [Microsoft Azure Well-Architected Framework](/azure/architecture/framework) and [Cloud Adoption Framework](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/).
@@ -194,6 +192,7 @@ The key benefits mentioned before are also part of the [Well Architected Framewo
 ## Deploy this scenario
 
 An implemented example and template is available at [AKS Landing Zone Accelerator](https://github.com/Azure/AKS-Landing-Zone-Accelerator).
+The reference implmentation is based on the AGIC native add-on for AKS, this means that each cluster has it own application gateway.
 
 ## Contributors
 
@@ -220,5 +219,6 @@ Examples:
 
 This solution is a generalized architecture pattern, which can be used for many different scenarios and industries. See the following example solutions that build off of this core architecture:
 
+- [AKS Landing Zone Accelerator for Blue Green](https://github.com/Azure/AKS-Landing-Zone-Accelerator)
 - [Mission Critical Workloads Pattern](https://docs.microsoft.com/en-us/azure/architecture/framework/mission-critical/mission-critical-architecture-pattern)
 - [Multi Region WebApp](https://docs.microsoft.com/en-us/azure/architecture/example-scenario/sql-failover/app-service-private-sql-multi-region)
