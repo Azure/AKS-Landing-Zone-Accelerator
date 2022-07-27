@@ -7,6 +7,8 @@ param vnetName string
 param pubkeydata string
 param vmSize string
 param location string = deployment().location
+param adminUsername string
+param adminPassword string
 
 resource subnetVM 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
   scope: resourceGroup(rgName)
@@ -21,5 +23,7 @@ module jumpbox 'modules/VM/virtualmachine.bicep' = {
     subnetId: subnetVM.id
     publicKey: pubkeydata
     vmSize: vmSize
+    adminUsername: adminUsername
+    adminPassword: adminPassword
   }
 }
