@@ -53,3 +53,11 @@ output "gateway_name" {
 output "gateway_id" {
   value = module.appgw.gateway_id
 }
+
+output "appgw_subnet_id" {
+  value = azurerm_subnet.appgw.id
+}
+
+output "appgw_subnet_name" {
+  value = azurerm_subnet.appgw.name
+}

@@ -13,3 +13,10 @@ variable "access_key" {}
 variable "private_dns_zone_name" {
 default =  "privatelink.eastus.azmk8s.io"
 }
+
+variable "network_plugin" {
+}
+
+variable "pod_cidr" {
+    default = null
+}

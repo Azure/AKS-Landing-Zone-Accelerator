@@ -7,14 +7,15 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
    ]
   }
 
-  name                    = var.prefix
-  dns_prefix              = var.prefix
-  location                = var.location
-  resource_group_name     = var.resource_group_name
-  kubernetes_version      = "1.23.5"
-  private_cluster_enabled = true
-  private_dns_zone_id     = var.private_dns_zone_id
-  azure_policy_enabled    = true
+  name                                = var.prefix
+  dns_prefix                          = var.prefix
+  location                            = var.location
+  resource_group_name                 = var.resource_group_name
+  kubernetes_version                  = "1.23.5"
+  private_cluster_enabled             = true
+  private_dns_zone_id                 = var.private_dns_zone_id
+  azure_policy_enabled                = true
+  private_cluster_public_fqdn_enabled = false
 
   ingress_application_gateway {
     gateway_id = var.gateway_id
@@ -34,12 +35,13 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 
   network_profile {
-    network_plugin = "azure"
-    # network_policy = "azure"
-    outbound_type = "userDefinedRouting"
-    dns_service_ip = "192.168.100.10"
-    service_cidr = "192.168.100.0/24"
-    docker_bridge_cidr = "172.17.0.1/16"
+    network_plugin     = var.network_plugin
+    # network_policy   = "azure"
+    outbound_type      = "userDefinedRouting"
+    dns_service_ip     = "192.168.100.10"
+    service_cidr       = "192.168.100.0/24"
+    docker_bridge_cidr = "172.16.1.1/30"
+    pod_cidr           = var.pod_cidr
 
   }
 
@@ -54,6 +56,10 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   identity {
     type         = "UserAssigned"
     identity_ids = [var.mi_aks_cp_id]
+  }
+
+  key_vault_secrets_provider {
+    secret_rotation_enabled = false
   }
 }
 
