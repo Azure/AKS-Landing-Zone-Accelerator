@@ -169,25 +169,25 @@ It is important to highlight that a succesfull implementation of the pattern is 
 
 
 ### Reliability
-The blue green pattern has a direct and positive impact on the availability of AKS platform and workloads. In particular the pattern improves the availability during the deployment of the AKS platform changes, in particular downtime is near to zero and it can be affected by how user sessions are managed. Moreover, the blue green provide also coverage for reliability during the deployment because by default there is the option to rollback in the previous version of the AKS cluster if something goes wrong in the new cluster version. 
+The blue green pattern has a direct and positive impact on the availability of AKS platform and workloads. In particular the pattern improves the availability during the deployment of the AKS platform changes, in particular downtime is near to zero, though it can be affected by how user sessions are managed. Moreover, the blue green pattern also provides coverage for reliability during the deployment because by default there is the option to rollback in the previous version of the AKS cluster if something goes wrong in the new cluster version. 
 Here more detail about the resiliency and availability pillar defined in the [Well Architected Framework](/azure/architecture/framework/resiliency/overview).
 
 
 ### Cost optimization
 
-As described before, one of the main advantages of the blue green deployment is to maintain a control and optimization of the costs without impacting the resiliency, availability, continuous delivery of the workloads and apps. This is achieved with the automated destruction of the old cluster after that the switch is completed and validated. Another important point to mention, it is that to continue to have the same cost baseline the two clusters are usually hosted in the same subnet, in this way all the network connections and access to the resources/services is the same, that means that all the azure services and resources remain the same during the blue green deployment.
-If we should quantify the azure costs to implement this pattern, we can say that you should double the costs of the AKS services during the time of the blue green deployment, that usually happen in hours; this also another reason to explain the large adoption of this pattern.
-If you are curious and want to have more insight about cost optimization you can [here](/azure/architecture/framework/cost/overview).
+As described before, one of the main advantages of the blue green deployment is to maintain a control and optimization of the costs without impacting the resiliency, availability, continuous delivery of the workloads and apps. This is achieved with the automated destruction of the old cluster after that the switch is completed and validated. Another important point to mention is that, to continue to have the same cost baseline, the two clusters are usually hosted in the same subnet. This way, all the network connections and access to the resources/services are the same, that means that all the azure services and resources remain the same during the blue green deployment.
+If we quantify the azure costs to implement this pattern, we do double the costs of the AKS services during the time of the blue green deployment, but that usually only lasts for a few hours; This also explains the large adoption of this pattern.
+If you are curious and want to have more insight about cost optimization you check the [WAF cost optimization pillar](/azure/architecture/framework/cost/overview).
 
 
 ### Operational excellence
 
-As we all know automation, continuous  delivery, resilient deployment are fundamental capabilities for modern applications and products. As described in the [Architecture](#architecture) the blue green pattern brings natively all these capabilities when properly implemented.
-One of the key aspects of the Continuous Delivery is to be able to iteratively deliver increments of platform and workloads; with the blue green pattern for AKS you can unlock the continuous delivery at the platform level providing a controlled and safe experience. 
+Automation, continuous  delivery and resilient deployment are fundamental capabilities for modern applications and products. As described in the [Architecture](#architecture), the blue green pattern brings natively all these capabilities when properly implemented.
+One of the key aspects of the Continuous Delivery is to be able to iteratively deliver increments of platform and workloads; with the blue green pattern for AKS, you can unlock the continuous delivery at the platform level providing a controlled and safe experience. 
 Resiliency during the deployment is one of the main benefits of the pattern, because natively there is the fallback option of the previous cluster.
-Morover the adoption of the pattern has a clear advantage on the business continuity testing, because the blue green pattern intorduce the proper level of automation to reduce the effort related to the BC.
+Morover, the adoption of the pattern has a clear advantage on the business continuity testing, because the blue green pattern introduces the proper level of automation to reduce the effort related to business continuity strategy.
 As highlithed in the [workflow](#workflow) steps, the triggers and validation of the blue green deployment are an extra effort in term of automation and operation to properly manage the deployment. More specifically, it is required to have the proper monitoring and logging in place to capture metrics and events at infra and apps level to determine the health of the deployment. For the platform it is possible to leverage the native Azure monitoring capabilities. For the apps, they need to be designed based on each app context.
-The key benefits mentioned before are also part of the [Well Architected Framework](/azure/architecture/framework/devops/overview).
+The key benefits mentioned above are discussed in more detail in the [Well Architected Framework](/azure/architecture/framework/devops/overview).
 
 ## Deploy this scenario
 
