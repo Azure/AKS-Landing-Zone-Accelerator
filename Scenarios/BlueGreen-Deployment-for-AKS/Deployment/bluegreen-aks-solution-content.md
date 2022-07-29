@@ -107,16 +107,16 @@ An important point to mention is that this pattern is based on a full switch, me
 ![Step3](../media/bg-step3.png)
 
 From a networking perspective this pattern is based on the definition of 3 hostnames:
-- Cluster host - the official hostname used by the consumers of the workloads hosted in the clusters
-- Blue Cluster host - the dedicated host for the blue cluster
-- Green Cluster host - the dedicated host for the green cluster
+- Cluster hostname - the official hostname used by the consumers of the workloads hosted in the clusters
+- Blue Cluster hostname - the dedicated hostname for the blue cluster
+- Green Cluster hostname - the dedicated hostname for the green cluster
 
-The cluster host is the one configured at Application Gateway level to manage the ingress traffic. The hostname is also part of the AKS Ingress configuration in order to manage the TLS properly. This host is used only for live transactions and requests.
+The cluster hostname is the one configured at Application Gateway level to manage the ingress traffic. The hostname is also part of the AKS Ingress configuration in order to manage the TLS properly. This hostname is used only for live transactions and requests.
 
-The Blue and Green cluster hosts are mainly used for:
+The Blue and Green cluster hostnames are mainly used for:
 - Test and Validate the specific cluster, like mentioned in [Step 2](#t2-sync-k8s-state-between-blue-and-green-cluster)
-- The switch of the live traffic, mainly the hosts are used for the backend pools configuration at Application Gateway level, in this way the switch is transparent for the end user of the workloads.
-For testing and validation purposes, the hosts are also exposed at Application Gateway level with dedicated endpoints and also at AKS Ingress controller level to manage the TLS properly.
+- The switch of the live traffic, mainly the hostnamess are used for the backend pools configuration at Application Gateway level, in this way the switch is transparent for the end user of the workloads.
+For testing and validation purposes, the hostnames are also exposed at Application Gateway level with dedicated endpoints and also at AKS Ingress controller level to manage the TLS properly.
 At this stage the validation is based on the infra and app monitoring metrics and official SLO and SLI, when available. If the validation gate is satisfied then it is possible to move in the [last state](#t4-blue-cluster-is-destroyed) of the pattern.
 
 
