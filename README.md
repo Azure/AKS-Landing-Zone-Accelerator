@@ -53,6 +53,10 @@ Pick one of the scenarios below to get started on a reference implementation. Fo
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
 
+:arrow_forward: [BlueGreen Deployment for AKS](./Scenarios/BlueGreen-Deployment-for-AKS)
+
+:arrow_forward: [AKS on prem & Hybrid](./Scenarios/AKS-on-prem)
+
 ### Or leverage one of the Landing Zone Accelerator implementations from our other repos
 
 :arrow_forward: [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction#getting-started)
