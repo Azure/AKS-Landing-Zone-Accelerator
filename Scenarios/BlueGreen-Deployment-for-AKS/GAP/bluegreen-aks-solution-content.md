@@ -107,16 +107,17 @@ An important point to mention is that this pattern is based on a full switch, me
 ![Step3](../media/bg-step3.png)
 
 From a networking perspective this pattern is based on the definition of 3 hostnames:
-- Cluster host - the official hostname used by the consumers of the workloads hosted in the clusters
-- Blue Cluster host - the dedicated host for the blue cluster
-- Green Cluster host - the dedicated host for the green cluster
+- Cluster hostname - the official hostname used by the consumers of the workloads hosted in the clusters
+- Blue Cluster hostname - the dedicated host for the blue cluster
+- Green Cluster hostname - the dedicated host for the green cluster
 
-The cluster host is the one configured at Application Gateway level to manage the ingress traffic, moreover the hostname is also part of the AKS Ingress configuration in order to manage the TLS properly. This host is used only for live transactions and requests.
+The cluster hostname is the one configured at Application Gateway level to manage the ingress traffic, moreover the hostname is also part of the AKS Ingress configuration in order to manage the TLS properly. This host is used only for live transactions and requests.
+If the Front Door is also part of the deployment, it is not impacted by the switch because it manages only the cluster hostname, indded it provide the proper abstarction for the end-users of the application, that are not impacted by the switch between the blue and green cluster. In the Front Door are never exposed the blue and green hostnames, because they are used only fro internal validation and monitoring.
 
-The Blue and Green cluster hosts are mainly used for:
+The Blue and Green cluster hostnames are mainly used for:
 - Test and Validate the specific cluster, like mentioned in [Step 2](#t2-sync-k8s-state-between-blue-and-green-cluster)
-- The switch of the live traffic, mainly the hosts are used for the backend pools configuration at Application Gateway level, in this way the switch is transparent for the end user of the workloads.
-For the testing and validation purpose the hosts are also exposed at Application Gateway level with dedicated endpoints and also at AKS Ingress controller level to manage the TLS in the proper way.
+- The switch of the live traffic, mainly the hostnames/IPs are used for the backend pools configuration at Application Gateway level, in this way the switch is transparent for the end user of the workloads.
+For the testing and validation purpose the hostnames are also exposed at Application Gateway level with dedicated endpoints and also at AKS Ingress controller level to manage the TLS in the proper way.
 At this stage the validation is based on the infra and app monitoring metrics and official SLO and SLI, when available. If the validation gate is satisfied then it is possible to move in the [last state](#t4-blue-cluster-is-destroyed) of the pattern.
 
 
@@ -133,9 +134,10 @@ Below are the main components and azure services that are part of the blue green
 - [Application Gateway](https://azure.microsoft.com/services/application-gateway/), the main responsibility is to act as gateway and Load balancer for the AKS clusters.
 - [AKS](https://azure.microsoft.com/services/kubernetes-service/), is the core component of the pattern.
 - [Container Registry](https://azure.microsoft.com/services/container-registry/), has the main role to store and distribute the artifacts in the AKS clusters, example of artifacts are Container Images, HELM Charts, etc.. .
-- [Azure Monitor](https://azure.microsoft.com/services/monitor/), s the core observability platform for AKS and strongly recommended given its native integration with AKS and its ability to provide logging, monitoring and alerting capabilities used to manage the different stages of this pattern.
+- [Azure Monitor](https://azure.microsoft.com/services/monitor/), is the core observability platform for AKS and strongly recommended given its native integration with AKS and its ability to provide logging, monitoring and alerting capabilities used to manage the different stages of this pattern.
 - [Azure Firewall](https://azure.microsoft.com/services/azure-firewall/), has the main responsibility to manage the egress traffic into the clusters, in particular in hub and spoke topology and connections with external datacenters or locations.
-- [KeyVault](https://azure.microsoft.com/services/key-vault/), s recommended for securely managing secrets and certificates used by the Azure resources and the applications that depend on them.
+- [KeyVault](https://azure.microsoft.com/services/key-vault/), is recommended for securely managing secrets and certificates used by the Azure resources and the applications that depend on them.
+- [Front Door](https://azure.microsoft.com/en-us/services/frontdoor/), is an optional component, that is needed in case of global endpoints and apps hosted on AKS and other azure compute servies.
 
 
 ### Alternatives
