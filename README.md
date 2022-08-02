@@ -2,7 +2,7 @@
 
 Azure Landing Zone Accelerators are an architectural approach and a reference implementation that enables effective construction and operationalization of landing zones on Azure, at scale. This approach aligns with the Azure roadmap and the Cloud Adoption Framework for Azure.
 
-AKS Landing Zone Accelerator represents the strategic design path and target technical state for an Azure Kubernetes Service (AKS) deployment. This solution provides an architectural approach and reference implementation to prepare landing zone subscriptions for a scalable Azure Kubernetes Service (AKS) cluster. For the architectural guidance, check out [AKS Landing Zone Accelerator](https://docs.microsoft.com/azure/cloud-adoption-framework/scenarios/aks/enterprise-scale-landing-zone) in Microsoft Docs.
+AKS Landing Zone Accelerator represents the strategic design path and target technical state for an Azure Kubernetes Service (AKS) deployment. This solution provides an architectural approach and reference implementation to prepare landing zone subscriptions for a scalable Azure Kubernetes Service (AKS) cluster. For the architectural guidance, check out [AKS Landing Zone Accelerator](https://docs.microsoft.com/azure/cloud-adoption-framework/scenarios/aks/enterprise-scale-landing-zone) in Microsoft Docs. 
 
 Below is a picture of what a golden state looks like and open source software like flux and traefik integrate well within the AKS ecosystem.
 
@@ -52,6 +52,10 @@ Pick one of the scenarios below to get started on a reference implementation. Fo
 :arrow_forward: [Azure Policy initiative for AKS Landing Zone Accelerator (Brownfield scenario)](./Scenarios/Azure-Policy-ES-for-AKS)
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
+
+:arrow_forward: [BlueGreen Deployment for AKS](./Scenarios/BlueGreen-Deployment-for-AKS)
+
+:arrow_forward: [AKS on prem & Hybrid](./Scenarios/AKS-on-prem)
 
 ### Or leverage one of the Landing Zone Accelerator implementations from our other repos
 

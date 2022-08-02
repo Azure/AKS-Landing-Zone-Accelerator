@@ -1,5 +1,42 @@
 # Application Gateway and Supporting Infrastructure
 
+#############
+# LOCALS #
+#############
+
+/*
+
+locals {
+  Map of the aure application gateway to deploy
+  appgws = {
+    "appgw_blue" = {
+      prefix used to configure uniques names and parameter values
+      name_prefix="blue"
+      Boolean flag that enable or disable the deployment of the specific application gateway
+      appgw_turn_on=true
+    },
+    "appgw_green" = {
+      name_prefix="green"
+      appgw_turn_on=false
+    }
+  }
+}
+
+*/
+
+locals {
+  appgws = {
+    "appgw_blue" = {
+      name_prefix="blue"
+      appgw_turn_on=true
+    },
+    "appgw_green" = {
+      name_prefix="green"
+      appgw_turn_on=true
+    }
+  }
+}
+
 resource "azurerm_subnet" "appgw" {
   name                                             = "appgwSubnet"
   resource_group_name                              = azurerm_resource_group.spoke-rg.name
@@ -24,7 +61,8 @@ resource "azurerm_subnet_network_security_group_association" "appgwsubnet" {
 }
 
 resource "azurerm_public_ip" "appgw" {
-  name                = "appgw-pip"
+  for_each = { for appgws in local.appgws : appgws.name_prefix => appgws if appgws.appgw_turn_on == true}
+  name                = "appgw-pip-${each.value.name_prefix}"
   resource_group_name = azurerm_resource_group.spoke-rg.name
   location            = azurerm_resource_group.spoke-rg.location
   allocation_method   = "Static"
@@ -36,20 +74,28 @@ module "appgw" {
   depends_on = [
     module.appgw_nsgs
   ]
-
+  for_each = { for appgws in local.appgws : appgws.name_prefix => appgws if appgws.appgw_turn_on == true}
   resource_group_name  = azurerm_resource_group.spoke-rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   location             = azurerm_resource_group.spoke-rg.location
-  appgw_name           = "lzappgw"
+  appgw_name           = "lzappgw-${each.value.name_prefix}"
   frontend_subnet      = azurerm_subnet.appgw.id
-  appgw_pip            = azurerm_public_ip.appgw.id
+  appgw_pip            = azurerm_public_ip.appgw[each.value.name_prefix].id
 
 }
 
+
 output "gateway_name" {
-  value = module.appgw.gateway_name
+  value = { for appgws in module.appgw : appgws.gateway_name => appgws.gateway_name}
 }
 
 output "gateway_id" {
-  value = module.appgw.gateway_id
+  value = { for appgws in module.appgw : appgws.gateway_name => appgws.gateway_id}
 }
+
+# PIP IDs to permit the A Records registration in the DNS zone to invke the apps deployed on AKS
+output "azurerm_public_ip_ref" {
+  value = { for pips in azurerm_public_ip.appgw : pips.name => pips.id}
+}
+
+

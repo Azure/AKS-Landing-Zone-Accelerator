@@ -1,0 +1,10 @@
+state_sa_name = <storage account name>
+container_name = <storage account container name>
+access_key = "XXXXXXX"
+
+arecords_apps_map = {
+    "yourappname" = {
+      aks_active_prefix="prefix of the aks that currently active for production traffic, usually is blue or green"
+      record_name="yourapp-hostname"
+    }
+}
