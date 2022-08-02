@@ -16,6 +16,12 @@
     },
     "vmSize" : {
       "value": "Standard_B2ms"
+    },
+    "adminUsername" : {
+      "value": "azureuser"
+    },
+    "adminPassword" : {
+      "value": "Password123"
     }
   }
 }
