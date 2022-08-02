@@ -24,7 +24,10 @@ Review the "parameters-main.json" file and update the parameter values if requir
 
 Review "parameters-updateUDR.json" and "parameters-deploy-vm.json" to update any parameters previously updated in "parameters-main.json".
 
-Note: "parameters-deploy-vm.json" file contains public key value with a default value. We recommend to use your own ssh key pair for troubleshooting the cluster through the VM.
+Note: "parameters-deploy-vm.json" file contains the username and password for the virtual machine. These can be changed in the parameters file for the vm, however these are the default values:
+
+Username: azureuser
+Password: Password123
 
 Once the files are updated, deploy using az cli or Az PowerShell.
 
