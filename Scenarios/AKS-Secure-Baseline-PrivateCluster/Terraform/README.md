@@ -41,4 +41,4 @@ To deploy AKS into an existing network, use the [AKS for Existing Cluster](./07-
 
 As part of the reference implementation tehre is also the possibility to use the blue green deployment to cover platform and workloads non distruptive deployments. 
 The basic deployment is not affected, and you can still follow a standard deployment following the [Getting Started](#getting-started).
-[Here]() the details about the blue green deployment.
+[Here](./11-blue-green.md) the details about the blue green deployment.
