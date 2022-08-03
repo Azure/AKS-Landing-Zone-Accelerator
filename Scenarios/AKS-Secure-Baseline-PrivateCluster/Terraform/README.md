@@ -36,3 +36,9 @@ This section is organized using folders that match the steps outlined below. Mak
 The steps above assume that you will be creating the Hub and Spoke (Landing Zone) Network and supporting components using the code provided, where each step refers to state file information from the previous steps.
 
 To deploy AKS into an existing network, use the [AKS for Existing Cluster](./07-AKS-cluster-existing-infra) folder.  Update the "existing-infra.variables.tf" file to reference the names and resource IDs of the pre-existing infrastructure.
+
+## Deploying blue green AKS clusters
+
+As part of the reference implementation tehre is also the possibility to use the blue green deployment to cover platform and workloads non distruptive deployments. 
+The basic deployment is not affected, and you can still follow a standard deployment following the [Getting Started](#getting-started).
+[Here]() the details about the blue green deployment.

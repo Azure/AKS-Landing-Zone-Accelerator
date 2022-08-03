@@ -1,0 +1,268 @@
+# Blue Green Deployment
+
+Here you find the details of the steps to adopt the blue green deployment pattern. The reference implementation is based on the existing secure baseline implementation with the addition of new data structure to add abstraction to manage multiple AKS clusters, in this case 2 AKS clusters, the blue and green, and additional supporting azure resources like: Application Gateway and Public DNS Zone.
+
+The new introduced data structures are:
+
+- Application Gateway map to deploy the blue and green Application Gateways, there is a one to one mapping between the AKS clusters and Application Gateways due to the adoption of the AGIC addon for AKS.
+Below the data structure and related documentation. By default only the blue application gateway is deployed.
+
+```
+locals {
+  Map of the aure application gateway to deploy
+  appgws = {
+    "appgw_blue" = {
+      prefix used to configure uniques names and parameter values
+      name_prefix="blue"
+      Boolean flag that enable or disable the deployment of the specific application gateway
+      appgw_turn_on=true
+    },
+    "appgw_green" = {
+      name_prefix="green"
+      appgw_turn_on=false
+    }
+  }
+}
+```
+
+- The other map structure is dedicated to the AKS clusters. Below the data structure and related documentation. By default only the blue AKS cluster is deployed.
+
+```
+locals {
+  Map of the AKS Clusters to deploy
+  aks_clusters = {
+    "aks_blue" = {
+      prefix used to configure unique names and parameter values
+      name_prefix="blue"
+      Boolean flag that enable or disable the deployment of the specific AKS cluster
+      aks_turn_on=true
+      The kubernetes version to use on the cluster
+      k8s_version="1.23.5"
+      Reference Name to the Application gateway that need to be associaated to the AKS Cluster with the AGIC addo-on
+      appgw_name="lzappgw-blue"
+    },
+    "aks_green" = {
+      name_prefix="green"
+      aks_turn_on=false
+      k8s_version="1.23.8"
+      appgw_name="lzappgw-green"
+    }
+  }
+}
+```
+
+As part of the blue green deployment there is also a dedicated public DNS zone to register the 3 hostnames required to implment the pattern:
+- Public facing hostname, the one used by the end users of the workloads/apps hosted into the clusters
+- blue cluster hostname, that is dedicated fot the internal validation
+- green cluster hostname, that is dedicated fot the internal validation
+
+The blue/green deployment can be summarized in 5 steps:
+1. T0: Blue Cluster is On, this means:
+  - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
+  - "green cluster" and "green app gateway" with aks_turn_on=false and appgw_turn_on=false
+  - A record mapped with the PIP of the Blue Application Gateway
+  This is the default scenario in which you land following the [Getting Started with the default values](../README.md)
+2. T1: Green Cluster Deployment
+  - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
+  - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
+  - A record mapped with the PIP of the Blue Application Gateway
+3. T2: Sync K8S State between Blue and Green clusters
+4. T3: Traffic Switch to the green cluster
+  - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
+  - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
+  - A record mapped with the PIP of the Green Application Gateway
+5. T4: Blue cluster is destroyed
+  - "blue cluster" and "blue app gateway" with aks_turn_on=false and appgw_turn_on=false
+  - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
+  - A record mapped with the PIP of the Green Application Gateway
+
+## T0: Blue Cluster is On
+
+  Follow the guide [Getting Started with the default values](../README.md). Where the default values are:
+
+- in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
+```
+locals {
+  appgws = {
+    "appgw_blue" = {
+      name_prefix="blue"
+      appgw_turn_on=true
+    },
+    "appgw_green" = {
+      name_prefix="green"
+      appgw_turn_on=false
+    }
+  }
+}
+
+```
+
+- in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\aks-cluster.tf"
+
+```
+locals {
+  aks_clusters = {
+    "aks_blue" = {
+      name_prefix="blue"
+      aks_turn_on=true
+      k8s_version="1.23.5"
+      appgw_name="lzappgw-blue"
+    },
+    "aks_green" = {
+      name_prefix="green"
+      aks_turn_on=false
+      k8s_version="1.23.5"
+      appgw_name="lzappgw-green"
+    }
+  }
+}
+
+```
+
+After the deployment if the Landing Zone, than is possible to install a test application. The sample application to use is stored in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\sample-workload-for-agic-test.yaml".
+
+To deploy the sample application follow the same steps described at [Workload](./08-workload.md), the main difference is to apply the sample yaml to deploy the app.
+
+```bash
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f sample-workload-for-agic-test.yaml "
+```
+
+Than you can test the correct deployment, executing an invocation to the sample app
+
+```bash
+curl http://{hostname-app}.{public_domain}/
+```
+
+If the azure public dns zone is not attached to the domain, than is possible to still test the app endpoint with the followwing command.
+
+```bash
+curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
+```
+
+## T1: Green Cluster Deployment
+
+At this stage is required to perfor the following action to deploy the new green cluster in co-existence with the blue one.
+
+1. Run again the flow mentioned [here](./05-network-lz.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
+
+```
+locals {
+  appgws = {
+    "appgw_blue" = {
+      name_prefix="blue"
+      appgw_turn_on=true
+    },
+    "appgw_green" = {
+      name_prefix="green"
+      appgw_turn_on=true
+    }
+  }
+}
+
+```
+
+2. Run the flow mentioned [here](./07-aks-cluster.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\aks-cluster.tf"
+
+```
+locals {
+  aks_clusters = {
+    "aks_blue" = {
+      name_prefix="blue"
+      aks_turn_on=true
+      k8s_version="1.23.5"
+      appgw_name="lzappgw-blue"
+    },
+    "aks_green" = {
+      name_prefix="green"
+      aks_turn_on=false
+      k8s_version="1.23.5"
+      appgw_name="lzappgw-green"
+    }
+  }
+}
+
+```
+
+## T2: Sync K8S State between Blue and Green clusters
+
+In our sample scenario, this means deploy the sample workload and related K8S resources in the green cluster.
+
+```bash
+az aks get-credentials --resource-group $ClusterRGName --name $ClusterName
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f sample-workload-for-agic-test.yaml "
+```
+
+after the deployment you can test the application wit the following command.
+
+```bash
+curl -H "Host: {hostname-app-green}.{public_domain}" http://{app-gateway-pip}/
+```
+
+If the validation is ok, than the new cluster can be promoted as new production/stable cluster. Follow the instruction described in the [next section](#t3-traffic-switch-to-the-green-cluster).
+
+## T3: Traffic Switch to the green cluster
+
+In this step is required to update the DNS A Record in order to switch the traffic to the PIP assigned to the green cluster.
+You need to run the flow describe [here](./09-dns-records.md) with the following var in input.
+
+```
+arecords_apps_map = {
+    "testapp" = {
+      aks_active_prefix="green"
+      record_name={your_app_hostname}
+    }
+}
+```
+
+Than you can test that the switch is performed with the following command.
+
+```bash
+curl http://{hostname-app}.{public_domain}/
+```
+
+If the validation is ok than you can move to the lasst step
+
+## T4: Blue cluster is destroyed
+
+At this stage you can destroy the blue AKS cluster and Application Gateway attached to it.
+This means:
+
+1. Run the flow mentioned [here](./07-aks-cluster.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\aks-cluster.tf"
+
+```
+locals {
+  aks_clusters = {
+    "aks_blue" = {
+      name_prefix="blue"
+      aks_turn_on=false
+      k8s_version="1.23.5"
+      appgw_name="lzappgw-blue"
+    },
+    "aks_green" = {
+      name_prefix="green"
+      aks_turn_on=false
+      k8s_version="1.23.5"
+      appgw_name="lzappgw-green"
+    }
+  }
+}
+
+```
+
+2. Run again the flow mentioned [here](./05-network-lz.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
+
+```
+locals {
+  appgws = {
+    "appgw_blue" = {
+      name_prefix="blue"
+      appgw_turn_on=false
+    },
+    "appgw_green" = {
+      name_prefix="green"
+      appgw_turn_on=true
+    }
+  }
+}
+
+```
