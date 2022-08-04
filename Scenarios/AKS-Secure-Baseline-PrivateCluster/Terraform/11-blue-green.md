@@ -174,7 +174,7 @@ locals {
     },
     "aks_green" = {
       name_prefix="green"
-      aks_turn_on=false
+      aks_turn_on=true
       k8s_version="1.23.5"
       appgw_name="lzappgw-green"
     }
@@ -188,8 +188,8 @@ locals {
 In our sample scenario, this means deploy the sample workload and related K8S resources in the green cluster.
 
 ```bash
-az aks get-credentials --resource-group $ClusterRGName --name $ClusterName
-az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f sample-workload-for-agic-test.yaml "
+az aks get-credentials --resource-group $ClusterRGName --name $GreenClusterName
+az aks command invoke --resource-group $ClusterRGName --name $GreenClusterName  --command "kubectl apply -f sample-workload-for-agic-test.yaml "
 ```
 
 after the deployment you can test the application wit the following command.
@@ -240,7 +240,7 @@ locals {
     },
     "aks_green" = {
       name_prefix="green"
-      aks_turn_on=false
+      aks_turn_on=true
       k8s_version="1.23.5"
       appgw_name="lzappgw-green"
     }
