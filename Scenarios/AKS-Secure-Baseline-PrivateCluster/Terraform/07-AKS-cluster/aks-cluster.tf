@@ -114,7 +114,6 @@ module "aks" {
   gateway_id          = data.terraform_remote_state.existing-lz.outputs.gateway_id[each.value.appgw_name]
   private_dns_zone_id = azurerm_private_dns_zone.aks-dns.id
   k8s_version = each.value.k8s_version
-  aks_is_active = each.value.aks_is_active
 
 }
 
