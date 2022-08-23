@@ -27,7 +27,3 @@ variable "private_dns_zone_id" {}
 variable "k8s_version" {
   description = "Kubernetes version to assign to the AKS Cluster"
 }
-
-variable "aks_is_active" {
-  description = "is the AKS Cluster active to accept production traffic"
-}
