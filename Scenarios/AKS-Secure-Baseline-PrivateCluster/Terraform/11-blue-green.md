@@ -197,7 +197,7 @@ after the deployment you can test the application wit the following command.
 ```bash
 curl -H "Host: {hostname-app-green}.{public_domain}" http://{app-gateway-pip}/
 ```
-
+where app-gateway-pip is the public ip of the app gateway. 
 If the validation is ok, than the new cluster can be promoted as new production/stable cluster. Follow the instruction described in the [next section](#t3-traffic-switch-to-the-green-cluster).
 
 ## T3: Traffic Switch to the green cluster

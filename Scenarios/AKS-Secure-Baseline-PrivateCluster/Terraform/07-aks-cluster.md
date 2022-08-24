@@ -123,34 +123,6 @@ For the jumpbox you just created in the hub network to have access to Key vault'
 
 ## Enable Blue Green Deployment
 
-Configuring in the proper way the variables and local structures in the folders "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/05-Network-LZ", "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/07-AKS-cluster" and "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/08-DNS-Records", in paritcular:
-- the file app-gateway.tf, configuring the local structure named "appgws"
-- in the file aks_cluster.tf, configuring the local structure names "aks_clusters"
-- in the file variables.tf, configuring the variable named "arecords_apps_map"
-
-Is possible to deploy blue and green clusters, each one with it own AGIC and Application Gateway; annd to have full control regarding the switch of the network traffic between clusters is possible to configure the DNS Records in the public zone.
-
-The blue/green flow is driven by two main factors:
-- Boolean variables to enable/disable the deployment of Application Gateways and AKS Clusters, in this way there is full control over the deployment and post-deployment. The two attributes are "aks_turn_on" and "appgw_turn_on"
-- Mapping of the hostnames into the public ip addresses assigned to the Application Gateways, in this way is possible to control the network traffic between the blue and green clusters
-
-The blue/green deployment can be summarized in 5 steps:
-1. T0: Blue Cluster is On, this means:
-  - "blue cluster" with aks_turn_on=true
-  - "green cluster" with aks_turn_on=false
-  - A record mapped with the PIP of the Blue Application Gateway
-2. T1: Green Cluster Deployment
-  - "blue cluster" with aks_turn_on=true
-  - "green cluster" with aks_turn_on=true
-  - A record mapped with the PIP of the Blue Application Gateway
-3. T2: Sync K8S State between Blue and Green clusters
-4. T3: Traffic Switch to the green cluster
-  - "blue cluster" with aks_turn_on=true
-  - "green cluster" with aks_turn_on=true
-  - A record mapped with the PIP of the Green Application Gateway
-5. T4: Blue cluster is destroyed
-  - "blue cluster" with aks_turn_on=false
-  - "green cluster" with aks_turn_on=true
-  - A record mapped with the PIP of the Green Application Gateway
+If you want to activate the blue green deployment you can explore the [section](./11-blue-green.md)
 
 :arrow_forward: ][Deploy a Basic Workload](./08-workload.md)

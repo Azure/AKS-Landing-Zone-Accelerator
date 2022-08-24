@@ -11,6 +11,7 @@ resource "azurerm_user_assigned_identity" "aks_pod_identity" {
 
 
 # Role assignments
+# Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "aks_identity_operator" {
   for_each = module.aks
   scope                = azurerm_user_assigned_identity.aks_pod_identity.id
