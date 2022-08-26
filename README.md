@@ -18,7 +18,7 @@ The reference implementations are spread across three repos that all build on to
 
 1. This one
 1. The [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction)
-1. The [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation)
+<!-- 1. The [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation) -->
 
 ### This repo
 
@@ -34,11 +34,11 @@ Driving the configuration experience is a [wizard](https://azure.github.io/Aks-C
 
 Use [this repo](https://github.com/Azure/Aks-Construction) if you would like to use a guided experience to rapidly create your environment with a maintained Bicep template based on the architecture of the AKS Secure Baseline.
 
-### Baseline Automation Module
+<!-- ### Baseline Automation Module
 
 This reference implementation demonstrates recommended ways to automate the deployment of the components composing a typical AKS solution. This repository includes information about separation of duties (different teams managing different parts of the deployment process), CI/CD and GitOps best practices. 
 
-Use [this repo](https://github.com/Azure/aks-baseline-automation) if you would like to learn how to quickly setup and get access to templates to help setup your own DevOps environments for AKS workloads. 
+Use [this repo](https://github.com/Azure/aks-baseline-automation) if you would like to learn how to quickly setup and get access to templates to help setup your own DevOps environments for AKS workloads.  -->
 
 ## Next Steps to implement AKS Landing Zone Accelerator
 Pick one of two options below
@@ -60,5 +60,5 @@ Pick one of the scenarios below to get started on a reference implementation. Fo
 ### Or leverage one of the Landing Zone Accelerator implementations from our other repos
 
 :arrow_forward: [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction#getting-started)
-:arrow_forward: [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation)
+<!-- :arrow_forward: [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation) -->
 
