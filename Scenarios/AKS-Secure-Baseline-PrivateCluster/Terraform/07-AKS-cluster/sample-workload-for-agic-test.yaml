@@ -1,3 +1,4 @@
+# Use this manifest only for the blue green deployment scenario.
 apiVersion: v1
 kind: Pod
 metadata:

@@ -1,3 +1,4 @@
+#This resource is required only the blue green deployment scenario.
 terraform {
   required_providers {
     azurerm = {

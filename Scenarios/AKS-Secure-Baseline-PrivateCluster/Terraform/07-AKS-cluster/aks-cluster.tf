@@ -4,7 +4,7 @@
 #############
 
 /*
-
+The following map enables the deployment of multiple clusters, as example you can use to deploy two clusters for the blue green deployment, instead if you need to deploy just one AKS cluster for sample and standard deployment then you you can configure a map with only one object.
 locals {
   Map of the AKS Clusters to deploy
   aks_clusters = {
@@ -38,7 +38,7 @@ locals {
     },
     "aks_green" = {
       name_prefix="green"
-      aks_turn_on=true
+      aks_turn_on=false
       k8s_version="1.23.5"
       appgw_name="lzappgw-green"
     }

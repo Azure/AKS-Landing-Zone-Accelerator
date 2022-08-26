@@ -1,5 +1,7 @@
 # Create Public DNS Record to publish and invoke endpoitns/apps hostend in the AKS Clusters
 
+This stage is required onlu for the blue green deployment.
+
 The following will be created:
 * A Records
 

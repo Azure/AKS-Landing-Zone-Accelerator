@@ -1,3 +1,4 @@
+#This module is required only the blue green deployment scenario.
 ########
 # DATA #
 ########

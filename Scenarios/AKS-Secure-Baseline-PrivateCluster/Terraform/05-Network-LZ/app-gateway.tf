@@ -5,7 +5,7 @@
 #############
 
 /*
-
+The following map enables the deployment of multiple application gateways, as example you can use to deploy two app gateways to support the the blue green deployment at AKS clusters level, instead if you need to deploy just one app gateway for sample and standard deployment then you you can configure a map with only one object.
 locals {
   Map of the aure application gateway to deploy, it used to manage the standard deployment but also the blue green deployment.
   appgws = {
@@ -86,17 +86,17 @@ module "appgw" {
 
 }
 
-# the app gateway name for each instance provisioned
+# the app gateway name for each instance provisioned. If you are not using the blue green deployment then you can remove the for loop and use directly the attributes of the module module.appgw.
 output "gateway_name" {
   value = { for appgws in module.appgw : appgws.gateway_name => appgws.gateway_name}
 }
 
-# the app gateway id for each instance provisioned
+# the app gateway id for each instance provisioned. If you are not using the blue green deployment then you can remove the for loop and use directly the attributes of the module module.appgw.
 output "gateway_id" {
   value = { for appgws in module.appgw : appgws.gateway_name => appgws.gateway_id}
 }
 
-# PIP IDs to permit the A Records registration in the DNS zone to invke the apps deployed on AKS. There is a PIP for each instance provisioned.
+# PIP IDs to permit the A Records registration in the DNS zone to invke the apps deployed on AKS. There is a PIP for each instance provisioned. If you are not using the blue green deployment then you can remove the for loop and use directly the attributes of the azurerm_public_ip.appgw resource.
 output "azurerm_public_ip_ref" {
   value = { for pips in azurerm_public_ip.appgw : pips.name => pips.id}
 }
