@@ -1,3 +1,4 @@
+# This pipeline is required only for the blue green deployment.
 name: 'Terraform'
 
 on:

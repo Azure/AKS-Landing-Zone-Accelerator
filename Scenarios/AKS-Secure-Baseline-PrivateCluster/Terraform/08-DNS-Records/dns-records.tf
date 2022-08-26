@@ -1,3 +1,4 @@
+#This resource is required only the blue green deployment scenario.
 resource "azurerm_dns_a_record" "app_record" {
   for_each = var.arecords_apps_map
   name                = each.value.record_name

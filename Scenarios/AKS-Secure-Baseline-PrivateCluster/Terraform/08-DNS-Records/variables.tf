@@ -1,3 +1,4 @@
+#These variables are required only the blue green deployment scenario.
 #############
 # VARIABLES #
 #############
