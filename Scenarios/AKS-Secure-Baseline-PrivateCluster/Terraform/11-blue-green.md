@@ -51,17 +51,20 @@ locals {
 }
 ```
 
-As part of the blue green deployment there is also a dedicated public DNS zone to register the 3 hostnames required to implment the pattern:
+As part of the blue green deployment there is the condifguration of 3 hostnames required to implement the pattern:
 - Public facing hostname, the one used by the end users of the workloads/apps hosted into the clusters
-- blue cluster hostname, that is dedicated fot the internal validation
-- green cluster hostname, that is dedicated fot the internal validation
+- blue cluster hostname, that is dedicated for the internal validation
+- green cluster hostname, that is dedicated for the internal validation
 
-The blue/green deployment can be summarized in 5 steps:
+As part of the solution there is also the optional deployment of a public DNS zone to manage in azure the DNS records for the custom domain assigned to  the applications.
+You can configure the DNS records in the public DNS zone using the following [guide](./09-dns-records.md).
+
+The tasks to test a blue green deployment can be summarized as follow:
 1. T0: Blue Cluster is On, this means:
   - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
   - "green cluster" and "green app gateway" with aks_turn_on=false and appgw_turn_on=false
   - A record mapped with the PIP of the Blue Application Gateway
-  This is the default scenario in which you land following the [Getting Started with the default values](../README.md)
+  This is where you end up if you follow the steps in the default scenario [Getting Started with the default values](../README.md)
 2. T1: Green Cluster Deployment
   - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
   - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
@@ -119,21 +122,21 @@ locals {
 
 ```
 
-After the deployment if the Landing Zone, than is possible to install a test application. The sample application to use is stored in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\sample-workload-for-agic-test.yaml".
-
-To deploy the sample application follow the same steps described at [Workload](./08-workload.md), the main difference is to apply the sample yaml to deploy the app.
+After the deployment if the Landing Zone, install a sample application to test the deployment. The sample application to use is stored in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\sample-workload-for-agic-test.yaml".
 
 ```bash
 az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f sample-workload-for-agic-test.yaml "
 ```
 
-Than you can test the correct deployment, executing an invocation to the sample app
+As an alternative you can run the kubectl command directly from the Linux jump box access of the BastionHost provisoned as part in the [hub network](./04-network-hub.md).
+
+If you have deployed the public dns zone that is part of [AKS-Supporting](./06-aks-supporting.md), than you can test the deployment, executing an invocation to the sample app.
 
 ```bash
 curl http://{hostname-app}.{public_domain}/
 ```
 
-If the azure public dns zone is not attached to the domain, than is possible to still test the app endpoint with the followwing command.
+If the azure public dns zone is not attached to the domain, than is possible to test the app endpoint with the followwing command.
 
 ```bash
 curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
