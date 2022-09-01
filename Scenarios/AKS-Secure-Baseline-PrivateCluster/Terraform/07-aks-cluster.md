@@ -121,8 +121,4 @@ For the jumpbox you just created in the hub network to have access to Key vault'
 5. Select the hub virtual network for the **Virtual network** field
 6. Click on **OK** at the bottom
 
-## Enable Blue Green Deployment
-
-If you want to activate the blue green deployment you can explore the [section](./11-blue-green.md)
-
-:arrow_forward: ][Deploy a Basic Workload](./08-workload.md)
+:arrow_forward: [Deploy a Basic Workload](./08-workload.md)
