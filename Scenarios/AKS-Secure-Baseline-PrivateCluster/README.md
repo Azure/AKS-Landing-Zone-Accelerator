@@ -8,7 +8,7 @@ When using a private cluster, the control plane can only be accessed from comput
 
 By the end of this, you would have deployed a secure AKS cluster, complient with Enterprise-Scale for AKS guidance and best practices. We will also be deploying a workload known as the Ratings app that is also featured in the [Azure Kubernetes Services Workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/). Check out the workshop for some intermediate level training on AKS.
 
-For this scenario, we have various IaC technology that you can choose from depending on your preference. At this time only the ARM version is available. Below is an architectural diagram of this scenario.
+For this scenario, we have various IaC technology that you can choose from depending on your preference. At this time only the Terraform and Bicep versions are available. Below is an architectural diagram of this scenario.
 
 ![Architectural diagram for the secure baseline scenario.](./media/AKS-private-cluster-scenario.jpg)
 
@@ -40,14 +40,8 @@ For this scenario, we have various IaC technology that you can choose from depen
 * Azure MongoDb
 * Azure Redis Cache
 
-## Steps of Implementation for AKS Construction Set
-
-A deployment of AKS-hosted workloads typically experiences a separation of duties and lifecycle management in the area of prerequisites, the host network, the cluster infrastructure, and finally the workload itself. This reference implementation is similar. Also, be aware our primary purpose is to illustrate the topology and decisions of a baseline cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (team roles, organizational standards, etc), and will be implemented as appropriate for your needs.
-
 ## Next
 Pick one of the IaC options below and follow the instructions to deploy the AKS reference implementation.
-
-:arrow_forward: [ARM](./ARM)(Depricated)
 
 :arrow_forward: [Terraform](./Terraform)
 
