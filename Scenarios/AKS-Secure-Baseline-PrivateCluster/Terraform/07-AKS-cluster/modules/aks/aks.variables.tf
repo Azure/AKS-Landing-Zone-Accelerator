@@ -23,3 +23,7 @@ variable "gateway_name" {}
 variable "gateway_id" {}
 
 variable "private_dns_zone_id" {}
+
+variable "k8s_version" {
+  description = "Kubernetes version to assign to the AKS Cluster"
+}

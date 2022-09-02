@@ -1,7 +1,7 @@
 # Create resources for the AKS Priavte Cluster
 
 The following will be created:
-* AKS Private Cluster
+* AKS Private Clusters
 * Log Analytics Workspace
 * Managed Identity for AKS Control Plane
 * Managed Identity for Application Gateway Ingress Controller

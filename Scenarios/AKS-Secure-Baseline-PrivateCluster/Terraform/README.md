@@ -29,8 +29,16 @@ This section is organized using folders that match the steps outlined below. Mak
 
 8. [Deploy a Basic Workload](./08-workload.md)
 
+8. [Register Public DNS Records](./09-dns-records.md)
+
 
 ## Deploying AKS into Existing Infrastructure
 The steps above assume that you will be creating the Hub and Spoke (Landing Zone) Network and supporting components using the code provided, where each step refers to state file information from the previous steps.
 
 To deploy AKS into an existing network, use the [AKS for Existing Cluster](./07-AKS-cluster-existing-infra) folder.  Update the "existing-infra.variables.tf" file to reference the names and resource IDs of the pre-existing infrastructure.
+
+## Deploying blue green AKS clusters
+
+As part of the reference implementation there is also the possibility to use the blue green deployment to cover platform and workloads non distruptive deployments. 
+The basic deployment is not affected, and you can still follow a standard deployment following the [Getting Started](#getting-started).
+The details about the blue green deployment are documented [here](./11-blue-green.md).
