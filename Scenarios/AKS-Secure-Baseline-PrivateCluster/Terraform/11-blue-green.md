@@ -1,11 +1,11 @@
 # Blue Green Deployment
 
-Here you find the details of the steps to adopt the blue green deployment pattern. The reference implementation is based on the existing secure baseline implementation with the addition of new data structure to add abstraction to manage multiple AKS clusters, in this case 2 AKS clusters, the blue and green, and additional supporting azure resources like: Application Gateway and Public DNS Zone.
+Here you find the details of the steps to deploy the blue green deployment pattern. The reference implementation is based on the existing secure baseline implementation with the addition of new data structure to add abstraction to manage multiple AKS clusters, in this case 2 AKS clusters, the blue and green, and additional supporting azure resources like: Application Gateway and Public DNS Zone.
 
 The new introduced data structures are:
 
 - Application Gateway map to deploy the blue and green Application Gateways, there is a one to one mapping between the AKS clusters and Application Gateways due to the adoption of the AGIC addon for AKS.
-Below the data structure and related documentation. By default only the blue application gateway is deployed.
+Below is data structure and related documentation. By default only the blue application gateway is deployed.
 
 ```
 locals {
@@ -81,7 +81,9 @@ The tasks to test a blue green deployment can be summarized as follow:
 
 ## T0: Blue Cluster is On
 
-  Follow the guide [Getting Started with the default values](../README.md). Where the default values are:
+Follow the steps starting [here](./02-state-storage.md) to deploy the private cluster using the default values if you haven't already but do not deploy the workload (stage 08). 
+> :warning: Do not deploy the fruit smoothie application highlighted in step 08-workload.md
+The default values are:
 
 - in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
 ```
@@ -129,6 +131,19 @@ az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --co
 ```
 
 As an alternative you can run the kubectl command directly from the Linux jump box access of the BastionHost provisoned as part in the [hub network](./04-network-hub.md).
+
+As prerequisite to check deployment of the sample application is required to configure the NSG associated to the Application Gateway.
+In detail the NSG needs to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
+
+```bash
+   APPGWSUBNSG=<Name of NSG for AppGwy>
+   az network nsg rule create -g $SPOKERG --nsg-name $APPGWSUBNSG -n AllowHTTPInbound --priority 1000 \
+      --source-address-prefixes '*' --source-port-ranges '*' \
+      --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
+      --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
+```
+
+This configuration is only for testing purpose, for production workloads is trongly suggested to use HTTPS.
 
 If you have deployed the public dns zone that is part of [AKS-Supporting](./06-aks-supporting.md), than you can test the deployment, executing an invocation to the sample app.
 
@@ -188,25 +203,26 @@ locals {
 
 ## T2: Sync K8S State between Blue and Green clusters
 
-In our sample scenario, this means deploy the sample workload and related K8S resources in the green cluster.
+In our case, this means deploying the sample workload and related K8S resources in the green cluster.
 
 ```bash
 az aks get-credentials --resource-group $ClusterRGName --name $GreenClusterName
 az aks command invoke --resource-group $ClusterRGName --name $GreenClusterName  --command "kubectl apply -f sample-workload-for-agic-test.yaml "
 ```
 
-after the deployment you can test the application wit the following command.
+after the deployment you can test the application with the following command.
 
 ```bash
 curl -H "Host: {hostname-app-green}.{public_domain}" http://{app-gateway-pip}/
 ```
-where app-gateway-pip is the public ip of the app gateway. 
+
+where app-gateway-pip is the public ip of the green appplication gateway. 
 If the validation is ok, than the new cluster can be promoted as new production/stable cluster. Follow the instruction described in the [next section](#t3-traffic-switch-to-the-green-cluster).
 
 ## T3: Traffic Switch to the green cluster
 
 In this step is required to update the DNS A Record in order to switch the traffic to the PIP assigned to the green cluster.
-You need to run the flow describe [here](./09-dns-records.md) with the following var in input.
+You need to run the flow describe [here](./09-dns-records.md) with the following variable in input.
 
 ```
 arecords_apps_map = {

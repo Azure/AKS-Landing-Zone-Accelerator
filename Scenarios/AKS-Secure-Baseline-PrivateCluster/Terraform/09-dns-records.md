@@ -1,8 +1,9 @@
 # Create Public DNS Record to publish and invoke endpoitns/apps hostend in the AKS Clusters
 
-This stage is required onlu for the blue green deployment.
+This stage is required only for the blue green deployment.
 
 The following will be created:
+
 * A Records
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/08-DNS-Records" folder
@@ -10,9 +11,9 @@ Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/08-DNS-Reco
 cd ../08-DNS-Records
 ```
 
-This deployment will need to reference data objects from the Spoke deployment and will need access to the pre-existing state file, update the variables as needed. This deployment will also need to use a storage access key (from Azure) to read the storage account data.  This is a sensitive variable and should not be committed to the code repo.
+This deployment will need to reference data objects from the Spoke deployment and will need access to the pre-existing terraform state file. This data is stored in an Azure storage account accessible through an access key. This is a sensitive variable and should not be committed to the code repo.
 
-Once again, A sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
+Once again, a sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
 
 Once the files are updated, deploy using Terraform Init, Plan and Apply.
 
