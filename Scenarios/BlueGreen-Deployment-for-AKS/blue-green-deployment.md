@@ -156,9 +156,10 @@ If you get an error about changes to the configuration, go with the `-reconfigur
 
 ## Install the application
 
-After the deployment if the Landing Zone, install a sample application to test the deployment. The sample application to use is stored in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\sample-workload-for-agic-test.yaml".
+After the deployment if the Landing Zone, install a sample application to test the deployment. The sample application to use is stored in the file "Scenarios/BlueGreen-Deployment-for-AKS/Deployment/sample-workload-for-agic-test.yaml".
 
 ```bash
+cd ..
 az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f sample-workload-for-agic-test.yaml "
 ```
 
