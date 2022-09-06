@@ -38,7 +38,7 @@ locals {
       aks_turn_on=true
       The kubernetes version to use on the cluster
       k8s_version="1.23.5"
-      Reference Name to the Application gateway that need to be associaated to the AKS Cluster with the AGIC addo-on
+      Reference Name to the Application gateway that need to be associated to the AKS Cluster with the AGIC add-on
       appgw_name="lzappgw-blue"
     },
     "aks_green" = {
@@ -51,13 +51,10 @@ locals {
 }
 ```
 
-As part of the blue green deployment there is the condifguration of 3 hostnames required to implement the pattern:
+As part of the blue green deployment there is the configuration of 3 hostnames required to implement the pattern:
 - Public facing hostname, the one used by the end users of the workloads/apps hosted into the clusters
 - blue cluster hostname, that is dedicated for the internal validation
 - green cluster hostname, that is dedicated for the internal validation
-
-As part of the solution there is also the optional deployment of a public DNS zone to manage in azure the DNS records for the custom domain assigned to  the applications.
-You can configure the DNS records in the public DNS zone using the following [guide](./09-dns-records.md).
 
 The tasks to test a blue green deployment can be summarized as follow:
 1. T0: Blue Cluster is On, this means:
@@ -79,9 +76,9 @@ The tasks to test a blue green deployment can be summarized as follow:
   - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
   - A record mapped with the PIP of the Green Application Gateway
 
-## T0: Blue Cluster is On
+## T0: Blue Cluster is On. Deploy the AKS cluster
 
-Follow the steps starting [here](./02-state-storage.md) to deploy the private cluster using the default values if you haven't already but do not deploy the workload (stage 08). 
+Follow the steps starting [here](./02-state-storage.md) to deploy the private cluster using the default values if you haven't already but do not deploy the workload (stage 08).
 > :warning: Do not deploy the fruit smoothie application highlighted in step 08-workload.md
 The default values are:
 
@@ -123,6 +120,41 @@ locals {
 }
 
 ```
+
+## Create Public DNS Record to publish and invoke endpoitns/apps hostend in the AKS Clusters
+
+This stage is required only for the blue green deployment.
+
+The following will be created:
+
+* A Records
+
+Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/08-DNS-Records" folder
+```bash
+cd ../08-DNS-Records
+```
+
+This deployment will need to reference data objects from the Spoke deployment and will need access to the pre-existing terraform state file. This data is stored in an Azure storage account accessible through an access key. This is a sensitive variable and should not be committed to the code repo.
+
+Once again, a sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
+
+Once the files are updated, deploy using Terraform Init, Plan and Apply.
+
+```bash
+terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
+```
+
+```bash
+terraform plan
+```
+
+```bash
+terraform apply
+```
+
+If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
+
+## Install the application
 
 After the deployment if the Landing Zone, install a sample application to test the deployment. The sample application to use is stored in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\sample-workload-for-agic-test.yaml".
 
@@ -285,3 +317,7 @@ locals {
 }
 
 ```
+
+## Next Step
+
+:arrow_forward: [Cleanup](../AKS-Secure-Baseline-PrivateCluster/Terraform/09-cleanup.md)

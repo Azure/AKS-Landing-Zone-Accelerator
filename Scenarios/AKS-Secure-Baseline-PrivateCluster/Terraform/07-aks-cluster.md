@@ -121,4 +121,6 @@ For the jumpbox you just created in the hub network to have access to Key vault'
 5. Select the hub virtual network for the **Virtual network** field
 6. Click on **OK** at the bottom
 
+> :warning: Stop here if you are deploying the bluegreen scenario and return to the next step there. Do not deploy the basic workload in the link below.
+
 :arrow_forward: [Deploy a Basic Workload](./08-workload.md)

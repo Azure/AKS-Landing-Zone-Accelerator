@@ -392,4 +392,4 @@ Now you can access the website using using your FQDN. When you navigate to the w
 
 ## Next Step
 
-:arrow_forward: [Register or Update Public DNS Records](./09-dns-records.md) or go directly to [Cleanup](./10-cleanup.md)
+:arrow_forward: [Cleanup](.09-cleanup.md)
