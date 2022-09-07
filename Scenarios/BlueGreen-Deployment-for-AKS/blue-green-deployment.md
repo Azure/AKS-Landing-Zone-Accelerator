@@ -319,6 +319,15 @@ locals {
 
 ```
 
-## Next Step
+## Cleanup
 
+Navigate to the "Scenarios\BlueGreen-Deployment-for-AKS\Deployment\Deploy-DNS-Records" folder and delete the DNS records you created first.
+   ```bash
+   terrform init
+   ```
+
+   ```bash
+   terraform destroy
+   ```
+Clean up the rest of the resources you deployed using the instructions in the link below.
 :arrow_forward: [Cleanup](../AKS-Secure-Baseline-PrivateCluster/Terraform/09-cleanup.md)
