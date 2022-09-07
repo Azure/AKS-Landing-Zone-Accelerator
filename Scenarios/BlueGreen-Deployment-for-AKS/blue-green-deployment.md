@@ -9,7 +9,7 @@ Below is data structure and related documentation. By default only the blue appl
 
 ```
 locals {
-  Map of the aure application gateway to deploy
+  Map of the azure application gateway to deploy
   appgws = {
     "appgw_blue" = {
       prefix used to configure uniques names and parameter values
@@ -38,7 +38,7 @@ locals {
       aks_turn_on=true
       The kubernetes version to use on the cluster
       k8s_version="1.23.5"
-      Reference Name to the Application gateway that need to be associaated to the AKS Cluster with the AGIC addo-on
+      Reference Name to the Application gateway that need to be associated to the AKS Cluster with the AGIC add-on
       appgw_name="lzappgw-blue"
     },
     "aks_green" = {
@@ -51,13 +51,10 @@ locals {
 }
 ```
 
-As part of the blue green deployment there is the condifguration of 3 hostnames required to implement the pattern:
+As part of the blue green deployment there is the configuration of 3 hostnames required to implement the pattern:
 - Public facing hostname, the one used by the end users of the workloads/apps hosted into the clusters
 - blue cluster hostname, that is dedicated for the internal validation
 - green cluster hostname, that is dedicated for the internal validation
-
-As part of the solution there is also the optional deployment of a public DNS zone to manage in azure the DNS records for the custom domain assigned to  the applications.
-You can configure the DNS records in the public DNS zone using the following [guide](./09-dns-records.md).
 
 The tasks to test a blue green deployment can be summarized as follow:
 1. T0: Blue Cluster is On, this means:
@@ -79,9 +76,9 @@ The tasks to test a blue green deployment can be summarized as follow:
   - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
   - A record mapped with the PIP of the Green Application Gateway
 
-## T0: Blue Cluster is On
+## T0: Blue Cluster is On. Deploy the AKS cluster
 
-Follow the steps starting [here](./02-state-storage.md) to deploy the private cluster using the default values if you haven't already but do not deploy the workload (stage 08). 
+Follow the steps starting [here](./02-state-storage.md) to deploy the private cluster using the default values if you haven't already but do not deploy the workload (stage 08).
 > :warning: Do not deploy the fruit smoothie application highlighted in step 08-workload.md
 The default values are:
 
@@ -124,13 +121,49 @@ locals {
 
 ```
 
-After the deployment if the Landing Zone, install a sample application to test the deployment. The sample application to use is stored in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\sample-workload-for-agic-test.yaml".
+## Create Public DNS Record to publish and invoke endpoints/apps hosted in the AKS Clusters
+
+This stage is required only for the blue green deployment.
+
+The following will be created:
+
+* A Records
+
+Navigate to "/Scenarios/BlueGreen-Deployment-for-AKS/Deployment/Deploy-DNS-Records" folder
+```bash
+cd ./Scenarios/BlueGreen-Deployment-for-AKS/Deployment/Deploy-DNS-Records
+```
+
+This deployment will need to reference data objects from the Spoke deployment and will need access to the pre-existing terraform state file. This data is stored in an Azure storage account accessible through an access key. This is a sensitive variable and should not be committed to the code repo.
+
+Once again, a sample terraform.tfvars.sample file is included. Update the required variables, save it and rename it to **terraform.tfvars**.
+
+Once the files are updated, deploy using Terraform Init, Plan and Apply.
 
 ```bash
+terraform init -backend-config="resource_group_name=$TFSTATE_RG" -backend-config="storage_account_name=$STORAGEACCOUNTNAME" -backend-config="container_name=$CONTAINERNAME"
+```
+
+```bash
+terraform plan
+```
+
+```bash
+terraform apply
+```
+
+If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
+
+## Install the application
+
+After the deployment if the Landing Zone, install a sample application to test the deployment. The sample application to use is stored in the file "Scenarios/BlueGreen-Deployment-for-AKS/Deployment/sample-workload-for-agic-test.yaml".
+
+```bash
+cd ..
 az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f sample-workload-for-agic-test.yaml "
 ```
 
-As an alternative you can run the kubectl command directly from the Linux jump box access of the BastionHost provisoned as part in the [hub network](./04-network-hub.md).
+As an alternative you can run the kubectl command directly from the Linux jump box access of the BastionHost provisioned as part in the [hub network](./04-network-hub.md).
 
 As prerequisite to check deployment of the sample application is required to configure the NSG associated to the Application Gateway.
 In detail the NSG needs to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
@@ -143,15 +176,15 @@ In detail the NSG needs to accept traffic on port 80 if using the HTTP option. R
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```
 
-This configuration is only for testing purpose, for production workloads is trongly suggested to use HTTPS.
+This configuration is only for testing purpose, for production workloads is strongly suggested to use HTTPS.
 
-If you have deployed the public dns zone that is part of [AKS-Supporting](./06-aks-supporting.md), than you can test the deployment, executing an invocation to the sample app.
+If you have deployed the public dns zone that is part of [AKS-Supporting](../AKS-Secure-Baseline-PrivateCluster/Terraform/06-aks-supporting.md), than you can test the deployment, executing an invocation to the sample app.
 
 ```bash
 curl http://{hostname-app}.{public_domain}/
 ```
 
-If the azure public dns zone is not attached to the domain, than is possible to test the app endpoint with the followwing command.
+If the azure public dns zone is not attached to the domain, than is possible to test the app endpoint with the following command.
 
 ```bash
 curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
@@ -161,7 +194,7 @@ curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
 
 At this stage is required to perfor the following action to deploy the new green cluster in co-existence with the blue one.
 
-1. Run again the flow mentioned [here](./05-network-lz.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
+1. Run the flow mentioned [here](../AKS-Secure-Baseline-PrivateCluster/Terraform/05-network-lz.md) again, with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
 
 ```
 locals {
@@ -179,7 +212,7 @@ locals {
 
 ```
 
-2. Run the flow mentioned [here](./07-aks-cluster.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\aks-cluster.tf"
+2. Run the flow mentioned [here](../AKS-Secure-Baseline-PrivateCluster/Terraform/07-aks-cluster.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\aks-cluster.tf"
 
 ```
 locals {
@@ -216,7 +249,7 @@ after the deployment you can test the application with the following command.
 curl -H "Host: {hostname-app-green}.{public_domain}" http://{app-gateway-pip}/
 ```
 
-where app-gateway-pip is the public ip of the green appplication gateway. 
+where app-gateway-pip is the public ip of the green application gateway.
 If the validation is ok, than the new cluster can be promoted as new production/stable cluster. Follow the instruction described in the [next section](#t3-traffic-switch-to-the-green-cluster).
 
 ## T3: Traffic Switch to the green cluster
@@ -239,7 +272,7 @@ Than you can test that the switch is performed with the following command.
 curl http://{hostname-app}.{public_domain}/
 ```
 
-If the validation is ok than you can move to the lasst step
+If the validation is ok than you can move to the last step
 
 ## T4: Blue cluster is destroyed
 
@@ -285,3 +318,17 @@ locals {
 }
 
 ```
+
+## Cleanup
+
+Navigate to the "Scenarios\BlueGreen-Deployment-for-AKS\Deployment\Deploy-DNS-Records" folder and delete the DNS records you created first.
+   ```bash
+   terrform init
+   ```
+
+   ```bash
+   terraform destroy
+   ```
+Clean up the rest of the resources you deployed using the instructions in the link below.
+
+:arrow_forward: [Cleanup](../AKS-Secure-Baseline-PrivateCluster/Terraform/09-cleanup.md)
