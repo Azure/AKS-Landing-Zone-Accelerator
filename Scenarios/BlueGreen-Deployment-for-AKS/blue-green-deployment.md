@@ -330,4 +330,5 @@ Navigate to the "Scenarios\BlueGreen-Deployment-for-AKS\Deployment\Deploy-DNS-Re
    terraform destroy
    ```
 Clean up the rest of the resources you deployed using the instructions in the link below.
+
 :arrow_forward: [Cleanup](../AKS-Secure-Baseline-PrivateCluster/Terraform/09-cleanup.md)
