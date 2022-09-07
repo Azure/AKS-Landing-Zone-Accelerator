@@ -9,7 +9,7 @@ Below is data structure and related documentation. By default only the blue appl
 
 ```
 locals {
-  Map of the aure application gateway to deploy
+  Map of the azure application gateway to deploy
   appgws = {
     "appgw_blue" = {
       prefix used to configure uniques names and parameter values
@@ -163,7 +163,7 @@ cd ..
 az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f sample-workload-for-agic-test.yaml "
 ```
 
-As an alternative you can run the kubectl command directly from the Linux jump box access of the BastionHost provisoned as part in the [hub network](./04-network-hub.md).
+As an alternative you can run the kubectl command directly from the Linux jump box access of the BastionHost provisioned as part in the [hub network](./04-network-hub.md).
 
 As prerequisite to check deployment of the sample application is required to configure the NSG associated to the Application Gateway.
 In detail the NSG needs to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
@@ -176,15 +176,15 @@ In detail the NSG needs to accept traffic on port 80 if using the HTTP option. R
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
 ```
 
-This configuration is only for testing purpose, for production workloads is trongly suggested to use HTTPS.
+This configuration is only for testing purpose, for production workloads is strongly suggested to use HTTPS.
 
-If you have deployed the public dns zone that is part of [AKS-Supporting](./06-aks-supporting.md), than you can test the deployment, executing an invocation to the sample app.
+If you have deployed the public dns zone that is part of [AKS-Supporting](../AKS-Secure-Baseline-PrivateCluster/Terraform/06-aks-supporting.md), than you can test the deployment, executing an invocation to the sample app.
 
 ```bash
 curl http://{hostname-app}.{public_domain}/
 ```
 
-If the azure public dns zone is not attached to the domain, than is possible to test the app endpoint with the followwing command.
+If the azure public dns zone is not attached to the domain, than is possible to test the app endpoint with the following command.
 
 ```bash
 curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
@@ -249,7 +249,7 @@ after the deployment you can test the application with the following command.
 curl -H "Host: {hostname-app-green}.{public_domain}" http://{app-gateway-pip}/
 ```
 
-where app-gateway-pip is the public ip of the green appplication gateway. 
+where app-gateway-pip is the public ip of the green application gateway.
 If the validation is ok, than the new cluster can be promoted as new production/stable cluster. Follow the instruction described in the [next section](#t3-traffic-switch-to-the-green-cluster).
 
 ## T3: Traffic Switch to the green cluster
@@ -272,7 +272,7 @@ Than you can test that the switch is performed with the following command.
 curl http://{hostname-app}.{public_domain}/
 ```
 
-If the validation is ok than you can move to the lasst step
+If the validation is ok than you can move to the last step
 
 ## T4: Blue cluster is destroyed
 
