@@ -194,7 +194,7 @@ curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
 
 At this stage is required to perfor the following action to deploy the new green cluster in co-existence with the blue one.
 
-1. Run again the flow mentioned [here](./05-network-lz.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
+1. Run the flow mentioned [here](../AKS-Secure-Baseline-PrivateCluster/Terraform/05-network-lz.md) again, with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
 
 ```
 locals {
@@ -212,7 +212,7 @@ locals {
 
 ```
 
-2. Run the flow mentioned [here](./07-aks-cluster.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\aks-cluster.tf"
+2. Run the flow mentioned [here](../AKS-Secure-Baseline-PrivateCluster/Terraform/07-aks-cluster.md), with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\07-AKS-cluster\aks-cluster.tf"
 
 ```
 locals {
