@@ -392,4 +392,4 @@ Now you can access the website using using your FQDN. When you navigate to the w
 
 ## Next Step
 
-:arrow_forward: [Cleanup](.09-cleanup.md)
+:arrow_forward: [Cleanup](./09-cleanup.md)
