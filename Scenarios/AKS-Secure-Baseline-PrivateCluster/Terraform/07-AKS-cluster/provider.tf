@@ -12,7 +12,7 @@ terraform {
     # resource_group_name  = ""   # Partial configuration, provided during "terraform init"
     # storage_account_name = ""   # Partial configuration, provided during "terraform init"
     # container_name       = ""   # Partial configuration, provided during "terraform init"
-    key                  = "aks"
+    key = "aks"
   }
 }
 
