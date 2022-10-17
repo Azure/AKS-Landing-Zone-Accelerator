@@ -61,7 +61,7 @@ The tasks to test a blue green deployment can be summarized as follow:
   - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
   - "green cluster" and "green app gateway" with aks_turn_on=false and appgw_turn_on=false
   - A record mapped with the PIP of the Blue Application Gateway
-  This is where you end up if you follow the steps in the default scenario [Getting Started with the default values](../README.md)
+  This is where you end up if you follow the steps in the default scenario [Getting Started with the default values](../AKS-Secure-Baseline-PrivateCluster/Terraform/README.md)
 2. T1: Green Cluster Deployment
   - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
   - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
