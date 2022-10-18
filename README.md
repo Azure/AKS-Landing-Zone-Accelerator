@@ -26,7 +26,7 @@ In this repo, you get access to step by step guide covering various customer [sc
 
 Use [this repo](https://github.com/Azure/AKS-Landing-Zone-Accelerator/tree/main/Scenarios/AKS-Secure-Baseline-PrivateCluster) if you would like step by step guidance on how to deploy secure and well architected AKS clusters using our scenario based model and/or you are new to AKS or IaC. This model promotes a separation of duties, modularized IaC so you can pick and choose components you want to build with your cluster and has implementations in ARM, Terraform and Bicep. It is the best starting point for people new to Azure or AKS.
 
-### Bicep AKS Accelerator
+### AKS Construction Helper
 
 A flexible templating approach using Bicep that enables multiple scenarios using a Web based tool. It provides tangible artifacts to **quickly** enable AKS deployments through CLI or in your CI/CD pipeline.
 
@@ -59,6 +59,6 @@ Pick one of the scenarios below to get started on a reference implementation. Fo
 
 ### Or leverage one of the Landing Zone Accelerator implementations from our other repos
 
-:arrow_forward: [Bicep AKS Accelerator](https://github.com/Azure/Aks-Construction#getting-started)
+:arrow_forward: [AKS Construction Helper](https://github.com/Azure/Aks-Construction#getting-started)
 <!-- :arrow_forward: [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation) -->
 
