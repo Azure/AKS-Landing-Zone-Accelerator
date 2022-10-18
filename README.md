@@ -18,7 +18,7 @@ The reference implementations are spread across three repos that all build on to
 
 1. This one
 1. The [AKS Construction Helper](https://github.com/Azure/Aks-Construction)
-<!-- 1. The [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation) -->
+1. The [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation)
 
 ### This repo
 
