@@ -12,6 +12,28 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
+### Commit Standards
+For commits, use the following prefixes depending on which is most applicable to the changes:
+| Prefix    | Purpose | 
+|-------------|-----------|
+|fix:|Update to code base or bug|
+|feat:|New feature added to code base|
+|chore:|Basic task to update formatting or versions, etc.|
+|docs:|Updates to documentation in Markdown files |
+|ci:|Updates to workflows |
+|test:|Updates to testing frameworks |
+
+### Branch Naming Standards
+For branches, use the following prefixes depending on which is most applicable to the work being done:
+| Prefix    | Purpose | 
+|-------------|-----------|
+|fix/|Update to code base or bug|
+|feat/|New feature added to code base|
+|chore/|Basic task to update formatting or versions, etc.|
+|docs/|Updates to documentation in Markdown files |
+|ci/|Updates to workflows |
+|test/|Updates to testing frameworks |
+
 ## Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
