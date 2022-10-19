@@ -19,20 +19,20 @@ For commits, use the following prefixes depending on which is most applicable to
 |fix:|Update to code base or bug|
 |feat:|New feature added to code base|
 |chore:|Basic task to update formatting or versions, etc.|
-|docs:|Updates to documentation in Markdown files |
-|ci:|Updates to workflows |
-|test:|Updates to testing frameworks |
+|docs:|New documentations or updates to documentation in Markdown file(s) |
+|ci:|New workflow or updates to workflow(s) |
+|test:|New tests or updates to testing framework(s) |
 
 ### Branch Naming Standards
 For branches, use the following prefixes depending on which is most applicable to the work being done:
 | Prefix    | Purpose | 
 |-------------|-----------|
-|fix/|Update to code base or bug|
-|feat/|New feature added to code base|
-|chore/|Basic task to update formatting or versions, etc.|
-|docs/|Updates to documentation in Markdown files |
-|ci/|Updates to workflows |
-|test/|Updates to testing frameworks |
+|fix/|Any task related to a bug or minor fix|
+|feat/|Any task related to a new feature of the codebase|
+|chore/|Any basic task that involves minor updates that are not bugs|
+|docs/|Any task pertaining to documentation|
+|ci/|Any task pertaining to workflow changes |
+|test/|Any task pertaining to testing updates |
 
 ## Trademarks
 
