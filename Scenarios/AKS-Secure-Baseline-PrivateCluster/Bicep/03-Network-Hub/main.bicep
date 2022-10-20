@@ -145,6 +145,7 @@ param enableTelemetry bool = true
 var telemetryId = '0d807b2d-f7c3-4710-9a65-e88257df1ea0-${location}'
 resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
   name: telemetryId
+  location: location
   properties: {
     mode: 'Incremental'
     template: {
