@@ -12,10 +12,12 @@ terraform {
     # resource_group_name  = ""   # Partial configuration, provided during "terraform init"
     # storage_account_name = ""   # Partial configuration, provided during "terraform init"
     # container_name       = ""   # Partial configuration, provided during "terraform init"
-    key                  = "aks-existing-infra"
+    key = "aks-existing-infra"
   }
 }
 
 provider "azurerm" {
   features {}
+  disable_terraform_partner_id = false
+  partner_id                   = "5c162503-e576-4058-b2b4-2d4fd32d3584"
 }
