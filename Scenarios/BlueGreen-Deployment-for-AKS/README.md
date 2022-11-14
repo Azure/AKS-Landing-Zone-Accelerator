@@ -12,4 +12,6 @@ In the above mentioned scenario the desired outcome is to apply these changes wi
 This pattern is also at the basis for the mission critical deployment of workloads on AKS, the main difference is that in that scenario, the resiliency and AKS distribution in multiple regions are the main drivers and elements of the solution.
 
 The proposed pattern comes also with a Reference Architecture document located [here](./Deployment/bluegreen-aks-solution-content.md).
-For guidance and steps to deploy the blue green pattern, refer to this page [Blue Green Deployment](blue-green-deployment.md).
+Deploy this scenario using the step by step guidance by clicking on the link below:
+
+:arrow_forward: [Terraform](blue-green-deployment.md)
