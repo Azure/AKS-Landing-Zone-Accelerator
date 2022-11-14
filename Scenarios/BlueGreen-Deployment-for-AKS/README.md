@@ -11,7 +11,7 @@ The main purpose of this pattern is to provide a reliable and high availability 
 In the above mentioned scenario the desired outcome is to apply these changes without affecting the applications and/workloads hosted in the AKS cluster.
 This pattern is also at the basis for the mission critical deployment of workloads on AKS, the main difference is that in that scenario, the resiliency and AKS distribution in multiple regions are the main drivers and elements of the solution.
 
-The proposed pattern comes also with a Reference Architecture document located [here](./Deployment/bluegreen-aks-solution-content.md).
+The proposed pattern comes also with a Reference Architecture document in the Azure architecture center [Blue-green deployment for AKS](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/blue-green-deployment-for-aks/blue-green-deployment-for-aks).
 Deploy this scenario using the step by step guidance by clicking on the link below:
 
 :arrow_forward: [Terraform](blue-green-deployment.md)
