@@ -1,4 +1,4 @@
-# Create resources for the AKS Priavte Cluster
+# Create resources for the AKS Private Cluster
 
 The following will be created:
 * AKS Private Clusters
@@ -46,7 +46,7 @@ KV_RESOURCEGROUP=<KV RG name>
 
 
 
-## Enable aks-preview Azure CLI extenstion and add AKS-AzureKeyVaultSecretsProvider preview feature
+## Enable aks-preview Azure CLI extension and add AKS-AzureKeyVaultSecretsProvider preview feature
 
 You also need the *aks-preview* Azure CLI extension version 0.5.9 or later. If you don't already, enter the following in your command line
 
@@ -121,6 +121,6 @@ For the jumpbox you just created in the hub network to have access to Key vault'
 5. Select the hub virtual network for the **Virtual network** field
 6. Click on **OK** at the bottom
 
-> :warning: Stop here if you are deploying the bluegreen scenario and return to the next step there. Do not deploy the basic workload in the link below.
+> :warning: Stop here if you are deploying the blue-green scenario and return to the next step there. Do not deploy the basic workload in the link below.
 
 :arrow_forward: [Deploy a Basic Workload](./08-workload.md)
