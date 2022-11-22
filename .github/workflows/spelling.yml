@@ -15,7 +15,7 @@ jobs:
       - uses: streetsidesoftware/cspell-action@v2.12.1
         name: Spell Check
         with:
-          config: './.vscode/cspell.json'
+          config: './.vscode/settings.json'
           inline: warning
           root: '.'
           files: "**/*.{ts,js,md}" #You need to respecify this setting - even though it's in the cspell.json config :(
