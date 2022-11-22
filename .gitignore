@@ -50,6 +50,5 @@ override.tf.json
 *.hcl
 *.vs
 
-
-.vscode*
+!.vscode/settings.json #workspace settings should be source controlled 
 
