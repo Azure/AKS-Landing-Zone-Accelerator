@@ -1,0 +1,30 @@
+{
+    "version": "0.2",
+    "ignorePaths": [
+        ""
+    ],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [
+        "Bookstore",
+        "eastus",
+        "ESLZ",
+        "lycheeverse",
+        "MSRC",
+        "openservicemesh",
+        "RESOURCEGROUP",
+        "traefik",
+        "Velero",
+        "virtualmachine",
+        "whatismypublicip",
+        "Xamarin"
+    ],
+    "ignoreWords": [],
+    "import": [],
+    "enableFiletypes": [
+        "!css",
+        "!jsonc",
+        "!yml",
+        "json"
+    ]
+}
