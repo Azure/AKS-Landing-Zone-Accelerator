@@ -16,5 +16,5 @@ if($isInstalled){
     New-AzADGroup -DisplayName $aksops -MailNickname $aksops
 }
 else {
-    Write-Output "Azuer Powershell not installed. Installation steps in: https://docs.microsoft.com/en-us/powershell/azure/install-az-ps"
+    Write-Output "Azuer Powershell not installed. Installation steps in: https://learn.microsoft.com/powershell/azure/install-az-ps"
 }
