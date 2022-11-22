@@ -1,10 +1,10 @@
 # Open Service Mesh AKS add-on
 
-The [Open Service Mesh AKS add-on](https://learn.microsoft.com/en-us/azure/aks/open-service-mesh-about) is well documented on how to install and/or enable the AKS add-on, as well as how to deploy a sample application or onboard an existing application. Please review the following links to get started securing your AKS workloads with Open Service Mesh.
+The [Open Service Mesh AKS add-on](https://learn.microsoft.com/azure/aks/open-service-mesh-about) is well documented on how to install and/or enable the AKS add-on, as well as how to deploy a sample application or onboard an existing application. Please review the following links to get started securing your AKS workloads with Open Service Mesh.
 
 ## Installation
 
-[Install the Open Service Mesh add-on by using the Azure CLI](https://learn.microsoft.com/en-us/azure/aks/open-service-mesh-deploy-addon-az-cli)
+[Install the Open Service Mesh add-on by using the Azure CLI](https://learn.microsoft.com/azure/aks/open-service-mesh-deploy-addon-az-cli)
 
 ## Deploy a Sample Application
 

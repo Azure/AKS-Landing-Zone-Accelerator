@@ -70,40 +70,40 @@ if not enter the command below to enable it
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
 ```
 
-It takes a few minutes for the status to show *Registered*. Verify the registration status by using the [az feature list](https://docs.microsoft.com/en-us/cli/azure/feature#az_feature_list) command:
+It takes a few minutes for the status to show *Registered*. Verify the registration status by using the [az feature list](https://learn.microsoft.com/cli/azure/feature#az_feature_list) command:
 
 ```bash
 az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-AzureKeyVaultSecretsProvider')].{Name:name,State:properties.state}"
 ```
 
-When ready, refresh the registration of the *Microsoft.ContainerService* resource provider by using the [az provider register](https://docs.microsoft.com/en-us/cli/azure/provider#az_provider_register) command:
+When ready, refresh the registration of the *Microsoft.ContainerService* resource provider by using the [az provider register](https://learn.microsoft.com/cli/azure/provider#az_provider_register) command:
 
 ```bash
 az provider register --namespace Microsoft.ContainerService
 ```
 
-
-
 ##  Enable Keyvault Secrets Provider for your cluster
 
-```
+```bash
 az aks enable-addons --addons azure-keyvault-secrets-provider --name $AKSCLUSTERNAME --resource-group $AKSRESOURCEGROUP
 ```
 
 **IMPORTANT**: When completed, take note of the client-id created for the add-on:
 
-...,
- "addonProfiles": {
-    "azureKeyvaultSecretsProvider": {
-      ...,
-      "identity": {
-        "clientId": "<client-id>",
-        ...
-      }
+```json
+"addonProfiles": {
+  "azureKeyvaultSecretsProvider": {
+    ...,
+    "identity": {
+      "clientId": "<client-id>",
+      ...
     }
+  }
+```
 
 Update the permissions on the Key Vault to allow access from the newly created identity. The object-type can be certificate, key or secret. In this case, it should be all 3. Run the command below 3 times, one for each of the options.
-```
+
+```bash
 az keyvault set-policy -n $KV_NAME -g $KV_RESOURCEGROUP --<object type>-permissions get --spn <client-id>
 ```
 

@@ -12,4 +12,4 @@ The topics described in these scenarios will provide guidance on how to protect 
 
 A [Service Mesh](https://en.wikipedia.org/wiki/Service_mesh) provides a way to make communications between service endpoints in your Kubernetes cluster secure by encrypting the communications by way of a proxy. This can be beneficial in several ways, first you can offload the need of your applications having to negotiate encryption as part of its code base, secondly a service mesh provides a single operational control experience to provide security policies and transport security observability across your whole cluster.
 
-[OSM (Open Service Mesh)](openservicemesh.io), is an open-source service mesh, that is integrated with the AKS service as a [managed AKS add-on](https://learn.microsoft.com/en-us/azure/aks/open-service-mesh-about) providing a free fully supported service mesh experience.
+[OSM (Open Service Mesh)](openservicemesh.io), is an open-source service mesh, that is integrated with the AKS service as a [managed AKS add-on](https://learn.microsoft.com/azure/aks/open-service-mesh-about) providing a free fully supported service mesh experience.
