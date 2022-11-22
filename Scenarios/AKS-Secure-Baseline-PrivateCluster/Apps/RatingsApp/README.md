@@ -24,7 +24,7 @@ You will need to clone the following repos:
 git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
 ```
 
-2. The public repo for the Fruit Smootie Web Frontend:
+2. The public repo for the Fruit Smoothie Web Frontend:
 
 ```bash
 git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git

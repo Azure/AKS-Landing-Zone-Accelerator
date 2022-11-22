@@ -208,7 +208,7 @@ In this walkthrough, you will...
 
 ###  Run your first Load Test with Azure Load Testing
 
-1. (For your information only) We will use [Azure Load Testing](https://learn.microsoft.com/azure/load-testing/overview-what-is-azure-load-testing) in the following steps. This takes a [Apache JMeter](https://jmeter.apache.org/) test plan as input to simulate load on workloads running on the Azure platform. You can use the JMeter GUI (see screenshot) to define a testplan; in this tutorial, we will use a predefined test plan.
+1. (For your information only) We will use [Azure Load Testing](https://learn.microsoft.com/azure/load-testing/overview-what-is-azure-load-testing) in the following steps. This takes a [Apache JMeter](https://jmeter.apache.org/) test plan as input to simulate load on workloads running on the Azure platform. You can use the JMeter GUI (see screenshot) to define a test plan; in this tutorial, we will use a predefined test plan.
 
    ![](img/035_load-test_jmeter.png)
 
@@ -303,7 +303,7 @@ In this walkthrough, you will...
    ...
    ```
 
-   You can also observe _Insights_ of your AKS cluster again to see how new pods immediatly experience high load after creation:
+   You can also observe _Insights_ of your AKS cluster again to see how new pods immediately experience high load after creation:
 
    ![](img/052_load-test-2_container-insights.png)
 
@@ -372,7 +372,7 @@ In this walkthrough, you will...
    kubectl describe node aks-npuser01-37699233-vmss000000
    ```
 
-   The output reveals that 1870 of 1900 available mili cores have already been allocated. 
+   The output reveals that 1870 of 1900 available millicores have already been allocated. 
 
    ```output
    Allocatable:
@@ -385,11 +385,11 @@ In this walkthrough, you will...
    cpu                1830m (96%)   5556m (292%)
    ```
 
-   As each pod requests 75 mili cores (see resource requests in `randomnumbers.yaml`), scheduling another one would exceed the limit of 1900 mili cores available on that node. Therefore, the scheduler considers the pod to be _unschedulable_ and does not proceed with creating the respective containers.
+   As each pod requests 75 millicores (see resource requests in `randomnumbers.yaml`), scheduling another one would exceed the limit of 1900 millicores available on that node. Therefore, the scheduler considers the pod to be _unschedulable_ and does not proceed with creating the respective containers.
 
    Note that looking at the _Nodes_ tab of AKS _Insights_, CPU capacity does _not_ seem to be exhausted (the bars representing the load remain green and do not reach a high percentage). This is because this load represents the actual CPU load rather than the resource requests.
 
-1. We have seen how the Horizontal Pod Autoscaler adds and removes pods as load on our application increases and decreases. It uses the resource requests (in mili cores of CPU capacity and bytes of memory) to decide if a node has sufficient remaining capacity to host another pod. If it has not, scheduling the pod may fail in lack of available resources.
+1. We have seen how the Horizontal Pod Autoscaler adds and removes pods as load on our application increases and decreases. It uses the resource requests (in millicores of CPU capacity and bytes of memory) to decide if a node has sufficient remaining capacity to host another pod. If it has not, scheduling the pod may fail in lack of available resources.
 
 
 ### Enable the cluster autoscaler to add scale up the Virtual Machine Scale Set and add further VMs on demand
