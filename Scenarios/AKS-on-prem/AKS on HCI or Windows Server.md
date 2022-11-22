@@ -1,6 +1,6 @@
 # Azure Kubernetes Service on Azure Stack HCI or Windows Server
 
-AKS-HCI makes our popular Azure Kubernetes Service (AKS) available on-premises. It fulfills the key need for an on-premises App Platform in the Azure hybrid cloud stack that goes from bare metal all the way into Azure-connected experiences in the cloud.
+AKS-HCI makes our popular Azure Kubernetes Service (AKS) available on-premises. It fulfils the key need for an on-premises App Platform in the Azure hybrid cloud stack that goes from bare metal all the way into Azure-connected experiences in the cloud.
 
 AKS-HCI is a turn-key solution for Administrators to easily deploy, manage lifecycle of, and secure Kubernetes clusters in datacenters and edge locations, and developers to run and manage modern applications – all in an Azure-consistent manner. Complete end-to-end support and servicing from Microsoft – as a single vendor – makes this is a robust Kubernetes application platform that customers can trust with their production workloads.
 

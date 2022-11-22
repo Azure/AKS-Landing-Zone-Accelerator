@@ -175,7 +175,7 @@ az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --co
 
 ## Deploy the workload into the cluster
 
-We need to deploy the key vaults secret add on somehwere before this step, it is in the original markdown file but not this new one
+We need to deploy the key vaults secret add on somewhere before this step, it is in the original markdown file but not this new one
 
 In this section, you will be manipulating some of the deployment yaml files, replacing some entries related with Azure Key Vault, Azure Container Registry and Azure Active Directory references like ClientID, TenantID etc.
 
@@ -297,7 +297,7 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
 **Objectives**
 
-1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of customprefix.region.cloudapp.azure.com
+1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of customPrefix.region.cloudapp.azure.com
 2. Create a certificate using the FQDN and store it in Key Vault.
 
 ### Creating Public IP address for your Application Gateway

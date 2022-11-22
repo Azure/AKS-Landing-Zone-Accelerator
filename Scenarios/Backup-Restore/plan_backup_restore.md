@@ -38,15 +38,15 @@ Checkout the repo section on [High Availability Baseline](https://github.com/Azu
 ## Backup & Restore architecture
 
 ### Scenario 1: using a shared storage between the primary and secondary AKS Clusters
-![architecture_velerol](./media/architecture_velero.png)
+![architecture velero](./media/architecture_velero.png)
 
 - It might be simpler for most cases
 - You can expose the storage account to both regions, in a secure manner, via [Azure private link](https://learn.microsoft.com/azure/private-link/private-link-overview)
-- The seconday cluster should be configured to have readonly access to the backup storage 
-- to enable Regional Disastery Recovery, Storage account should be configured to have regional redundancy (sku RA-GRS or RA-GZRS)
+- The secondary cluster should be configured to have readonly access to the backup storage 
+- to enable Regional Disaster Recovery, Storage account should be configured to have regional redundancy (sku RA-GRS or RA-GZRS)
 
 
-### Scenario 2: using a primary storage account, replicated with a storage account in a seconday region
+### Scenario 2: using a primary storage account, replicated with a storage account in a secondary region
 ![aks-dr-regional](./media/aks-dr.png)
 
 - This scenario offers better security as it ensure a strict isolation of environments

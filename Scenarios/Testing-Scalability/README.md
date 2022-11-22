@@ -8,7 +8,7 @@ It will demonstrate the setup and use of following AKS platform capabilities:
 
 To emulate user load, this tutorial uses [Azure Load Testing](https://learn.microsoft.com/azure/load-testing/overview-what-is-azure-load-testing).
 
-##  Walthrough Overview
+##  Walkthrough Overview
 In this walkthrough, you will...
 - create a new AKS cluster using the [AKS Construction Helper](https://azure.github.io/AKS-Construction/).
 - build a new container image hosting an API that creates CPU load by generating random numbers,
@@ -446,7 +446,7 @@ In this walkthrough, you will...
 
    ![](img/071_load-test-4_node-insights.png)
 
-1. (For information only) Using the `Metrics` balde, you can also configure custom graphs to get insights about the state of your cluster. For example, select the namespace `insights.containers/pods`, metric `podCount` and apply a splitting by `Node` to see the number of pods scheduled on each node. 
+1. (For information only) Using the `Metrics` blade, you can also configure custom graphs to get insights about the state of your cluster. For example, select the namespace `insights.containers/pods`, metric `podCount` and apply a splitting by `Node` to see the number of pods scheduled on each node. 
 
    ![](img/072_load-test-4_pods-per-node.png)
 
