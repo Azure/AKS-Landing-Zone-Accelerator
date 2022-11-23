@@ -23,13 +23,13 @@ az aks command invoke --resource-group $ClusterRGName --name $ClusterName --comm
 
 ## Deploy the Enterprise Scale AKS (ES AKS) Policy Initiative
 
-The first step is to apply the ES AKS Policy Initative to the resource group that AKS is hosted in. By doing this, it allows us to set extra security controls on the cluster, to improve security and avoid any public IP addresses for the application/cluster. If you would like to learn more about Azure Policies in detail, you can visit this link - <https://learn.microsoft.com/azure/governance/policy/overview>
+The first step is to apply the ES AKS Policy Initiative to the resource group that AKS is hosted in. By doing this, it allows us to set extra security controls on the cluster, to improve security and avoid any public IP addresses for the application/cluster. If you would like to learn more about Azure Policies in detail, you can visit this link - <https://learn.microsoft.com/azure/governance/policy/overview>
 
 The policy initiative we will be deploying here is comprised of various different policy definitions that set security controls on our cluster. Some controls are enforced with a 'Deny' effect, meaning that you will not be able to create something if it's against the policy. Some controls are implemented with an 'audit' effect, meaning that you won't be stopped from doing anything, however an audit trail of the changes you're making, will be logged and can be viewed in the compliance part of Azure Policy.
 
 For this part of the guide, we will deploy the initiative, however we will be mainly concentrating on the policy 'Kubernetes clusters should use internal load balancers'. There may be times when you don't want your environment to have any public network access, therefore you may not want to deploy a public IP address as part of your ingress into your application. Of course by doing this, you will only be able to access your application from an endpoint that lives within the network. This in return, will improve security of your cluster and avoid any public IP's in the environment.
 
-First of all, deploy the ES AKS Policy Initative:
+First of all, deploy the ES AKS Policy Initiative:
 
 1. cd to /Scenarios/Azure-Policy-ES-for-AKS
 
@@ -59,7 +59,7 @@ We will now proceed to deploy the NGINX ingress controller using the basic confi
 az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz'"
 ```
 
-You will see that this installation of the NGINX ingress controller has failed. This is because Azure Policy is blocking any public load balancers from being created. You should have recieved the error as shown in the image below:
+You will see that this installation of the NGINX ingress controller has failed. This is because Azure Policy is blocking any public load balancers from being created. You should have received the error as shown in the image below:
 
 ![DenyPublicIngress](../media/DenyPublicIngress.png)
 
