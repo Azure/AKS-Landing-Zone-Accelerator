@@ -4,7 +4,7 @@ The following will be created:
 * Azure Container Registry (supporting-infra.tf)
 * Azure Key Vault (supporting-infra.tf)
 * Private Link Endpoints for ACR and Key Vault
-* Public DNS Zone (supporting-infra.tf), this is optional and required only if you have custom hostnames assigned to endpoints and worklods deployed in AKS, this is mainly related to the blue gree deployment.
+* Public DNS Zone (supporting-infra.tf), this is optional and required only if you have custom hostnames assigned to endpoints and workloads deployed in AKS, this is mainly related to the blue gree deployment.
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/06-AKS-supporting" folder
 ```

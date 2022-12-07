@@ -1,6 +1,6 @@
 ## Samples for Nginx application with persistent volumes. 
 
-Each sample uses a different storage class configuration to configure persisent volumes.
+Each sample uses a different storage class configuration to configure persistent volumes.
 
 * provisioner: disk.csi.azure.com
   - azuredisk_csi_LRS.yaml  

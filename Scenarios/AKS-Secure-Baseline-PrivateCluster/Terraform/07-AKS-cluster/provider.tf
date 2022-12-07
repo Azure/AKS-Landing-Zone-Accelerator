@@ -18,5 +18,6 @@ terraform {
 
 provider "azurerm" {
   features {}
+  disable_terraform_partner_id = false
+  partner_id                   = "5c162503-e576-4058-b2b4-2d4fd32d3584"
 }
-

@@ -61,7 +61,7 @@ The tasks to test a blue green deployment can be summarized as follow:
   - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
   - "green cluster" and "green app gateway" with aks_turn_on=false and appgw_turn_on=false
   - A record mapped with the PIP of the Blue Application Gateway
-  This is where you end up if you follow the steps in the default scenario [Getting Started with the default values](../README.md)
+  This is where you end up if you follow the steps in the default scenario [Getting Started with the default values](../AKS-Secure-Baseline-PrivateCluster/Terraform/README.md)
 2. T1: Green Cluster Deployment
   - "blue cluster" and "blue app gateway" with aks_turn_on=true and appgw_turn_on=true
   - "green cluster" and "green app gateway" with aks_turn_on=true and appgw_turn_on=true
@@ -192,7 +192,7 @@ curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
 
 ## T1: Green Cluster Deployment
 
-At this stage is required to perfor the following action to deploy the new green cluster in co-existence with the blue one.
+At this stage is required to perform the following action to deploy the new green cluster in co-existence with the blue one.
 
 1. Run the flow mentioned [here](../AKS-Secure-Baseline-PrivateCluster/Terraform/05-network-lz.md) again, with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
 
@@ -255,7 +255,7 @@ If the validation is ok, than the new cluster can be promoted as new production/
 ## T3: Traffic Switch to the green cluster
 
 In this step is required to update the DNS A Record in order to switch the traffic to the PIP assigned to the green cluster.
-You need to run the flow describe [here](./09-dns-records.md) with the following variable in input.
+You need to run the flow describe [here](#create-public-dns-record-to-publish-and-invoke-endpointsapps-hosted-in-the-aks-clusters) with the following variable in input.
 
 ```
 arecords_apps_map = {
