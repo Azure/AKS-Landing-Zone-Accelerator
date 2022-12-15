@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demoapp-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demoapp
+  template:
+    metadata:
+      labels:
+        app: demoapp
+    spec:
+      containers:
+      - name: demoapp
+        image: nginx
+        #image: <ACR_NAME>.azurecr.io/aci-aks-demo:latest
+        resources:
+         requests:
+           memory: "64Mi"
+           cpu: "50m"
+         limits:
+           memory: "128Mi"
+           cpu: "50m"
+        ports:
+        - containerPort: 80
+      tolerations:
+      - key: virtual-kubelet.io/provider
+        operator: Exists
+      - key: azure.com/aci
+        effect: NoSchedule
+      affinity:
+       nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+           matchExpressions:
+           - key: type
+             operator: NotIn
+             values:
+             - virtual-kubelet
+---
+apiVersion: v1
+kind: Service
+metadata:
+ name: demoapp-svc
+ labels:
+   app: demoapp
+spec:
+ ports:
+ - port: 80
+ selector:
+   app: demoapp
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: demoapp-hpa
+spec:
+ scaleTargetRef:
+   apiVersion: apps/v1
+   kind: Deployment
+   name: demoapp-deploy
+ minReplicas: 1
+ maxReplicas: 10
+ targetCPUUtilizationPercentage: 50
