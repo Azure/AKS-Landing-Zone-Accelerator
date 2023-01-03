@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.3">
+    <hashTree>
+        <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+            <stringProp name="TestPlan.comments"></stringProp>
+            <boolProp name="TestPlan.functional_mode">false</boolProp>
+            <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+            <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+            <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+            <stringProp name="TestPlan.user_define_classpath"></stringProp>
+        </TestPlan>
+        <hashTree>
+
+            <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+                <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+                <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+                    <boolProp name="LoopController.continue_forever">false</boolProp>
+                    <stringProp name="LoopController.loops">${loops}</stringProp>
+                </elementProp>
+                <stringProp name="ThreadGroup.num_threads">${threads}</stringProp>
+                <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+                <boolProp name="ThreadGroup.scheduler">false</boolProp>
+                <stringProp name="ThreadGroup.duration"></stringProp>
+                <stringProp name="ThreadGroup.delay"></stringProp>
+                <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+            </ThreadGroup>
+            <hashTree>
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request" enabled="true">
+                    <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                        <collectionProp name="Arguments.arguments"/>
+                    </elementProp>
+                    <stringProp name="HTTPSampler.domain">${endpoint}</stringProp>
+                    <stringProp name="HTTPSampler.port"></stringProp>
+                    <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+                    <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+                    <stringProp name="HTTPSampler.path">${path}</stringProp>
+                    <stringProp name="HTTPSampler.method">GET</stringProp>
+                    <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                    <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+                    <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                    <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+                    <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+                    <stringProp name="HTTPSampler.connect_timeout">60000</stringProp>
+                    <stringProp name="HTTPSampler.response_timeout">60000</stringProp>
+                </HTTPSamplerProxy>
+                <hashTree>
+                    <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                        <collectionProp name="HeaderManager.headers">
+                            <elementProp name="" elementType="Header">
+                                <stringProp name="Header.name">Host</stringProp>
+                                <stringProp name="Header.value">${hostHeader}</stringProp>
+                            </elementProp>
+                        </collectionProp>
+                    </HeaderManager>
+                    <hashTree/>
+                </hashTree>
+            </hashTree>
+            <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                    <elementProp name="protocol" elementType="Argument">
+                        <stringProp name="Argument.name">protocol</stringProp>
+                        <stringProp name="Argument.value">${__BeanShell( System.getenv("protocol") )}</stringProp>
+                        <stringProp name="Argument.desc">URL protocol</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="endpoint" elementType="Argument">
+                        <stringProp name="Argument.name">endpoint</stringProp>
+                        <stringProp name="Argument.value">${__BeanShell( System.getenv("endpoint") )}</stringProp>
+                        <stringProp name="Argument.desc">URL endpoint</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="path" elementType="Argument">
+                        <stringProp name="Argument.name">path</stringProp>
+                        <stringProp name="Argument.value">${__BeanShell( System.getenv("path") )}</stringProp>
+                        <stringProp name="Argument.desc">URL path</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="hostHeader" elementType="Argument">
+                        <stringProp name="Argument.name">hostHeader</stringProp>
+                        <stringProp name="Argument.value">${__BeanShell( System.getenv("hostHeader") )}</stringProp>
+                        <stringProp name="Argument.desc">HTTP Host header</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="threads" elementType="Argument">
+                        <stringProp name="Argument.name">threads</stringProp>
+                        <stringProp name="Argument.value">${__BeanShell( System.getenv("threads") )}</stringProp>
+                        <stringProp name="Argument.desc">Number of threads to run in parallel</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                    <elementProp name="loops" elementType="Argument">
+                        <stringProp name="Argument.name">loops</stringProp>
+                        <stringProp name="Argument.value">${__BeanShell( System.getenv("loops") )}</stringProp>
+                        <stringProp name="Argument.desc">Number of loops to run per thread</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                </collectionProp>
+            </Arguments>
+        </hashTree>
+    </hashTree>
+</jmeterTestPlan>

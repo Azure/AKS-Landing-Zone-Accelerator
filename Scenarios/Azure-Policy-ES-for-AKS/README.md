@@ -48,6 +48,9 @@ Once the initiative is assigned, you can verify the compliance details from the 
 
 Example:
 ![ES AKS Initiative Compliance Example:](./media/es-aks-initiative.png)
+
+### New Enhancements to Azure Policy for AKS
+The Azure policy team has made some enhancements to Azure policy for AKS which includes the ability to create custom policies for AKS and embed your own Gatekeeper constraint templates. Check out the [announcement blog](https://techcommunity.microsoft.com/t5/azure-governance-and-management/azure-policy-announces-enhancements-for-gradual-rollout-custom/ba-p/3645336) for more information
               
 
 #### NOTE: The above Azure policies represents a baseline and are configured with default settings. The policy parameters for individual policies may need to be updated based on custom compliance requirements. More details on these policies to follow

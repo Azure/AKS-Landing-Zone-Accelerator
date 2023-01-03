@@ -10,7 +10,7 @@ On Azure, You don't need to setup your own Prometheus server: Azure Container In
 ![azure-container-insights-prometheus](../media/monitoring-kubernetes-architecture.png)
 
 Read the documentation on Prometheus Integration: 
-https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-prometheus-integration
+<https://learn.microsoft.com/azure/azure-monitor/containers/container-insights-prometheus-integration>
 
 
 
@@ -23,22 +23,23 @@ To enable scraping with Container insights, you simply need to deploy a ConfigMa
 You can find [an example, in this repository](./container-azm-ms-agentconfig.yaml) for testing purposes (we recommend to download the latest version from the documentation link above).
 
 In this example (because Velero already exports the monitoring metrics), we simply *enable monitoring_kubernetes_pods* in the ConfigMap, and that's it !
-```bash
-        monitor_kubernetes_pods = true
-        ## Restricts Kubernetes monitoring to namespaces for pods that have annotations set and are scraped using the monitor_kubernetes_pods setting.
-        ## This will take effect when monitor_kubernetes_pods is set to true
-        # ex. monitor_kubernetes_pods_namespaces = ["velero"]
+
+```yaml
+monitor_kubernetes_pods = true
+## Restricts Kubernetes monitoring to namespaces for pods that have annotations set and are scraped using the monitor_kubernetes_pods setting.
+## This will take effect when monitor_kubernetes_pods is set to true
+# ex. monitor_kubernetes_pods_namespaces = ["velero"]
 ```
 
-   - Run the following command to deploy the configMap to the AKS cluster: 
-    ```
-    kubectl  apply -f  container-azm-ms-agentconfig.yaml
+   - Run the following command to deploy the configMap to the AKS cluster:
+
+    ``` bash
+    kubectl apply -f  container-azm-ms-agentconfig.yaml
     ```
 
-## Viewing  Velero Metrics in Azure
+## Viewing Velero Metrics in Azure
 
 You can access Insights on Velero Metrics, by viewing the *InsightsMetrics* of your AKS cluster.
-
 
 ![list_velero_metrics_azure](../media/list_velero_metrics_azure.png)
 

@@ -4,30 +4,32 @@ Congratulations on completing the previous labs. If everything went to plan, you
 
 If you would like to use a different ingress controller instead of Application Gateway, for example - NGINX - you can complete these optional extra steps to deploy NGINX as your ingress into the cluster.
 
-This will be using some steps from the quickstart guide that can be found here - https://docs.microsoft.com/en-us/azure/aks/ingress-basic?tabs=azure-cli
+This will be using some steps from the quickstart guide that can be found here - <https://learn.microsoft.com/azure/aks/ingress-basic?tabs=azure-cli>
 
 Before we get started, it is worth removing the existing ingress resource that is attached to your web service and is configured with Application Gateway.
 
 1. If you used HTTPS
 
- ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl delete ingress ratings-web-https -n ratingsapp"
-   ```
+```bash
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl delete ingress ratings-web-https -n ratingsapp"
+```
+
 2. If you used HTTP
- ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl delete ingress ratings-web -n ratingsapp"
-   ```
+
+```bash
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl delete ingress ratings-web -n ratingsapp"
+```
 
 
 ## Deploy the Enterprise Scale AKS (ES AKS) Policy Initiative
 
-The first step is to apply the ES AKS Policy Initative to the resource group that AKS is hosted in. By doing this, it allows us to set extra security controls on the cluster, to improve security and avoid any public IP addresses for the application/cluster. If you would like to learn more about Azure Policies in detail, you can visit this link - https://docs.microsoft.com/en-us/azure/governance/policy/overview
+The first step is to apply the ES AKS Policy Initiative to the resource group that AKS is hosted in. By doing this, it allows us to set extra security controls on the cluster, to improve security and avoid any public IP addresses for the application/cluster. If you would like to learn more about Azure Policies in detail, you can visit this link - <https://learn.microsoft.com/azure/governance/policy/overview>
 
 The policy initiative we will be deploying here is comprised of various different policy definitions that set security controls on our cluster. Some controls are enforced with a 'Deny' effect, meaning that you will not be able to create something if it's against the policy. Some controls are implemented with an 'audit' effect, meaning that you won't be stopped from doing anything, however an audit trail of the changes you're making, will be logged and can be viewed in the compliance part of Azure Policy.
 
 For this part of the guide, we will deploy the initiative, however we will be mainly concentrating on the policy 'Kubernetes clusters should use internal load balancers'. There may be times when you don't want your environment to have any public network access, therefore you may not want to deploy a public IP address as part of your ingress into your application. Of course by doing this, you will only be able to access your application from an endpoint that lives within the network. This in return, will improve security of your cluster and avoid any public IP's in the environment.
 
-First of all, deploy the ES AKS Policy Initative:
+First of all, deploy the ES AKS Policy Initiative:
 
 1. cd to /Scenarios/Azure-Policy-ES-for-AKS
 
@@ -38,9 +40,11 @@ First of all, deploy the ES AKS Policy Initative:
 The next step is to assign the policy initiative to the resource group that contains the AKS cluster:
 
 1. Edit the policy.bicep file and add your Subscription Id where required then deploy the initiative
+
    ```bash
    code policy.bicep
    ```
+
    ```bash
    az deployment group create -g <AKSResourceGroup> -f policy.bicep
    ```
@@ -49,13 +53,13 @@ Now that the policy is assigned, you can move onto the next step which is deploy
 
 ## Deploy the NGINX Ingress Controller
 
-We will now proceed to deploy the NGINX ingress controller using the basic configuration outlined in the quickstart guide - https://docs.microsoft.com/en-us/azure/aks/ingress-basic?tabs=azure-cli
+We will now proceed to deploy the NGINX ingress controller using the basic configuration outlined in the quickstart guide - https://learn.microsoft.com/azure/aks/ingress-basic?tabs=azure-cli
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz'"
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz'"
 ```
 
-You will see that this installation of the NGINX ingress controller has failed. This is because Azure Policy is blocking any public load balancers from being created. You should have recieved the error as shown in the image below:
+You will see that this installation of the NGINX ingress controller has failed. This is because Azure Policy is blocking any public load balancers from being created. You should have received the error as shown in the image below:
 
 ![DenyPublicIngress](../media/DenyPublicIngress.png)
 
@@ -66,7 +70,7 @@ To get around this issue, we will need to deploy the ingress controller as an in
 3. Run the following command, this time passing in your yaml configuration file stating that the NGINX Ingress resource should be internal.
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz' -f internal-ingress.yaml" --file internal-ingress.yaml
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz' -f internal-ingress.yaml" --file internal-ingress.yaml
 ```
 
 Now you have an NGINX ingress controller inside of your network with an internal IP address. The last step is to configure the ingress resource to instead use NGINX as the ingress controller.
@@ -74,13 +78,15 @@ Now you have an NGINX ingress controller inside of your network with an internal
 1. Deploy the 5b-http-ratings-web-ingress.yaml file. This will deploy a new ingress resource using NGINX as the Ingress Controller.
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 5b-http-ratings-web-ingress.yaml -n ratingsapp" --file 5b-http-ratings-web-ingress.yaml
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 5b-http-ratings-web-ingress.yaml -n ratingsapp" --file 5b-http-ratings-web-ingress.yaml
 ```
 
 Congratulations, you should now have deployed an internal ingress controller using NGINX and mapped it to the services previously created, in order to access your application. If you run a kubectl get ingress -n ratingsapp command, you should be able to retrieve the internal IP address used by the ingress controller to access your application.
+
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get ingress --all-namespaces"
+az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get ingress --all-namespaces"
 ```
+
 ![Displaying ip address](../media/getinternalip.png). 
 You can also see the internal load balancer deployed in your AKS infrastructure resource group in Azure Portal.
 ![Internal Load Balancer](../media/internal-lb.png). 

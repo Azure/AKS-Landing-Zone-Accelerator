@@ -11,16 +11,19 @@ resource "azurerm_user_assigned_identity" "aks_pod_identity" {
 
 
 # Role assignments
+# Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "aks_identity_operator" {
+  for_each             = module.aks
   scope                = azurerm_user_assigned_identity.aks_pod_identity.id
   role_definition_name = "Managed Identity Operator"
-  principal_id         = module.aks.kubelet_id
+  principal_id         = each.value.kubelet_id
 }
 
 resource "azurerm_role_assignment" "aks_vm_contributor" {
-  scope                = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourcegroups/${module.aks.node_pool_rg}"
+  for_each             = module.aks
+  scope                = "/subscriptions/${data.azurerm_client_config.current.subscription_id}/resourcegroups/${each.value.node_pool_rg}"
   role_definition_name = "Virtual Machine Contributor"
-  principal_id         = module.aks.kubelet_id
+  principal_id         = each.value.kubelet_id
 }
 
 # Azure Key Vault Access Policy for Managed Identity for AAD Pod Identity

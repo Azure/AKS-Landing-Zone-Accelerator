@@ -1,6 +1,6 @@
 # Deploy a Basic Workload using the Fruit Smoothie Ratings Application
 
-This application is provided by Microsoft Learning and is used as part of a self-paced Kubernetes training [workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/). You may find reviewing that workshop helpful as it presents some alternative deployment options and features using different architecture requirements. The application consists of a web frontend, an API service and a MongoDB database.
+This application consists of a web frontend, an API service and a MongoDB database.
 
 Because the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
 
@@ -185,7 +185,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
 
 1. Ensure the ratings-api deployment was successful. 
 
-   If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault, **api-secret-provider-class.yaml** file wasnt updated properly or because the proper access to the Key vault wasn't granted to the azuresecret identity.
+   If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault, **api-secret-provider-class.yaml** file wasn't updated properly or because the proper access to the Key vault wasn't granted to the azuresecret identity.
    ```bash
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get pods -n ratingsapp"
    ```
@@ -264,7 +264,7 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
 **Objectives**
 
-1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customprefix>.<region>.cloudapp.azure.com
+1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customPrefix>.<region>.cloudapp.azure.com
 1. Secure the web application using TLS
 
 ### Creating Public IP address for your Application Gateway
@@ -318,7 +318,7 @@ After updating the ingress, A request will be sent to letsEncrypt to provide a '
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificate -n ratingsapp" 
 ```
 
-> :warning: Letsencrypt does not always work. If you continue to encouter issues whereby the status isnt changing to Ready = True, skip this step and test the optional http deployment above instead, then move on to the next step.
+> :warning: Letsencrypt does not always work. If you continue to encounter issues whereby the status isnt changing to Ready = True, skip this step and test the optional http deployment above instead, then move on to the next step.
 
 If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
 
