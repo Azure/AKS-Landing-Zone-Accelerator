@@ -1,7 +1,7 @@
 # Create the Landing Zone Network
 
 The following will be created:
-* Resource Group for Landing Zone Neworking (lz-networking.tf)
+* Resource Group for Landing Zone Networking (lz-networking.tf)
 * Route Table (lz-networking.tf)
 * Peering of Hub and Spoke Networks (hub-spoke-peering.tf)
 * Private DNS Zones (dns-zones.tf)

@@ -31,16 +31,16 @@ locals {
 locals {
   aks_clusters = {
     "aks_blue" = {
-      name_prefix="blue"
-      aks_turn_on=true
-      k8s_version="1.23.5"
-      appgw_name="lzappgw-blue"
+      name_prefix = "blue"
+      aks_turn_on = true
+      k8s_version = "1.23.5"
+      appgw_name  = "lzappgw-blue"
     },
     "aks_green" = {
-      name_prefix="green"
-      aks_turn_on=false
-      k8s_version="1.23.5"
-      appgw_name="lzappgw-green"
+      name_prefix = "green"
+      aks_turn_on = false
+      k8s_version = "1.23.5"
+      appgw_name  = "lzappgw-green"
     }
   }
 }
@@ -55,7 +55,7 @@ locals {
 # Based on the structure of the aks_clusters map is created an identity per each AKS Cluster, this is mainly used in the blue green deployment scenario.
 
 resource "azurerm_user_assigned_identity" "mi-aks-cp" {
-  for_each = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true}
+  for_each            = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true }
   name                = "mi-${var.prefix}-aks-${each.value.name_prefix}-cp"
   resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
   location            = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
@@ -64,14 +64,14 @@ resource "azurerm_user_assigned_identity" "mi-aks-cp" {
 # Role Assignments for Control Plane MSI
 # Based on the structure of the aks_clusters map is defined the role assignment per each AKS Cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "aks-to-rt" {
-  for_each = azurerm_user_assigned_identity.mi-aks-cp
+  for_each             = azurerm_user_assigned_identity.mi-aks-cp
   scope                = data.terraform_remote_state.existing-lz.outputs.lz_rt_id
   role_definition_name = "Contributor"
   principal_id         = each.value.principal_id
 }
 
 resource "azurerm_role_assignment" "aks-to-vnet" {
-  for_each = azurerm_user_assigned_identity.mi-aks-cp
+  for_each             = azurerm_user_assigned_identity.mi-aks-cp
   scope                = data.terraform_remote_state.existing-lz.outputs.lz_vnet_id
   role_definition_name = "Network Contributor"
   principal_id         = each.value.principal_id
@@ -81,7 +81,7 @@ resource "azurerm_role_assignment" "aks-to-vnet" {
 # Role assignment to to create Private DNS zone for cluster
 # Based on the structure of the aks_clusters map is defined the role assignment per each AKS Cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "aks-to-dnszone" {
-  for_each = azurerm_user_assigned_identity.mi-aks-cp
+  for_each             = azurerm_user_assigned_identity.mi-aks-cp
   scope                = azurerm_private_dns_zone.aks-dns.id
   role_definition_name = "Private DNS Zone Contributor"
   principal_id         = each.value.principal_id
@@ -105,7 +105,7 @@ module "aks" {
     azurerm_role_assignment.aks-to-vnet,
     azurerm_role_assignment.aks-to-dnszone
   ]
-  for_each = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true}
+  for_each            = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true }
   resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
   location            = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
   prefix              = "aks-${var.prefix}-${each.value.name_prefix}"
@@ -115,7 +115,7 @@ module "aks" {
   gateway_name        = data.terraform_remote_state.existing-lz.outputs.gateway_name[each.value.appgw_name]
   gateway_id          = data.terraform_remote_state.existing-lz.outputs.gateway_id[each.value.appgw_name]
   private_dns_zone_id = azurerm_private_dns_zone.aks-dns.id
-  k8s_version = each.value.k8s_version
+  k8s_version         = each.value.k8s_version
 
 }
 
@@ -123,14 +123,14 @@ module "aks" {
 # The AKS cluster. 
 # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "appdevs_user" {
-  for_each = module.aks
+  for_each             = module.aks
   scope                = each.value.aks_id
   role_definition_name = "Azure Kubernetes Service Cluster User Role"
   principal_id         = data.terraform_remote_state.aad.outputs.appdev_object_id
 }
 
 resource "azurerm_role_assignment" "aksops_admin" {
-  for_each = module.aks
+  for_each             = module.aks
   scope                = each.value.aks_id
   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
   principal_id         = data.terraform_remote_state.aad.outputs.aksops_object_id
@@ -140,7 +140,7 @@ resource "azurerm_role_assignment" "aksops_admin" {
 # to the cluster. In production, you should use just the AAD groups (above).
 # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "aks_rbac_admin" {
-  for_each = module.aks
+  for_each             = module.aks
   scope                = each.value.aks_id
   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
   principal_id         = data.azurerm_client_config.current.object_id
@@ -152,7 +152,7 @@ resource "azurerm_role_assignment" "aks_rbac_admin" {
 # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 
 resource "azurerm_role_assignment" "aks-to-acr" {
-  for_each = module.aks
+  for_each             = module.aks
   scope                = data.terraform_remote_state.aks-support.outputs.container_registry_id
   role_definition_name = "AcrPull"
   principal_id         = each.value.kubelet_id
@@ -163,7 +163,7 @@ resource "azurerm_role_assignment" "aks-to-acr" {
 # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 
 resource "azurerm_role_assignment" "agic_appgw" {
-  for_each = module.aks
+  for_each             = module.aks
   scope                = each.value.appgw_id
   role_definition_name = "Contributor"
   principal_id         = each.value.agic_id

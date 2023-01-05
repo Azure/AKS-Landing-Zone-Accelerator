@@ -1,10 +1,10 @@
-## Creat the Spoke Network
+## Create the Spoke Network
 
 In this section, we will be creating the spoke network and supporting resources:
 * Virtual Network (Spoke)
 * Azure Application Gateway
 * VNET Peering
-* Public IP Allocation for Appgateway
+* Public IP Allocation for Application Gateway
 
 <br/>
 
@@ -13,7 +13,7 @@ For deploying an AKS cluster, the Spoke VNET should be having basic supporting i
 
 >*For secure communication between Azure Key Vault and ACR, private endpoints will be used.*
 >
->*For better flexibility, Application Gateway has been deployed separetely and not as an AKS add-on. This helps customers to make use of their existing Application Gateway for AKS.*
+>*For better flexibility, Application Gateway has been deployed separately and not as an AKS add-on. This helps customers to make use of their existing Application Gateway for AKS.*
 ---
 ### How to deploy the templates
 Before executing these templates, ensure that you are connected to your Azure subscription using AZ CLI or PowerShell and a Resource Group has been created to hold these new deployments.

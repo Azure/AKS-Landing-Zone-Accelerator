@@ -35,7 +35,7 @@ Check out How Velero works  https://www.youtube.com/watch?v=8skHGzUBZ-Q
 The sample code provides a **Terraform module** to install & configure Velero.
 
 
-The implemented scenario using this sample code, shows how to backup a primary AKS cluster, and restore it to a seconday cluster (in a secondary region).
+The implemented scenario using this sample code, shows how to backup a primary AKS cluster, and restore it to a secondary cluster (in a secondary region).
 
 The Terraform code does the following:
 
@@ -78,7 +78,7 @@ terraform plan
 terraform apply
 ```
 
-* Check that the install is successfull: 
+* Check that the install is successful: 
   - First, install Velero client (CLI) to interact with Velero Server (pods deployed on AKS cluster):
        - You can download the client binary for linux : https://github.com/vmware-tanzu/velero/releases/tag/v1.7.1. An example code is provided below.
        ```bash
@@ -169,7 +169,7 @@ terraform apply
    ```bash
   velero backup describe manual-backup1 --details
     ```
-     ![Descrube backup](./media/describe_backup.png)
+     ![Describe backup](./media/describe_backup.png)
 
 * Restore to secondary AKS cluster:
   - Connect to the Secondary / Backup AKS Cluster (following the sample code as is): 
@@ -194,7 +194,7 @@ terraform apply
     ```
      ![Create Restore](./media/create_restore.png)
 
-* Check that Restore is successfull:
+* Check that Restore is successful:
   - Check restored applications / pods
     ```bash
     kubectl get pods --all-namespaces
