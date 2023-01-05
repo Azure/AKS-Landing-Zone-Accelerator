@@ -16,6 +16,7 @@
 * Azure Container Registry (ACR)
 * Azure Kubernetes Service (AKS) Cluster
 * Azure PostgreSQL DB
+* Azure Cache for Redis Enterprise
 * Github Actions
 * Bicep
 * Docker
