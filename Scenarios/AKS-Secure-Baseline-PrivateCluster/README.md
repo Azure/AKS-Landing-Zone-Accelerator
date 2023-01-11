@@ -6,7 +6,7 @@ There are various ways to secure your AKS cluster. From a network security persp
 
 When using a private cluster, the control plane can only be accessed from computers in the private network or peered networks. For this reason, in this reference implementation, we will be deploying a virtual machine in the Hub network through which we can connect to the control plane.
 
-By the end of this, you would have deployed a secure AKS cluster, compliant with Enterprise-Scale for AKS guidance and best practices. We will also be deploying a workload known as the Ratings app. Check out the [Introduction to Kubernetes on Azure](https://learn.microsoft.com/training/paths/intro-to-kubernetes-on-azure/) Training path on Microsoft Learn  for some intermediate level training on AKS.
+By the end of this, you would have deployed a secure AKS cluster, compliant with AKS Landing Zone Accelerator guidance and best practices. We will also be deploying a workload known as the Ratings app. Check out the [Introduction to Kubernetes on Azure](https://learn.microsoft.com/training/paths/intro-to-kubernetes-on-azure/) Training path on Microsoft Learn  for some intermediate level training on AKS.
 
 For this scenario, we have various IaC technology that you can choose from depending on your preference. At this time only the Terraform and Bicep versions are available. Below is an architectural diagram of this scenario.
 
@@ -42,8 +42,6 @@ For this scenario, we have various IaC technology that you can choose from depen
 
 ## Next
 Pick one of the IaC options below and follow the instructions to deploy the AKS reference implementation.
-
-:arrow_forward: [ARM](./ARM)(Deprecated)
 
 :arrow_forward: [Terraform](./Terraform)
 
