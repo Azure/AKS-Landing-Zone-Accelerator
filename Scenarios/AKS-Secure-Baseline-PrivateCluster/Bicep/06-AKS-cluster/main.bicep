@@ -13,6 +13,9 @@ param aksIdentityName string
 param kubernetesVersion string
 param rtAKSName string
 param location string = deployment().location
+param availabilityZones array
+param enableAutoScaling bool
+param autoScalingProfile object
 
 @allowed([
   'azure'
@@ -55,6 +58,12 @@ resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing =
   scope: resourceGroup(rg.name)
 }
 
+module aksPolicy 'modules/policy/policy.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksPolicy'
+  params: {}
+}
+
 module akslaworkspace 'modules/laworkspace/la.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'akslaworkspace'
@@ -78,6 +87,9 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
   params: {
+    autoScalingProfile:autoScalingProfile
+    enableAutoScaling: enableAutoScaling
+    availabilityZones:availabilityZones
     location: location
     aadGroupdIds: [
       aksadminaccessprincipalId
@@ -98,6 +110,7 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     aksPvtNetworkContrib
     aksPodIdentityRole
     aksRouteTableRole
+    aksPolicy
   ]
 }
 
@@ -219,3 +232,22 @@ module appgwroutetableroutes 'modules/vnet/routetableroutes.bicep' = [for i in r
     }
   }
 }]
+
+
+//  Telemetry Deployment
+@description('Enable usage and telemetry feedback to Microsoft.')
+param enableTelemetry bool = true
+var telemetryId = 'a4c036ff-1c94-4378-862a-8e090a88da82-${location}'
+resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
+  name: telemetryId
+  location: location
+  properties: {
+    mode: 'Incremental'
+    template: {
+      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#'
+      contentVersion: '1.0.0.0'
+      resources: {}
+    }
+  }
+}
+

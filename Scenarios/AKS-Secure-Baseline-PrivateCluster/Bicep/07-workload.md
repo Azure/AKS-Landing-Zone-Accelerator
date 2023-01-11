@@ -1,20 +1,23 @@
 # Deploy a Basic Workload using the Fruit Smoothie Ratings Application
 
-This application is provided by Microsoft Learning and is used as part of a self-paced Kubernetes training [workshop](https://docs.microsoft.com/en-us/learn/modules/aks-workshop/). You may find reviewing that workshop helpful as it presents some alternative deployment options and features using different architecture requirements. The application consists of a web frontend, an API service and a MongoDB database.
+This application consists of a web frontend, an API service and a MongoDB database.
 
 Because the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
 
 ## Prepare your Jumpbox VM with tools
 
-* Add a rule in the Firewall to allow internet access to the VM's private IP. Verify VM's private IP and update if necessary
+* Add a rule in the Firewall to allow internet access to the Jumpbox's private IP and your computer's IP. Verify VM's private IP and update if necessary
 
    ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
+   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
+   ```
+      ```bash
+   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 215 --source-addresses '<your vm or computer's ip>'
    ```
 * Add a rule in the Firewall to allow internet access to the your VM or computer's  IP. Verify VM's private IP and update if necessary
 
    ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '<your vm or computer's ip>'
+   az network firewall network-rule create --collection-name 'access-VM' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 202 --source-addresses '<your vm or computer's ip>'
    ```
 ## Connecting to the Bastion Host
 
@@ -78,7 +81,8 @@ cd ../mslearn-aks-workshop-ratings-web
 sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
 ```
 
-Log into ACR
+Log into ACR (Azure Container Registry)
+> :warning: If you run into issues logging into ACR this way, head to the portal and get login credentials from Access Keys tab in the left plane of your ACR.
 
 ```bash
 sudo az acr login -n $ACRNAME
@@ -115,6 +119,11 @@ Ensure the AKS run commands are working as expected.
 # create environment variable for cluster and its resource group name
 ClusterRGName=<cluster resource group name>
 ClusterName=<AKS cluster name>
+SPOKERG=<resource group name of spoke network default same as ClusterRGName>
+PGUSERNAME=<postgres db user name>
+PGPASSWORD=<postgres db password>
+echo $PGUSERNAME
+echo $PGPASSWORD
 ```
 
 ```bash
@@ -176,7 +185,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
 
 1. Ensure the ratings-api deployment was successful. 
 
-   If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault or because the proper access to the Key vault wasn't granted to the azuresecret identity.
+   If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault, **api-secret-provider-class.yaml** file wasn't updated properly or because the proper access to the Key vault wasn't granted to the azuresecret identity.
    ```bash
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get pods -n ratingsapp"
    ```
@@ -216,7 +225,8 @@ This step is optional. If you would like to go straight to using https which is 
 It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
 
 ```bash
-   az network nsg rule create -g $SPOKERG --nsg-name <name of nsg for app gateway subnet> -n AllowHTTPInbound --priority 222 \
+   APPGWNSG=<name of nsg for app gateway subnet default APPGW-NSG>
+   az network nsg rule create -g $SPOKERG --nsg-name $APPGWNSG -n AllowHTTPInbound --priority 222 \
       --source-address-prefixes '*' --source-port-ranges '*' \
       --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
       --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
@@ -225,7 +235,7 @@ It is important to first configure the NSG for the Application Gateway to accept
 1. Deploy the **"5-ratings-web-ingress.yaml"** file.
 
    ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-http-ratings-web-ingress.yaml -n ratingsapp" --file 5-http-ratings-web-ingress.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5a-http-ratings-web-ingress.yaml -n ratingsapp" --file 5a-http-ratings-web-ingress.yaml
    ```
 
 1. Get the ip address of your ingress controller
@@ -243,18 +253,19 @@ It is important to first configure the NSG for the Application Gateway to accept
 It is important to delete the rule that allows HTTP traffic to keep the cluster safe since we have completed the test. 
 
 ```bash
-   az network nsg rule delete -g <RG of the NSG> --nsg-name <Name of NSG for AppGwy> -n AllowHTTPInbound 
+   az network nsg rule delete -g $SPOKERG --nsg-name $APPGWNSG -n AllowHTTPInbound 
 ```
+A few seconds after you delete the rule, you should no longer be able to access the website with the IP address on a **new** browser
 **the optional steps end here**
 
 ## Deploy the Ingress with HTTPS support
 
-A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a self-signed certificate with an FQDN configured on the IP address used by the Application Gateway.
+A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a letsencrypt certificate with an FQDN configured on the IP address used by the Application Gateway.
 
 **Objectives**
 
-1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customprefix>.<region>.cloudapp.azure.com
-2. Create a certificate using the FQDN and store it in Key Vault.
+1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customPrefix>.<region>.cloudapp.azure.com
+1. Secure the web application using TLS
 
 ### Creating Public IP address for your Application Gateway
 
@@ -282,7 +293,7 @@ We are going to use Lets Encrypt and Cert-Manager to provide easy to use certifi
 ```
 First of all this will create a new namespace called cert-manager which is where all of the resources for cert-manager will be kept. This will then go ahead and download some CRDs (CustomResourceDefinitions) which provides extra functionality in the cluster for the creation of certificates.
 
-We will then proceed to test this certificate process with a staging certificate to begin with, before moving on to deploying a production certificate.
+We will then proceed to test this certificate process with a staging certificate. For production, get a certificate from a certified authority.
 
 2. Edit the 'certificateIssuer.yaml' file and include your email address. This will be used for certificate renewal notifications.
 
@@ -307,6 +318,8 @@ After updating the ingress, A request will be sent to letsEncrypt to provide a '
    az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificate -n ratingsapp" 
 ```
 
+> :warning: Letsencrypt does not always work. If you continue to encounter issues whereby the status isnt changing to Ready = True, skip this step and test the optional http deployment above instead, then move on to the next step.
+
 If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
 
 ```bash
@@ -315,40 +328,16 @@ If you notice the status is not changing after a few minutes, there could be a p
    
 ```
 
-Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate. If you have got this far, continue to the next step to remediate this issue.
+Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate.
 ![deployed workload https](../media/deployed-workload-https.png)
 
-4. Edit the 'certificateIssuer.yaml' file and replace the following:
-
-    Change the metadata name to letsencrypt-prod
-    Change the server to https://acme-v02.api.letsencrypt.org/directory
-    change the privateKeySecretRef to letsencrypt-prod
-
-Re-apply the updated file
-
-```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
-```
-
-5. The next step is to change the ingress to point to the production certificateIssuer. At the moment it is still pointing to the old staging issuer.
-
-Edit '5-https-ratings-web-ingress.yaml' and replace the following values:
-
-    cert-manager.io/issuer: letsencrypt-prod
-
-Re-apply the updated file
-
-```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
-   
-```
-
-
-Now you can access the website using using your FQDN. When you navigate to the website using your browser you might see a warning stating the destination is not safe. Give it a few minutes and this should clear out. However, for production you want to use Certified Authority (CA) certificates. 
-
-![deployed workload https more secure](../media/deployed-workload-https-secure.png)
+Please note: Using LetsEncrypt staging certificates for your Application Gateway/Ingress Controller is only advised for non-production environments. If you are using Ingress Controllers in your production workloads, we recommend you to purchase a paid TLS certificate.
 
 
 ## Next Step
+
+:arrow_forward: [Deploy and test Azure Policy for AKS-LZA](./07b-QuickStartOptionalExtra.md)
+   
+or
 
 :arrow_forward: [Cleanup](./08-cleanup.md)

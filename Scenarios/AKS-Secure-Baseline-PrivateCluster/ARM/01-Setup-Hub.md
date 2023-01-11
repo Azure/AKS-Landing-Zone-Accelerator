@@ -80,7 +80,7 @@ To easily modify manifest files, you will connect to the control plane using Rem
 Prerequisites
 To get started, you need to have done the following steps:
 
-1. Install an OpenSSH compatible SSH client (PuTTY is not supported). https://docs.microsoft.com/en-us/windows-server/administration/openssh/openssh_install_firstuse
+1. Install an OpenSSH compatible SSH client (PuTTY is not supported). <https://learn.microsoft.com/windows-server/administration/openssh/openssh_install_firstuse>
 2. Install Visual Studio Code.
 
 When the Remote-SSH vs code extension is installed you should see the following icon in the lower left screen of your vs code windows

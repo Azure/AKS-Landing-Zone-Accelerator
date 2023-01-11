@@ -1,0 +1,32 @@
+# Checks for broken links in the repo markdown
+
+name: Broken Link Checker
+
+on:
+  schedule:
+    - cron: 0 0 1 * * # run monthly
+
+  workflow_dispatch: # run manually
+
+jobs:
+  repoLinkChecker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Link Checker
+        id: lychee
+        uses: lycheeverse/lychee-action@v1.5.1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          # Check all markdown and html files in repo (default)
+          args: './**/*.md'
+
+      - name: Create Issue From File
+        if: steps.lychee.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: 'Bot: Broken Links Detected in Repo'
+          content-filepath: ./lychee/out.md
+          labels: automated issue

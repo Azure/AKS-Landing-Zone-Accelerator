@@ -51,6 +51,4 @@ override.tf.json
 *.hcl
 *.vs
 
-
-.vscode*
-
+!.vscode/cspell.json #workspace spelling should be source controlled

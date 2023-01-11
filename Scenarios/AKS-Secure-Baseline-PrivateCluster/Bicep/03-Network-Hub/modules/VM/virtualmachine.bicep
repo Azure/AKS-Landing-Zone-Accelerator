@@ -2,7 +2,8 @@ param subnetId string
 param publicKey string
 param vmSize string
 param location string = resourceGroup().location
-param adminUsername string = 'azureuser'
+param adminUsername string
+param adminPassword string
 //param script64 string
 
 module jbnic '../vnet/nic.bicep' = {
@@ -20,17 +21,7 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     osProfile: {
       computerName: 'jumpbox'
       adminUsername: adminUsername
-      linuxConfiguration: {
-        ssh: {
-          publicKeys: [
-            {
-              path: '/home/azureuser/.ssh/authorized_keys'
-              keyData: publicKey
-            }
-          ]
-        }
-        disablePasswordAuthentication: true
-      }
+      adminPassword: adminPassword
     }
     hardwareProfile: {
       vmSize: vmSize

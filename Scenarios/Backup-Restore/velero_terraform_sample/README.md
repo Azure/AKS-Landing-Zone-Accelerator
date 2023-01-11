@@ -17,11 +17,11 @@ Velero is a plugin based tool. You can use the following plugins to run Velero o
  <a href="https://github.com/vmware-tanzu/velero-plugin-for-csi" target="_blank">velero-plugin-for-csi</a>
   - **A volume snapshotter plugin** for CSI backed PVCs using the CSI beta snapshot APIs for Kubernetes. 
   - See [how Velero supports CSI Snapshot API](https://velero.io/docs/v1.8/csi/)
-  - It supports <a href="https://docs.microsoft.com/en-us/azure/aks/azure-disk-csi" target="_blank">Azure Disks</a> `disk.csi.azure.com`
+  - It supports [Azure Disks](https://learn.microsoft.com/azure/aks/azure-disk-csi) `disk.csi.azure.com`
   - Volume snapshots are configured using a VolumeSnapshotClass:
         - <a href="https://github.com/kubernetes-sigs/azuredisk-csi-driver/blob/master/deploy/example/snapshot/storageclass-azuredisk-snapshot.yaml" target="_blank">Azure Disk VolumeSnapshotClass</a>
   - Limitation: 
-      - Currently CSI snapshots in a different region from the primary AKS cluster, is not suppored -> Coming Soon !
+      - Currently CSI snapshots in a different region from the primary AKS cluster, is not supported -> Coming Soon !
       - Azure File is not yet fully supported: https://github.com/kubernetes-sigs/azurefile-csi-driver/tree/master/deploy/example/snapshot
 
   <a href="https://velero.io/docs/v1.8/restic/" target="_blank">restic</a>
@@ -71,7 +71,7 @@ Velero’s backups are split into 2 pieces :
           - You can use CSI Snapshots to restore to a cluster in the same Region.
           - Regional volume snapshot with CSI Driver is coming soon ! --> to Restore to a cluster in a secondary region, use Restic for now
 
-   -    Note on <a href="https://docs.microsoft.com/en-us/azure/aks/availability-zones#azure-disk-availability-zone-support" target="_blank">Azure Disk Availability Zone support</a>
+   -    Note on [Azure Disk Availability Zone support](https://learn.microsoft.com/azure/aks/availability-zones#azure-disk-availability-zone-support)
            - Volumes that use Azure managed LRS disks are not zone-redundant resources, those volumes cannot be attached across zones and must be co-located in the same zone as a given node hosting the target pod   
            - Kubernetes is aware of Azure availability zones since version 1.12. You can deploy a PersistentVolumeClaim object referencing an Azure Managed Disk in a multi-zone AKS cluster and Kubernetes will take care of scheduling any pod that claims this PVC in the correct availability zone.
            - See How to use Availability Zones in your StorageClasses: https://kubernetes-sigs.github.io/cloud-provider-azure/topics/availability-zones/
@@ -135,7 +135,7 @@ module "velero" {
 
 ```
 
- ## Understanding the sample code
+ ## Using the sample code for your own clusters
 
  <a href="./providers.tf" target="_blank">providers.tf</a>:
   - Defines the Terraform providers used to automate the deployment and configuration of resources
@@ -162,7 +162,7 @@ module "velero" {
  <a href="./main.tf" target="_blank">maint.tf</a>:
   - References the created ressources: primary and secondary RGs + AKS clusters + storage account (you should be able to reuse it for your existing resources)
   - Creates RBACs for Velero Service Principal. See this <a href="https://github.com/vmware-tanzu/velero-plugin-for-microsoft-azure#set-permissions-for-velero" target="_blank">article</a> for defining minium permissions.  
-  - Installs Velero on the AKS Clusters using the provided module (enable Restic for filesystem backup)
+  - **Installs Velero on the AKS Clusters using the provided module** (enable Restic for filesystem backup)
 
 
 ## Customizing the module

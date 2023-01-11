@@ -1,5 +1,11 @@
 # Create the Hub Network
 
+If you haven't yet, clone the repo and cd to the appropriate folder
+```bash
+git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-AAD
+```
+
 The following will be created:
 
 * Resource Group for Hub Networking
@@ -18,16 +24,20 @@ Review the "parameters-main.json" file and update the parameter values if requir
 
 Review "parameters-updateUDR.json" and "parameters-deploy-vm.json" to update any parameters previously updated in "parameters-main.json".
 
-Note: "parameters-deploy-vm.json" file contains public key value with a default value. We recommend to use your own ssh key pair for troubleshooting the cluster through the VM.
+Note: "parameters-deploy-vm.json" file contains the username and password for the virtual machine. These can be changed in the parameters file for the vm, however these are the default values:
+
+Username: azureuser
+Password: Password123
 
 Once the files are updated, deploy using az cli or Az PowerShell.
 
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create -n "ESLZ-HUB-AKS" -l "CentralUS" -f main.bicep -p parameters-main.json
-az deployment sub create -n "ESLZ-AKS-HUB-UDR" -l "CentralUS" -f updateUDR.bicep -p parameters-updateUDR.json
-az deployment sub create -n "ESLZ-HUB-VM" -l "CentralUS" -f deploy-vm.bicep -p parameters-deploy-vm.json
+REGION=CentralUS
+az deployment sub create -n "ESLZ-HUB-AKS" -l $REGION -f main.bicep -p parameters-main.json
+az deployment sub create -n "ESLZ-AKS-HUB-UDR" -l $REGION -f updateUDR.bicep -p parameters-updateUDR.json
+az deployment sub create -n "ESLZ-HUB-VM" -l $REGION -f deploy-vm.bicep -p parameters-deploy-vm.json
 ```
 
 # [PowerShell](#tab/PowerShell)

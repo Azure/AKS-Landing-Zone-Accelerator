@@ -16,6 +16,8 @@ param nsgAppGWName string
 param rtAppGWSubnetName string
 param dhcpOptions object
 param location string = deployment().location
+param availabilityZones array
+param appGwyAutoScale object
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
@@ -156,6 +158,23 @@ module privateDNSLinkVault 'modules/vnet/privatednslink.bicep' = {
   }
 }
 
+module privatednsSAZone 'modules/vnet/privatednszone.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'privatednsSAZone'
+  params: {
+    privateDNSZoneName: 'privatelink.file.core.windows.net'
+  }
+}
+
+module privateDNSLinkSA 'modules/vnet/privatednslink.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'privateDNSLinkSA'
+  params: {
+    privateDnsZoneName: privatednsSAZone.outputs.privateDNSZoneName
+    vnetId: vnethub.id
+  }
+}
+
 module privatednsAKSZone 'modules/vnet/privatednszone.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'
@@ -177,6 +196,7 @@ module publicipappgw 'modules/vnet/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'APPGW-PIP'
   params: {
+    availabilityZones:availabilityZones
     location: location
     publicipName: 'APPGW-PIP'
     publicipproperties: {
@@ -198,6 +218,8 @@ module appgw 'modules/vnet/appgw.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'appgw'
   params: {
+    appGwyAutoScale:appGwyAutoScale
+    availabilityZones:availabilityZones
     location: location
     appgwname: appGatewayName
     appgwpip: publicipappgw.outputs.publicipId

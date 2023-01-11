@@ -15,6 +15,7 @@ default =  "privatelink.eastus.azmk8s.io"
 }
 
 variable "network_plugin" {
+default = "azure"
 }
 
 variable "pod_cidr" {
