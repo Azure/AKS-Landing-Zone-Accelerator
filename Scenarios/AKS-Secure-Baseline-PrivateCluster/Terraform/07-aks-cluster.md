@@ -74,7 +74,7 @@ KV_NAME=<Key vault name>
 KV_RESOURCEGROUP=<KV RG name>
 ```
 
-## Enable aks-preview Azure CLI extenstion and add AKS-AzureKeyVaultSecretsProvider feature
+## Enable aks-preview Azure CLI extension and add AKS-AzureKeyVaultSecretsProvider feature
 
 You also need the *aks-preview* Azure CLI extension version 0.5.9 or later. If you don't already, enter the following in your command line
 
