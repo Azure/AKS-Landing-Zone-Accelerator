@@ -108,6 +108,7 @@ module "aks" {
   for_each            = { for aks_clusters in local.aks_clusters : aks_clusters.name_prefix => aks_clusters if aks_clusters.aks_turn_on == true }
   resource_group_name = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
   location            = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
+
   prefix              = "aks-${var.prefix}-${each.value.name_prefix}"
   vnet_subnet_id      = data.terraform_remote_state.existing-lz.outputs.aks_subnet_id
   mi_aks_cp_id        = azurerm_user_assigned_identity.mi-aks-cp[each.value.name_prefix].id
@@ -115,11 +116,14 @@ module "aks" {
   gateway_name        = data.terraform_remote_state.existing-lz.outputs.gateway_name[each.value.appgw_name]
   gateway_id          = data.terraform_remote_state.existing-lz.outputs.gateway_id[each.value.appgw_name]
   private_dns_zone_id = azurerm_private_dns_zone.aks-dns.id
+  network_plugin      = try(var.network_plugin,"azure")
+  pod_cidr            = try(var.pod_cidr, null)
   k8s_version         = each.value.k8s_version
 
 }
 
 # These role assignments grant the groups made in "03-AAD" access to use
+
 # The AKS cluster. 
 # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "appdevs_user" {
@@ -166,5 +170,26 @@ resource "azurerm_role_assignment" "agic_appgw" {
   for_each             = module.aks
   scope                = each.value.appgw_id
   role_definition_name = "Contributor"
-  principal_id         = each.value.agic_id
+  principal_id         = module.aks.agic_id
+}
+
+# Route table to support AKS cluster with kubenet network plugin
+
+resource "azurerm_route_table" "rt" {
+  count = var.network_plugin == "kubenet" ? 1 : 0
+
+  name                          = "appgw-rt"
+  location                      = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
+  resource_group_name           = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
+  disable_bgp_route_propagation = false
+
+}`
+
+resource "azurerm_subnet_route_table_association" "rt_kubenet_association" {
+  count = var.network_plugin == "kubenet" ? 1 : 0
+
+  subnet_id      = data.terraform_remote_state.existing-lz.outputs.appgw_subnet_id
+  route_table_id = azurerm_route_table.rt[count.index].id
+
+  depends_on = [ azurerm_route_table.rt]
 }
