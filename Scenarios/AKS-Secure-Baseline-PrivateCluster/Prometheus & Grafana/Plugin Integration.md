@@ -44,8 +44,17 @@ When you configure your AKS cluster to send data to Azure Monitor managed servic
 ```
 
 #### Enable AzureMonitorMetrics
+-  #### Option 1
+> Create a new default Azure Monitor workspace. If no Azure Monitor Workspace is specified, then a default Azure Monitor Workspace will be created in the DefaultRG-<cluster_region> following the format DefaultAzureMonitorWorkspace-<mapped_region>. This Azure Monitor Workspace will be in the region specific in Region mappings.
 
 ```bash
   az aks update --enable-azuremonitormetrics -n "" -g ""
 ```
 
+- #### Option 2
+
+> Use an existing Azure Monitor workspace. If the Azure Monitor workspace is linked to one or more Grafana workspaces, then the data will be available in Grafana.
+
+```bash
+az aks update --enable-azuremonitormetrics -n <cluster-name> -g <cluster-resource-group> --azure-monitor-workspace-resource-id <workspace-name-resource-id>
+```
