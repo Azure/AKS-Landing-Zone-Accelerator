@@ -101,4 +101,11 @@ output "azurerm_public_ip_ref" {
   value = { for pips in azurerm_public_ip.appgw : pips.name => pips.id}
 }
 
+output "appgw_subnet_id" {
+  value = azurerm_subnet.appgw.id
+}
+
+output "appgw_subnet_name" {
+  value = azurerm_subnet.appgw.name
+}
 
