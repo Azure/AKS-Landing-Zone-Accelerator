@@ -13,6 +13,9 @@ When you configure your AKS cluster to send data to Azure Monitor managed servic
   - Microsoft.ContainerService
   - Microsoft.Insights
   - Microsoft.AlertsManagement
+- Register the AKS-PrometheusAddonPreview feature flag in the Azure Kubernetes clusters subscription with the following command in Azure CLI: az feature register --namespace Microsoft.ContainerService --name AKS-PrometheusAddonPreview.
+- The aks-preview extension needs to be installed using the command az extension add --name aks-preview. 
+- Azure CLI version 2.41.0 or higher is required for this feature.
 
   ## Implementation
   
