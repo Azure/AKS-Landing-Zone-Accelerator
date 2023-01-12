@@ -17,13 +17,35 @@ When you configure your AKS cluster to send data to Azure Monitor managed servic
 - The aks-preview extension needs to be installed using the command az extension add --name aks-preview. 
 - Azure CLI version 2.41.0 or higher is required for this feature.
 
-  ## Implementation
-  
+## Implementation
+
+#### Login into Azure CLI  
+
+```bash
   az login
+```
+
+#### Update Subscription
+
+```bash
   az account set --subscription ""
-  
+```
+
+#### Register Feature
+
+```bash
   az feature register --namespace Microsoft.ContainerService --name AKS-PrometheusAddonPreview
-  
+```
+
+#### Add preview-extension
+
+```bash
   az extension add --name aks-preview
-  
+```
+
+#### Enable AzureMonitorMetrics
+
+```bash
   az aks update --enable-azuremonitormetrics -n "" -g ""
+```
+
