@@ -47,7 +47,7 @@ az deployment group create -g az-k8s-eizw-rg  --template-uri https://github.com/
 	privateLinks=true \
 	omsagent=true \
 	retentionInDays=30 \
-	networkPolicy=azure \
+	networkPolicy=calico \
 	azurepolicy=deny \
 	networkPlugin=kubenet \
 	podCidr=10.174.0.0/17 \
