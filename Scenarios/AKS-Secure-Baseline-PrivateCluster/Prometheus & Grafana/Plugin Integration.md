@@ -58,3 +58,4 @@ When you configure your AKS cluster to send data to Azure Monitor managed servic
 ```bash
 az aks update --enable-azuremonitormetrics -n <cluster-name> -g <cluster-resource-group> --azure-monitor-workspace-resource-id <workspace-name-resource-id>
 ```
+
