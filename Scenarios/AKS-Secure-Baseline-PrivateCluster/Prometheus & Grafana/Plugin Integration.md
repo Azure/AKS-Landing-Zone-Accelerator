@@ -1,9 +1,15 @@
-## Introduction
+# Introduction
 
-This helps in configuring your Azure Kubernetes Service (AKS) cluster to send data to Azure Monitor managed service for Prometheus. 
+This guidance helps in configuring your Azure Kubernetes Service (AKS) cluster to send data to Azure Monitor managed service for Prometheus. 
 
 When you configure your AKS cluster to send data to Azure Monitor managed service for Prometheus, a containerized version of the Azure Monitor agent is installed with a metrics extension. 
 <i>You just need to specify the Azure Monitor workspace that the data should be sent to.</i>
+
+
+> Important : Azure Monitor managed service for Prometheus is intended for storing information about service health of customer machines and applications. It is not intended for storing any data classified as Personal Identifiable Information (PII) or End User Identifiable Information (EUII). We strongly recommend that you do not send any sensitive information (usernames, credit card numbers etc.) into Azure Monitor managed service for Prometheus fields like metric names, label names, or label values
+For more details , refer https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/prometheus-metrics-overview
+
+
 
 ## Prerequisites
 
@@ -19,39 +25,40 @@ When you configure your AKS cluster to send data to Azure Monitor managed servic
 
 ## Implementation
 
-#### Login into Azure CLI  
+> Login into Azure CLI  
 
 ```bash
   az login
 ```
 
-#### Update Subscription
+> Update Subscription
 
 ```bash
   az account set --subscription ""
 ```
 
-#### Register Feature
+> Register Feature
 
 ```bash
   az feature register --namespace Microsoft.ContainerService --name AKS-PrometheusAddonPreview
 ```
 
-#### Add preview-extension
+> Add preview-extension
 
 ```bash
   az extension add --name aks-preview
 ```
 
-#### Enable AzureMonitorMetrics
--  #### Option 1
+> Enable AzureMonitorMetrics
+
+- Option 1
 > Create a new default Azure Monitor workspace. If no Azure Monitor Workspace is specified, then a default Azure Monitor Workspace will be created in the DefaultRG-<cluster_region> following the format DefaultAzureMonitorWorkspace-<mapped_region>. This Azure Monitor Workspace will be in the region specific in Region mappings.
 
 ```bash
   az aks update --enable-azuremonitormetrics -n "" -g ""
 ```
 
-- #### Option 2
+- Option 2
 
 > Use an existing Azure Monitor workspace. If the Azure Monitor workspace is linked to one or more Grafana workspaces, then the data will be available in Grafana.
 
@@ -59,3 +66,49 @@ When you configure your AKS cluster to send data to Azure Monitor managed servic
 az aks update --enable-azuremonitormetrics -n <cluster-name> -g <cluster-resource-group> --azure-monitor-workspace-resource-id <workspace-name-resource-id>
 ```
 
+## Grafana integration with Azure Monitor Workspace 
+
+You can also refer [Azure Managed Grafana Instance] for additional information (https://learn.microsoft.com/en-us/azure/managed-grafana/quickstart-managed-grafana-cli)
+
+This includes the steps that are mentioned below
+
+1. Create an Azure Managed Grafana instance using the Azure CLI 
+2. Grafana integration with Azure Monitor Workspace
+
+
+> Prerequisites
+- Azure Subscription
+- Minimum required role to create an instance: resource group Contributor.
+- Minimum required role to access an instance: resource group Owner.
+
+> Implementation
+
+1. Create an Azure Managed Grafana workspace
+
+
+```bash
+az grafana create --name <managed-grafana-resource-name> --resource-group <resourcegroupname> -l <Location>
+```
+
+**Note:** that Azure Managed Grafana workspace is available only in specific regions. Before deployment , please choose the appropriate region
+
+
+Now let's check if you can access your new Managed Grafana instance. Take note of the endpoint URL ending by eus.grafana.azure.com, listed in the CLI output. 
+
+Open a browser and enter the endpoint URL. Single sign-on via Azure Active Directory has been configured for you automatically. If prompted, enter your Azure account. 
+
+You should now see your Azure Managed Grafana instance. From there, you can finish setting up your Grafana installation.
+
+**Note**  : Azure Managed Grafana doesn't support connecting with personal Microsoft accounts currently. Please refer for additional information https://learn.microsoft.com/en-us/azure/managed-grafana/quickstart-managed-grafana-cli
+
+2. Grafana integration with Azure Monitor Workspace
+The primary method for visualizing Prometheus metrics is [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview). 
+
+[Connect your Azure Monitor workspace to a Grafana workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview#link-a-grafana-workspace) so that it can be used as a data source in a Grafana dashboard. You then have access to multiple prebuilt dashboards that use Prometheus metrics and the ability to create any number of custom dashboards.
+
+> Below is the process to accomplish the same
+
+- Open the Azure Monitor workspace menu in the Azure portal.
+- Select your workspace.
+- Click Linked Grafana workspaces.
+- Select a Grafana workspace.
