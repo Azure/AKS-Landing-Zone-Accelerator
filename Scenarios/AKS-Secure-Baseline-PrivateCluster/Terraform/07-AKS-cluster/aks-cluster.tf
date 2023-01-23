@@ -170,7 +170,7 @@ resource "azurerm_role_assignment" "agic_appgw" {
   for_each             = module.aks
   scope                = each.value.appgw_id
   role_definition_name = "Contributor"
-  principal_id         = module.aks.agic_id
+  principal_id         = each.value.agic_id
 }
 
 # Route table to support AKS cluster with kubenet network plugin
@@ -183,7 +183,7 @@ resource "azurerm_route_table" "rt" {
   resource_group_name           = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
   disable_bgp_route_propagation = false
 
-}`
+}
 
 resource "azurerm_subnet_route_table_association" "rt_kubenet_association" {
   count = var.network_plugin == "kubenet" ? 1 : 0
