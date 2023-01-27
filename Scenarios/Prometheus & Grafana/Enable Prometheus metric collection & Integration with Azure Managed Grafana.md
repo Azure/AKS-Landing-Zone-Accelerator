@@ -33,7 +33,7 @@ For more details , refer https://learn.microsoft.com/en-us/azure/azure-monitor/e
 > Update Subscription
 
 ```bash
-  az account set --subscription ""
+  az account set --subscription "subscription-id"
 ```
 
 > Register Feature
@@ -51,7 +51,7 @@ For more details , refer https://learn.microsoft.com/en-us/azure/azure-monitor/e
 > Create a new default Azure Monitor workspace. If no Azure Monitor Workspace is specified, then a default Azure Monitor Workspace will be created in the DefaultRG-<cluster_region> following the format DefaultAzureMonitorWorkspace-<mapped_region>. This Azure Monitor Workspace will be in the region specific in Region mappings.
 
 ```bash
-  az aks update --enable-azuremonitormetrics -n "" -g ""
+  az aks update --enable-azuremonitormetrics -n <cluster-name> -g <cluster-resource-group>
 ```
 
 OR
