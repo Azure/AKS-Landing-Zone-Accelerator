@@ -6,11 +6,7 @@
       "value": "ESLZ-SPOKE"
     },
     "availabilityZones": {
-      "value": [
-        "1",
-        "2",
-        "3"
-      ]
+      "value": ["1", "2", "3"]
     },
     "clusterName": {
       "value": "eslzakscluster"
@@ -60,14 +56,14 @@
     "appGatewayName": {
       "value": "APPGW"
     },
-    "rtAppGWSubnetName" :{
+    "rtAppGWSubnetName": {
       "value": "AppGWSubnet-RT"
     },
     "aksuseraccessprincipalId": {
-      "value": "<service principal id for developers AAD user group>"
+      "value": "cfdcb30b-5adb-4e25-9c8c-dde6b3302a43"
     },
     "aksadminaccessprincipalId": {
-      "value": "<service principal id for admin AAD user group>"
+      "value": "26fad22d-4093-4133-ab43-90dc87e4aed1"
     },
     "aksIdentityName": {
       "value": "aksIdentity"

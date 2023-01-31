@@ -1,6 +1,7 @@
 # Create the Hub Network
 
 If you haven't yet, clone the repo and cd to the appropriate folder
+
 ```bash
 git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
 cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-AAD
@@ -8,11 +9,11 @@ cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-AAD
 
 The following will be created:
 
-* Resource Group for Hub Networking
-* Hub VNET
-* Azure Firewall
-* Azure Bastion Host
-* Virtual Machine
+- Resource Group for Hub Networking
+- Hub VNET
+- Azure Firewall
+- Azure Bastion Host
+- Virtual Machine
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub" folder
 
@@ -43,9 +44,10 @@ az deployment sub create -n "ESLZ-HUB-VM" -l $REGION -f deploy-vm.bicep -p param
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\main.bicep -TemplateParameterFile .\03-Network-Hub\parameters-main.json -Location "CentralUS" -Name ESLZ-HUB-AKS
-New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\updateUDR.bicep -TemplateParameterFile .\03-Network-Hub\parameters-updateUDR.json -Location "CentralUS" -Name ESLZ-AKS-HUB-UDR
-New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\deploy-vm.bicep -TemplateParameterFile .\03-Network-Hub\parameters-deploy-vm.json -Location "CentralUS" -Name ESLZ-HUB-VM
+$REGION="CentralUS"
+New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\main.bicep -TemplateParameterFile .\03-Network-Hub\parameters-main.json -Location $REGION -Name ESLZ-HUB-AKS
+New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\updateUDR.bicep -TemplateParameterFile .\03-Network-Hub\parameters-updateUDR.json -Location $REGION -Name ESLZ-AKS-HUB-UDR
+New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\deploy-vm.bicep -TemplateParameterFile .\03-Network-Hub\parameters-deploy-vm.json -Location $REGION -Name ESLZ-HUB-VM
 ```
 
 :arrow_forward: [Creation of Spoke Network & its respective Components](./04-network-lz.md)

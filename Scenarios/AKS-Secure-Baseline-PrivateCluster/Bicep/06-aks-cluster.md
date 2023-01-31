@@ -2,10 +2,10 @@
 
 The following will be created:
 
-* AKS Cluster with KeyVault (preview), AGIC and monitoring addons
-* Log Analytics Workspace
-* ACR Access to the AKS Cluster
-* Updates to KeyVault access policy with AKS keyvault addon
+- AKS Cluster with KeyVault (preview), AGIC and monitoring addons
+- Log Analytics Workspace
+- ACR Access to the AKS Cluster
+- Updates to KeyVault access policy with AKS keyvault addon
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/06-AKS-cluster" folder
 
@@ -25,13 +25,13 @@ if not enter the command below to enable it
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
 ```
 
-It takes a few minutes for the status to show *Registered*. Verify the registration status by using the [az feature list](https://learn.microsoft.com/cli/azure/feature#az_feature_list) command:
+It takes a few minutes for the status to show _Registered_. Verify the registration status by using the [az feature list](https://learn.microsoft.com/cli/azure/feature#az_feature_list) command:
 
 ```bash
 az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/AKS-AzureKeyVaultSecretsProvider')].{Name:name,State:properties.state}"
 ```
 
-When ready, refresh the registration of the *Microsoft.ContainerService* resource provider by using the [az provider register](https://learn.microsoft.com/cli/azure/provider#az_provider_register) command:
+When ready, refresh the registration of the _Microsoft.ContainerService_ resource provider by using the [az provider register](https://learn.microsoft.com/cli/azure/provider#az_provider_register) command:
 
 ```bash
 az provider register --namespace Microsoft.ContainerService
@@ -56,11 +56,10 @@ az feature register --name EnablePodIdentityPreview --namespace Microsoft.Contai
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
 az feature register --namespace Microsoft.Compute --name EncryptionAtHost
 ```
-   > :warning: Don't move ahead to the next steps until all providers are registered.
 
-There are two groups you need to change in parameters-main.json: 
-    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId.
-    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
+> :warning: Don't move ahead to the next steps until all providers are registered.
+
+There are two groups you need to change in parameters-main.json: - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId. - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
 
 ## AKS Networking Choices
 
@@ -69,18 +68,20 @@ You can choose which AKS network plugin you want to use when deploying the clust
 **Please note: If you are new to Kubernetes, we recommend for you to choose Azure CNI Networking to avoid the extra complexity of routing.**
 
 ## Deploy the cluster
+
 Review "**parameters-main.json**" file and update the values as required. Please make sure to update the AAD Group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell (code snippets are below).
 
-   > :warning: There are two groups you need to change in parameters-main.json:
-   >
-   > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
-   > * Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
-        
+> :warning: There are two groups you need to change in parameters-main.json:
+>
+> - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: _aksadminaccessprincipalId_.
+> - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: _aksadminaccessprincipalId_.
+
 The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://learn.microsoft.com/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
 
 ```azurecli
 az aks get-versions -l <region>
 ```
+
 # [CLI](#tab/CLI)
 
 ```azurecli
@@ -91,7 +92,7 @@ keyVaultName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query propertie
 ### Reference: Follow the below steps if you are going with the Azure CNI Networking option
 
 ```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=azure
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.25.4 -p networkPlugin=azure
 ```
 
 ### Reference: Follow the below steps if you are going with the Kubenet option
@@ -100,18 +101,18 @@ Step 1:
 
 [How to setup networking between Application Gateway and AKS](https://azure.github.io/application-gateway-kubernetes-ingress/how-tos/networking/)
 
-Step 2: (Optional - *if you don't do this, you'll have to manually update the route table after scaling changes in the cluster*)
+Step 2: (Optional - _if you don't do this, you'll have to manually update the route table after scaling changes in the cluster_)
 
 [Using AKS kubenet egress control with AGIC](https://github.com/Welasco/AKS-AGIC-UDR-AutoUpdate)
 
 ```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l "CentralUS" -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile parameters-main.json -Location "CentralUS" -Name ESLZ-AKS-CLUSTER
+New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile parameters-main.json -Location $REGION -Name ESLZ-AKS-CLUSTER
 ```
 
 ## Azure CNI VS Kubenet
@@ -130,7 +131,5 @@ It's also possible to use an Azure external solution to watch the scaling operat
 
 [Use kubenet networking with your own IP address ranges in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/azure/aks/configure-kubenet)
 [Application Gateway infrastructure configuration](https://learn.microsoft.com/azure/application-gateway/configuration-infrastructure#supported-user-defined-routes)
-
-
 
 :arrow_forward: [Deploy a Basic Workload](./07-workload.md)

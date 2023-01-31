@@ -2,12 +2,12 @@
 
 The following will be created:
 
-* Resource Group for Landing Zone Networking
-* Spoke Virtual Network and Subnets
-* Peering of Hub and Spoke Networks
-* Private DNS Zones
-* Application Gateway
-* NSGs for AKS subnet and Application Gateway subnet
+- Resource Group for Landing Zone Networking
+- Spoke Virtual Network and Subnets
+- Peering of Hub and Spoke Networks
+- Private DNS Zones
+- Application Gateway
+- NSGs for AKS subnet and Application Gateway subnet
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/04-Network-LZ" folder
 
@@ -20,21 +20,21 @@ Review "parameters-main.json" and update the values as required. Please note to 
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create -n "ESLZ-Spoke-AKS" -l "CentralUS" -f main.bicep -p parameters-main.json
+az deployment sub create -n "ESLZ-Spoke-AKS" -l $REGION -f main.bicep -p parameters-main.json
 
 # Wait until App Gateway gets deployed. It takes a few mins to complete, at least 10 min.
 
-az deployment sub create -n "ESLZ-AKS-SPOKE-UDRNSG" -l "CentralUS" -f updateUDR-NSG.bicep -p parameters-updateUDR-NSG.json
+az deployment sub create -n "ESLZ-AKS-SPOKE-UDRNSG" -l $REGION -f updateUDR-NSG.bicep -p parameters-updateUDR-NSG.json
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\main.bicep -TemplateParameterFile .\04-Network-LZ\parameters-main.json -Location "CentralUS" -Name ESLZ-Spoke-AKS
+New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\main.bicep -TemplateParameterFile .\04-Network-LZ\parameters-main.json -Location $REGION -Name ESLZ-Spoke-AKS
 
 # Wait until App Gateway gets deployed. It takes a few mins to complete, at least 10 min.
 
-New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\updateUDR-NSG.bicep -TemplateParameterFile .\04-Network-LZ\parameters-updateUDR-NSG.json -Location "CentralUS" -Name ESLZ-AKS-SPOKE-UDRNSG
+New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\updateUDR-NSG.bicep -TemplateParameterFile .\04-Network-LZ\parameters-updateUDR-NSG.json -Location $REGION -Name ESLZ-AKS-SPOKE-UDRNSG
 ```
 
 :arrow_forward: [Creation of Supporting Components for AKS](./05-aks-supporting.md)
