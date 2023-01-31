@@ -29,7 +29,7 @@ az deployment group create \
   --name aksinfra-demo \
   --resource-group aksdemorg \
   --template-file ./bicep/aksinfra.bicep \
-  --parameters aksclustername='aksdemo'
+  --parameters aksname='aksdemo'
   --parameters acrname='aksacr0022'
   --parameters vnetname='demo-vnet'
   --parameters location='eastus'
