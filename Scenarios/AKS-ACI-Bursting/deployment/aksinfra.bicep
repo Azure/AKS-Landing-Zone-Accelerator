@@ -2,7 +2,7 @@
 // and necessary RBAC role assignments on ACR and subnets. 
 
 
-param aksname string = 'demo-aks02'
+param aksname string = 'aksdemo'
 param acrname string = 'demoacr09836'
 param vnetname string = 'demo-vnet'
 param location string = 'eastus'
@@ -58,7 +58,7 @@ resource managedCluster_resource 'Microsoft.ContainerService/managedClusters@202
     type: 'SystemAssigned'
   }
   properties: {
-    kubernetesVersion: '1.23.5'
+    kubernetesVersion: '1.24.6'
     dnsPrefix: '${aksname}-dns'
     agentPoolProfiles: [
       {
