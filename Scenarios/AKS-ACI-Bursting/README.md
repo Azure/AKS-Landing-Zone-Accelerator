@@ -63,7 +63,7 @@ To create the fileshare, run the following az commands
 ```bash
 # Change the values for these four parameters as needed for your own environment
 AKS_PERS_STORAGE_ACCOUNT_NAME=acidemostorage$RANDOM
-AKS_PERS_RESOURCE_GROUP=aks
+AKS_PERS_RESOURCE_GROUP=aksdemorg
 AKS_PERS_LOCATION=eastus
 AKS_PERS_SHARE_NAME=aksshare
 
