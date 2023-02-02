@@ -87,15 +87,18 @@ echo Storage account key: $STORAGE_KEY
 # Application deployment and Testing
 ## Validate the cluster
 Before start deploying the applications, make sure that the virtual nodes are up and running fine within the AKS cluster. 
-Run the following kubectl command to list the cluster nodes
+Run the following commands to connect to the cluster and list the cluster nodes
 ```bash
+az aks get-credentials --resource-group aksdemorg --name aksdemo
 kubectl get nodes
-
-NAME                                STATUS   ROLES   AGE     VERSION
-aks-agentpool-41957417-vmss000000   Ready    agent   31m     v1.24.3
-virtual-node-aci-linux              Ready    agent   4m18s   v1.19.10-vk-azure-aci-v1.4.5-dev
 ```
-The node "virtual-node-aci-linux" indicates that the virtual nodes are configured and running fine within the AKS cluster.
+Output will look like below:
+```bash 
+NAME                                STATUS   ROLES   AGE   VERSION
+aks-agentpool-74340005-vmss000000   Ready    agent   13m   v1.24.6
+virtual-node-aci-linux              Ready    agent   11m   v1.19.10-vk-azure-aci-1.4.8
+```
+The node "virtual-node-aci-linux" in the above output indicates that the virtual nodes are configured and running fine within the AKS cluster.
 
 ## Push container image to Azure Container Registry
 Before deploying the application to the AKS cluster, we need to have it built and uploaded to the Azure Container registry. To keep this excercise simple, we will import a publicly available image to ACR using 'az acr import' command, which will be used as our demo app. Alternatively, you can build your custom application images and push them to ACR using docker commands or CI/CD pipelines.
@@ -220,22 +223,24 @@ kubectl get pods -o wide
 You should be able to see the mounted fileshare by connecting to one of the pods running under the virtual nodes. 
 
 ```bash
-kubectl get pods -o wide
-NAME                              READY   STATUS    RESTARTS   AGE    IP            NODE                                NOMINATED NODE   READINESS GATES
-demoapp-deploy-85889899bc-ls8sc   1/1     Running   0          102m   10.225.0.4    virtual-node-aci-linux              <none>           <none>
-demoapp-deploy-85889899bc-rm6j5   1/1     Running   0          104m   10.224.0.14   aks-agentpool-41957417-vmss000000   <none>           <none>
+$ kubectl get pods -o wide
+
+NAME                              READY   STATUS    RESTARTS   AGE     IP            NODE                                NOMINATED NODE   READINESS GATES
+demoapp-deploy-7544f8b99d-g5kwj   1/1     Running   0          2m21s   10.100.0.26   virtual-node-aci-linux              <none>           <none>
+demoapp-deploy-7544f8b99d-k4w99   1/1     Running   0          13m     10.100.1.28   aks-agentpool-74340005-vmss000000   <none>           <none>
+demoapp-deploy-7544f8b99d-sqkv8   1/1     Running   0          2m21s   10.100.0.29   virtual-node-aci-linux              <none>           <none>
 ```
 
 Create a file with some dummy data in the mounted file share
 
 ```bash
-kubectl exec demoapp-deploy-85889899bc-rm6j5 -- sh -c 'echo "TestData" > /mnt/azure/testfile'
+kubectl exec demoapp-deploy-7544f8b99d-g5kwj -- /bin/sh -c "hostname > /mnt/azure/`hostname`"
 ```
 
 Validate the newly created file from one of the replicas running in the aks vm nodepools. 
 
 ```bash
-kubectl exec demoapp-deploy-85889899bc-rm6j5 -- sh -c 'cat /mnt/azure/testfile'
+kubectl exec demoapp-deploy-85889899bc-rm6j5 -- sh -c 'ls /mnt/azure/'
 
 TestData
 ```
