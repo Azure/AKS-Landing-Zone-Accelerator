@@ -17,9 +17,9 @@ In order to deploy this scenario, you will need the following:
   - Azure Bicep installed (optional)
 
 
-```
-NOTE: This scenario will be focusing on showcasing the capability of using virtual nodes with AKS and for that purpose some of the advanced security configurations like private cluster, Azure policies, ingress controllers etc are skipped here.   
-```
+
+**NOTE**: This scenario will be focusing on showcasing the capability of using virtual nodes with AKS and for that purpose some of the advanced security configurations like private cluster, Azure policies, ingress controllers etc are skipped here. Please refer to the [AKS Accelarator scenarios](https://github.com/Azure/AKS-Landing-Zone-Accelerator/tree/main/Scenarios) for advanced and secure configurations.
+
 
 # Infrastructure Deployment
 ## Create AKS Cluster with Virtual Nodes
