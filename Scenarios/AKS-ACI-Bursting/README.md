@@ -208,7 +208,7 @@ Open a new bash terminal and execute the below command:
 
 ```bash
 kubectl create ns loadtest
-kubectl apply -f deployment/loadtest.yaml -n loadtest
+kubectl apply -f deployment/load_deploy.yaml -n loadtest
 ```
 Once you triggered the load test, use the below command to check the status of the HPA in realtime:
 
