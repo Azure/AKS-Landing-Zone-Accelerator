@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
       - name: demoapp
-        image: nginx
-        #image: <ACR_NAME>.azurecr.io/aci-aks-demo:latest
+        image: <ACR_NAME>.azurecr.io/aci-aks-demo:latest
         resources:
          requests:
            memory: "64Mi"
@@ -25,6 +24,9 @@ spec:
            cpu: "50m"
         ports:
         - containerPort: 80
+        volumeMounts:
+         - name: azure
+           mountPath: /mnt/azure
       tolerations:
       - key: virtual-kubelet.io/provider
         operator: Exists
@@ -40,6 +42,14 @@ spec:
              operator: NotIn
              values:
              - virtual-kubelet
+      volumes:
+       - name: azure
+         csi:
+           driver: file.csi.azure.com
+           readOnly: false
+           volumeAttributes:
+             secretName: azure-secret 
+             shareName: aksshare
 ---
 apiVersion: v1
 kind: Service
@@ -52,17 +62,3 @@ spec:
  - port: 80
  selector:
    app: demoapp
-
----
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
- name: demoapp-hpa
-spec:
- scaleTargetRef:
-   apiVersion: apps/v1
-   kind: Deployment
-   name: demoapp-deploy
- minReplicas: 1
- maxReplicas: 10
- targetCPUUtilizationPercentage: 50
