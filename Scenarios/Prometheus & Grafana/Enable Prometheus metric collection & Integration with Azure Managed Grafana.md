@@ -9,7 +9,6 @@
 
 ## Prerequisites to create Azure Monitor workspace
 
-- You must either have an [Azure Monitor workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview) or [create a new one](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview).
 - The cluster must use [managed identity authentication](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview).
 - The following resource providers must be registered in the subscription of the AKS cluster and the Azure Monitor Workspace.
   - Microsoft.ContainerService
@@ -64,15 +63,6 @@ az aks update --enable-azuremonitormetrics -n <cluster-name> -g <cluster-resourc
 
 ## Grafana integration with Azure Monitor Workspace 
 
-
-You can also refer [Azure Managed Grafana Instance](https://learn.microsoft.com/en-us/azure/managed-grafana/quickstart-managed-grafana-cli) for additional information
-
-This includes the steps that are mentioned below.
-
-1. Create an Azure Managed Grafana instance using the Azure CLI 
-2. Grafana integration with Azure Monitor Workspace
-
-
 > Prerequisites
 - Azure Subscription
 - Minimum required role to create an instance: resource group Contributor.
@@ -93,17 +83,18 @@ Now let’s check if you can access your new Managed Grafana instance. Take note
 
 ![Grafana Dashboard](https://user-images.githubusercontent.com/50182145/215081171-da0d9b79-a3ec-4408-9fad-3eadc2e1a0d5.png)
 
+For more information on this, check out the doc [Create an Azure Managed Grafana instance using the Azure CLI](https://learn.microsoft.com/en-us/azure/managed-grafana/quickstart-managed-grafana-cli)
 
 **Note**  : Azure Managed Grafana does not support connecting with personal Microsoft accounts currently. Please refer for additional information https://learn.microsoft.com/en-us/azure/managed-grafana/quickstart-managed-grafana-cli
 
-2. Grafana integration with Azure Monitor Workspace
+## Grafana integration with Azure Monitor Workspace
 The primary method for visualizing Prometheus metrics is [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview). 
 
-[Connect your Azure Monitor workspace to a Grafana workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview#link-a-grafana-workspace) – To use it as a data source in a Grafana dashboard. You then have access to multiple prebuilt dashboards that use Prometheus metrics and the ability to create any number of custom dashboards.
+Connect Grafana to your Azure monitor workspace by following the instructions in [Connect your Azure Monitor workspace to a Grafana workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview#link-a-grafana-workspace). This will enable you to use prometheus as a data source in a Grafana dashboard. You then have access to multiple prebuilt dashboards that use Prometheus metrics and the ability to create any number of custom dashboards.
 
-> Below is the process to accomplish the same
+> Below are the steps to complete this:
 
-- Open the Azure Monitor workspace menu in the Azure portal.
-- Select your workspace.
-- Click Linked Grafana workspaces.
-- Select a Grafana workspace.
+- Open the Azure Monitor workspace menu in the Azure portal
+- Select your workspace
+- Click "Linked Grafana Workspaces"
+- Select a Grafana workspace
