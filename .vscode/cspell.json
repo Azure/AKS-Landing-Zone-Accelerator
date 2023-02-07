@@ -20,6 +20,7 @@
         "Architecting",
         "Autoscaler",
         "azuread",
+        "azurecr",
         "azuredisk",
         "azurefile",
         "azurekeyvaultsecrets",
