@@ -6,21 +6,21 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
 
 ## Prepare your Jumpbox VM with tools
 
-- Add a rule in the Firewall to allow internet access to the Jumpbox's private IP and your computer's IP. Verify VM's private IP and update if necessary
+* Add a rule in the Firewall to allow internet access to the Jumpbox's private IP and your computer's IP. Verify VM's private IP and update if necessary
 
-  ```bash
-  az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
-  ```
+   ```bash
+   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
+   ```
 
-  ```bash
-  az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 215 --source-addresses '<your vm or computer's ip>'
-  ```
+   ```bash
+   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 215 --source-addresses '<your vm or computer's ip>'
+   ```
 
-- Add a rule in the Firewall to allow internet access to the your VM or computer's IP. Verify VM's private IP and update if necessary
+* Add a rule in the Firewall to allow internet access to the your VM or computer's IP. Verify VM's private IP and update if necessary
 
-  ```bash
-  az network firewall network-rule create --collection-name 'access-VM' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 202 --source-addresses '<your vm or computer's ip>'
-  ```
+   ```bash
+   az network firewall network-rule create --collection-name 'access-VM' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 202 --source-addresses '<your vm or computer's ip>'
+   ```
 
 ## Connecting to the Bastion Host
 
@@ -28,32 +28,32 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
 2. Enter the username and password. If you have used a public key, then select upload private key (corresponding to the public key) to connect.
 3. Once you connect ensure you permit the site to read the content of your clipboard
 
-- Clone it on the jumpbox.
+* Clone it on the jumpbox.
 
-  ```bash
-  git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
-  ```
+   ```bash
+   git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
+   ```
 
-- Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub" folder.
+* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub" folder.
 
-  ```bash
-  cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub
-  chmod +x script.sh
-  sudo ./script.sh
-  ```
+   ```bash
+   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub
+   chmod +x script.sh
+   sudo ./script.sh
+   ```
 
-- Login to Azure
+* Login to Azure
 
-  ```bash
-  TENANTID=<tenant id>
-  az login -t $TENANTID
-  ```
+   ```bash
+   TENANTID=<tenant id>
+   az login -t $TENANTID
+   ```
 
-- Ensure you are connected to the correct subscription
+* Ensure you are connected to the correct subscription
 
-  ```bash
-  az account set --subscription <subscription id>
-  ```
+   ```bash
+   az account set --subscription <subscription id>
+   ```
 
 ## Build Container Images
 
@@ -62,7 +62,7 @@ Clone the required repos to the Dev Jumpbox:
 1. The Ratings API repo
 
 ```bash
-cd ~
+cd ..
 git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
 ```
 
@@ -74,7 +74,7 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 
 Navigate to each of the application code directories, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
 
-_NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below._
+*NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
 
 ```bash
 # enter the name of your ACR below
@@ -96,7 +96,7 @@ sudo az acr login -n $ACRNAME
 
 Push the images into the container registry. Ensure you are logged into the Azure Container Registry, you should show a successful login from the command above.
 
-_NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below._
+*NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
 
 ```bash
 sudo docker push $ACRNAME.azurecr.io/ratings-api:v1
@@ -176,7 +176,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
    - Client ID for the AKS Key Vault Add-on
    - Tenant ID for the subscription.
 
-   _Note: if you are deploying to Azure US Government, you will also need to update the `cloudName` attribute to `AzureUSGovernment`._
+   *Note: if you are deploying to Azure US Government, you will also need to update the `cloudName` attribute to `AzureUSGovernment`.*
 
    > If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
 
@@ -191,7 +191,7 @@ Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folde
 
    Update the **"1-ratings-api-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
 
-   _NOTE: if you deploying to Azure US Government, you need to ensure the image name is suffixed with `.azurecr.us`._
+   *NOTE: if you deploying to Azure US Government, you need to ensure the image name is suffixed with `.azurecr.us`.*
 
    ```bash
       az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp" --file 1-ratings-api-deployment.yaml
@@ -290,7 +290,7 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
 1. Find your application gateway in your landing zone resource group and click on it. By default it should be in the spoke resource group.
 
-2. Click on the _Frontend public IP address_
+2. Click on the *Frontend public IP address*
 
    ![front end public ip address](../media/front-end-pip-link.png)
 
@@ -307,7 +307,7 @@ We are going to use Lets Encrypt and Cert-Manager to provide easy to use certifi
 1. First of all, you will need to install cert-manager into your cluster.
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml"
 
 ```
 
@@ -320,7 +320,7 @@ We will then proceed to test this certificate process with a staging certificate
 Deploy certificateIssuer.yaml
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
 ```
 
 3. Edit the '5-https-ratings-web-ingress.yaml' file with the FQDN of your host that you created earlier on the public IP of the Application Gateway.
@@ -328,14 +328,14 @@ Deploy certificateIssuer.yaml
 Deploy 5-https-ratings-web-ingress.yaml
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
 
 ```
 
 After updating the ingress, A request will be sent to letsEncrypt to provide a 'staging' certificate. This can take a few minutes. You can check on the progress by running the below command. When the status Ready = True. You should be able to browse to the same URL you configured on the PIP of the Application Gateway earlier.
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificate -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl get certificate -n ratingsapp"
 ```
 
 > :warning: Letsencrypt does not always work. If you continue to encounter issues whereby the status isnt changing to Ready = True, skip this step and test the optional http deployment above instead, then move on to the next step.
@@ -343,8 +343,8 @@ After updating the ingress, A request will be sent to letsEncrypt to provide a '
 If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get certificaterequest -n ratingsapp"
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl describe certificaterequest <certificaterequestname> -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl get certificaterequest -n ratingsapp"
+   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl describe certificaterequest <certificaterequestname> -n ratingsapp"
 
 ```
 

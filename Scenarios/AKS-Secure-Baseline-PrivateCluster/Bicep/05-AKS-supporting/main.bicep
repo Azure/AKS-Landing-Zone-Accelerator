@@ -7,16 +7,13 @@ param saPrivateEndpointName string
 param vnetName string
 param subnetName string
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
-param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net' //TODO: what is the US GOV version here?
+param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
 param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.storage}'
 param acrName string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
 param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', utcNow('u'))}'
 param storageAccountName string = 'eslzsa${uniqueString('aks', utcNow('u'))}'
 param storageAccountType string
 param location string = deployment().location
-
-//var acrName = 'eslzacr${uniqueString(rgName, deployment().name)}'
-//var keyvaultName = 'eslz-kv-${uniqueString(rgName, deployment().name)}'
 
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName

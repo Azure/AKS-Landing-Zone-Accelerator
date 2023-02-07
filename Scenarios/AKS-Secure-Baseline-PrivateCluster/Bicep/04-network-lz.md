@@ -2,12 +2,12 @@
 
 The following will be created:
 
-- Resource Group for Landing Zone Networking
-- Spoke Virtual Network and Subnets
-- Peering of Hub and Spoke Networks
-- Private DNS Zones
-- Application Gateway
-- NSGs for AKS subnet and Application Gateway subnet
+* Resource Group for Landing Zone Networking
+* Spoke Virtual Network and Subnets
+* Peering of Hub and Spoke Networks
+* Private DNS Zones
+* Application Gateway
+* NSGs for AKS subnet and Application Gateway subnet
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/04-Network-LZ" folder
 

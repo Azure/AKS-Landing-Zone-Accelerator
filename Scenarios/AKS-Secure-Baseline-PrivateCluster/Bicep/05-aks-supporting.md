@@ -2,11 +2,11 @@
 
 The following will be created:
 
-- Azure Container Registry
-- Azure Key Vault
-- Private Link Endpoints for ACR and Key Vault
-- Related DNS settings for private endpoints
-- A managed identity
+* Azure Container Registry
+* Azure Key Vault
+* Private Link Endpoints for ACR and Key Vault
+* Related DNS settings for private endpoints
+* A managed identity
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-supporting" folder
 
