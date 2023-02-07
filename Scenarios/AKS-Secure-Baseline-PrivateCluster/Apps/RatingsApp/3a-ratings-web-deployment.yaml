@@ -16,10 +16,10 @@ spec:
         image: <acr name>.azurecr.io/ratings-web:v1 # IMPORTANT: update with your own repository
         imagePullPolicy: Always
         ports:
-          - containerPort: 8080 # the application listens to this port
+        - containerPort: 8080 # the application listens to this port
         env:
-          - name: API # the application expects to connect to the API at this endpoint
-            value: http://ratings-api.ratingsapp.svc.cluster.local
+        - name: API # the application expects to connect to the API at this endpoint
+          value: http://ratings-api.ratingsapp.svc.cluster.local
         resources:
           requests: # minimum resources required
             cpu: 250m
