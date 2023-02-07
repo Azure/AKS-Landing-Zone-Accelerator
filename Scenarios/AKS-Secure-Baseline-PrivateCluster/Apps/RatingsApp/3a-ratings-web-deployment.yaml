@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: ratings-web
-        image: <acr name>.azurecr.io/ratings-web:v1 # IMPORTANT: update with your own repository
+        image: <acr name>.azurecr.io/ratings-web:v1 # IMPORTANT: update with your own repository, if using Azure Government, also update change the URI to end with *.us instead of *.io
         imagePullPolicy: Always
         ports:
         - containerPort: 8080 # the application listens to this port
