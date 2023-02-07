@@ -27,7 +27,7 @@ module vnethub 'modules/vnet/vnet.bicep' = {
   params: {
     location: location
     vnetAddressSpace: {
-        addressPrefixes: hubVNETaddPrefixes
+      addressPrefixes: hubVNETaddPrefixes
     }
     vnetName: vnetHubName
     subnets: hubSubnets
@@ -41,7 +41,7 @@ module publicipfw 'modules/vnet/publicip.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'AZFW-PIP'
   params: {
-    availabilityZones:availabilityZones
+    availabilityZones: availabilityZones
     location: location
     publicipName: 'AZFW-PIP'
     publicipproperties: {
