@@ -90,7 +90,7 @@ For more information on this, check out the doc [Create an Azure Managed Grafana
 ## Grafana integration with Azure Monitor Workspace
 The primary method for visualizing Prometheus metrics is [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview). 
 
-Connect Grafana to your Azure monitor workspace by following the instructions in [Connect your Azure Monitor workspace to a Grafana workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview#link-a-grafana-workspace). This will enable you to use prometheus as a data source in a Grafana dashboard. You then have access to multiple prebuilt dashboards that use Prometheus metrics and the ability to create any number of custom dashboards.
+Connect Grafana to your Azure monitor workspace by following the instructions in [Connect your Azure Monitor workspace to a Grafana workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview#link-a-grafana-workspace). You then have access to multiple prebuilt dashboards that use Prometheus metrics and the ability to create any number of custom dashboards.
 
 > Below are the steps to complete this:
 
