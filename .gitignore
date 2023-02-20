@@ -60,3 +60,5 @@ override.tf.json
 *tfplan
 *tfplan.json
 **/tfplan
+
+*.terraform.lock.hcl
