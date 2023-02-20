@@ -1,0 +1,1 @@
+{"Path":"d:\\AKS\\AKS-Landing-Zone-Accelerator\\Scenarios\\AKS-Secure-Baseline-PrivateCluster\\Terraform\\07-AKS-cluster-existing-infra","Version":"2.0","Modules":[{"Key":"aks","Source":"./modules/aks","Dir":"Scenarios\\AKS-Secure-Baseline-PrivateCluster\\Terraform\\07-AKS-cluster-existing-infra\\modules\\aks"}]}

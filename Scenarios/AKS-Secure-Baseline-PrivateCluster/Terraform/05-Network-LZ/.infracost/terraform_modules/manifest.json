@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"appgw_nsgs","Source":"./modules/app_gw_nsg","Dir":"modules\\app_gw_nsg"},{"Key":"appgw","Source":"./modules/app_gw","Dir":"modules\\app_gw"}]}

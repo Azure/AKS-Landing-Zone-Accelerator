@@ -52,3 +52,7 @@ override.tf.json
 *.vs
 
 !.vscode/cspell.json #workspace spelling should be source controlled
+
+# Ignore any .tfvars files that are generated automatically for each Terraform run
+*.tfvars
+*.tfvars.json

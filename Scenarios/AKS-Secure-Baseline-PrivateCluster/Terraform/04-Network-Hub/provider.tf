@@ -4,7 +4,6 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "= 3.9.0"
     }
-
   }
 
   backend "azurerm" {
@@ -13,7 +12,6 @@ terraform {
     # container_name       = ""   # Partial configuration, provided during "terraform init"
     key = "hub-net"
   }
-
 }
 
 provider "azurerm" {
@@ -21,4 +19,3 @@ provider "azurerm" {
   disable_terraform_partner_id = false
   partner_id                   = "a30e584d-e662-44ee-9f11-ae84db89a0f0"
 }
-

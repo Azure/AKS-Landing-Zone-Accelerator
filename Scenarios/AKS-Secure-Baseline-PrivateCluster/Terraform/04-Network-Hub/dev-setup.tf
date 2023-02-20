@@ -18,7 +18,6 @@ resource "azurerm_network_security_group" "dev-nsg" {
   name                = "${azurerm_virtual_network.vnet.name}-${azurerm_subnet.dev.name}-nsg"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-
 }
 
 resource "azurerm_subnet_network_security_group_association" "subnet" {
@@ -38,7 +37,6 @@ module "create_linuxsserver" {
   server_name         = "server-dev-linux"
   admin_username      = var.admin_username
   admin_password      = var.admin_password
-
 }
 
 #######################
@@ -46,7 +44,7 @@ module "create_linuxsserver" {
 #######################
 
 variable "admin_password" {
-  default = "changeme"
+  default = "@Aa123456789"
 }
 
 variable "admin_username" {
