@@ -57,4 +57,5 @@ override.tf.json
 *.tfvars
 *.tfvars.json
 
+tfplan
 **/tfplan
