@@ -71,4 +71,5 @@ override.tf.json
 **/.terraform.tfstate.lock.info
 **/*.lock.hcl
 
+.infracost
 **/.infracost
