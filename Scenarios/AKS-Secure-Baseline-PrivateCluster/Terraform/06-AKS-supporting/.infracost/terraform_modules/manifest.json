@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"create_acr","Source":"./modules/acr-private","Dir":"modules\\acr-private"},{"Key":"create_kv","Source":"./modules/kv-private","Dir":"modules\\kv-private"}]}

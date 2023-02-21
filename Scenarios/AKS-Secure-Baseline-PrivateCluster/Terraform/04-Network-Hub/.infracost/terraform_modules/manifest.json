@@ -1,1 +1,0 @@
-{"Modules":[{"Key":"bastion","Source":"./modules/bastion","Dir":"modules\\bastion"},{"Key":"create_linuxsserver","Source":"./modules/compute-linux","Dir":"modules\\compute-linux"},{"Key":"firewall_rules_aks","Source":"./modules/aks-fw-rules","Dir":"modules\\aks-fw-rules"}]}
