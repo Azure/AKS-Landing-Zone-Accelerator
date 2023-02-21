@@ -1,1 +1,0 @@
-{"Path":"d:\\AKS\\AKS-Landing-Zone-Accelerator\\Scenarios\\Backup-Restore\\velero_terraform_sample","Version":"2.0","Modules":[{"Key":"velero","Source":"./modules/velero","Dir":"Scenarios\\Backup-Restore\\velero_terraform_sample\\modules\\velero"},{"Key":"veleroaksdr","Source":"./modules/velero","Dir":"Scenarios\\Backup-Restore\\velero_terraform_sample\\modules\\velero"}]}
