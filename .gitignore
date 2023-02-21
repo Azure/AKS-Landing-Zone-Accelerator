@@ -54,11 +54,21 @@ override.tf.json
 !.vscode/cspell.json #workspace spelling should be source controlled
 
 # Ignore any .tfvars files that are generated automatically for each Terraform run
-*.tfvars
-*.tfvars.json
+**/*.tfvars
+**/*.tfvars.json
 
-*tfplan
 *tfplan.json
+**/tfplan.json
+*tfplan
 **/tfplan
 
-*.terraform.lock.hcl
+**/.terraform
+**/*.tfstate
+**/*.tfplan
+.DS_Store
+**/terraform.tfstate.d
+**/terraform.tfstate.backup
+**/.terraform.tfstate.lock.info
+**/*.lock.hcl
+
+**/.infracost
