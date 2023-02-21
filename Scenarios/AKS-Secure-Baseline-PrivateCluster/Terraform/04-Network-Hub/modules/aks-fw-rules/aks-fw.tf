@@ -78,6 +78,3 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
 variable "resource_group_name" {}
 
 variable "location" {}
-
-
-
