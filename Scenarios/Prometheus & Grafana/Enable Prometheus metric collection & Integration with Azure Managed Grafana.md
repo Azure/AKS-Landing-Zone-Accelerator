@@ -19,7 +19,7 @@
 - Azure CLI version 2.41.0 or higher is required for this feature. Aks-preview version 0.5.122 or higher is required for this feature. You can check the aks-preview version using the az version command.
 
 
-> Important : Azure Monitor managed service for Prometheus is intended for storing information about service health of customer machines and applications. It is not intended for storing any data classified as Personal Identifiable Information (PII) or End User Identifiable Information (EUII). We strongly recommend that you do not send any sensitive information (usernames, credit card numbers etc.) into Azure Monitor managed service for Prometheus fields like metric names, label names, or label values
+> Important : Azure Monitor managed service for Prometheus is intended for storing information about service health of customer machines and applications. It is not intended for storing any data classified as Personal Identifiable Information (PII) or End User Identifiable Information. We strongly recommend that you do not send any sensitive information (usernames, credit card numbers etc.) into Azure Monitor managed service for Prometheus fields like metric names, label names, or label values
 For more details , refer https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/prometheus-metrics-overview
 ## Enable Prometheus metric collection
 
