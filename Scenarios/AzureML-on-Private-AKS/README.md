@@ -10,6 +10,8 @@ At it's core, this pattern provides a prescriptive way to use Azure Marchine Lea
  - Azure Machine Learning Workspace
  - Azure Container Registry
 
+ ![Architectural diagram for the AzureML baseline scenario.](./media/aks-ml-baseline.png)
+
 In the above mentioned scenario the desired outcome is to apply these changes without affecting the applications and/workloads hosted in the AKS cluster.
 This pattern is also at the basis for the mission critical deployment of workloads on AKS, the main difference is that in that scenario, the resiliency and AKS distribution in multiple regions are the main drivers and elements of the solution.
 
