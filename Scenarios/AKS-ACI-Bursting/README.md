@@ -243,7 +243,7 @@ kubectl exec -it demoapp-deploy-b9fbcbfcb-57fq8 -- /bin/sh
 demoapp-deploy-b9fbcbfcb-57fq8
 ```
 
-Validate the newly created file from one of the replicas running in the aks vm nodepools. 
+Validate the newly created file from one of the replicas running on a different node:
 
 ```bash
 kubectl exec -it demoapp-deploy-85889899bc-rm6j5 sh 
