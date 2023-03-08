@@ -198,7 +198,7 @@ The above output shows that the HPA maintains between 1 and 10 replicas of the p
 ## Load Testing
 To test HPA in real-time, let’s increase the load on the cluster and check how HPA responds in managing the resources.
 
-First, let’s check the current status of the deployment:
+First, we need to see the current status of the deployment:
 ```bash
 kubectl get deploy
 ```
