@@ -5,7 +5,7 @@ This example scenario showcases how to rapidly scale up the workload instances i
 AKS Virtual Nodes allows AKS users to make use of the compute capacity of Azure Container Instances (ACI) to spin up additional containers rather than having to bring up additional VM based worker nodes in the cluster. AKS Virtual Nodes helps leverage Azure's serverless container hosting services to extend Kubernetes service using the Virtual Kubelet implementation. This integration requires the AKS cluster to be created with advanced networking - Azure Container Networking Interface (Azure CNI).
 
 This deployable solution contains two parts:
-* Deploying the Infrastructure required for virtual nodes. 
+* Deploying the infrastructure required for virtual nodes. 
 * Deploying the scalable application components to the AKS cluster and testing the scaling to virtual nodes 
 
 In order to deploy this scenario, you will need the following:
