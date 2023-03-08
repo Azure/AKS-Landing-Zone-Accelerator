@@ -256,7 +256,7 @@ You can also view the files in the Azure Fileshare:
 
 ### Stop the load
 
-Stop the load by deleting the loadtest environment.
+Stop the load by deleting the *loadtest* namespace:
 
 ```bash
 kubectl delete ns loadtest
