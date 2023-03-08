@@ -11,7 +11,7 @@ This deployable solution contains two parts:
 In order to deploy this scenario, you will need the following:
 
 - An active [Microsoft Azure](https://azure.microsoft.com/en-us/free "Microsoft Azure") Subscription
-- Azure cloudshell or bash cli with the following installed:
+- Azure Cloud Shell or bash cli with the following installed:
   - [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/overview?view=azure-cli-latest "Azure CLI") installed
   - [Kubernetes CLI (kubectl)](https://kubernetes.io/docs/tasks/tools/install-kubectl/ "Kubernetes CLI (kubectl)") installed
   - Azure Bicep installed (optional)
