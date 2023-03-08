@@ -223,7 +223,7 @@ demoapp-hpa   Deployment/demoapp-deploy   100%/50%   1         10        2      
 You can now see that as the usage went up, the number of pods started scaling up.
 
 
-You should be able to see that the additional pods started getting deployed in the virtal nodes
+You should be able to see that the additional pods started getting deployed in the virtual nodes.
 
 ```bash
 $ kubectl get pods -o wide
