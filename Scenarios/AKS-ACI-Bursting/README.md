@@ -24,7 +24,7 @@ In order to deploy this scenario, you will need the following:
 # Infrastructure Deployment
 ## Create AKS Cluster with Virtual Nodes
 
-Create a new AKS cluster with virtual nodes enabled or enable virtual nodes on an existing AKS cluster by following one of the options below.
+Create a new AKS cluster with virtual nodes enabled or enable virtual nodes on an existing AKS cluster by following one of the options below:
 
 ### Option1 : Create a new AKS cluster with Virtual Nodes enabled
 
