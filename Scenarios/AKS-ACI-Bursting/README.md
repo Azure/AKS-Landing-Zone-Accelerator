@@ -43,7 +43,7 @@ az deployment group create \
 Running above bicep template will create the following new resources/configurations:
 * One VNET with two subnets 
 * One AKS cluster with virtual nodes enabled
-* 1 Container registry
+* One container registry
 * Required RBAC assignments on the VNET and the ACR
 
 
@@ -56,15 +56,15 @@ Existing AKS clusters can be updated to enable virtual nodes. Please make sure t
 # Change the values as needed for your own environment
 az aks enable-addons \
     -g <resource-group> \
-    --name <AKS_Cluster> \
+    --name <aks-cluster> \
     --addons virtual-node \
-    --subnet-name <aciSubnet>
+    --subnet-name <aci-subnet>
 ```
 
 ## Create the Storage Account and fileshare
 In this scenario, we will use an Azure File share as a shared persistent storage consumed by multiple replicas of the application pods.
 
-To create the fileshare, run the following az commands 
+To create the file share, run the following azure cli commands:
 
 ```bash
 # Change the values for these four parameters as needed for your own environment
@@ -104,14 +104,14 @@ NAME                                STATUS   ROLES   AGE   VERSION
 aks-agentpool-74340005-vmss000000   Ready    agent   13m   v1.24.6
 virtual-node-aci-linux              Ready    agent   11m   v1.19.10-vk-azure-aci-1.4.8
 ```
-The node "virtual-node-aci-linux" in the above output indicates that the virtual nodes are configured and running fine within the AKS cluster.
+The node *virtual-node-aci-linux* in the above output indicates that the virtual nodes are configured and running fine within the AKS cluster.
 
 ## Push container image to Azure Container Registry
-Before deploying the application to the AKS cluster, we need to have it built and uploaded to the Azure Container registry. To keep this excercise simple, we will import a publicly available image to ACR using 'az acr import' command, which will be used as our demo app. Alternatively, you can build your custom application images and push them to ACR using docker commands or CI/CD pipelines.
+Before deploying the application to the AKS cluster, we need to have it built and uploaded to the Azure Container registry. To keep this exercise simple, we will import a publicly available image to ACR using 'az acr import' command, which will be used as our demo app. Alternatively, you can build your custom application images and push them to ACR using docker commands or CI/CD pipelines.
 
 ```bash
   az acr import \
-  --name <ACR_NAME> \
+  --name <acr-name> \
   --source docker.io/library/nginx:latest \
   --image aci-aks-demo:latest
 ```
@@ -124,7 +124,7 @@ kubectl create secret generic azure-secret \
 --from-literal=azurestorageaccountname=$AKS_PERS_STORAGE_ACCOUNT_NAME \
 --from-literal=azurestorageaccountkey=$STORAGE_KEY
 ```
-Similarly for pulling the images from container registry, a secret should be created referencing the service principal credentials which has acrpull access on the registry. 
+Similarly for pulling the images from container registry, a secret should be created referencing the service principal credentials which has *AcrPull* access on the registry. 
 
 ```bash
 #!/bin/bash
@@ -146,7 +146,7 @@ echo "Service principal ID: $USER_NAME"
 echo "Service principal password: $PASSWORD"
 ```
 
-Now create a kubernetes secret with the above credentials to access the container regitry
+Now create a kubernetes secret with the above credentials to access the container registry:
 ```bash
 kubectl create secret docker-registry acr-pull-secret \
     --namespace default \
@@ -166,7 +166,7 @@ Deploy the sample application to the AKS cluster using the following command. Ma
 
 kubectl apply -f deployment/demoapp-deploy.yaml
 ```
-The above command deploys 1 replica of the application and creates a service to expose it on port 80. The application pod will have the Azure Fileshare mounted to the /mnt/azure directory. 
+The above command deploys one replica of the application and creates a service to expose it on port 80. The application pod will have the Azure File share mounted to the */mnt/azure* directory. 
 
 Validate the deployment and service by running the following commands:
 ```bash 
@@ -193,10 +193,10 @@ Verify the HPA deployment:
 ```bash
 kubectl get hpa
 ```
-The above output shows that the HPA maintains between 1 and 10 replicas of the pods controlled by the reference deployment and a  target of 50% is the average CPU utilization that the HPA needs to maintain, whereas the target of 0% is the current usage.
+The above output shows that the HPA maintains between 1 and 10 replicas of the pods controlled by the reference deployment and a target of 50% is the average CPU utilization that the HPA needs to maintain, whereas the target of 0% is the current usage.
 
 ## Load Testing
-To test HPA in real-time, let’s increase the load on the cluster and check how HPA responds in managing the resources.
+To test HPA in real-time, we will increase the load on the cluster, and check how HPA responds in managing the resources.
 
 First, we need to see the current status of the deployment:
 ```bash
