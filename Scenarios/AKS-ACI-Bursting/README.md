@@ -42,7 +42,7 @@ az deployment group create \
 ```
 Running above bicep template will create the following new resources/configurations:
 * One VNET with two subnets 
-* 1 AKS cluster with virtual nodes enabled
+* One AKS cluster with virtual nodes enabled
 * 1 Container registry
 * Required RBAC assignments on the VNET and the ACR
 
