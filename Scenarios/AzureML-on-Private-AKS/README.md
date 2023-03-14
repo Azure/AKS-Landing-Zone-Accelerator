@@ -52,5 +52,10 @@ LOCATION=EastUS
 az group create -l $LOCATION -n $RG_NAME
 
 # deploy the solution
-az deployment group create -g az-k8s-blabla-rg  --template-file main.bicep
+az deployment group create -g $RG_NAME --template-file main.bicep
 ```
+
+## After deployment
+
+After the deployment is done, you can use the solution by navigating to the the Azure Portal and open VM through Azure Bastion.
+
