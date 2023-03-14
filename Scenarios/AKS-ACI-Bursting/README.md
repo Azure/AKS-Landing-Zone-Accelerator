@@ -40,7 +40,7 @@ az deployment group create \
   --parameters vnetname='demo-vnet'
   --parameters location='eastus'
 ```
-Executing the above bicep template will create the following new resources/configurations.
+Running above bicep template will create the following new resources/configurations:
 * 1 VNET with 2 subnets 
 * 1 AKS cluster with virtual nodes enabled
 * 1 Container registry
