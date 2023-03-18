@@ -4,11 +4,11 @@ In this walkthrough, we will explore the options of Azure Kubernetes Services (A
 It will demonstrate the setup and use of following AKS platform capabilities:
 
 - The [Kubernetes Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/), adding and removing pods to the existing set of virtual machines as load changes.
-- The [Cluster Autoscaler of an AKS cluster](https://docs.microsoft.com/en-us/azure/aks/cluster-autoscaler), adding and removing virtual machines to scale up the scale set and providing more CPU and memory capacity.
+- The [Cluster Autoscaler of an AKS cluster](https://learn.microsoft.com/azure/aks/cluster-autoscaler), adding and removing virtual machines to scale up the scale set and providing more CPU and memory capacity.
 
-To emulate user load, this tutorial uses [Azure Load Testing](https://docs.microsoft.com/en-us/azure/load-testing/overview-what-is-azure-load-testing).
+To emulate user load, this tutorial uses [Azure Load Testing](https://learn.microsoft.com/azure/load-testing/overview-what-is-azure-load-testing).
 
-##  Walthrough Overview
+##  Walkthrough Overview
 In this walkthrough, you will...
 - create a new AKS cluster using the [AKS Construction Helper](https://azure.github.io/AKS-Construction/).
 - build a new container image hosting an API that creates CPU load by generating random numbers,
@@ -52,12 +52,20 @@ In this walkthrough, you will...
    ![](img/001_rg_resources-deployed.png)
 
    ```bash
-   $ az acr list -g "az-k8s-khim-rg" -o table
+   az acr list -g "az-k8s-khim-rg" -o table
+   ```
+
+   ```output
    NAME                      RESOURCE GROUP    LOCATION    SKU    LOGIN SERVER                         CREATION DATE         ADMIN ENABLED
    ------------------------  ----------------  ----------  -----  -----------------------------------  --------------------  ---------------
    crazk8skhimqwzol4vktwxre  az-k8s-khim-rg    westeurope  Basic  crazk8skhimqwzol4vktwxre.azurecr.io  2022-09-08T11:03:35Z  False
-   
-   $ az aks list -g "az-k8s-khim-rg" -o table
+   ```
+
+   ```bash
+   az aks list -g "az-k8s-khim-rg" -o table
+   ```
+
+   ```output
    Name             Location    ResourceGroup    KubernetesVersion    CurrentKubernetesVersion    ProvisioningState    Fqdn
    ---------------  ----------  ---------------  -------------------  --------------------------  -------------------  -------------------------------------------------
    aks-az-k8s-khim  westeurope  az-k8s-khim-rg   1.23.8               1.23.8                      Succeeded            az-k8s-khim-dns-318a3497.hcp.   westeurope.azmk8s.io
@@ -66,32 +74,35 @@ In this walkthrough, you will...
 1. Check that you have the [`kubectl`](https://kubernetes.io/docs/tasks/tools/#kubectl) available on your machine.
 
    ```bash
-   $ kubectl version
    kubectl version
+   ```
+
+   ```output
    Client Version: version.Info{Major:"1", Minor:"25", GitVersion:"v1.25.0", GitCommit:"a866cbe2e5bbaa01cfd5e969aa3e033f3282a8a2", GitTreeState:"clean", BuildDate:"2022-08-23T17:44:59Z", GoVersion:"go1.19", Compiler:"gc", Platform:"linux/amd64"}
    Kustomize Version: v4.5.7
-   ...
    ```
 
    If `kubectl` is not yet available, install it using Azure CLI:
 
    ```bash
-   $ az aks install-cli
+   az aks install-cli
    ```
 
-1. Log in to your AKS cluster using [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-get-credentials).
+1. Log in to your AKS cluster using [Azure CLI](https://learn.microsoft.com/cli/azure/aks?view=azure-cli-latest#az-aks-get-credentials).
 
    ```bash
-   $ az aks get-credentials \
+   az aks get-credentials \
      --resource-group az-k8s-khim-rg \
      --name aks-az-k8s-khim
-   Merged "aks-az-k8s-khim" as current context
    ```
 
 1. Get the list of nodes of your AKS cluster to check connectivity to your AKS cluster:
 
    ```bash
-   $ kubectl get nodes
+   kubectl get nodes
+   ```
+
+   ```output
    NAME                               STATUS   ROLES   AGE   VERSION
    aks-npsystem-40226941-vmss000000   Ready    agent   23m   v1.23.8
    aks-npuser01-40226941-vmss000000   Ready    agent   23m   v1.23.8
@@ -103,20 +114,23 @@ In this walkthrough, you will...
    This application provides a very simple API to generate some load on your worker nodes.
 
    ```bash
-   $ git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator.git
+   git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator.git
    ```
 
 
 1. Change into directory `Scenarios/Testing-Scalability/dotnet` that hosts the demo application to be used in this walkthrough.
 
    ```bash
-   $ cd AKS-Landing-Zone-Accelerator/Scenarios/Testing-Scalability/dotnet
+   cd AKS-Landing-Zone-Accelerator/Scenarios/Testing-Scalability/dotnet
    ```
 
 1. (optional) If you want to test it, run `dotnet run`...
-   ```bash
-   $ dotnet run
 
+   ```bash
+   dotnet run
+   ```
+
+   ```output
    Welcome to .NET 6.0!
    ---------------------
    SDK Version: 6.0.202
@@ -131,7 +145,10 @@ In this walkthrough, you will...
    and browse to endpoint `https://localhost:7230/RandomNumbers`:
 
    ```bash
-   $ curl -k https://localhost:7230/RandomNumbers
+   curl -k https://localhost:7230/RandomNumbers
+   ```
+
+   ```output
    {"numbersGenerated":10000000,"timeUsed":45.7634}
    ```
 
@@ -191,7 +208,7 @@ In this walkthrough, you will...
 
 ###  Run your first Load Test with Azure Load Testing
 
-1. (For your information only) We will use [Azure Load Testing](https://docs.microsoft.com/en-us/azure/load-testing/overview-what-is-azure-load-testing) in the following steps. This takes a [Apache JMeter](https://jmeter.apache.org/) test plan as input to simulate load on workloads running on the Azure platform. You can use the JMeter GUI (see screenshot) to define a testplan; in this tutorial, we will use a predefined test plan.
+1. (For your information only) We will use [Azure Load Testing](https://learn.microsoft.com/azure/load-testing/overview-what-is-azure-load-testing) in the following steps. This takes a [Apache JMeter](https://jmeter.apache.org/) test plan as input to simulate load on workloads running on the Azure platform. You can use the JMeter GUI (see screenshot) to define a test plan; in this tutorial, we will use a predefined test plan.
 
    ![](img/035_load-test_jmeter.png)
 
@@ -286,7 +303,7 @@ In this walkthrough, you will...
    ...
    ```
 
-   You can also observe _Insights_ of your AKS cluster again to see how new pods immediatly experience high load after creation:
+   You can also observe _Insights_ of your AKS cluster again to see how new pods immediately experience high load after creation:
 
    ![](img/052_load-test-2_container-insights.png)
 
@@ -306,10 +323,15 @@ In this walkthrough, you will...
 1. Increase `maxReplicas` in `randomnumbers-hpa.yaml` with an editor of your choice to 50 and redeploy the pod autoscaler.
 
    ```bash
-   $ grep maxReplicas ./randomnumbers-hpa.yaml
-   maxReplicas: 50
+   grep maxReplicas ./randomnumbers-hpa.yaml
+   ```
 
-   $ kubectl apply -f randomnumbers-hpa.yaml
+   ```output
+   maxReplicas: 50
+   ```
+
+   ```bash
+   kubectl apply -f randomnumbers-hpa.yaml
    ```
 
 1. Create another test in Azure Load Testing with "50 threads, 150 loops" and run it.
@@ -331,7 +353,7 @@ In this walkthrough, you will...
 
    The query is defined as follows...
 
-   ```
+   ```kql
    KubeEvents
    | where TimeGenerated > ago(7d) 
    | where not(isempty(Namespace))
@@ -340,19 +362,19 @@ In this walkthrough, you will...
 
    ...and will reveal messages like:
 
-   ```
+   ```output
    0/2 nodes are available: 1 Insufficient cpu, 1 node(s) had taint {CriticalAddonsOnly: true}, that the pod didn't tolerate.
    ```
    
    The interesting part is `1 Insufficient cpu`, preventing pods from being assigned to the nodes of our `npuser01` node pool. Let us take a closer look at one of these nodes using:
 
    ```bash
-   $ kubectl describe node aks-npuser01-37699233-vmss000000
+   kubectl describe node aks-npuser01-37699233-vmss000000
    ```
 
-   The output reveals that 1870 of 1900 available mili cores have already been allocated. 
+   The output reveals that 1870 of 1900 available millicores have already been allocated. 
 
-   ```
+   ```output
    Allocatable:
    cpu:                1900m
    ...
@@ -363,18 +385,18 @@ In this walkthrough, you will...
    cpu                1830m (96%)   5556m (292%)
    ```
 
-   As each pod requests 75 mili cores (see resource requests in `randomnumbers.yaml`), scheduling another one would exceed the limit of 1900 mili cores available on that node. Therefore, the scheduler considers the pod to be _unschedulable_ and does not proceed with creating the respective containers.
+   As each pod requests 75 millicores (see resource requests in `randomnumbers.yaml`), scheduling another one would exceed the limit of 1900 millicores available on that node. Therefore, the scheduler considers the pod to be _unschedulable_ and does not proceed with creating the respective containers.
 
    Note that looking at the _Nodes_ tab of AKS _Insights_, CPU capacity does _not_ seem to be exhausted (the bars representing the load remain green and do not reach a high percentage). This is because this load represents the actual CPU load rather than the resource requests.
 
-1. We have seen how the Horizontal Pod Autoscaler adds and removes pods as load on our application increases and decreases. It uses the resource requests (in mili cores of CPU capacity and bytes of memory) to decide if a node has sufficient remaining capacity to host another pod. If it has not, scheduling the pod may fail in lack of available resources.
+1. We have seen how the Horizontal Pod Autoscaler adds and removes pods as load on our application increases and decreases. It uses the resource requests (in millicores of CPU capacity and bytes of memory) to decide if a node has sufficient remaining capacity to host another pod. If it has not, scheduling the pod may fail in lack of available resources.
 
 
 ### Enable the cluster autoscaler to add scale up the Virtual Machine Scale Set and add further VMs on demand
 
-1. In the next step, you will enable the [cluster autoscaler](https://learn.microsoft.com/en-us/azure/aks/cluster-autoscaler) for your AKS cluster. It will add nodes to your node pool when pods cannot be scheduled due to resource constraints and will remove nodes from node pools when consolidation of pods allows. 
+1. In the next step, you will enable the [cluster autoscaler](https://learn.microsoft.com/azure/aks/cluster-autoscaler) for your AKS cluster. It will add nodes to your node pool when pods cannot be scheduled due to resource constraints and will remove nodes from node pools when consolidation of pods allows. 
 
-1. Run the following command to change the default cluster autoscaler profile (default values can be found in the [AKS Cluster REST API documentation](https://learn.microsoft.com/en-us/rest/api/aks/managed-clusters/create-or-update?tabs=HTTP#autoscalerprofile)). These parameters enable a rather aggressive scale-down to avoid longer waiting times in this tutorial. Please be mindful when setting these values in your own cluster.
+1. Run the following command to change the default cluster autoscaler profile (default values can be found in the [AKS Cluster REST API documentation](https://learn.microsoft.com/rest/api/aks/managed-clusters/create-or-update?tabs=HTTP#autoscalerprofile)). These parameters enable a rather aggressive scale-down to avoid longer waiting times in this tutorial. Please be mindful when setting these values in your own cluster.
 
    ```bash
    az aks update \
@@ -424,7 +446,7 @@ In this walkthrough, you will...
 
    ![](img/071_load-test-4_node-insights.png)
 
-1. (For information only) Using the `Metrics` balde, you can also configure custom graphs to get insights about the state of your cluster. For example, select the namespace `insights.containers/pods`, metric `podCount` and apply a splitting by `Node` to see the number of pods scheduled on each node. 
+1. (For information only) Using the `Metrics` blade, you can also configure custom graphs to get insights about the state of your cluster. For example, select the namespace `insights.containers/pods`, metric `podCount` and apply a splitting by `Node` to see the number of pods scheduled on each node. 
 
    ![](img/072_load-test-4_pods-per-node.png)
 
@@ -438,7 +460,8 @@ In this walkthrough, you will...
    ![](img/073_load-test-4_test-results.png)
 
 1. After some time, the number of pods and nodes will decrease again. The AKS logs reveal some further information:
-   ```
+
+   ```kql
    AzureDiagnostics
    | where Category == "cluster-autoscaler"
    | project TimeGenerated, attrs_s, log_s, pod_s
@@ -446,7 +469,8 @@ In this walkthrough, you will...
    ```
 
    ...there will be messages like:
-   ```
+
+   ```output
    I0504 09:10:17.929359 1 azure_scale_set.go:755] Calling virtualMachineScaleSetsClient.DeleteInstancesAsync(&[6]) for aks-npuser01-61737176-vmss
    I0504 09:10:17.929205 1 azure_scale_set.go:705] Deleting vmss instances [azure:///subscriptions/ce9d064e-10a7-4b7c-8e8e-561fb2e718dd/resourceGroups/leho-rg-leho-aks-rio6zecikhluy-nodepools/providers/Microsoft.Compute/virtualMachineScaleSets/aks-npuser01-61737176-vmss/virtualMachines/6]
    I0504 09:10:17.928963 1 scale_down.go:1478] All pods removed from aks-npuser01-61737176-vmss000006
@@ -465,23 +489,23 @@ In this walkthrough, you will...
 # Resources
 
 ## AKS Scaling and Monitoring
-[Automatically scale a cluster to meet application demands on Azure Kubernetes Service (AKS)](https://docs.microsoft.com/en-us/azure/aks/cluster-autoscaler)
+[Automatically scale a cluster to meet application demands on Azure Kubernetes Service (AKS)](https://learn.microsoft.com/azure/aks/cluster-autoscaler)
 
 
-[Examine the node and pod health](https://docs.microsoft.com/en-us/azure/architecture/operator-guides/aks/aks-triage-node-health)
+[Examine the node and pod health](https://learn.microsoft.com/azure/architecture/operator-guides/aks/aks-triage-node-health)
 
-[AKS troubleshooting](https://docs.microsoft.com/en-us/azure/aks/troubleshooting)
+[AKS troubleshooting](https://learn.microsoft.com/azure/aks/troubleshooting)
 
-_Resource logs_ in [Monitoring AKS data reference](https://docs.microsoft.com/en-us/azure/aks/monitor-aks-reference#resource-logs)
+_Resource logs_ in [Monitoring AKS data reference](https://learn.microsoft.com/azure/aks/monitor-aks-reference#resource-logs)
 
-[Monitoring Azure Kubernetes Service (AKS) with Azure Monitor](https://docs.microsoft.com/en-us/azure/aks/monitor-aks)
+[Monitoring Azure Kubernetes Service (AKS) with Azure Monitor](https://learn.microsoft.com/azure/aks/monitor-aks)
 [Horizontal Pod Autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)
 
 ## Kubernetes Scaling
 
 [Horizontal Pod Autoscaler Walkthrough](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/)
 
-[How to query logs from Container insights](https://docs.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-log-query#resource-logs)
+[How to query logs from Container insights](https://learn.microsoft.com/azure/azure-monitor/containers/container-insights-log-query#resource-logs)
 
 _Frequently Asked Questions_ (`autoscaler/cluster-autoscaler/FAQ.md`) in [kubernetes/autoscaler](https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md)
 
@@ -491,7 +515,7 @@ _Frequently Asked Questions_ (`autoscaler/cluster-autoscaler/FAQ.md`) in [kubern
 
 ## Azure Load Testing
 
-[Quickstart: Create and run a load test with Azure Load Testing Preview](https://docs.microsoft.com/en-us/azure/load-testing/quickstart-create-and-run-load-test)
+[Quickstart: Create and run a load test with Azure Load Testing Preview](https://learn.microsoft.com/azure/load-testing/quickstart-create-and-run-load-test)
 
 
 # :construction: Todos 

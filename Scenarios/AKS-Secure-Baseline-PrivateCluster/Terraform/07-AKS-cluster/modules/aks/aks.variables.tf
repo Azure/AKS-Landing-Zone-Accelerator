@@ -12,9 +12,9 @@ variable "vnet_subnet_id" {}
 
 variable "mi_aks_cp_id" {}
 
-# variable "mi_aks_kubelet_id" {
-  
-# }
+
+# variable "mi_aks_kubelet_id" {}
+
 
 variable "la_id" {}
 
@@ -24,6 +24,14 @@ variable "gateway_id" {}
 
 variable "private_dns_zone_id" {}
 
+
+variable "network_plugin" {
+  default = "azure"
+}
+
+variable "pod_cidr" {}
+
 variable "k8s_version" {
   description = "Kubernetes version to assign to the AKS Cluster"
 }
+

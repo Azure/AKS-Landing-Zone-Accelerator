@@ -2,10 +2,11 @@
 
 resource "azurerm_kubernetes_cluster" "akscluster" {
   lifecycle {
-   ignore_changes = [
-     default_node_pool[0].node_count
-   ]
+    ignore_changes = [
+      default_node_pool[0].node_count
+    ]
   }
+
 
   name                    = var.prefix
   dns_prefix              = var.prefix
@@ -15,6 +16,7 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   private_cluster_enabled = true
   private_dns_zone_id     = var.private_dns_zone_id
   azure_policy_enabled    = true
+  private_cluster_public_fqdn_enabled = false
 
   ingress_application_gateway {
     gateway_id = var.gateway_id
@@ -34,26 +36,31 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 
   network_profile {
-    network_plugin = "azure"
-    # network_policy = "azure"
-    outbound_type = "userDefinedRouting"
-    dns_service_ip = "192.168.100.10"
-    service_cidr = "192.168.100.0/24"
-    docker_bridge_cidr = "172.17.0.1/16"
+    network_plugin     = var.network_plugin
+    outbound_type      = "userDefinedRouting"
+    dns_service_ip     = "192.168.100.10"
+    service_cidr       = "192.168.100.0/24"
+    docker_bridge_cidr = "172.16.1.1/30"
+    pod_cidr           = var.pod_cidr
+
 
   }
 
   role_based_access_control_enabled = true
 
   azure_active_directory_role_based_access_control {
-      managed            = true
+    managed = true
     //  admin_group_object_ids = talk to Ayo about this one, this arg could reduce code other places possibly 
-      azure_rbac_enabled = true
-    }
+    azure_rbac_enabled = true
+  }
 
   identity {
     type         = "UserAssigned"
     identity_ids = [var.mi_aks_cp_id]
+  }
+
+  key_vault_secrets_provider {
+    secret_rotation_enabled = false
   }
 }
 

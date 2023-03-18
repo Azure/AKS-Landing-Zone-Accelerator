@@ -192,7 +192,7 @@ curl -H "Host: {hostname-app}.{public_domain}" http://{app-gateway-pip}/
 
 ## T1: Green Cluster Deployment
 
-At this stage is required to perfor the following action to deploy the new green cluster in co-existence with the blue one.
+At this stage is required to perform the following action to deploy the new green cluster in co-existence with the blue one.
 
 1. Run the flow mentioned [here](../AKS-Secure-Baseline-PrivateCluster/Terraform/05-network-lz.md) again, with the following configuration in the file "Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\05-Network-LZ\app-gateway.tf"
 

@@ -19,6 +19,7 @@
 # Local .terraform directories
 **/.terraform/*
 .terraform
+**.tfbackend**
 
 # .tfstate files
 *.tfstate
@@ -50,6 +51,4 @@ override.tf.json
 *.hcl
 *.vs
 
-
-.vscode*
-
+!.vscode/cspell.json #workspace spelling should be source controlled
