@@ -46,8 +46,10 @@
         "jumpbox",
         "Jumpstart",
         "keyvault",
+        "Kubelet",
         "Kubenet",
         "letsencrypt",
+        "loadtest",
         "lycheeverse",
         "millicores",
         "MSRC",
@@ -67,6 +69,7 @@
         "stracc",
         "tanzu",
         "templating",
+        
         "tfvars",
         "tfvsars",
         "Todos",
