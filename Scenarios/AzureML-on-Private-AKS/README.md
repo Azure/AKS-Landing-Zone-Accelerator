@@ -2,7 +2,7 @@
 
 This architectural pattern describes how to deploy an AKS cluster to be used by Azure ML. This follows the guiding tenets of the [Azure Well-Architected Framework](https://learn.microsoft.com/azure/architecture/framework/). 
 
-At it's core, this pattern provides a prescriptive way to use Azure Marchine Learning in a private AKS cluster using the following topology:
+At its core, this pattern provides a prescriptive way to use Azure Machine Learning in a private AKS cluster using the following topology:
 
  - An AKS Private Cluster
  - Jumpbox
@@ -12,7 +12,7 @@ At it's core, this pattern provides a prescriptive way to use Azure Marchine Lea
 
  ![Architectural diagram for the AzureML baseline scenario.](./media/aks-ml-baseline.png)
 
-In the above mentioned scenario the desired outcome is to apply these changes without affecting the applications and/workloads hosted in the AKS cluster.
+In the above mentioned scenario the desired outcome is to apply these changes without affecting the applications and workloads hosted in the AKS cluster.
 This pattern is also at the basis for the mission critical deployment of workloads on AKS, the main difference is that in that scenario, the resiliency and AKS distribution in multiple regions are the main drivers and elements of the solution.
 
 For this solution, we will be using the `Machine Learning End-to-End Secure` template available at the [Azure Quickstarts repository](https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.machinelearningservices/machine-learning-end-to-end-secure). This template can be deployed via the Azure Portal, ARM or through Bicep. We will demonstrate how to deploy the solution using Bicep.
