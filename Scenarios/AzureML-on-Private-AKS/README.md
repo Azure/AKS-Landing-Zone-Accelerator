@@ -1,6 +1,6 @@
 # Using Azure ML on a Secure AKS Cluster
 
-This architectural pattern describes how to deployment an AKS cluster to be used by Azure ML. This follows the guiding tenets of the [Azure Well-Architected Framework](https://learn.microsoft.com/azure/architecture/framework/). 
+This architectural pattern describes how to deploy an AKS cluster to be used by Azure ML. This follows the guiding tenets of the [Azure Well-Architected Framework](https://learn.microsoft.com/azure/architecture/framework/). 
 
 At it's core, this pattern provides a prescriptive way to use Azure Marchine Learning in a private AKS cluster using the following topology:
 
