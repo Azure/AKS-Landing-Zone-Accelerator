@@ -14,7 +14,7 @@ locals {
       Boolean flag that enable or disable the deployment of the specific AKS cluster
       aks_turn_on=true
       The kubernetes version to use on the cluster
-      k8s_version="1.23.5"
+      k8s_version="1.25.5"
       Reference Name to the Application gateway that need to be associaated to the AKS Cluster with the AGIC addo-on
       appgw_name="lzappgw-blue"
     },
@@ -33,13 +33,13 @@ locals {
     "aks_blue" = {
       name_prefix = "blue"
       aks_turn_on = true
-      k8s_version = "1.23.5"
+      k8s_version = "1.25.5"
       appgw_name  = "lzappgw-blue"
     },
     "aks_green" = {
       name_prefix = "green"
       aks_turn_on = false
-      k8s_version = "1.23.5"
+      k8s_version = "1.25.5"
       appgw_name  = "lzappgw-green"
     }
   }
@@ -170,7 +170,7 @@ resource "azurerm_role_assignment" "agic_appgw" {
   for_each             = module.aks
   scope                = each.value.appgw_id
   role_definition_name = "Contributor"
-  principal_id         = module.aks.agic_id
+  principal_id         = each.value.agic_id
 }
 
 # Route table to support AKS cluster with kubenet network plugin
@@ -183,7 +183,7 @@ resource "azurerm_route_table" "rt" {
   resource_group_name           = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
   disable_bgp_route_propagation = false
 
-}`
+}
 
 resource "azurerm_subnet_route_table_association" "rt_kubenet_association" {
   count = var.network_plugin == "kubenet" ? 1 : 0
