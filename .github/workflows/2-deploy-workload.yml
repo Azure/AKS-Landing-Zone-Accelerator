@@ -1,0 +1,223 @@
+name: Deploy Sample Application
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+on:
+  workflow_run:
+    workflows: [Deploy Enterprise Landing Zone Hub & Spoke Infrastructure]
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  DEPLOYMENT_LOCATION: eastus
+  SPOKE_RESOURCE_GROUP: ESLZ-SPOKE
+  CLUSTER_NAME: eslzakscluster
+  EMAIL: ${{ secrets.EMAIL }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  SPOKE_VNET_NAME: VNet-SPOKE
+  SPOKE_PRIVATE_ENDPOINT_SUBNET_NAME: servicespe
+  AGENT_POOL_NAME: eslzacragentpool
+  AGENT_POOL_TIER: S2
+  AGENT_POOL_COUNT: 1
+  MONGO_DB_USER: mongouser
+
+jobs:
+  deploy-application:
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: self-hosted
+    name: Deploy Sample App Using GH Runner
+    steps:
+
+      - name: Install K8s Extension
+        uses: Azure/CLI@v1
+        continue-on-error: true
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            az extension add --name k8s-extension
+            az extension update --name k8s-extension
+
+      - name: Install Common Services onto AKS
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            # Login using the Managed Identity of the self-hosted GH runner VM
+            az login --identity
+            
+            az config set extension.use_dynamic_install=yes_without_prompt
+            
+            # Enable OIDC Issuer 
+            az aks update --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --enable-oidc-issuer
+            echo 'oidcIssuerProfile.issuerUrl:' $(az aks show --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --query "oidcIssuerProfile.issuerUrl" -otsv)
+            
+            # Install Kured
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "helm repo add kubereboot https://kubereboot.github.io/charts/ && helm repo update && kubectl create namespace kured && helm install kured kubereboot/kured --namespace kured"
+            
+            # Install Kubecost
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl create namespace kubecost && helm repo add kubecost https://kubecost.github.io/cost-analyzer/ && helm install kubecost kubecost/cost-analyzer --namespace kubecost --set kubecostToken=YWxnaWJib25AbWljcm9zb2Z0LmNvbQ==xm343yadf98"
+
+            # Install Open Service Mesh
+            az aks enable-addons --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --addons open-service-mesh 
+            
+            # Install Let's Encrypt Certificate Manager
+            curl -O -L https://github.com/cert-manager/cert-manager/releases/download/v1.10.1/cert-manager.yaml
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f cert-manager.yaml" --file cert-manager.yaml
+
+      - name: Create Random MongoDB password for this app
+        run: | 
+            echo 'MongoDB_Password='$(uuidgen) >> $GITHUB_ENV
+
+      - name: Find ACR Name
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            az login --identity # Login as the VM's Managed Identity
+            ACR_NAME="$(az acr list --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --query [0].name -o tsv)"
+            echo 'ACR_NAME='$ACR_NAME >> $GITHUB_ENV
+
+      - name: Create Agent Pool
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            subnetId=$(az network vnet subnet show --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --vnet-name ${{ env.SPOKE_VNET_NAME }} --name ${{ env.SPOKE_PRIVATE_ENDPOINT_SUBNET_NAME }} --query id -o tsv)
+            az acr agentpool create --registry ${{ env.ACR_NAME }} --name ${{ env.AGENT_POOL_NAME }} --tier ${{ env.AGENT_POOL_TIER }} --count ${{ env.AGENT_POOL_COUNT }} --subnet-id $subnetId
+
+      - name: Find KeyVault Name
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            KEYVAULT_NAME=$(az keyvault list --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --query [0].name -o tsv)
+            echo 'KEYVAULT_NAME='$KEYVAULT_NAME >> $GITHUB_ENV
+
+      - name: Get the clientId of the azure-keyvault-secrets-provider User Assigned Managed Identity
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+
+            azureKeyvaultSecretsProviderUserAssignedManagedIdentityClientId="$(az aks addon show --name ${{ env.CLUSTER_NAME }} --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} -a azure-keyvault-secrets-provider --query identity.clientId -o tsv)"
+            echo 'azureKeyvaultSecretsProviderUserAssignedManagedIdentityClientId='$azureKeyvaultSecretsProviderUserAssignedManagedIdentityClientId >> $GITHUB_ENV
+            
+      - name: Store MongoDb Connection String in KeyVault
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            az keyvault secret set --name mongodburi --vault-name ${{ env.KEYVAULT_NAME }} --value "mongodb://${{ env.MONGO_DB_USER }}:${{ env.MongoDB_Password }}@ratings-mongodb.ratingsapp:27017/ratingsdb"
+
+      - name: Build and Push web app using the ACR and agent pool
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            az acr build --no-logs --agent-pool ${{ env.AGENT_POOL_NAME }} --image ratings-web:v1 --registry ${{ env.ACR_NAME }} --file Dockerfile https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git#master
+
+      - name: Build and Push api app to ACR using agent pool
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            az acr build --no-logs --agent-pool ${{ env.AGENT_POOL_NAME }} --image ratings-api:v1 --registry ${{ env.ACR_NAME }} --file Dockerfile https://github.com/ivegamsft/mslearn-aks-workshop-ratings-api.git#master
+
+      - name: Delete Agent Pool to save $
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+               az acr agentpool delete -n ${{ env.AGENT_POOL_NAME }} -r ${{ env.ACR_NAME }} --yes
+
+      - name: Checkout YAML
+        uses: actions/checkout@main
+          
+      - name: Edit local copy of YAML for Internal Deployment
+        if: ${{ env.azureKeyvaultSecretsProviderUserAssignedManagedIdentityClientId != '' && env.ACR_NAME != '' && env.KEYVAULT_NAME != '' && env.AZURE_TENANT_ID != '' && env.EMAIL != '' }}
+        run: |
+
+          cd $GITHUB_WORKSPACE/${{ env.AKSESLZ_PATH }}/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp
+          find . -type f -exec sed -i 's/<keyvault>/${{ env.KEYVAULT_NAME }}/g' {} +
+          find . -type f -exec sed -i 's/<client id>/${{ env.azureKeyvaultSecretsProviderUserAssignedManagedIdentityClientId }}/g' {} +
+          find . -type f -exec sed -i 's/<tenant id>/${{ env.AZURE_TENANT_ID }}/g' {} +
+          find . -type f -exec sed -i 's/<acr name>/${{ env.ACR_NAME }}/g' {} +
+          find . -type f -exec sed -i 's/<your e-mail here>/${{ env.EMAIL }}/g' {} +
+
+      - name: Deploy NGINX
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+          
+            az login --identity            
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz' -f internal-ingress.yaml" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/internal-ingress.yaml
+
+      - name: Deploy Web and API App & Expose Internally
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+
+            az login --identity
+            
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl create namespace ratingsapp"
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "helm repo add bitnami https://charts.bitnami.com/bitnami && helm install ratings bitnami/mongodb --namespace ratingsapp --create-namespace --set image.tag=5.0.14-debian-11-r9,auth.username=${{ env.MONGO_DB_USER }},auth.password=${{ env.MongoDB_Password }},auth.database=ratingsdb"
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f api-secret-provider-class.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/api-secret-provider-class.yaml
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/1-ratings-api-deployment.yaml
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/2-ratings-api-service.yaml
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/3a-ratings-web-deployment.yaml
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/4-ratings-web-service.yaml
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f 5b-http-ratings-web-ingress.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/5b-http-ratings-web-ingress.yaml
+   
+      - name: Create Random Public DNS Name for Web app on our Application Gateway
+        run: | 
+
+            echo 'Random_DNS=z'$(uuidgen) | sed 's/-//g' >> $GITHUB_ENV
+
+      - name: Update DNS of our Application Gateway Public IP
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            
+            az network public-ip update --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name APPGW-PIP --dns-name ${{ env.Random_DNS }}
+            APPGW_FQDN=$(az network public-ip show --name APPGW-PIP --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --query dnsSettings.fqdn -o tsv)
+            echo 'APPGW_FQDN='$APPGW_FQDN >> $GITHUB_ENV
+            
+      - name: Edit local copy of YAML for External Deployment
+        if: ${{ env.APPGW_FQDN != '' && env.EMAIL != '' }}
+        run: |
+
+          cd $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp
+          find . -type f -exec sed -i 's/<fqdn>/${{ env.APPGW_FQDN }}/g' {} +
+          find . -type f -exec sed -i 's/<your e-mail here>/${{ env.EMAIL }}/g' {} +
+
+      - name: Deploy Certificate Issuer and Public Ingress using Application Gateway
+        uses: Azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az login --identity
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/certificateIssuer.yaml
+            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/5-https-ratings-web-ingress.yaml
+
+      - name: Log out
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+          
+            # Log out as per best practices for self-hosted runners (https://github.com/Azure/login#az-logout-and-security-hardening)          
+            az logout
+            az cache purge
+            az account clear

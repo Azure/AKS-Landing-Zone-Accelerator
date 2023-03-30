@@ -66,8 +66,7 @@ You will see that this installation of the NGINX ingress controller has failed. 
 To get around this issue, we will need to deploy the ingress controller as an internal ingress controller. To do this, complete the following steps:
 
 1. cd back to /Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps
-2. Edit the internal-ingress.yaml file to include an UNUSED IP Address from your AKS subnet address space. An example would be `10.1.1.120` if you used the defaults to setup the cluster
-3. Run the following command, this time passing in your yaml configuration file stating that the NGINX Ingress resource should be internal.
+2. Run the following command, this time passing in your yaml configuration file stating that the NGINX Ingress resource should be internal.
 
 ```bash
 az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz' -f internal-ingress.yaml" --file internal-ingress.yaml
