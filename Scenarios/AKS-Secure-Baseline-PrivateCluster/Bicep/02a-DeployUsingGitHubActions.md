@@ -71,7 +71,7 @@ Follow these instructions to create a "Classic" PAT: [https://docs.github.com/en
 
 ## Register Resource Providers
 
-There are a number of resouce providers required by the IaC that need to be registered once in your subscription. Run the commands below.
+There are a number of resource providers required by the IaC that need to be registered once in your subscription. Run the commands below.
 
    ```bash
    az feature register --namespace "Microsoft.Network" --name "AzureFirewallBasic"
@@ -108,7 +108,7 @@ There are a number of resouce providers required by the IaC that need to be regi
 * Click on the "Deploy Enterprise Landing Zone Hub & Spoke Infrastructure" Workflow on the left of the screen
 * Click on the `Run workflow` button, accept the default options (leave the checkbox unchecked)
 
-This will trigger the first workflow. There are two - the first deployes the infrastructure and when complete, triggers the second one which will deploy a sample application.
+This will trigger the first workflow. There are two - the first deploys the infrastructure and when complete, triggers the second one which will deploy a sample application.
 
 ## Testing the Sample Application
 
