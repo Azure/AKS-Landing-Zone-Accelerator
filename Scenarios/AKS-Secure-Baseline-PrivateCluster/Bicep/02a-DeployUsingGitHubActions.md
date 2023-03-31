@@ -20,7 +20,9 @@ This will require performing the following tasks:
 
 ## Create AAD Accounts
 
-Use Azure Cloud Shell in the subscription you want to deploy to. From the Cloud Shell, run these commands to create a group in your Azure AD tenant called "AKS Users". Users in this group will have user permissions to the cluster. You will use the value shown for this in a later step.
+Use Azure Cloud Shell and Bash (not PowerShell) to run all the commands below in the subscription you want to deploy to.
+
+From the Cloud Shell, run these commands using Bash to create a group in your Azure AD tenant called "AKS Users". Users in this group will have user permissions to the cluster. You will use the value shown for this in a later step.
 
 ```bash
 az ad group create --display-name "AKS Users" --mail-nickname "AKS-Users"
@@ -30,7 +32,7 @@ echo $AKSUSERACCESSPRINCIPALID
 
 ## Configuring OpenID Connect in Azure
 
-1. Create an Azure AD application Used to deploy the IaC to your Azure Subscription. Make a note of the appId value that is shown by the last step, you will use this value in later steps.
+1. Continue to use Bash in the same Cloud Shell to create an Azure AD application using these commands. This is used to deploy the IaC to your Azure Subscription. Make a note of the appId value that is shown by the last step, you will use this value in later steps.
 
    ```bash
    uniqueAppName=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10 ; echo '')
@@ -65,7 +67,7 @@ echo $AKSUSERACCESSPRINCIPALID
 
 ## Create a Personal Access Token (PAT)
 
-You also need a Personal Access Token (PAT) for your forked repo in GitHub. This PAT is used to create a private self-hosted GitHub runner against this repo, which is in turn used to deploy code to your cluster.
+You also need a Personal Access Token (PAT) for your forked repo in GitHub. This PAT is used to create a private self-hosted GitHub runner within your repo, which is in turn used to deploy code to your cluster. This is required as your cluster is private and so only a _self-hosted_ GitHub Runner will be able to connect to your cluster in order to deploy code to it. 
 
 Follow these instructions to create a "Classic" PAT: [https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token] The scopes need to include the top-level "repo" and "workflow" scopes, and also "read:org" which is under "admin:org". Make a temporary note of the value: it is used in the next section.
 
@@ -102,27 +104,27 @@ There are a number of resource providers required by the IaC that need to be reg
    * `AKSUSERACCESSPRINCIPALID` (run `az ad group show --group "AKS Users" --query id --output tsv` to get this value)
    * `EMAIL` (your email address - used by LetsEncrypt to send notifications.)
 
-## Triggering the GitHub Actions workflow
+## Triggering the "Deploy Enterprise Landing Zone Hub & Spoke Infrastructure" GitHub Actions workflow
 
-* Enable GitHub Actions for your repository by clicking on the "Actions" tab, and clicking on the `I understand my workflows, go ahead and enable them` button.
-* Click on the "Deploy Enterprise Landing Zone Hub & Spoke Infrastructure" Workflow on the left of the screen
+* Enable GitHub Actions for your repository by clicking on the "Actions" tab, and clicking on the `I understand my workflows, go ahead and enable them` button. You might need to Refresh to see them.
+* Click on the `Deploy Enterprise Landing Zone Hub & Spoke Infrastructure` Workflow on the left of the screen (you may need to refresh your Actions in order to see it). Note: Do NOT select the `Deploy Sample Application` Action: this one will be launched _automatically_ and run by your self-hosted GitHub Runner by the first workflow once the first has finished successfully, so does not need to be run manually.
 * Click on the `Run workflow` button, accept the default options (leave the checkbox unchecked)
 
-This will trigger the first workflow. There are two - the first deploys the infrastructure and when complete, triggers the second one which will deploy a sample application.
+This will trigger the `Deploy Enterprise Landing Zone Hub & Spoke Infrastructure` Action. This will deploy the infrastructure and when complete, will trigger the second Action `Deploy Sample Application` which will deploy a sample application using a self-hosted GitHub runner.
 
 ## Testing the Sample Application
 
-The Application Gateway will have been configured for a random DNS name, to which a sample SSL Certificate will have been automatically created to secure the test site. To access your site, first run the command below on a bash shell to get the randomly-generated URL of your site:
+The Application Gateway will have been configured for a random DNS name, to which a sample SSL Certificate will have been automatically created to secure the test site. To access your site, first run the command below using cloud shell and bash to get the randomly-generated URL of your site:
 
    ```bash
    echo 'https://'$(az network public-ip show --name APPGW-PIP --resource-group ESLZ-SPOKE --query dnsSettings.fqdn -o tsv)
    ```
 
-The output of this command will give you the full public URL of your site, for example "https://z910579fa72444b7caeefc4cb439c6ca4.eastus.cloudapp.azure.com". Paste this in to a browser to see your site. You will see warnings indicating that the SSL certificate is not valid, as it is only a test SSL certificate for your domain. You should be able to move past these warnings and view the site via HTTPS in your browser.
+The output of this command will give you the full public URL of your site, for example "https://z910579fa72444b7caeefc4cb439c6ca4.eastus.cloudapp.azure.com". Paste this in to a browser to see your site. You will see warnings indicating that the SSL certificate is not valid, as it is only a test SSL certificate for your randomly-generated domain. You should be able to move past these warnings and view the site running on your secure AKS cluster via HTTPS in your browser.
 
 ## Cleaning Up
 
-Execute the following commands to delete everything created by the GitHub Actions:
+Execute the following commands using Cloud Shell and Bash to delete everything created by the GitHub Actions:
 
    ```bash
    az group delete -n ESLZ-HUB -y
