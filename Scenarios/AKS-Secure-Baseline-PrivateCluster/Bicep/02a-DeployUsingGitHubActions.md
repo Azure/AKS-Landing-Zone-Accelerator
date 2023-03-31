@@ -112,15 +112,25 @@ There are a number of resource providers required by the IaC that need to be reg
 
 This will trigger the `Deploy Enterprise Landing Zone Hub & Spoke Infrastructure` Action. This will deploy the infrastructure and when complete, will trigger the second Action `Deploy Sample Application` which will deploy a sample application using a self-hosted GitHub runner.
 
+## Wait for the GitHub Actions to Complete
+
+* There are two GitHub Actions and they both need to complete before moving to the next step. The second Action is called `Deploy Sample Application`: wait for this to complete.
+* These two Actions usually takes over an hour for both to finish.
+* Once the `Deploy Sample Application` Action has finished, you also need to allow some time for the Sample Application to finish configuring itself. It can take 10 minutes after the `Deploy Sample Application` has finished before the SSL certificate has finished being generated and the test application is ready to recieve traffic. 
+
 ## Testing the Sample Application
 
-The Application Gateway will have been configured for a random DNS name, to which a sample SSL Certificate will have been automatically created to secure the test site. To access your site, first run the command below using cloud shell and bash to get the randomly-generated URL of your site:
+Once the `Deploy Sample Application` GitHub Action has completed running and you have allowed some time for the Sample Application to configure itself as mentioned above then it will be ready to be tested. 
+
+The Application Gateway will have been configured for a random DNS name, to which a sample SSL Certificate will have (eventually) been created to secure the test site. To access your site and test it out, first run the command below using cloud shell and bash to get the randomly-generated secure URL that was automatically created for your site:
 
    ```bash
    echo 'https://'$(az network public-ip show --name APPGW-PIP --resource-group ESLZ-SPOKE --query dnsSettings.fqdn -o tsv)
    ```
 
 The output of this command will give you the full public URL of your site, for example "https://z910579fa72444b7caeefc4cb439c6ca4.eastus.cloudapp.azure.com". Paste this in to a browser to see your site. You will see warnings indicating that the SSL certificate is not valid, as it is only a test SSL certificate for your randomly-generated domain. You should be able to move past these warnings and view the site running on your secure AKS cluster via HTTPS in your browser.
+
+If you see a '502 Bad Gateway' Error then you may need to allow more time for your sample application to automatically configure itself. It can take 10 to 15 minutes or so after the `Deploy Sample Application` GitHub Action has completed running before it is ready so just allow it some extra time and then try again.
 
 ## Cleaning Up
 
