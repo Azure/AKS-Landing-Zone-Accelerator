@@ -116,7 +116,7 @@ This will trigger the `Deploy Enterprise Landing Zone Hub & Spoke Infrastructure
 
 * There are two GitHub Actions and they both need to complete before moving to the next step. The second Action is called `Deploy Sample Application`: wait for this to complete.
 * These two Actions usually takes over an hour for both to finish.
-* Once the `Deploy Sample Application` Action has finished, you also need to allow some time for the Sample Application to finish configuring itself. It can take 10 minutes after the `Deploy Sample Application` has finished before the SSL certificate has finished being generated and the test application is ready to recieve traffic. 
+* Once the `Deploy Sample Application` Action has finished, you also need to allow some time for the Sample Application to finish configuring itself. It can take 10 minutes after the `Deploy Sample Application` has finished before the SSL certificate has finished being generated and the test application is ready to securely receive traffic from the Internet. 
 
 ## Testing the Sample Application
 
