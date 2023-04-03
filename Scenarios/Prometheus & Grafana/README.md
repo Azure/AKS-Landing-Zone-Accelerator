@@ -105,11 +105,11 @@ Connect Grafana to your Azure monitor workspace by following the instructions in
 re Monitor Workspace for Prometheus is a new service (in preview).
 It is not yet supported with ARM template or with Terraform resource.
 
-So, we'll use `azapi` terraform provider to create the Monitor Workspace for Prometheus.
+So, we'll use (`azapi`) terraform provider to create the Monitor Workspace for Prometheus.
 
 And we'll use a `local-exec` to run a command line to configure AKS with Prometheus.
 
-AKS, Grafana and Log Analytics are suported with ARM templates and Terraform.
+AKS, Grafana and Log Analytics are supported with ARM templates and Terraform.
 
 ### Deploying the resources using Terraform
 
