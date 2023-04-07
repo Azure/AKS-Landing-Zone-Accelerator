@@ -89,7 +89,7 @@ For more information on this, check out the documentation on [Create an Azure Ma
 
 ## Connect Grafana and Prometheus managed services
 
-[Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview) provides rich visualization of Prometheus data. It's been designed to work seamlessly with Azure Monitor Managed Service for Prometheus. Connect your managed Grafana instance to your Azure monitor workspace by following the instructions in [Connect your Azure Monitor workspace to a Grafana workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-manage?tabs=azure-portal#link-a-grafana-workspace).
+[Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview) provides rich visualization of Prometheus data. It's designed to work seamlessly with Azure Monitor managed service for Prometheus. Connect your managed Grafana instance to your Azure monitor workspace by following the instructions in [Connect your Azure Monitor workspace to a Grafana workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-manage?tabs=azure-portal#link-a-grafana-workspace).
 
 > Below are the steps to complete this:
 
