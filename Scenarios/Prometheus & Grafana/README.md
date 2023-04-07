@@ -98,4 +98,4 @@ For more information on this, check out the documentation on [Create an Azure Ma
 - Click "Linked Grafana workspaces"
 - Select a Grafana workspace
 
-Once this has been set up, you then have access to multiple prebuilt dashboards for Prometheus metrics and the ability to customize these dashboards and/or create new ones.
+After setting this up, you can access multiple prebuilt dashboards with Prometheus metrics and customize these dashboards and/or create new ones.
