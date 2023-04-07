@@ -79,7 +79,7 @@ az grafana create --name <managed-grafana-resource-name> --resource-group <resou
 
 **Note:** that Azure Managed Grafana workspace is available only in specific regions. Before deployment, please choose an appropriate region.
 
-Now let’s check if you can access your new Managed Grafana instance. Take note of the endpoint URL ending in grafana.azure.com, as displayed in the CLI output. Enter the URL into your browser. You should see the Grafana application homepage if you have the right permission.
+Now let’s check if you can access your new Managed Grafana instance. Take note of the endpoint URL ending in grafana.azure.com, as displayed in the CLI output. Open a browser and navigate to this URL. If you have the right permissions, you will see the the Grafana application homepage.
 
 ![Grafana Dashboard](https://user-images.githubusercontent.com/50182145/215081171-da0d9b79-a3ec-4408-9fad-3eadc2e1a0d5.png)
 
