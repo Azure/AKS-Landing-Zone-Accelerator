@@ -6,19 +6,17 @@
 # Dev Subnet
 # (Additional subnet for Developer Jumpbox)
 resource "azurerm_subnet" "dev" {
-  name                                           = "devSubnet"
-  resource_group_name                            = azurerm_resource_group.rg.name
-  virtual_network_name                           = azurerm_virtual_network.vnet.name
-  address_prefixes                               = ["10.0.4.0/24"]
-  enforce_private_link_endpoint_network_policies = false
-
+  name                                      = "devSubnet"
+  resource_group_name                       = azurerm_resource_group.rg.name
+  virtual_network_name                      = azurerm_virtual_network.vnet.name
+  address_prefixes                          = ["10.0.4.0/24"]
+  private_endpoint_network_policies_enabled = false
 }
 
 resource "azurerm_network_security_group" "dev-nsg" {
   name                = "${azurerm_virtual_network.vnet.name}-${azurerm_subnet.dev.name}-nsg"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-
 }
 
 resource "azurerm_subnet_network_security_group_association" "subnet" {
@@ -35,10 +33,9 @@ module "create_linuxsserver" {
   location            = azurerm_resource_group.rg.location
   vnet_subnet_id      = azurerm_subnet.dev.id
 
-  server_name         = "server-dev-linux"
-  admin_username      = var.admin_username
-  admin_password      = var.admin_password
-
+  server_name    = "server-dev-linux"
+  admin_username = var.admin_username
+  admin_password = var.admin_password
 }
 
 #######################
@@ -46,7 +43,7 @@ module "create_linuxsserver" {
 #######################
 
 variable "admin_password" {
-  default = "changeme"
+  default = "change me"
 }
 
 variable "admin_username" {
