@@ -14,6 +14,6 @@ Customers are using AKS-HCI to run cloud-native workloads, modernize legacy Wind
 
 ## Next
 
-* If you have no hardware, To deploy AKS on Azure Stack HCI in an Azure VM try out our [eval guide](https://docs.microsoft.com/en-us/azure-stack/aks-hci/aks-hci-evaluation-guide)
+* If you have no hardware, To deploy AKS on Azure Stack HCI in an Azure VM try out our [eval guide](https://learn.microsoft.com/en-us/azure-stack/aks-hci/aks-hci-evaluation-guide)
 
 * If you already have a configured cluster. Try out the [Jumpstart guide](https://azurearcjumpstart.io/azure_arc_jumpstart/azure_arc_k8s/aks_stack_hci/aks_hci_powershell/).  The commands described in this scenario should be run on the management computer or in a host server in a cluster

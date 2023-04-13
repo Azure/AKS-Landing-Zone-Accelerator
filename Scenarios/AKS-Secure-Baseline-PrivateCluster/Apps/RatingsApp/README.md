@@ -30,4 +30,4 @@ git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
 git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
 ```
 
-3. This repo, for the application code  - /Enterprise-Scale-for-AKS/Scenarios/Secure-Baseline/Apps/RatingsApp
+3. This repo, for the application code  - /AKS-Landing-Zone-Accelerator/Scenarios/Secure-Baseline/Apps/RatingsApp

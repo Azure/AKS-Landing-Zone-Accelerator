@@ -5,9 +5,8 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "= 3.9.0"
+      version = "= 3.44.1"
     }
-
   }
 
   backend "azurerm" {
@@ -16,7 +15,6 @@ terraform {
     # container_name       = ""   # Partial configuration, provided during "terraform init"
     key                  = "aad"
   }
-
 }
 
 provider "azurerm" {
