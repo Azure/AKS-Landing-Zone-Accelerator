@@ -13,7 +13,6 @@ output "lz_rg_name" {
   value = azurerm_resource_group.spoke-rg.name
 }
 
-
 # Virtual Network
 
 resource "azurerm_virtual_network" "vnet" {
@@ -23,7 +22,6 @@ resource "azurerm_virtual_network" "vnet" {
   address_space       = ["10.1.0.0/16"]
   dns_servers         = null
   tags                = var.tags
-
 }
 
 output "lz_vnet_name" {

@@ -3,11 +3,11 @@
 # "Here be dragons!" <-- Must elaborate
 
 resource "azurerm_subnet" "aks" {
-  name                                           = "aksSubnet"
-  resource_group_name                            = azurerm_resource_group.spoke-rg.name
-  virtual_network_name                           = azurerm_virtual_network.vnet.name
-  address_prefixes                               = ["10.1.16.0/20"]
-  enforce_private_link_endpoint_network_policies = true
+  name                                      = "aksSubnet"
+  resource_group_name                       = azurerm_resource_group.spoke-rg.name
+  virtual_network_name                      = azurerm_virtual_network.vnet.name
+  address_prefixes                          = ["10.1.16.0/20"]
+  private_endpoint_network_policies_enabled = true
 
 }
 
