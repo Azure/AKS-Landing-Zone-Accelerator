@@ -186,5 +186,7 @@ resource "azurerm_subnet_route_table_association" "rt_kubenet_association" {
   count          = var.network_plugin == "kubenet" ? 1 : 0
   subnet_id      = data.terraform_remote_state.existing-lz.outputs.appgw_subnet_id
   route_table_id = azurerm_route_table.rt[count.index].id
-  depends_on     = [azurerm_route_table.rt]
+
+  depends_on = [ azurerm_route_table.rt]
+
 }
