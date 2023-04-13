@@ -14,7 +14,7 @@ locals {
       Boolean flag that enable or disable the deployment of the specific AKS cluster
       aks_turn_on=true
       The kubernetes version to use on the cluster
-      k8s_version="1.23.5"
+      k8s_version="1.25.5"
       Reference Name to the Application gateway that need to be associaated to the AKS Cluster with the AGIC addo-on
       appgw_name="lzappgw-blue"
     },
@@ -179,6 +179,7 @@ resource "azurerm_route_table" "rt" {
   location                      = data.terraform_remote_state.existing-lz.outputs.lz_rg_location
   resource_group_name           = data.terraform_remote_state.existing-lz.outputs.lz_rg_name
   disable_bgp_route_propagation = false
+
 }
 
 resource "azurerm_subnet_route_table_association" "rt_kubenet_association" {
