@@ -3,6 +3,7 @@
 #############
 
 variable "location" {
+  default = "eastus"
 }
 
 variable "tags" {
@@ -13,7 +14,9 @@ variable "tags" {
   }
 }
 
-variable "hub_prefix" {}
+variable "hub_prefix" {
+  default = "escs-hub"
+}
 
 variable "sku_name" {
   default = "AZFW_VNet"

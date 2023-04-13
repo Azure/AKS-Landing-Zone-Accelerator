@@ -18,22 +18,22 @@ resource "azurerm_virtual_network" "vnet" {
 # Firewall Subnet
 # (Additional subnet for Azure Firewall, without NSG as per Firewall requirements)
 resource "azurerm_subnet" "firewall" {
-  name                                           = "AzureFirewallSubnet"
-  resource_group_name                            = azurerm_resource_group.rg.name
-  virtual_network_name                           = azurerm_virtual_network.vnet.name
-  address_prefixes                               = ["10.0.1.0/26"]
-  enforce_private_link_endpoint_network_policies = false
+  name                                      = "AzureFirewallSubnet"
+  resource_group_name                       = azurerm_resource_group.rg.name
+  virtual_network_name                      = azurerm_virtual_network.vnet.name
+  address_prefixes                          = ["10.0.1.0/26"]
+  private_endpoint_network_policies_enabled = false
 
 }
 
 # Gateway Subnet 
 # (Additional subnet for Gateway, without NSG as per requirements)
 resource "azurerm_subnet" "gateway" {
-  name                                           = "GatewaySubnet"
-  resource_group_name                            = azurerm_resource_group.rg.name
-  virtual_network_name                           = azurerm_virtual_network.vnet.name
-  address_prefixes                               = ["10.0.2.0/27"]
-  enforce_private_link_endpoint_network_policies = false
+  name                                      = "GatewaySubnet"
+  resource_group_name                       = azurerm_resource_group.rg.name
+  virtual_network_name                      = azurerm_virtual_network.vnet.name
+  address_prefixes                          = ["10.0.2.0/27"]
+  private_endpoint_network_policies_enabled = false
 
 }
 
