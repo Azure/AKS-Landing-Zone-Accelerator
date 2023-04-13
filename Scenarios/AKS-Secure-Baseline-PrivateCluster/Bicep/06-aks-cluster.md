@@ -94,7 +94,7 @@ keyVaultName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query propertie
 ### Reference: Follow the below steps if you are going with the Azure CNI Networking option
 
 ```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.25.4 -p networkPlugin=azure
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.25.5 -p networkPlugin=azure
 ```
 
 ### Reference: Follow the below steps if you are going with the Kubenet option
