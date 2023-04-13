@@ -1,4 +1,4 @@
-# Before this deployment, ensure that MongoDB has been created using Helm.  
+# Before this deployment, ensure that MongoDB has been created using Helm.
 
 apiVersion: apps/v1
 kind: Deployment
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ratings-api
-        image: <acr name>.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository
+        image: <acr name>.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository, if using Azure Government, also update change the URI to end with *.us instead of *.io
         imagePullPolicy: Always
         volumeMounts:
         - name: secrets-store-inline
@@ -28,7 +28,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mongodburi # secret name in keyvault and secret provider class
-              key:  MONGODBURI # key name in secret provider class
+              key: MONGODBURI # key name in secret provider class
         resources:
           requests: # minimum resources required
             cpu: 250m
@@ -48,9 +48,9 @@ spec:
             port: 3000
             path: /healthz
       volumes:
-        - name: secrets-store-inline
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: "mongo-secret-csi"
+      - name: secrets-store-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "mongo-secret-csi"

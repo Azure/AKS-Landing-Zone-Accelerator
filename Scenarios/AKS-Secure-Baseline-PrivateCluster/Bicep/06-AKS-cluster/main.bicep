@@ -31,6 +31,15 @@ var ipdelimiters = [
 param acrName string //User to provide each time
 param keyvaultName string //user to provide each time
 
+var privateDNSZoneAKSSuffixes = {
+  AzureCloud: '.azmk8s.io'
+  AzureUSGovernment: '.cx.aks.containerservice.azure.us'
+  AzureChinaCloud: '.cx.prod.service.azk8s.cn'
+  AzureGermanCloud: '' //TODO: what is the correct value here?
+}
+
+var privateDNSZoneAKSName = 'privatelink.${toLower(location)}${privateDNSZoneAKSSuffixes[environment().name]}'
+
 module rg 'modules/resource-group/rg.bicep' = {
   name: rgName
   params: {
@@ -54,7 +63,7 @@ module aksPodIdentityRole 'modules/Identity/role.bicep' = {
 }
 
 resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  name: 'privatelink.${toLower(location)}.azmk8s.io'
+  name: privateDNSZoneAKSName
   scope: resourceGroup(rg.name)
 }
 
@@ -87,9 +96,9 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksCluster'
   params: {
-    autoScalingProfile:autoScalingProfile
+    autoScalingProfile: autoScalingProfile
     enableAutoScaling: enableAutoScaling
-    availabilityZones:availabilityZones
+    availabilityZones: availabilityZones
     location: location
     aadGroupdIds: [
       aksadminaccessprincipalId
@@ -101,7 +110,7 @@ module aksCluster 'modules/aks/privateaks.bicep' = {
     privateDNSZoneId: pvtdnsAKSZone.id
     subnetId: aksSubnet.id
     identity: {
-      '${aksIdentity.id}' : {}
+      '${aksIdentity.id}': {}
     }
     appGatewayResourceId: appGateway.id
   }
@@ -151,6 +160,7 @@ module aksPvtDNSContrib 'modules/Identity/pvtdnscontribrole.bicep' = {
     location: location
     principalId: aksIdentity.properties.principalId
     roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
+    pvtdnsAKSZoneName: privateDNSZoneAKSName
   }
 }
 
@@ -213,13 +223,12 @@ module keyvaultAccessPolicy 'modules/keyvault/keyvault.bicep' = {
   }
 }
 
-resource rtAppGW 'Microsoft.Network/routeTables@2021-02-01' existing ={
+resource rtAppGW 'Microsoft.Network/routeTables@2021-02-01' existing = {
   scope: resourceGroup(rgName)
   name: rtAppGWSubnetName
 }
 
-
-module appgwroutetableroutes 'modules/vnet/routetableroutes.bicep' = [for i in range(0,3): if(networkPlugin == 'kubenet'){
+module appgwroutetableroutes 'modules/vnet/routetableroutes.bicep' = [for i in range(0, 3): if (networkPlugin == 'kubenet') {
   scope: resourceGroup(rg.name)
   name: 'aks-vmss-appgw-pod-node-${i}'
   params: {
@@ -227,12 +236,11 @@ module appgwroutetableroutes 'modules/vnet/routetableroutes.bicep' = [for i in r
     routeName: 'aks-vmss-appgw-pod-node-${i}'
     properties: {
       nextHopType: 'VirtualAppliance'
-      nextHopIpAddress: '${split(aksSubnet.properties.addressPrefix, ipdelimiters)[0]}.${split(aksSubnet.properties.addressPrefix, ipdelimiters)[1]}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[2])}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[3])+i+4}'
-      addressPrefix: '${split(akskubenetpodcidr, ipdelimiters)[0]}.${split(akskubenetpodcidr, ipdelimiters)[1]}.${int(split(akskubenetpodcidr, ipdelimiters)[2])+i}.${split(akskubenetpodcidr, ipdelimiters)[3]}/${split(akskubenetpodcidr, ipdelimiters)[4]}'
+      nextHopIpAddress: '${split(aksSubnet.properties.addressPrefix, ipdelimiters)[0]}.${split(aksSubnet.properties.addressPrefix, ipdelimiters)[1]}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[2])}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[3]) + i + 4}'
+      addressPrefix: '${split(akskubenetpodcidr, ipdelimiters)[0]}.${split(akskubenetpodcidr, ipdelimiters)[1]}.${int(split(akskubenetpodcidr, ipdelimiters)[2]) + i}.${split(akskubenetpodcidr, ipdelimiters)[3]}/${split(akskubenetpodcidr, ipdelimiters)[4]}'
     }
   }
 }]
-
 
 //  Telemetry Deployment
 @description('Enable usage and telemetry feedback to Microsoft.')
@@ -250,4 +258,3 @@ resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (
     }
   }
 }
-
