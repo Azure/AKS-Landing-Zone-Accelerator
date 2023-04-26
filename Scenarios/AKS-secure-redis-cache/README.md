@@ -20,5 +20,4 @@
 * Github Actions
 * Bicep
 * Docker
-* Maven
-* Springboot
+* Flask
