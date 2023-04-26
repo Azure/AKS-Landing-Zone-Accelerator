@@ -19,6 +19,7 @@
 # Local .terraform directories
 **/.terraform/*
 .terraform
+**.tfbackend**
 
 # .tfstate files
 *.tfstate
@@ -51,3 +52,24 @@ override.tf.json
 *.vs
 
 !.vscode/cspell.json #workspace spelling should be source controlled
+
+# Ignore any .tfvars files that are generated automatically for each Terraform run
+**/*.tfvars
+**/*.tfvars.json
+
+*tfplan.json
+**/tfplan.json
+*tfplan
+**/tfplan
+
+**/.terraform
+**/*.tfstate
+**/*.tfplan
+.DS_Store
+**/terraform.tfstate.d
+**/terraform.tfstate.backup
+**/.terraform.tfstate.lock.info
+**/*.lock.hcl
+
+.infracost/*
+**/.infracost/*

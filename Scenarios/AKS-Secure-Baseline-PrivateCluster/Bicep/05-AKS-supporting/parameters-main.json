@@ -20,15 +20,6 @@
     "subnetName": {
       "value": "servicespe"
     },
-    "privateDNSZoneACRName": {
-      "value": "privatelink.azurecr.io"
-    },
-    "privateDNSZoneKVName": {
-      "value": "privatelink.vaultcore.azure.net"
-    },
-    "privateDNSZoneSAName": {
-      "value": "privatelink.file.core.windows.net"
-    },
     "storageAccountType": {
       "value": "Standard_GZRS"
     }
