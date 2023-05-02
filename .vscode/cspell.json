@@ -23,6 +23,7 @@
         "appgw",
         "Architecting",
         "Autoscaler",
+        "azapi",
         "azuread",
         "azurecr",
         "azuredisk",
@@ -75,8 +76,7 @@
         "statefulset",
         "stracc",
         "tanzu",
-        "templating",
-        
+        "templating",        
         "tfvars",
         "tfvsars",
         "Todos",
