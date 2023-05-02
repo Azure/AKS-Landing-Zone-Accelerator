@@ -300,6 +300,16 @@ A fully qualified DNS name and a certificate are needed to configure HTTPS suppo
 
    ![creating nds](../media/dns-created.png)
 
+### Add Firewall Rule
+
+We need to allow Let's Encrypt, which we will get running on our cluster in the next step, to be able to call itself via our Application Gateway. Add a rule in the Firewall to permit traffic from the cluster to the Public IP of your Application Gateway using these commands:
+ 
+```bash
+az config set extension.use_dynamic_install=yes_without_prompt
+APPGW_PIP="$(az network public-ip show --resource-group $ClusterRGName --name 'APPGW-PIP' --query '{address: ipAddress}' -o tsv)"
+az network firewall network-rule create --collection-name 'aks-egress-to-application-gateway' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-AppGW' --protocols Tcp --resource-group 'ESLZ-HUB' --action Allow --dest-addr $APPGW_PIP --source-addresses '10.1.1.0/24' --priority 350
+```
+
 ### Create the self-signed certificate using Lets Encrypt
 
 We are going to use Lets Encrypt and Cert-Manager to provide easy to use certificate management for the application within AKS. Cert-Manager will also handle future certificate renewals removing any manual processes.
