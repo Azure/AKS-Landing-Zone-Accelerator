@@ -1,9 +1,10 @@
 param principalId string
 param roleGuid string
 param location string = resourceGroup().location
+param pvtdnsAKSZoneName string
 
 resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  name: 'privatelink.${toLower(location)}.azmk8s.io'
+  name: pvtdnsAKSZoneName
 }
 
 resource role_assignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
