@@ -1,8 +1,9 @@
 param subnetId string
 param location string = resourceGroup().location
+param nicName string = 'jbnic'
 
-resource jbnic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
-  name: 'jbnic'
+resource vmnic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
+  name: nicName
   location: location
   properties: {
     ipConfigurations: [
@@ -19,5 +20,5 @@ resource jbnic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
   }
 }
 
-output nicName string = jbnic.name
-output nicId string = jbnic.id
+output nicName string = vmnic.name
+output nicId string = vmnic.id
