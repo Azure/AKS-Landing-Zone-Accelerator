@@ -11,6 +11,10 @@ SPN issue (Akshay Nimbalkar have more details)
 ### 1. Issue: All cached container images are removed during upgrade.
 **Solution:** No magic solution.
 
+### 2. Issue : insufficient computer (CRP) quota
+
+https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/upgrading-or-scaling-does-not-succeed#cause-1-cluster-is-in-a-failed-state
+
 ## 2. Networking related issues
 
 ### 1. Issue: AKS Subnet is full.
