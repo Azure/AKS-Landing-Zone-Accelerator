@@ -28,3 +28,7 @@ Kubernetes API versions might be deprecated.
 With version 1.25, there is a change in managing C-Groups which results in some Java apps not working as expected. (Aymen Dhaoudi have more details)
 
 ## 4. Applications related issues
+
+### 1. Issue : fail to drain a node due to poddisruptionbudget constraint 
+
+https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/error-code-poddrainfailure
