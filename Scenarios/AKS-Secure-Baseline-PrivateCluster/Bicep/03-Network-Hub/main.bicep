@@ -54,9 +54,31 @@ module publicipfw 'modules/vnet/publicip.bicep' = {
   }
 }
 
+module publicipfwmanagement 'modules/vnet/publicip.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'AZFW-Management-PIP'
+  params: {
+    availabilityZones:availabilityZones
+    location: location
+    publicipName: 'AZFW-Management-PIP'
+    publicipproperties: {
+      publicIPAllocationMethod: 'Static'
+    }
+    publicipsku: {
+      name: 'Standard'
+      tier: 'Regional'
+    }
+  }
+}
+
 resource subnetfw 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
   scope: resourceGroup(rg.name)
   name: '${vnethub.name}/AzureFirewallSubnet'
+}
+
+resource subnetfwmanagement 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
+  scope: resourceGroup(rg.name)
+  name: '${vnethub.name}/AzureFirewallManagementSubnet'
 }
 
 module azfirewall 'modules/vnet/firewall.bicep' = {
@@ -79,6 +101,17 @@ module azfirewall 'modules/vnet/firewall.bicep' = {
         }
       }
     ]
+    fwipManagementConfigurations: {
+      name: 'AZFW-Management-PIP'
+      properties: {
+        subnet: {
+          id: subnetfwmanagement.id
+        }
+        publicIPAddress: {
+          id: publicipfwmanagement.outputs.publicipId
+        }
+      }
+    }
     fwapplicationRuleCollections: fwapplicationRuleCollections
     fwnatRuleCollections: fwnatRuleCollections
     fwnetworkRuleCollections: fwnetworkRuleCollections
