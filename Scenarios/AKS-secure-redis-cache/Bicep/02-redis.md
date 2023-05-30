@@ -1,6 +1,6 @@
-# Deploy Azure Cache for Redis Enteprise using Bicep
+# Deploy Azure Cache for Redis Enterprise using Bicep
 
-This will create a Azure Cache for Redis Enteprise cluster with private endpoint in the subnet of your choice.
+This will create a Azure Cache for Redis Enterprise cluster with private endpoint in the subnet of your choice.
 
 ## Connect to Azure
 

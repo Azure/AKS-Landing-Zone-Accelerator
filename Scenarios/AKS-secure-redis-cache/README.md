@@ -5,10 +5,10 @@
 ## Core architecture components when deploying workload
 
 * Azure
-* Azure Infra (Hub & Spoke Toppology)
+* Azure Infra (Hub & Spoke Topology)
 * Azure Infra (VNet Peering)
 * Azure User Defined Routing (UDR)
-* Azure Application Inisghts
+* Azure Application Insights
 * Azure Log Analytics
 * Azure Application Gateway
 * Azure Fire Wall
