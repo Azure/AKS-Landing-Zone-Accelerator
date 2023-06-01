@@ -28,13 +28,13 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
 * Clone it on the jumpbox.
 
    ```Git bash
-   git clone https://github.com/Azure/aks-baseline-windows
+   git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
    ```
 
-* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "aks-baseline-windows/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/04-Network-Hub" folder.
+* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/04-Network-Hub" folder.
 
    ``` PowerShell
-   cd aks-baseline-windows/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/04-Network-Hub
+   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/04-Network-Hub
    ./Install-Tools.ps1
    ```
 
@@ -61,7 +61,7 @@ Navigate to the [eShop Dockerfile](../eshopLegacyApp/application/eshop.Dockerfil
 $SPOKERG=<resource group name for spoke>
 $ACRNAME=$(az acr show --name <ACR NAME> --resource-group $SPOKERG --query "name" --output tsv)
 
-cd aks-baseline-windows/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/eshopLegacyApp/application
+cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/eshopLegacyApp/application
 
 docker build -t $ACRNAME.azurecr.io/eshopapp:v1 -f eshop.Dockerfile .
 ```

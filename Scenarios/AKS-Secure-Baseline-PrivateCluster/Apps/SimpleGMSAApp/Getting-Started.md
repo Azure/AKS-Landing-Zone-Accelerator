@@ -90,7 +90,7 @@ To verify that the image has been imported:
 
 ## Deploy workload without support for HTTPS
 
-Navigate to "aks-baseline-windows/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/SimpleGMSAAPP/manifests" folder.
+Navigate to "AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/SimpleGMSAAPP/manifests" folder.
 
 1. Create a namespace for your application by running ``` kubectl create namespace simpleapp ``` 
 2. Update the [manifest file](manifests/deployment_sampleapp.yml) for the sample application with your GMSA name (look for **< GMSA Credential Spec Name >** in the manifest) and application container registry name (Look for **< Registry Name >** in the manifest).
