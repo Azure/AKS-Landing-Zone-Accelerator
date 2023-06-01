@@ -1,21 +1,24 @@
 terraform {
+  required_version = "~> 1.4.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "= 3.44.1"
+      version = "~> 3.58.0"
+    }
+    http = {
+      source  = "hashicorp/http"
+      version = ">= 3.3.0"
     }
   }
 
   backend "azurerm" {
-    # resource_group_name  = ""   # Partial configuration, provided during "terraform init"
-    # storage_account_name = ""   # Partial configuration, provided during "terraform init"
-    # container_name       = ""   # Partial configuration, provided during "terraform init"
-    key = "hub-net"
+    resource_group_name  = var.resource_group_name  # Partial configuration, provided during "terraform init"
+    storage_account_name = var.storage_account_name # Partial configuration, provided during "terraform init"
+    container_name       = var.container_name       # Partial configuration, provided during "terraform init"
+    key                  = "hub-net"                # Value set here because multiple state files are used in this example.
   }
 }
 
 provider "azurerm" {
   features {}
-  disable_terraform_partner_id = false
-  partner_id                   = "a30e584d-e662-44ee-9f11-ae84db89a0f0"
 }

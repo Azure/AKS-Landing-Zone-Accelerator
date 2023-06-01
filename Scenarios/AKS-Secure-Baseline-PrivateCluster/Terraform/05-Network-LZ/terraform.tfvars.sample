@@ -1,7 +1,7 @@
 # Update to reflect correct environment
 
-state_sa_name = <storage account name>
+storage_account_name = <storage account name>
 container_name = "akscs"
-access_key = "XXXXX"
+access_key = "<access key gotten from azure portal>"
 lz_prefix = "escs-lz01"
 

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.Configuration.ConfigurationBuilders.Environment</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.Configuration.ConfigurationBuilders.EnvironmentConfigBuilder">
+            <summary>
+            A ConfigurationProvider that retrieves values from environment variables.
+            </summary>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.EnvironmentConfigBuilder.GetValue(System.String)">
+            <summary>
+            Looks up a single 'value' for the given 'key.'
+            </summary>
+            <param name="key">The 'key' to look up in the environment. (Prefix handling is not needed here.)</param>
+            <returns>The value corresponding to the given 'key' or null if no value is found.</returns>
+        </member>
+        <member name="M:Microsoft.Configuration.ConfigurationBuilders.EnvironmentConfigBuilder.GetAllValues(System.String)">
+            <summary>
+            Retrieves all known key/value pairs from the environment where the key begins with with <paramref name="prefix"/>.
+            </summary>
+            <param name="prefix">A prefix string to filter the list of potential keys retrieved from the source.</param>
+            <returns>A collection of key/value pairs.</returns>
+        </member>
+    </members>
+</doc>

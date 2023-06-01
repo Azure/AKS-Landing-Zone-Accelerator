@@ -8,7 +8,7 @@
 # It is referenced in the "identity" block in the azurerm_kubernetes_cluster resource.
 
 resource "azurerm_user_assigned_identity" "mi-aks-cp" {
-  name                = "mi-${var.prefix}-aks-cp"
+  name                = replace(module.CAFResourceNames.names.azurerm_user_assigned_identity, "msi", "aksmsi")
   resource_group_name = var.existing_spoke_vnet_rg_name
   location            = var.existing_spoke_vnet_rg_location
 }
@@ -38,7 +38,7 @@ resource "azurerm_role_assignment" "aks-to-dnszone" {
 # Log Analytics Workspace for Cluster
 
 resource "azurerm_log_analytics_workspace" "aks" {
-  name                = "aks-la-01"
+  name                = replace(module.CAFResourceNames.names.azurerm_log_analytics_workspace, "log", "akslog")
   resource_group_name = var.existing_spoke_vnet_rg_name
   location            = var.existing_spoke_vnet_rg_location
   sku                 = "PerGB2018"
@@ -54,9 +54,10 @@ module "aks" {
     azurerm_role_assignment.aks-to-dnszone
   ]
 
+  caf_basename        = module.CAFResourceNames.names
   resource_group_name = var.existing_spoke_vnet_rg_name
   location            = var.existing_spoke_vnet_rg_location
-  prefix              = "aks-${var.prefix}"
+  dns_prefix          = var.dns_prefix
   vnet_subnet_id      = var.existing_aks_subnet_id
   mi_aks_cp_id        = azurerm_user_assigned_identity.mi-aks-cp.id
   la_id               = azurerm_log_analytics_workspace.aks.id

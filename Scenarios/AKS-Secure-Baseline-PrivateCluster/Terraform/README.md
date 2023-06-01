@@ -1,4 +1,4 @@
-## Steps of Implementation for AKS Construction Set
+## Steps of Implementation for Windows Secure Baseline
 A deployment of AKS-hosted workloads typically experiences a separation of duties and lifecycle management in the area of prerequisites, the host network, the cluster infrastructure, and finally the workload itself. This reference implementation is similar. Also, be aware our primary purpose is to illustrate the topology and decisions of a baseline cluster. We feel a "step-by-step" flow will help you learn the pieces of the solution and give you insight into the relationship between them. Ultimately, lifecycle/SDLC management of your cluster and its dependencies will depend on your situation (team roles, organizational standards, tooling, etc), and must be implemented as appropriate for your needs.
 
 ## Accounting for Separation of Duties 
@@ -10,10 +10,21 @@ The code here is purposely written to avoid loops, complex variables and logic. 
 ## Terraform State Management
 In this example, state is stored in an Azure Storage account that was created out-of-band.  All deployments reference this storage account to either store state or reference variables from other parts of the deployment however you may choose to use other tools for state management, like Terraform Cloud after making the necessary code changes.
 
+<!-- ## Authenticating using a Service Principal with a Client Secret
+Terraform modules in this repo use ARM_* environment variables stored in local shell to allow Terraform providers to authenticate to Azure. Please, set these environment variables with your specific values to allow Terraform to build Azure resources. You can go [here](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/guides/service_principal_client_secret) for further details.
+```
+$ARM_CLIENT_ID =""
+$ARM_CLIENT_SECRET =""
+$ARM_TENANT_ID =""
+$ARM_SUBSCRIPTION_ID =""
+$ARM_ACCESS_KEY =""
+```  -->
+
+
 ## Getting Started 
 This section is organized using folders that match the steps outlined below. Make any necessary adjustments to the variables and settings within that folder to match the needs of your deployment. 
 
-1. Prerequisites: Clone this repo, install Azure CLI, install Terraform
+1. [Prerequisites](./01-prerequisites.md)
 
 2. [Creation of Azure Storage Account for State Management](./02-state-storage.md)
 
@@ -28,15 +39,11 @@ This section is organized using folders that match the steps outlined below. Mak
 7. [Creation of AKS & enabling Addons](./07-aks-cluster.md)
 
 8. [Deploy a Basic Workload](./08-workload.md)
+9. [Create the ingress configuration for GMSA](./09-ingress-config.md)
+10. [Cleanup](./10-cleanup.md)
 
 
 ## Deploying AKS into Existing Infrastructure
 The steps above assume that you will be creating the Hub and Spoke (Landing Zone) Network and supporting components using the code provided, where each step refers to state file information from the previous steps.
 
 To deploy AKS into an existing network, use the [AKS for Existing Cluster](./07-AKS-cluster-existing-infra) folder.  Update the "existing-infra.variables.tf" file to reference the names and resource IDs of the pre-existing infrastructure.
-
-## Deploying blue green AKS clusters
-
-As part of the reference implementation there is also the possibility to use the blue green deployment to cover platform and workloads non distruptive deployments. 
-The basic deployment is not affected, and you can still follow a standard deployment following the [Getting Started](#getting-started).
-The details about the blue green deployment are documented [here](./11-blue-green.md).

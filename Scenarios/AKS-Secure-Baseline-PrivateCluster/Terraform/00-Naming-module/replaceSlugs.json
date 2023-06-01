@@ -1,0 +1,14 @@
+{
+  "azurerm_example_how_to_exclude": {
+    "exclude": true
+  },
+  "azurerm_route": {
+    "slug": "route"
+  },
+  "azurerm_route_table": {
+    "slug": "rt"
+  },
+  "azurerm_monitor_activity_log_alert": {
+    "slug": "mala"
+  }
+}

@@ -68,14 +68,13 @@ resource "azurerm_application_gateway" "agw" {
     backend_http_settings_name = local.http_setting_name
     priority                   = 1 //priority arguement required as of 3.6.0 release. 1 is the highest priority and 20000 is the lowest priority.
   }
-
-  waf_configuration {
-    enabled          = true
-    firewall_mode    = "Detection" # "Prevention" or "Detection"
-    rule_set_type    = "OWASP"     # "OWASP" or "Microsoft_BotManagerRuleSet"
-    rule_set_version = "3.2"
-  }
 }
+
+##########################################################
+## Common Naming Variable
+##########################################################
+
+variable "caf_basename" {}
 
 # Variables
 

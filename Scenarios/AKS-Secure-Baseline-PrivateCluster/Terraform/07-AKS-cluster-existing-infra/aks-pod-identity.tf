@@ -6,7 +6,7 @@
 resource "azurerm_user_assigned_identity" "aks_pod_identity" {
   resource_group_name = var.existing_spoke_vnet_rg_name
   location            = var.existing_spoke_vnet_rg_location
-  name                = "pod-identity-example"
+  name                = replace(module.CAFResourceNames.names.azurerm_user_assigned_identity, "msi", "podmsi")
 }
 
 

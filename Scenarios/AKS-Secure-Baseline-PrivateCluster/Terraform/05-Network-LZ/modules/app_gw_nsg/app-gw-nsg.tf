@@ -81,6 +81,11 @@ resource "azurerm_network_security_rule" "DenyAllInBound" {
 #   network_security_group_name = var.network_security_group_name
 # }
 
+##########################################################
+## Common Naming Variable
+##########################################################
+
+variable "caf_basename" {}
 
 variable "location" {}
 

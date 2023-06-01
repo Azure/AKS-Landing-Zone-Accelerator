@@ -1,37 +1,25 @@
-variable "prefix" {
-  description = "A prefix used for all resources in this example"
-}
+##########################################################
+## Common Naming Variable
+##########################################################
 
-variable "location" {
-  description = "The Azure Region in which all resources in this example should be provisioned"
-}
+variable "caf_basename" {}
+
+variable "location" {}
 
 variable "resource_group_name" {}
 
 variable "vnet_subnet_id" {}
 
+variable "winnp_subnet_id" {}
+
 variable "mi_aks_cp_id" {}
 
-
-# variable "mi_aks_kubelet_id" {}
-
+variable "aks_admin_group" {}
 
 variable "la_id" {}
 
-variable "gateway_name" {}
-
-variable "gateway_id" {}
+variable "spoke_la_id" {}
 
 variable "private_dns_zone_id" {}
 
-
-variable "network_plugin" {
-  default = "azure"
-}
-
-variable "pod_cidr" {}
-
-variable "k8s_version" {
-  description = "Kubernetes version to assign to the AKS Cluster"
-}
-
+variable "dns_prefix" {}

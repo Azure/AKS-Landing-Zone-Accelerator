@@ -1,0 +1,106 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app: "gmsa-win-demo"
+  name: "gmsa-win-demo"
+  namespace: simpleapp
+data:
+  run.ps1: |
+    $ErrorActionPreference = "Stop"
+ 
+    Write-Output "Configuring IIS with authentication."
+ 
+    # Add required Windows features, since they are not installed by default.
+    Install-WindowsFeature "Web-Windows-Auth", "Web-Asp-Net45"
+ 
+    # Create simple ASP.Net page.
+    New-Item -Force -ItemType Directory -Path 'C:\inetpub\wwwroot\app'
+    Set-Content -Path 'C:\inetpub\wwwroot\app\default.aspx' -Value 'Authenticated as <B><%=User.Identity.Name%></B>, Type of Authentication: <B><%=User.Identity.AuthenticationType%></B>'
+ 
+    # Configure IIS with authentication.
+    Import-Module IISAdministration
+    Start-IISCommitDelay
+    (Get-IISConfigSection -SectionPath 'system.webServer/security/authentication/windowsAuthentication').Attributes['enabled'].value = $true
+    (Get-IISConfigSection -SectionPath 'system.webServer/security/authentication/anonymousAuthentication').Attributes['enabled'].value = $false
+    (Get-IISServerManager).Sites[0].Applications[0].VirtualDirectories[0].PhysicalPath = 'C:\inetpub\wwwroot\app'
+    Stop-IISCommitDelay
+ 
+    Write-Output "IIS with authentication is ready."
+ 
+    C:\ServiceMonitor.exe w3svc
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: "gmsa-win-demo"
+  name: gmsa-win-demo
+  namespace: simpleapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "gmsa-win-demo"
+  template:
+    metadata:
+      labels:
+        app: "gmsa-win-demo"
+    spec:
+      serviceAccountName: gmsa
+      nodeSelector:
+        "kubernetes.io/os": windows
+      securityContext:
+        windowsOptions:
+           gmsaCredentialSpecName: < GMSA Credential Spec Name >
+        runAsNonRoot: true
+      containers:
+      - name: iis
+        image: < Registry Name >.azurecr.io/windows/servercore/iis:windowsservercore-ltsc2019
+        imagePullPolicy: IfNotPresent
+        command:
+          - powershell
+        args:
+          - -File
+          - /gmsa-demo/run.ps1
+        volumeMounts:
+           - name: gmsa-win-demo
+             mountPath: /gmsa-demo
+        resources:
+          requests:
+            cpu: 500m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1024Mi
+      volumes:
+        - name: gmsa-win-demo 
+          configMap:
+             defaultMode: 420
+             name: gmsa-win-demo
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: agentpool
+                operator: In
+                values:
+                - winpl
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gmsa-win-demo
+  namespace: simpleapp
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: "< Subnet Name >"
+spec:
+  type: LoadBalancer
+  selector:
+    app: gmsa-win-demo
+  ports:
+  - protocol: TCP
+    port: 80

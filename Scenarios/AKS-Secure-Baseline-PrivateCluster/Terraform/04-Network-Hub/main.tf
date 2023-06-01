@@ -1,3 +1,15 @@
+##############
+# CAF MODULE #
+##############
+
+module "CAFResourceNames" {
+  source      = "../00-Naming-module"
+  workload    = "gsma"
+  environment = "dev"
+  region      = "eus"
+  instance    = "001"
+}
+
 #############
 # RESOURCES #
 #############
@@ -6,7 +18,7 @@
 # ----------------------
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.hub_prefix}-HUB"
+  name     = module.CAFResourceNames.names.azurerm_resource_group
   location = var.location
 }
 

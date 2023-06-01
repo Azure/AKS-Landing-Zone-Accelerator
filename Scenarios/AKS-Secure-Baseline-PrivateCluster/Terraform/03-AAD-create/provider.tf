@@ -2,28 +2,20 @@
 # storage account created out of band for TF statemanagement.
 
 terraform {
+  required_version = "~> 1.4.0"
   required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "= 3.44.1"
-    }
     azuread = {
       source  = "hashicorp/azuread"
-      version = "= 2.34.1"
+      version = "~> 2.39.0"
     }
   }
 
   backend "azurerm" {
-    # resource_group_name  = ""   # Partial configuration, provided during "terraform init"
-    # storage_account_name = ""   # Partial configuration, provided during "terraform init"
-    # container_name       = ""   # Partial configuration, provided during "terraform init"
-    key = "aad"
+    resource_group_name  = var.resource_group_name  #"tfstateashi"   # Partial configuration, provided during "terraform init"
+    storage_account_name = var.storage_account_name #"aksashi001tfsa"   # Partial configuration, provided during "terraform init"
+    container_name       = var.container_name       #"akscs"   # Partial configuration, provided during "terraform init"
+    key                  = "aad"                    # Value set here because multiple state files are used in this example.
   }
-
-}
-
-provider "azurerm" {
-  features {}
 }
 
 provider "azuread" {

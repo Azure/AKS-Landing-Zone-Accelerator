@@ -1,19 +1,26 @@
 terraform {
+  required_version = "~> 1.4.0"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "= 3.44.1"
+      version = "~> 3.58.0"
+    }
+    http = {
+      source  = "hashicorp/http"
+      version = ">= 3.3.0"
     }
     random = {
-      version = ">=3.0"
+      source  = "hashicorp/random"
+      version = ">= 3.5.1"
     }
   }
   backend "azurerm" {
-    # resource_group_name  = ""   # Partial configuration, provided during "terraform init"
-    # storage_account_name = ""   # Partial configuration, provided during "terraform init"
-    # container_name       = ""   # Partial configuration, provided during "terraform init"
-    key                  = "aks-support"
+    resource_group_name  = var.resource_group_name  # Partial configuration, provided during "terraform init"
+    storage_account_name = var.storage_account_name # Partial configuration, provided during "terraform init"
+    container_name       = var.container_name       # Partial configuration, provided during "terraform init"
+    key                  = "aks-sup"
   }
+
 }
 
 provider "azurerm" {
