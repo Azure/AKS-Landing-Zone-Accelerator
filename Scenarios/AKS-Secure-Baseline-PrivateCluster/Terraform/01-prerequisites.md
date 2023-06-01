@@ -14,8 +14,8 @@
 4. [Terraform version 1.4.0 or greater](https://learn.microsoft.com/azure/developer/terraform/get-started-windows-bash?tabs=bash#4-install-terraform-for-windows)
 5. Clone/download this repo locally using a Git Bash terminal, GitHub Desktop app or VSCode.
     ``` Git Bash
-    git clone https://github.com/Azure/aks-baseline-windows.git
-    cd aks-baseline-windows
+    git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator.git
+    cd AKS-Landing-Zone-Accelerator
     ```
 
     [VSCode](https://learn.microsoft.com/azure/developer/javascript/how-to/with-visual-studio-code/clone-github-repository?tabs=create-repo-command-palette%2Cinitialize-repo-activity-bar%2Ccreate-branch-command-palette%2Ccommit-changes-command-palette%2Cpush-command-palette#clone-repository)
