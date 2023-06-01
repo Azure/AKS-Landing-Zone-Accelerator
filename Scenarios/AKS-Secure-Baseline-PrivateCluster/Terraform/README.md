@@ -39,7 +39,7 @@ This section is organized using folders that match the steps outlined below. Mak
 7. [Creation of AKS & enabling Addons](./07-aks-cluster.md)
 
 8. [Deploy a Basic Workload](./08-workload.md)
-9. [Create the ingress configuration for GMSA](./09-ingress-config.md)
+9. [Create the ingress configuration for GMSA (Windows example app)](./09-ingress-config.md)
 10. [Cleanup](./10-cleanup.md)
 
 
