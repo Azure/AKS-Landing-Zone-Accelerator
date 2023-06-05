@@ -1,7 +1,7 @@
 # CAF
 module "CAFResourceNames" {
   source      = "../"
-  workload    = "gsma"
+  workload    = "rate"
   environment = "dev"
   region      = "weu"
   instance    = "001"

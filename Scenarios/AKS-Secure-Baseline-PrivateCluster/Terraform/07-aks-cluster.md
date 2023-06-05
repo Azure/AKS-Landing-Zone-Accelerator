@@ -48,7 +48,7 @@ If you get an error about list of available provider versions, go with the `-upg
 
 ### Try the user nodepool
 
-The reference implementation creates three nodepools: a Linux system nodepool, a Windows nodepool, and a Linux user nodepool. The Linux user nodepool is not actively used in this implementation, but the intended uses for this nodepool include hosting ingress controllers, or any other workload in the cluster that requires a Linux host -- which is common when running Windows clusters.
+The reference implementation creates two nodepools: a Linux system nodepool and a Linux user nodepool.
 
 This example uses AKS command invoke, which creates a temporary pod to invoke a command on the cluster.  This common management command creates a transient pod in the cluster, and that pod requires a Linux node pool to be available.
 

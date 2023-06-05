@@ -46,8 +46,8 @@ resource "azurerm_ip_group" "ipg-lxnp" {
   cidrs = ["10.240.0.0/22"]
 }
 
-resource "azurerm_ip_group" "ipg-winnp" {
-  name                = replace(module.CAFResourceNames.names.azurerm_subnet, "snet", "ipg-win")
+resource "azurerm_ip_group" "ipg-lxunp" {
+  name                = replace(module.CAFResourceNames.names.azurerm_subnet, "snet", "ipg-lxuser")
   location            = var.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -62,7 +62,7 @@ module "firewall_rules_aks" {
   location            = azurerm_resource_group.rg.location
   firewallName        = azurerm_firewall.firewall.name
   lx_ip_group         = azurerm_ip_group.ipg-lxnp.id
-  win_ip_group        = azurerm_ip_group.ipg-winnp.id
+  lxu_ip_group        = azurerm_ip_group.ipg-lxunp.id
 }
 
 

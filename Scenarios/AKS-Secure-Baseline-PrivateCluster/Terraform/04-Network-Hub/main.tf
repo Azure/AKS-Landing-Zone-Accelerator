@@ -4,7 +4,7 @@
 
 module "CAFResourceNames" {
   source      = "../00-Naming-module"
-  workload    = "gsma"
+  workload    = "rate"
   environment = "dev"
   region      = "eus"
   instance    = "001"

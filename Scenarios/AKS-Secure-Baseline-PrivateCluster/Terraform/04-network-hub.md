@@ -25,7 +25,7 @@ admin_username = ""
 location = ""
 ```
 
-### Deploy the hub networking and Windows domain controller
+### Deploy the hub networking and Windows jump server
 
 Using the same PowerShell session from the previous step, update the state file name that will be used for this part of the deployment.
 

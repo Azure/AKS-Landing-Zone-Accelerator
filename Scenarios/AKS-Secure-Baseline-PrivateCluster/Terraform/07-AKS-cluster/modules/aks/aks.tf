@@ -67,29 +67,6 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "windows_node_pool" {
-  name                  = var.caf_basename.aks_node_pool_windows
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.akscluster.id
-  vm_size               = "Standard_DS4_v2"
-  enable_auto_scaling   = true
-  min_count             = 2
-  max_count             = 5
-  mode                  = "User"
-  os_disk_type          = "Ephemeral"
-  os_type               = "Windows"
-  os_sku                = "Windows2019"
-  vnet_subnet_id        = var.winnp_subnet_id
-  zones                 = ["1", "2", "3"]
-  upgrade_settings {
-    max_surge = "33%"
-  }
-  tags = {
-    "nodepool-type" = "user"
-    "env_type"      = "Windows_np"
-    "app"           = "dotnet-apps"
-  }
-}
-
 resource "azurerm_kubernetes_cluster_node_pool" "linux_user_pool" {
   name                  = var.caf_basename.aks_node_pool_linux
   kubernetes_cluster_id = azurerm_kubernetes_cluster.akscluster.id
@@ -100,7 +77,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "linux_user_pool" {
   min_count             = 1
   max_count             = 3
   os_type               = "Linux"
-  vnet_subnet_id        = var.vnet_subnet_id
+  vnet_subnet_id        = var.linnp_subnet_id
   zones                 = ["1", "2", "3"]
   upgrade_settings {
     max_surge = "33%"

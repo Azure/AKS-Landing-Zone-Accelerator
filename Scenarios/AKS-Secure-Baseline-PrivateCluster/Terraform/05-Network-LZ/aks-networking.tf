@@ -19,8 +19,8 @@ resource "azurerm_subnet" "lb" {
 
 }
 
-# Subnet for AKS Windows Nodepool 
-resource "azurerm_subnet" "windowsnp" {
+# Subnet for AKS Linux user Nodepool
+resource "azurerm_subnet" "linuxnp" {
   name                                      = replace(module.CAFResourceNames.names.azurerm_subnet, "snet", "winsnet")
   resource_group_name                       = azurerm_resource_group.spoke-rg.name
   virtual_network_name                      = azurerm_virtual_network.vnet.name
@@ -46,8 +46,8 @@ resource "azurerm_subnet_route_table_association" "rt_association_aks" {
   route_table_id = azurerm_route_table.route_table.id
 }
 
-resource "azurerm_subnet_route_table_association" "rt_association_wnp" {
-  subnet_id      = azurerm_subnet.windowsnp.id
+resource "azurerm_subnet_route_table_association" "rt_association_lnp" {
+  subnet_id      = azurerm_subnet.linuxnp.id
   route_table_id = azurerm_route_table.route_table.id
 }
 
@@ -58,6 +58,6 @@ resource "azurerm_subnet_route_table_association" "rt_association_wnp" {
 output "aks_subnet_id" {
   value = azurerm_subnet.aks.id
 }
-output "aks_windowsnp_subnet_id" {
-  value = azurerm_subnet.windowsnp.id
+output "aks_linuxnp_subnet_id" {
+  value = azurerm_subnet.linuxnp.id
 }

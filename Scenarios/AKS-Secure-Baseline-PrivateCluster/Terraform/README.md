@@ -28,7 +28,9 @@ This section is organized using folders that match the steps outlined below. Mak
 
 2. [Creation of Azure Storage Account for State Management](./02-state-storage.md)
 
-3. [Create or Import Azure Active Directory Groups for AKS Cluster Admins and AKS Cluster Users](./03-aad.md)
+3. Azure Active Directory Groups for AKS Cluster Admins and AKS Cluster Users:<br>
+   a. [Create AAD Groups](./03-aad-create.md)<br>
+   b. [Import AAD Groups](./03-aad-import.md)<br>
 
 4. [Creation of Hub Network & its respective Components](./04-network-hub.md)
  
@@ -39,8 +41,8 @@ This section is organized using folders that match the steps outlined below. Mak
 7. [Creation of AKS & enabling Addons](./07-aks-cluster.md)
 
 8. [Deploy a Basic Workload](./08-workload.md)
-9. [Create the ingress configuration for GMSA (Windows example app)](./09-ingress-config.md)
-10. [Cleanup](./10-cleanup.md)
+   
+9.  [Cleanup](./09-cleanup.md)
 
 
 ## Deploying AKS into Existing Infrastructure

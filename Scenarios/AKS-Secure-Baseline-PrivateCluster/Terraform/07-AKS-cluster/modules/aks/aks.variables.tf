@@ -10,7 +10,7 @@ variable "resource_group_name" {}
 
 variable "vnet_subnet_id" {}
 
-variable "winnp_subnet_id" {}
+variable "linnp_subnet_id" {}
 
 variable "mi_aks_cp_id" {}
 

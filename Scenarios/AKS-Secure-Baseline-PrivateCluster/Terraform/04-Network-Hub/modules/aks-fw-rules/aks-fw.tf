@@ -27,10 +27,10 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
         type = "Https"
         port = 443
       }
-      source_ip_groups      = [var.lx_ip_group, var.win_ip_group]
+      source_ip_groups = [var.lx_ip_group, var.lxu_ip_group]
       destination_fqdn_tags = [
         "AzureKubernetesService"
-        ]
+      ]
     }
   }
 
@@ -44,37 +44,11 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
         type = "Http"
         port = 80
       }
-      source_ip_groups = [var.lx_ip_group]
+      source_ip_groups = [var.lx_ip_group, var.lxu_ip_group]
       destination_fqdns = [
         "security.ubuntu.com",
         "azure.archive.ubuntu.com",
         "changelogs.ubuntu.com"
-      ]
-    }
-  }
-
-    application_rule_collection {
-    name     = "aks_app_win_node_rules"
-    priority = 202
-    action   = "Allow"
-    rule {
-      name = "win_node_pools"
-      protocols {
-        type = "Http"
-        port = 80
-      }
-      protocols {
-        type = "Https"
-        port = 443
-      }
-
-      source_ip_groups = [var.win_ip_group]
-      destination_fqdns = [
-        "onegetcdn.azureedge.net",
-        "go.microsoft.com",
-        "*.mp.microsoft.com",
-        "www.msftconnecttest.com",
-        "ctldl.windowsupdate"
       ]
     }
   }
@@ -89,7 +63,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
         type = "Https"
         port = 443
       }
-      source_ip_groups = [var.lx_ip_group, var.win_ip_group]
+      source_ip_groups = [var.lx_ip_group, var.lxu_ip_group]
       destination_fqdns = [
         "dc.services.visualstudio.com",
         "*.ods.opinsights.azure.com",
@@ -109,7 +83,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
         type = "Https"
         port = 443
       }
-      source_ip_groups = [var.lx_ip_group, var.win_ip_group]
+      source_ip_groups = [var.lx_ip_group, var.lxu_ip_group]
       destination_fqdns = [
         "data.policy.core.windows.net",
         "store.policy.core.windows.net",
@@ -119,15 +93,15 @@ resource "azurerm_firewall_policy_rule_collection_group" "AKS" {
   }
 
   network_rule_collection {
-      name     = "network_rules"
-      priority = 100
-      action   = "Allow"
-      rule {
-       name                  = "net_monitor_containers"
-       protocols             = ["TCP"]
-       source_ip_groups      = [var.lx_ip_group, var.win_ip_group]
-       destination_addresses = ["AzureMonitor"]
-       destination_ports     = ["443"]
+    name     = "network_rules"
+    priority = 100
+    action   = "Allow"
+    rule {
+      name                  = "net_monitor_containers"
+      protocols             = ["TCP"]
+      source_ip_groups      = [var.lx_ip_group, var.lxu_ip_group]
+      destination_addresses = ["AzureMonitor"]
+      destination_ports     = ["443"]
     }
   }
 }
@@ -140,5 +114,5 @@ variable "caf_basename" {}
 variable "resource_group_name" {}
 variable "location" {}
 variable "firewallName" {}
-variable "win_ip_group" {}
 variable "lx_ip_group" {}
+variable "lxu_ip_group" {}

@@ -1,7 +1,5 @@
 
 private_dns_zone_name = "privatelink.eastus.azmk8s.io" ## Replace the "eastus" location if you are deploying to a different location
-# change windows node pool count = true, if you want to deploy windows node pool along with linux system node pool 
-wnp_count = true
 
 access_key = ""
 dns_prefix = "aks-cluster"

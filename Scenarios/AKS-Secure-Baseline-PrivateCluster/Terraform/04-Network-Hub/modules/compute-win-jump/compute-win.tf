@@ -1,4 +1,4 @@
-resource "azurerm_windows_virtual_machine" "computedc" {
+resource "azurerm_windows_virtual_machine" "computejump" {
 
   name                = var.server_name
   location            = var.location

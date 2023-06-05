@@ -24,20 +24,6 @@ resource "azurerm_subnet_network_security_group_association" "subnetdc" {
   network_security_group_id = azurerm_network_security_group.dev-nsg-dc.id
 }
 
-# Domain Controller Server VM
-module "create_windows_DC" {
-  source = "./modules/compute-win-DC"
-
-  caf_basename        = module.CAFResourceNames.names
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  vnet_subnet_id      = azurerm_subnet.devSubnetdc.id
-
-  server_name    = "dc${module.CAFResourceNames.workload}${module.CAFResourceNames.environment}${module.CAFResourceNames.region}${module.CAFResourceNames.instance}"
-  admin_username = var.admin_username
-  admin_password = var.admin_password
-}
-
 # JumpBox Server VM
 module "create_windows_jump" {
   source = "./modules/compute-win-jump"

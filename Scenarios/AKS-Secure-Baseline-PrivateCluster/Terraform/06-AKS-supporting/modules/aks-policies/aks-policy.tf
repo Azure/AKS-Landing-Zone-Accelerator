@@ -12,8 +12,7 @@ resource "azurerm_resource_group_policy_assignment" "aks_lx_workload" {
           "kube-system",
           "gatekeeper-system",
           "azure-arc",
-          "flux-system",
-          "windows-gmsa-webhook-system"
+          "flux-system"
         ]
       },
       "effect": {
@@ -75,9 +74,7 @@ resource "azurerm_resource_group_policy_assignment" "aks_ro_fs" {
           "kube-system",
           "gatekeeper-system",
           "azure-arc",
-          "flux-system",
-          "windows-gmsa-webhook-system",
-          "simpleapp"
+          "flux-system"
         ]
       },
       "excludedContainers": {
@@ -112,8 +109,7 @@ resource "azurerm_resource_group_policy_assignment" "aks_cpu_mem_limit" {
           "kube-system",
           "gatekeeper-system",
           "azure-arc",
-          "flux-system",
-          "windows-gmsa-webhook-system"
+          "flux-system"
         ]
       },
       "effect": {
@@ -130,7 +126,7 @@ resource "azurerm_resource_group_policy_assignment" "aks_containers_allowed" {
   policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/febd0533-8e55-448f-b837-bd0e06f16469"
   location             = "Global"
 
-   parameters = <<PARAMS
+  parameters = <<PARAMS
     {
       "allowedContainerImagesRegex": {
         "value":
@@ -140,8 +136,7 @@ resource "azurerm_resource_group_policy_assignment" "aks_containers_allowed" {
         "value": [
           "kube-system",
           "gatekeeper-system",
-          "azure-arc",
-          "windows-gmsa-webhook-system"
+          "azure-arc"
         ]
       },
       "effect": {
@@ -165,8 +160,7 @@ resource "azurerm_resource_group_policy_assignment" "aks_path_vol" {
           "kube-system",
           "gatekeeper-system",
           "azure-arc",
-          "flux-system",
-          "windows-gmsa-webhook-system"
+          "flux-system"
         ]
       },
       "allowedHostPaths": {
@@ -266,37 +260,5 @@ resource "azurerm_resource_group_policy_assignment" "aks_msi" {
   name                 = "AKS should use managed identities"
   resource_group_id    = var.resource_group_id
   policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/da6e2401-19da-4532-9141-fb8fbde08431"
-  location             = "Global"
-}
-
-#  Built-in 'Kubernetes cluster Windows containers should not overcommit cpu and memory'
-resource "azurerm_resource_group_policy_assignment" "aks_win_overcommit" {
-  name                 = "AKS Windows containers should not overcommit"
-  resource_group_id    = var.resource_group_id
-  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/a2abc456-f0ae-464b-bd3a-07a3cdbd7fb1"
-  location             = "Global"
-}
-
-#  Built-in 'Kubernetes cluster Windows containers should not run as ContainerAdministrator'
-resource "azurerm_resource_group_policy_assignment" "aks_win_runas" {
-  name                 = "AKS Windows containers should not run as ContainerAdministrator"
-  resource_group_id    = var.resource_group_id
-  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/5485eac0-7e8f-4964-998b-a44f4f0c1e75"
-  location             = "Global"
-
-  parameters = <<PARAMS
-    {
-      "effect": {
-        "value": "Deny"
-      }
-    }
-PARAMS
-}
-
-#  Built-in 'Kubernetes cluster Windows containers should only run with approved user and domain user group'
-resource "azurerm_resource_group_policy_assignment" "aks_win_user_allowed" {
-  name                 = "AKS Windows containers approved user and domain user group"
-  resource_group_id    = var.resource_group_id
-  policy_definition_id = "/providers/Microsoft.Authorization/policyDefinitions/5485eac0-7e8f-4964-998b-a44f4f0c1e75"
   location             = "Global"
 }
