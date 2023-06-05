@@ -42,7 +42,9 @@ This section is organized using folders that match the steps outlined below. Mak
 
 8. [Deploy a Basic Workload](./08-workload.md)
    
-9.  [Cleanup](./09-cleanup.md)
+9. [Ingress Configuration](09-ingress-config.md) 
+   
+10. [Cleanup](./10-cleanup.md)
 
 
 ## Deploying AKS into Existing Infrastructure
