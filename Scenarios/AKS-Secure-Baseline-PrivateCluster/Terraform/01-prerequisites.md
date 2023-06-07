@@ -7,7 +7,6 @@
 
         - Contributor role is required at the subscription level to have the ability to create resource groups and perform deployments.
         - User Access Administrator role is required at the subscription level since you'll be performing role assignments to managed identities across various resource groups.
-        - Global Admin on Azure AD Tenant is required for setting up Azure Application Proxy. This setup is done manually. An admin could perform this step for you as it's the last step in the setup after deploying your application. 
     Please follow [these instructions](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal) to create a service principal in Azure. 
 2. PowerShell terminal. This reference reference implementation uses PowerShell for deployment.
 3. Latest [Azure CLI installed](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)

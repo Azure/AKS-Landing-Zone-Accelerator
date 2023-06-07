@@ -26,10 +26,8 @@ For this scenario, we have various IaC technology that you can choose from depen
 * Azure Monitor for Containers
 * Azure Firewall
 * Azure Front Door
-* Azure Application Proxy
 * MongoDB 
 * Helm
-* [Group managed service accounts on Windows deployments](https://learn.microsoft.com/en-us/azure/aks/use-group-managed-service-accounts) (GMSA)
 * [Secret store CSI driver](https://learn.microsoft.com/azure/aks/csi-secrets-store-driver)
 * [Azure RBAC for Kubernetes Authorization](https://learn.microsoft.com/azure/aks/manage-azure-rbac)
 * [Azure Active Directory pod-managed identities](https://learn.microsoft.com/azure/aks/use-azure-ad-pod-identity)
