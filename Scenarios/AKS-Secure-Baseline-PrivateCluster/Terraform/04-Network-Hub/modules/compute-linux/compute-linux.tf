@@ -64,13 +64,13 @@ variable "location" {}
 
 variable "vnet_subnet_id" {}
 variable "os_publisher" {
-  default = "Canonical"
+  default = "canonical"
 }
 variable "os_offer" {
-  default = "UbuntuServer"
+  default = "0001-com-ubuntu-server-focal"
 }
 variable "os_sku" {
-  default = "18.04-LTS"
+  default = "20_04-lts-gen2"
 }
 variable "os_version" {
   default = "latest"
