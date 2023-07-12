@@ -62,28 +62,35 @@ SIGNEDINUSER=$(az ad signed-in-user show --query id --out tsv)
 ```bash
 DEP=$(az deployment group create --name aksenvironmentdeployment -g $RGNAME  --parameters signedinuser=$SIGNEDINUSER api_key=<your openai key>  -f aks.bicep -o json)
 ```
-
+Storage deployment information in environment variables
+```bash
 KVNAME=$(echo $DEP | jq -r '.properties.outputs.kvAppName.value')
 OIDCISSUERURL=$(echo $DEP | jq -r '.properties.outputs.aksOidcIssuerUrl.value')
 AKSCLUSTER=$(echo $DEP | jq -r '.properties.outputs.aksClusterName.value')
 EMBEDINGAPPID=$(echo $DEP | jq -r '.properties.outputs.idsuperappClientId.value')
 TENANTID=$(az account show --query tenantId -o tsv)
 ACRNAME=$(az acr list -g $RGNAME --query [0].name  -o tsv)
+```
 
-cd k8s
+Update manifest files with the environment variables
+```bash
 sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" secret-provider-class.yaml
 sed -i  "s/<kv name>/$KVNAME/" secret-provider-class.yaml
 sed -i  "s/<tenant ID>/$TENANTID/" secret-provider-class.yaml
 
 sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" svc-accounts.yaml
 sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+```
+cd kubernetes
 
-update the env-configmap.yaml file with the correct environment variables
 
-log into the AKS cluster
+Update the env-configmap.yaml file with the correct environment variables
+
+Log into the AKS cluster
 
 ```bash
 az aks get-credentials -g $RGNAME -n aks-embedings-cluster
+kubectl get nodes
 ```
 
 cd to the manifests folder
