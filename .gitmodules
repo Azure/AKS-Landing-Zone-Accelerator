@@ -1,0 +1,3 @@
+[submodule "Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/AKS-Construction"]
+	path = Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/AKS-Construction
+	url = https://github.com/Azure/AKS-Construction

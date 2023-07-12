@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: api-env
+  name: env
+data:
+  AZURE_SEARCH_ADMIN_KEY: ""
+  AZURE_SEARCH_SERVICE_NAME: ""
+  AzureWebJobsStorage: ""
+  BLOB_ACCOUNT_KEY: ""
+  BLOB_ACCOUNT_NAME: "" 
+  BLOB_CONTAINER_NAME: documents
+  CHUNK_OVERLAP: "100"
+  CHUNK_SIZE: "500"
+  CONVERT_ADD_EMBEDDINGS_URL: http://batch/api/BatchStartProcessing
+  FORM_RECOGNIZER_ENDPOINT: https://eastus.api.cognitive.microsoft.com/
+  FORM_RECOGNIZER_KEY: ""
+  NUMBER_OF_EMBEDDINGS_FOR_QNA: "3"
+  OPENAI_API_BASE: ""
+  OPENAI_API_KEY: ""
+  OPENAI_DEPLOYMENT_TYPE: Text
+  OPENAI_EMBEDDINGS_ENGINE: text-embedding-ada-002
+  OPENAI_EMBEDDINGS_ENGINE_DOC: text-embedding-ada-002
+  OPENAI_EMBEDDINGS_ENGINE_QUERY: text-embedding-ada-002
+  OPENAI_ENGINE: text-davinci-003
+  OPENAI_MAX_TOKENS: "-1"
+  OPENAI_TEMPERATURE: "0.7"
+  QUEUE_NAME: doc-processing
+  REDIS_ADDRESS: api
+  REDIS_ARGS: --requirepass redis-stack-password
+  REDIS_PASSWORD: redis-stack-password
+  REDIS_PORT: "6379"
+  TRANSLATE_ENDPOINT: https://api.cognitive.microsofttranslator.com/
+  TRANSLATE_KEY: ""
+  TRANSLATE_REGION: <your region>
+  VECTOR_STORE_TYPE: SomethingElse
+  VNET_DEPLOYMENT: "false"
+
+# a49bec412d404e1e8dcb69a10b67a335

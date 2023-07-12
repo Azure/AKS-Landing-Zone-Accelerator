@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: serversa
+  namespace: default
+  annotations:
+    azure.workload.identity/client-id: 24c906c4-5ef0-49fa-8e6e-a2025f0ac0d9
+    azure.workload.identity/tenant-id: 449fbe1d-9c99-4509-9014-4fd5cf25b014
+  labels:
+    azure.workload.identity/use: "true"
