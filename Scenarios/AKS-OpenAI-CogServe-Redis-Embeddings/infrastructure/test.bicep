@@ -1,7 +1,7 @@
 param location string = resourceGroup().location
 
 resource embeddingapp 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
-  name: 'xxaaaid-embedinging'
+  name: 'aad-embedinging'
   location: location
 }
 

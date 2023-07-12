@@ -36,5 +36,3 @@ data:
   TRANSLATE_REGION: <your region>
   VECTOR_STORE_TYPE: SomethingElse
   VNET_DEPLOYMENT: "false"
-
-# a49bec412d404e1e8dcb69a10b67a335

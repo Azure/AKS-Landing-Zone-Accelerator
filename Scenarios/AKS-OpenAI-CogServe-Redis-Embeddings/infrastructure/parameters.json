@@ -6,7 +6,7 @@
         "value": "aksembeddings"
       },
       "OpenAIName" : {
-        "value": "openai-embedsress-ayo"
+        "value": "<name for your OpenAI service>"
       },
       "OpenAIEngine" : {
         "value": "text-davinci-003"

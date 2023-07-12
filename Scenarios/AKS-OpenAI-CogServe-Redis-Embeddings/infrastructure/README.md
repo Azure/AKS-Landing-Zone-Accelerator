@@ -1,4 +1,4 @@
-switch to the infra rg
+Switch to the infrastruture folder
 
 ```bash
     cd infrastructure
@@ -22,7 +22,7 @@ SIGNEDINUSER=$(az ad signed-in-user show --query id --out tsv)
 ```
 
 ```bash
-DEP=$(az deployment group create --name aksenvironmentdeployment -g $RGNAME  --parameters signedinuser=$SIGNEDINUSER api_key=a49bec412d404e1e8dcb69a10b67a335  -f aks.bicep -o json)
+DEP=$(az deployment group create --name aksenvironmentdeployment -g $RGNAME  --parameters signedinuser=$SIGNEDINUSER api_key=<your openai key>  -f aks.bicep -o json)
 ```
 
 KVNAME=$(echo $DEP | jq -r '.properties.outputs.kvAppName.value')

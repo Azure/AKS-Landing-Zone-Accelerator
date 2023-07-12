@@ -27,10 +27,10 @@ module aksconst 'aks-construction/bicep/main.bicep' = {
     custom_vnet: true
     upgradeChannel: 'stable'
     workloadIdentity: true
+    CreateNetworkSecurityGroups:true
 
     //Workload Identity requires OidcIssuer to be configured on AKS
     oidcIssuer: true
-
     //We'll also enable the CSI driver for Key Vault
     keyVaultAksCSI: true
   }
@@ -81,18 +81,3 @@ module kvSuperappRbac 'kvRbac.bicep' = {
     openaiSecret: api_key
   }
 }
-
-// az identity federated-credential show --name embeddingsy --identity-name id-embeding --resource-group $RGNAME
-
-// @description('Uses helm to install Workload Identity. This could be done via an AKS property, but is currently in preview.')
-// module aadWorkloadId 'workloadId.bicep' = {
-//   name: 'aadWorkloadId-helm'
-//   params: {
-//     aksName: aksconst.outputs.aksClusterName
-//     location: location
-//   }
-// }
-
-
-// output aksUserNodePoolName string = 'npuser01' //[for nodepool in aks.properties.agentPoolProfiles: name] // 'npuser01' //hardcoding this for the moment.
-// output nodeResourceGroup string = aksconst.outputs.aksNodeResourceGroup
