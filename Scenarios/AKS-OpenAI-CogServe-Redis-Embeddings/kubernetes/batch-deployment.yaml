@@ -1,30 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.28.0 (HEAD)
   labels:
-    io.kompose.service: batch
+    service: batch
   name: batch
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: batch
+      service: batch
   strategy: {}
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.28.0 (HEAD)
       labels:
         io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
-        io.kompose.service: batch
+        service: batch
     spec:
       serviceAccountName: serversa
       containers:
-        - env:
+        - image: fruocco/oai-batch:latest
+          name: batch
+          env:
             - name: AZURE_SEARCH_ADMIN_KEY
               valueFrom:
                 configMapKeyRef:
@@ -95,9 +91,6 @@ spec:
                 secretKeyRef: 
                   name: openaiapikey
                   key: openaiapikey
-                # configMapKeyRef:
-                #   key: OPENAI_API_KEY
-                #   name: env
             - name: OPENAI_DEPLOYMENT_TYPE
               valueFrom:
                 configMapKeyRef:
@@ -183,8 +176,6 @@ spec:
                 configMapKeyRef:
                   key: VNET_DEPLOYMENT
                   name: env
-          image: fruocco/oai-batch:latest
-          name: batch
           ports:
             - containerPort: 80
           resources: {}
