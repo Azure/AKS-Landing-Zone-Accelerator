@@ -32,7 +32,7 @@ A simple web application for a OpenAI-enabled document search. This repo uses Az
 ## Deploy this Scenario
 
 Begin by cloning this repository
-``bash
+```bash
     git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
 ```
 
