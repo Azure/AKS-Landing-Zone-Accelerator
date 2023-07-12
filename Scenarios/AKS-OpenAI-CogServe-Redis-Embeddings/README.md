@@ -9,6 +9,22 @@ Within the cluster we will have three pods running. One for batch processing of 
 
 ![Architecture](docs/architecture_aks.png)
 
+## Azure and AKS Features
+During this workshop, you will be using various Azure and AKS features that make it easy to host intelligent application on AKS. Some of the features are listen below:
+* Create embeddings and generate intelligent responses using using Azure OpenAI service
+* Read text from PDF documents using Azure form recognizer
+* Translate text to a different language as part of AI processing using Azure Translator
+* Secure secrets with Azure Key vault
+* Provide individual pods access to Key vault secrets using workload identity
+* Secure your AKS environment with Azure Policy and Network policy
+* Protect access to your application using Application Gateway
+* Automatically scale your application with cluster autoscaler and horizontal pod autoscaler
+* Queue jobs using Azure queue
+* Store vectors of your knowledge base and perform vector search using a pod running on AKS
+* Store domain knowledge on Azure blog storage
+* Load balance traffic across various pods using Azure Load balancer and Nginx
+* Limit network access using network security groups
+
 ## Azure OpenAI Embeddings QnA
 
 A simple web application for a OpenAI-enabled document search. This repo uses Azure OpenAI Service for creating embeddings vectors from documents. For answering the question of a user, it retrieves the most relevant document and then uses GPT-3 to extract the matching answer for the question. For more information about this application and how to run it on other Azure services, please check out the [Azure OpenAI Embeddings QnA](https://github.com/azure-samples/azure-open-ai-embeddings-qna) repository.

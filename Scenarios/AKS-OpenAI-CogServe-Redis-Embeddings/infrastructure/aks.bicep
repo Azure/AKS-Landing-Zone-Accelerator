@@ -19,7 +19,6 @@ module aksconst 'aks-construction/bicep/main.bicep' = {
     osDiskType: 'Managed'
     AksPaidSkuForSLA: true
     networkPolicy: 'azure'
-    networkPluginMode: 'Overlay'
     azurepolicy: 'audit'
     acrPushRolePrincipalId: signedinuser
     adminPrincipalId: signedinuser
