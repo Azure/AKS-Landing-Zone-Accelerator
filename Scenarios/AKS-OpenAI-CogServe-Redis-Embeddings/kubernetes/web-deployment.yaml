@@ -1,26 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert
-    kompose.version: 1.28.0 (HEAD)
   labels:
-    io.kompose.service: web
+    service: web
   name: web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: web
+      service: web
   strategy: {}
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert
-        kompose.version: 1.28.0 (HEAD)
       labels:
         io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
-        io.kompose.service: web
+        service: web
     spec:
       serviceAccountName: serversa
       containers:
