@@ -47,7 +47,7 @@ Switch to the infrastruture folder
     az group create -l $LOCATION -n $RGNAME
 ```
 
-create the supporting resources (openai, storageaccount, translator, form reader)
+Create the supporting resources (openai, storageaccount, translator, form reader)
 ```bash
  az deployment group create -g $RGNAME  --name intelligentappsdeployment --template-file intelligent-services.bicep --parameters parameters.json --parameters UniqueString=<your unique string>
 ```
