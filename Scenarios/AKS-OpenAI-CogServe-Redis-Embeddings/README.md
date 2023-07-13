@@ -7,8 +7,8 @@ In this scenario, we will be building an application that uses various cognitive
 
 Within the cluster we will have three pods running. One for batch processing of the documents used to update the knowledge base of the conversational AI bot. Another is a customized Redis stack pod that is used for the vector search. The third will the front end application. You can run some of the cognitive services mentioned above as containers in the cluster as well, but for this vanilla installation, we will stick to running them as PaaS service on Azure. For more information about running cognitive services on AKS, please check out [Azure Cognitive Services containers](https://learn.microsoft.com/en-us/azure/cognitive-services/cognitive-services-container-support) page.
 
-![Architecture](docs/architecture_aks.png)
-
+![Architecture](../../media/architecture_aks_oai.png)
+git submodule add https://github.com/azure-samples/azure-open-ai-embeddings-qna Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/App
 ## Azure and AKS Features
 During this workshop, you will be using various Azure and AKS features that make it easy to host intelligent application on AKS. Some of the features are listen below:
 * Create embeddings and generate intelligent responses using using Azure OpenAI service

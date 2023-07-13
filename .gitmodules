@@ -1,3 +1,6 @@
 [submodule "Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/AKS-Construction"]
 	path = Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/AKS-Construction
 	url = https://github.com/Azure/AKS-Construction
+[submodule "Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/App"]
+	path = Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/App
+	url = https://github.com/azure-samples/azure-open-ai-embeddings-qna

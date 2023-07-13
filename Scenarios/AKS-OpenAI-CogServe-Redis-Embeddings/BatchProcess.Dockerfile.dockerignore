@@ -1,8 +1,0 @@
-code/__pycache__
-code/images
-code/pages
-code/.funcignore
-code/environment.yml
-code/host.json
-code/local.settings.json
-code/OpenAI_Queries.py

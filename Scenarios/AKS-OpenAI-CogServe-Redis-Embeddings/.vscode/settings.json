@@ -1,7 +1,0 @@
-{
-    "azureFunctions.deploySubpath": "code",
-    "azureFunctions.scmDoBuildDuringDeployment": true,
-    "azureFunctions.projectLanguage": "Python",
-    "azureFunctions.projectRuntime": "~3",
-    "debug.internalConsoleOptions": "neverOpen"
-}
