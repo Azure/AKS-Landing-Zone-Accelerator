@@ -49,6 +49,8 @@ Pick one of the scenarios below to get started on a reference implementation. Fo
 
 :arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-PrivateCluster)
 
+▶️ [Running Azure ML workloads on a private AKS cluster](./Scenarios/AzureML-on-Private-AKS)
+
 :arrow_forward: [Azure Policy initiative for AKS Landing Zone Accelerator (Brownfield scenario)](./Scenarios/Azure-Policy-ES-for-AKS)
 
 :arrow_forward: [Backup Restore using Open source tool Velero](./Scenarios/Backup-Restore)
