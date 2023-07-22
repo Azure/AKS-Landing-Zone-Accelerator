@@ -21,10 +21,11 @@ For this scenario, we have various IaC technology that you can choose from depen
 * AKS-managed Internal Load Balancer
 * Azure CNI
 * Azure Keyvault
-* Azure Container registry
+* Azure Container Registry
 * Azure Bastion
-* Azure Monitor for containers
-* Azure firewall
+* Azure Monitor for Containers
+* Azure Firewall
+* Azure Front Door
 * MongoDB 
 * Helm
 * [Secret store CSI driver](https://learn.microsoft.com/azure/aks/csi-secrets-store-driver)

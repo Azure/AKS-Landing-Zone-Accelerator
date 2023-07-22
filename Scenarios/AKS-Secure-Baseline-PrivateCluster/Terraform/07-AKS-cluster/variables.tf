@@ -1,23 +1,27 @@
 #############
 # VARIABLES #
 #############
-
-variable "prefix" {}
-
-variable "state_sa_name" {}
-
-variable "container_name" {}
-
-variable "access_key" {}
-
 variable "private_dns_zone_name" {
-default =  "privatelink.eastus.azmk8s.io"
+  # update this in the .tfvars file
 }
 
-variable "network_plugin" {
-default = "azure"
+variable "dns_prefix" {
+  # update this in the .tfvars file
 }
 
-variable "pod_cidr" {
-    default = null
+variable "resource_group_name" {
+  default = "jose-aksdeps-rg"
+}
+
+variable "storage_account_name" {
+  default = "tfstatejose23"
+}
+
+variable "container_name" {
+  default = "tfstate"
+}
+
+variable "access_key" {
+  type      = string
+  sensitive = true
 }

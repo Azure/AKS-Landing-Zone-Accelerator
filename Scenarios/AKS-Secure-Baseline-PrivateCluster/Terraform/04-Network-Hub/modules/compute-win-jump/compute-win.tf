@@ -1,16 +1,16 @@
-resource "azurerm_linux_virtual_machine" "compute" {
-  
-  name                            = var.server_name
-  location                        = var.location
-  resource_group_name             = var.resource_group_name
-  size                            = var.vm_size
-  admin_username                  = var.admin_username
-  admin_password                  = var.admin_password
-  disable_password_authentication = var.disable_password_authentication //Set to true if using SSH key
-  tags                            = var.tags
+resource "azurerm_windows_virtual_machine" "computejump" {
+
+  name                = var.server_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  size                = var.vm_size
+  admin_username      = var.admin_username
+  admin_password      = var.admin_password
+  #disable_password_authentication = var.disable_password_authentication //Set to true if using SSH key
+  tags = var.tags
 
   network_interface_ids = [
-    azurerm_network_interface.compute.id
+    azurerm_network_interface.win.id
   ]
 
   os_disk {
@@ -31,9 +31,9 @@ resource "azurerm_linux_virtual_machine" "compute" {
   }
 }
 
-resource "azurerm_network_interface" "compute" {
+resource "azurerm_network_interface" "win" {
 
-  name                          = "${var.server_name}-nic"
+  name                          = var.caf_basename.azurerm_network_interface
   location                      = var.location
   resource_group_name           = var.resource_group_name
   enable_accelerated_networking = var.enable_accelerated_networking
@@ -43,18 +43,26 @@ resource "azurerm_network_interface" "compute" {
   ip_configuration {
     name                          = "internal"
     subnet_id                     = var.vnet_subnet_id
-    private_ip_address_allocation = "Dynamic"
+    private_ip_address_allocation = "Static"
+    private_ip_address            = "10.200.0.101"
   }
 }
 
+##########################################################
+## Common Naming Variable
+##########################################################
+
+variable "caf_basename" {}
+
+##########################################################
+## Variables
+##########################################################
 
 variable "admin_username" {
   default = "sysadmin"
 }
 
-variable "admin_password" {
-  default = "changeme"
-}
+variable "admin_password" {}
 
 variable "server_name" {}
 
@@ -64,13 +72,13 @@ variable "location" {}
 
 variable "vnet_subnet_id" {}
 variable "os_publisher" {
-  default = "Canonical"
+  default = "MicrosoftWindowsServer"
 }
 variable "os_offer" {
-  default = "UbuntuServer"
+  default = "WindowsServer"
 }
 variable "os_sku" {
-  default = "18.04-LTS"
+  default = "2022-Datacenter"
 }
 variable "os_version" {
   default = "latest"
@@ -91,7 +99,8 @@ variable "tags" {
   type = map(string)
 
   default = {
-    application = "compute"
+    application = "compute",
+    tier        = "jump"
   }
 }
 

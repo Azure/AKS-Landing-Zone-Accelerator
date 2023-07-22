@@ -2,16 +2,16 @@
 
 resource "azurerm_kubernetes_cluster" "akscluster" {
   lifecycle {
-   ignore_changes = [
-     default_node_pool[0].node_count
-   ]
+    ignore_changes = [
+      default_node_pool[0].node_count
+    ]
   }
 
-  name                    = var.prefix
-  dns_prefix              = var.prefix
+  name                    = var.caf_basename.azurerm_kubernetes_cluster
+  dns_prefix              = var.dns_prefix
   location                = var.location
   resource_group_name     = var.resource_group_name
-  kubernetes_version      = "1.25.5"
+  kubernetes_version      = "1.23.5"
   private_cluster_enabled = true
   private_dns_zone_id     = var.private_dns_zone_id
   azure_policy_enabled    = true
@@ -34,22 +34,20 @@ resource "azurerm_kubernetes_cluster" "akscluster" {
   }
 
   network_profile {
-    network_plugin     = "azure"
+    network_plugin = "azure"
     # network_policy   = "azure"
-    outbound_type      = "userDefinedRouting"
-    dns_service_ip     = "192.168.100.10"
-    service_cidr       = "192.168.100.0/24"
-    docker_bridge_cidr = "172.17.0.1/16"
-
+    outbound_type  = "userDefinedRouting"
+    dns_service_ip = "192.168.100.10"
+    service_cidr   = "192.168.100.0/24"
   }
 
   role_based_access_control_enabled = true
 
   azure_active_directory_role_based_access_control {
-      managed            = true
+    managed = true
     //  admin_group_object_ids = talk to Ayo about this one, this arg could reduce code other places possibly
-      azure_rbac_enabled = true
-    }
+    azure_rbac_enabled = true
+  }
 
   identity {
     type         = "UserAssigned"

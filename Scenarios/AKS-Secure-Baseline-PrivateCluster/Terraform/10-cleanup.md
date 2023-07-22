@@ -1,6 +1,6 @@
 # Cleanup
 
-Remember to destroy resources that are not in use. The instructions below assume you terminal is at the "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp". If you are not there navigate there first.
+Remember to destroy resources that are not in use
 
 1. Delete the AKS cluster
 

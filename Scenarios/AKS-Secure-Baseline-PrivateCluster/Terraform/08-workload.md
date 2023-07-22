@@ -351,4 +351,4 @@ Upon navigating to your new FQDN you will see you receive a certificate warning 
 
 ## Next Step
 
-:arrow_forward: [Cleanup](./09-cleanup.md)
+:arrow_forward: [Ingress Configuration](./09-ingress-config.md)

@@ -1,6 +1,10 @@
 #############
 # VARIABLES #
 #############
+variable "location" {
+
+  default = "eastus"
+}
 
 variable "tags" {
   type = map(string)
@@ -11,20 +15,22 @@ variable "tags" {
 }
 
 variable "lz_prefix" {
-  default = "escs-lz01"
+  default = "lz"
 }
 
-# Used to retrieve outputs from other state files.
-# The "access_key" variable is sensitive and should be passed using
-# a .TFVARS file or other secure method.
+variable "resource_group_name" {
+  default = "jose-aksdeps-rg"
+}
 
-variable "state_sa_name" {
-  default = "hub-net"
+variable "storage_account_name" {
+  default = "tfstatejose23"
 }
 
 variable "container_name" {
-  default = "akscs"
+  default = "tfstate"
 }
 
-# Storage Account Access Key
-variable "access_key" {}
+variable "access_key" {
+  sensitive = true
+  type      = string
+}

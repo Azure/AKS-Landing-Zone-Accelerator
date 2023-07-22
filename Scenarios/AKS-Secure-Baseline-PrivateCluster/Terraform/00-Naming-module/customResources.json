@@ -1,0 +1,13 @@
+[
+  {
+    "name": "azurerm_firewall_policy_rule_collection_group",
+    "min_length": 1,
+    "max_length": 80,
+    "validation_regex": "\"^[a-zA-Z0-9][a-zA-Z0-9-._]{0,78}[a-zA-Z0-9_]$\"",
+    "scope": "resourceGroup",
+    "slug": "afwprcg",
+    "dashes": true,
+    "lowercase": false,
+    "regex": "\"[^0-9A-Za-z_.-]\""
+  }
+]

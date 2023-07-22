@@ -6,7 +6,7 @@ resource "azurerm_private_dns_zone" "aks-dns" {
 
 # Needed for Jumpbox to resolve cluster URL using a private endpoint and private dns zone
 resource "azurerm_private_dns_zone_virtual_network_link" "hub_aks" {
-  name                  = "hub_to_aks"
+  name                  = replace(module.CAFResourceNames.names.azurerm_private_dns_zone_virtual_network_link, "pnetlk", "hubakspnetlk")
   resource_group_name   = var.existing_spoke_vnet_rg_name // lives in the spoke rg
   private_dns_zone_name = azurerm_private_dns_zone.aks-dns.name
   virtual_network_id    = var.existing_hub_vnet_id

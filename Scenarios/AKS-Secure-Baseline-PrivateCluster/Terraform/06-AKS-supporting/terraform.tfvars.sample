@@ -1,8 +1,8 @@
-state_sa_name = <storage account name>
+storage_account_name = <storage account name>
 container_name = "akscs"
 access_key = "XXXXXX"
 prefix  = "akscs"
-public_domain = <public domain to register apps hostname>
+public_domain = <public domain to register apps hostname> # you can leave this as empty ("") if you are not planning on using public dns zone
 
 
 
