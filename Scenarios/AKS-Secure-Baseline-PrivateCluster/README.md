@@ -40,6 +40,12 @@ For this scenario, we have various IaC technology that you can choose from depen
 * Azure MongoDb
 * Azure Redis Cache
 
+## Video tutorial
+
+A video explaining the architecture used for AKS Landing Zone is available here: https://www.youtube.com/watch?v=vwGo9tZPngU&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE
+
+<img width="1055" alt="image" src="https://user-images.githubusercontent.com/6548359/235442137-87b26450-ab06-48cf-89b0-2cf205276e15.png">
+
 ## Next
 Pick one of the IaC options below and follow the instructions to deploy the AKS reference implementation.
 
