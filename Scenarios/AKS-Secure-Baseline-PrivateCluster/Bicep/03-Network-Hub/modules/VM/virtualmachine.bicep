@@ -35,8 +35,8 @@ resource jumpbox 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       }
       imageReference: {
         publisher: 'Canonical'
-        offer: 'UbuntuServer'
-        sku: '18.04-LTS'
+        offer: '0001-com-ubuntu-server-focal'
+        sku: '20_04-lts-gen2'
         version: 'latest'
       }
     }
