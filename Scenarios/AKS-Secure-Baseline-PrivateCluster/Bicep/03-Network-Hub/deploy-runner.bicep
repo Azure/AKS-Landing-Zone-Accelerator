@@ -7,8 +7,8 @@ param vnetName string
 param vmName string = 'runner'
 param vmSize string
 param publisher string = 'Canonical'
-param offer string = 'UbuntuServer'
-param sku string = '18.04-LTS'
+param offer string = '0001-com-ubuntu-server-focal'
+param sku string = '20_04-lts-gen2'
 param location string = deployment().location
 param adminUsername string
 @secure()
