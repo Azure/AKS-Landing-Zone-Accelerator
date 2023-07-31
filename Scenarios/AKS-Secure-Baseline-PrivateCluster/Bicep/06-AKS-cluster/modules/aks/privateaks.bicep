@@ -49,6 +49,8 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-03-02-previ
         osDiskSizeGB: 30
         type: 'VirtualMachineScaleSets'
         vnetSubnetID: subnetId
+        osType: 'Linux'
+        osSKU: 'CBLMariner'
       }
     ]
     autoScalerProfile: enableAutoScaling ? autoScalingProfile : null
