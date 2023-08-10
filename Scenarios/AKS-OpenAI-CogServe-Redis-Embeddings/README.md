@@ -36,7 +36,7 @@ Begin by cloning this repository
     git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
 ```
 
-Switch to the infrastruture folder
+Change directory to the infrastruture folder
 
 ```bash
     cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
