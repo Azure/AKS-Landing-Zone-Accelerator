@@ -37,7 +37,7 @@ To Deploy this Scenario, yopu must be registered to use Azure's OpenAI Service. 
 > **Warning** 
 > Registration may take multiple hours
 
-### Process
+### Deployment Process
 
 Begin by cloning this repository locally
 ```bash
@@ -93,9 +93,20 @@ Change directory to the kubernetes manifests folder, and update manifest files w
     sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
 ```
 
-Update the env-configmap.yaml file with the correct environment variables
 
-Log into the AKS cluster
+### Pass environment parameters to the container
+
+> **Note** 
+> OPENAI_API_KEY will be secured from KeyVault using the CSI Secret driver, so can be left empty in this configmap
+
+
+Update the `env-configmap.yaml` file with the correct environment variables.
+
+NOTE: Replacing the values in `<...>`.  These values can be taken from the deployments created in the previous steps, as seen in your Azure portal.
+
+
+
+### Log into the AKS cluster
 
 ```bash
 az aks get-credentials -g $RGNAME -n aks-embedhhdingsy
@@ -103,7 +114,7 @@ kubectl get nodes
 ```
 
 
-deploy the kubernetes resources
+### Deploy the kubernetes resources
 ```
 kubectl apply -f .
 ```
