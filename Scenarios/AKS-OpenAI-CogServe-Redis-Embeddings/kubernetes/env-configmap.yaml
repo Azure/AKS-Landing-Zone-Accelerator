@@ -23,7 +23,7 @@ data:
   OPENAI_EMBEDDINGS_ENGINE: text-embedding-ada-002
   OPENAI_EMBEDDINGS_ENGINE_DOC: text-embedding-ada-002
   OPENAI_EMBEDDINGS_ENGINE_QUERY: text-embedding-ada-002
-  OPENAI_ENGINE: text-davinci-003
+  OPENAI_ENGINE: gpt-deployment
   OPENAI_MAX_TOKENS: "-1"
   OPENAI_TEMPERATURE: "0.7"
   QUEUE_NAME: doc-processing
