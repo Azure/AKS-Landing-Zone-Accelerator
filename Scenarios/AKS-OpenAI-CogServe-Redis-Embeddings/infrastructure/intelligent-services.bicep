@@ -1,20 +1,25 @@
 param ResourcePrefix string
-param OpenAIName string
 param OpenAIEngine string
+param OpenAIEngineVersion string
 param OpenAIEmbeddingsEngineDoc string
+param OpenAIEmbeddingsEngineDocVersion string
 param UniqueString string // need to specify this in your deployment command
+param location string = resourceGroup().location
 var BlobContainerName = 'documents'
 
 
-resource OpenAI 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
-  name: '${OpenAIName}'
-  location: resourceGroup().location
+var OpenAIName = '${ResourcePrefix}-${UniqueString}'
+
+resource OpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+  name: OpenAIName
+  location: location
   kind: 'OpenAI'
   sku: {
     name: 'S0'
+    tier: 'Standard'
   }
   properties: {
-    customSubDomainName: '${OpenAIName}'
+    customSubDomainName: OpenAIName
     networkAcls: {
       defaultAction: 'Allow'
       virtualNetworkRules: []
@@ -22,63 +27,44 @@ resource OpenAI 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
     }
     publicNetworkAccess: 'Enabled'
   }
-}
 
-resource OpenAIDeploymentGPT 'Microsoft.CognitiveServices/accounts/deployments@2022-12-01' = {
-  name: '${OpenAI.name}/gpt-deployment'
-  dependsOn: [
-    OpenAI
-  ]
-  properties: {
-    model: {
-      format: 'OpenAI'
-      name: 'gpt-35-turbo'
-      version: '0301'
+  resource OpenAIDeploymentGPT 'deployments' = {
+    name: 'gpt-deployment'
+    sku: {
+      name: 'Standard'
+      capacity: 20
     }
-    scaleSettings: {
-      scaleType: 'Standard'
+    properties: {
+      model: {
+        format: 'OpenAI'
+        name: OpenAIEngine
+        version: OpenAIEngineVersion
+      }
     }
   }
-}
 
-resource OpenAIDeploymentEngine 'Microsoft.CognitiveServices/accounts/deployments@2022-12-01' = {
-  name: '${OpenAI.name}/${OpenAIEngine}'
-  dependsOn: [
-    OpenAIDeploymentEmbeddings
-  ]
-  properties: {
-    model: {
-      format: 'OpenAI'
-      // name: '${OpenAIEngine}'
-      name: 'text-davinci-002'
-      version: '1'
+  resource OpenAIDeploymentEmbeddings 'deployments' = {
+
+    name: OpenAIEmbeddingsEngineDoc
+
+    properties: {
+      model: {
+        format: 'OpenAI'
+        name: OpenAIEmbeddingsEngineDoc
+        version: OpenAIEmbeddingsEngineDocVersion
+      }
     }
-    scaleSettings: {
-      scaleType: 'Standard'
-    }
+    
+    dependsOn: [
+      OpenAIDeploymentGPT
+    ]
   }
+
 }
 
-resource OpenAIDeploymentEmbeddings 'Microsoft.CognitiveServices/accounts/deployments@2022-12-01' = {
-  name: '${OpenAI.name}/${OpenAIEmbeddingsEngineDoc}'
-  dependsOn: [
-    OpenAIDeploymentGPT
-  ]
-  properties: {
-    model: {
-      format: 'OpenAI'
-      name: '${OpenAIEmbeddingsEngineDoc}'
-      version: '2'
-    }
-    scaleSettings: {
-      scaleType: 'Standard'
-    }
-  }
-}
-
-resource FormRecognizer 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
+resource FormRecognizer 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: '${ResourcePrefix}-${UniqueString}-formrecog'
-  location: resourceGroup().location
+  location: location
   kind: 'FormRecognizer'
   sku: {
     name: 'S0'
@@ -93,9 +79,9 @@ resource FormRecognizer 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
   }
 }
 
-resource Translator 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
+resource Translator 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: '${ResourcePrefix}-${UniqueString}-translator'
-  location: resourceGroup().location
+  location: location
   kind: 'TextTranslation'
   sku: {
     name: 'S1'
@@ -110,50 +96,55 @@ resource Translator 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
   }
 }
 
-resource StorageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+resource StorageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: '${ResourcePrefix}${UniqueString}sa'
-  location: resourceGroup().location
+  location: location
   kind: 'StorageV2'
   sku: {
     name: 'Standard_GRS'
   }
-}
 
-resource BlobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
-  name: '${StorageAccount.name}/default/${BlobContainerName}'
-  dependsOn: [
-    StorageAccount
-  ]
-  properties: {
-    publicAccess: 'None'
-  }
-}
 
-resource QueueService 'Microsoft.Storage/storageAccounts/queueServices@2022-09-01' = {
-  name: '${StorageAccount.name}/default'
-  dependsOn: [
-    StorageAccount
-  ]
-  properties: {
-    cors: {
-      corsRules: []
+  resource BlobService 'blobServices' = {
+    name: 'default'
+    properties: {
+      cors: {
+        corsRules: []
+      }
+    }
+  
+    resource BlobContainer 'containers' = {
+      name: BlobContainerName
+      properties: {
+        publicAccess: 'None'
+      }
     }
   }
+
+  resource QueueService 'queueServices' = {
+    name: 'default'
+    properties: {
+      cors: {
+        corsRules: []
+      }
+    }
+
+    resource DocumentProcessingQueue 'queues' = {
+      name: 'doc-processing'
+      properties: {
+        metadata: {}
+      }
+    }
+    
+    resource DocumentProcessingPoisonQueue 'queues' = {
+      name: 'doc-processing-poison'
+      properties: {
+        metadata: {}
+      }
+    }
+  }
+  
 }
 
-resource DocumentProcessingQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01' = {
-  name: '${QueueService.name}/doc-processing'
-  properties: {
-    metadata: {}
-  }
-}
 
-resource DocumentProcessingPoisonQueue 'Microsoft.Storage/storageAccounts/queueServices/queues@2022-09-01' = {
-  name: '${QueueService.name}/doc-processing-poison'
-  dependsOn: [
-    DocumentProcessingQueue
-  ]
-  properties: {
-    metadata: {}
-  }
-}
+

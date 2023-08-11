@@ -31,12 +31,20 @@ A simple web application for a OpenAI-enabled document search. This repo uses Az
 
 ## Deploy this Scenario
 
+### Prerequisit
+To Deploy this Scenario, yopu must be registered to use Azure's OpenAI Service.  If you are not already registered, follow the instuctions [here](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access)
+
+> **Warning** 
+> Registration may take multiple hours
+
+
+### Process
 Begin by cloning this repository
 ```bash
     git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
 ```
 
-Switch to the infrastruture folder
+Change directory to the infrastruture folder
 
 ```bash
     cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
