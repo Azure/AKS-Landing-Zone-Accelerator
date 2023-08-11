@@ -39,7 +39,7 @@ To Deploy this Scenario, yopu must be registered to use Azure's OpenAI Service. 
 
 
 ### Process
-Begin by cloning this repository
+Begin by cloning this repository locally
 ```bash
     git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
 ```
