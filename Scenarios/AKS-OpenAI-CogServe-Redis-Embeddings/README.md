@@ -92,8 +92,6 @@ Change directory to the kubernetes manifests folder, and update manifest files w
     sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" svc-accounts.yaml
     sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
 ```
-cd kubernetes
-
 
 Update the env-configmap.yaml file with the correct environment variables
 
