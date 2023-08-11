@@ -98,14 +98,10 @@ Update the env-configmap.yaml file with the correct environment variables
 Log into the AKS cluster
 
 ```bash
-az aks get-credentials -g $RGNAME -n aks-embedings-cluster
+az aks get-credentials -g $RGNAME -n aks-embedhhdingsy
 kubectl get nodes
 ```
 
-cd to the manifests folder
-```bash
-cd ../kubernetes
-```
 
 deploy the kubernetes resources
 ```

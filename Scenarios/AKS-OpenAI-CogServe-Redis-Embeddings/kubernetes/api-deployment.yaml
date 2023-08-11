@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
-        io.kompose.service: api
+        service: api
     spec:
       serviceAccountName: serversa
       volumes:
