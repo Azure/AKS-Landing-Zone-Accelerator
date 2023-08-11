@@ -31,7 +31,7 @@ A simple web application for a OpenAI-enabled document search. This repo uses Az
 
 ## Deploy this Scenario
 
-### Prerequisit
+### Pre-requisite
 To Deploy this Scenario, yopu must be registered to use Azure's OpenAI Service.  If you are not already registered, follow the instuctions [here](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access)
 
 > **Warning** 
