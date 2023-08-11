@@ -75,19 +75,22 @@ Storage deployment information in environment variables
 KVNAME=$(echo $DEP | jq -r '.properties.outputs.kvAppName.value')
 OIDCISSUERURL=$(echo $DEP | jq -r '.properties.outputs.aksOidcIssuerUrl.value')
 AKSCLUSTER=$(echo $DEP | jq -r '.properties.outputs.aksClusterName.value')
-EMBEDINGAPPID=$(echo $DEP | jq -r '.properties.outputs.idsuperappClientId.value')
+EMBEDINGAPPID=$(echo $DEP | jq -r '.properties.outputs.idembedingappClientId.value')
 TENANTID=$(az account show --query tenantId -o tsv)
 ACRNAME=$(az acr list -g $RGNAME --query [0].name  -o tsv)
 ```
 
-Update manifest files with the environment variables
-```bash
-sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" secret-provider-class.yaml
-sed -i  "s/<kv name>/$KVNAME/" secret-provider-class.yaml
-sed -i  "s/<tenant ID>/$TENANTID/" secret-provider-class.yaml
+Change directory to the kubernetes manifests folder, and update manifest files with the environment variables
 
-sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" svc-accounts.yaml
-sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+```bash
+    cd ../kubernetes/
+
+    sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" secret-provider-class.yaml
+    sed -i  "s/<kv name>/$KVNAME/" secret-provider-class.yaml
+    sed -i  "s/<tenant ID>/$TENANTID/" secret-provider-class.yaml
+
+    sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" svc-accounts.yaml
+    sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
 ```
 cd kubernetes
 
