@@ -76,7 +76,7 @@ INFRA_RESULT=($(az deployment group create \
 ))
 KVNAME=${INFRA_RESULT[0]}
 OIDCISSUERURL=${INFRA_RESULT[1]}
-AKSCLUSTER==${INFRA_RESULT[2]}
+AKSCLUSTER=${INFRA_RESULT[2]}
 ```
 
 #### Vault the OpenAI API Key into a KeyVault Secret
@@ -101,9 +101,9 @@ Change directory to the kubernetes manifests folder, and update manifest files w
 ```bash
     cd ../kubernetes/
 
-    sed -i "s/<identity clientID>/$EMBEDINGAPPID/" -i "s/<kv name>/$KVNAME/" -i "s/<tenant ID>/$TENANTID/"  secret-provider-class.yaml
+    sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/"  secret-provider-class.yaml
 
-    sed -i "s/<identity clientID>/$EMBEDINGAPPID/" -i "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+    sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
 ```
 
 
