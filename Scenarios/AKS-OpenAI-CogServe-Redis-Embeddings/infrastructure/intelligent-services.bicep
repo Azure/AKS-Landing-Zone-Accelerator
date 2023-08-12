@@ -59,7 +59,6 @@ module aksconst 'AKS-Construction/bicep/main.bicep' = {
 output kvAppName string = aksconst.outputs.keyVaultName
 output aksOidcIssuerUrl string = aksconst.outputs.aksOidcIssuerUrl
 output aksClusterName string = aksconst.outputs.aksClusterName
-output containerRegistryName string = aksconst.outputs.containerRegistryName
 
 resource OpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: openAIName
@@ -199,6 +198,8 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 
 
 output blobAccountName string = StorageAccount.name
-output BlobContainerName string = BlobContainerName
-//output openAIURL string = OpenAI.properties.endpoint
+output openAIAccountName string = OpenAI.name
+output openAIURL string = OpenAI.properties.endpoint
+output formRecognizerAccountName string = FormRecognizer.name 
+output translatorAccountName string = Translator.name
 

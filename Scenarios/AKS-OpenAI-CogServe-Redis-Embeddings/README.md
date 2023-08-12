@@ -72,21 +72,32 @@ INFRA_RESULT=($(az deployment group create \
         --template-file intelligent-services.bicep \
         --parameters UniqueString=<your unique string> \
         --parameters signedinuser=$SIGNEDINUSER \
-        --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value]" -o tsv \
+        --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value,properties.outputs.blobAccountName.value,properties.outputs.openAIAccountName.value,properties.outputs.openAIURL.value,properties.outputs.formRecognizerAccountName.value,properties.outputs.translatorAccountName.value]" -o tsv \
 ))
 KVNAME=${INFRA_RESULT[0]}
 OIDCISSUERURL=${INFRA_RESULT[1]}
 AKSCLUSTER=${INFRA_RESULT[2]}
+BLOB_ACCOUNTNAME=${INFRA_RESULT[3]}
+OPENAI_ACCOUNTNAME=${INFRA_RESULT[4]}
+OPENAI_ENDPOINT=${INFRA_RESULT[5]}
+FORMREC_ACCOUNT=${INFRA_RESULT[6]}
+TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
 ```
 
-#### Vault the OpenAI API Key into a KeyVault Secret
+#### Store the resource keys KeyVault Secrets
 
 > **Note** 
-> OpenAI API Key will be secured in KeyVault, and passed to the working using the CSI Secret driver
+> OpenAI API, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
 
 
 ```bash
-az keyvault secret set --name openaiapikey  --vault-name $KVNAME --value <OpenAI API Key>
+az keyvault secret set --name openaiapikey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $OPENAI_ACCOUNTNAME --query key1 -o tsv)
+
+az keyvault secret set --name formrecognizerkey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $FORMREC_ACCOUNT --query key1 -o tsv)
+
+az keyvault secret set --name translatekey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $TRANSLATOR_ACCOUNT --query key1 -o tsv)
+
+az keyvault secret set --name blobaccountkey  --vault-name $KVNAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNTNAME --query [1].value -o tsv)
 ```
 
 
@@ -104,6 +115,8 @@ Change directory to the kubernetes manifests folder, and update manifest files w
     sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/"  secret-provider-class.yaml
 
     sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+
+    sed -i -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s/<your OpenAI endpoint>/$OPENAI_ENDPOINT/" env-configmap.yaml
 ```
 
 
