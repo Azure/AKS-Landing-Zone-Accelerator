@@ -198,4 +198,7 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 }
 
 
+output blobAccountName string = StorageAccount.name
+output BlobContainerName string = BlobContainerName
+//output openAIURL string = OpenAI.properties.endpoint
 
