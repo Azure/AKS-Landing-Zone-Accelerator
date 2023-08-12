@@ -4,7 +4,7 @@ param api_key string
 param signedinuser string
 
 //---------Kubernetes Construction---------
-module aksconst 'aks-construction/bicep/main.bicep' = {
+module aksconst 'AKS-Construction/bicep/main.bicep' = {
   name: 'aksconstruction'
   params: {
     location: location
@@ -38,7 +38,7 @@ output aksOidcIssuerUrl string = aksconst.outputs.aksOidcIssuerUrl
 output aksClusterName string = aksconst.outputs.aksClusterName
 
 // deploy keyvault
-module keyVault 'aks-construction/bicep/keyvault.bicep' = {
+module keyVault 'AKS-Construction/bicep/keyvault.bicep' = {
   name: 'kv${nameseed}'
   params: {
     resourceName: 'app${nameseed}'

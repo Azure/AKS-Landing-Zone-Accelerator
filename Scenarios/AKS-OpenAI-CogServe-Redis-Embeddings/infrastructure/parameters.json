@@ -3,16 +3,19 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
       "ResourcePrefix" : {
-        "value": "aksembeddings"
-      },
-      "OpenAIName" : {
-        "value": "<name for your OpenAI service>"
+        "value": "aksembed"
       },
       "OpenAIEngine" : {
-        "value": "text-davinci-003"
+        "value": "gpt-35-turbo"
+      },
+      "OpenAIEngineVersion" : {
+        "value": "0301" 
       },
       "OpenAIEmbeddingsEngineDoc" : {
         "value": "text-embedding-ada-002"
+      },
+      "OpenAIEmbeddingsEngineDocVersion" : {
+        "value": "2"
       }
     }
   }

@@ -31,6 +31,14 @@ A simple web application for a OpenAI-enabled document search. This repo uses Az
 
 ## Deploy this Scenario
 
+### Pre-requisite
+To Deploy this Scenario, yopu must be registered to use Azure's OpenAI Service.  If you are not already registered, follow the instuctions [here](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access)
+
+> **Warning** 
+> Registration may take multiple hours
+
+### Deployment Process
+
 Begin by cloning this repository locally
 ```bash
     git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
@@ -67,38 +75,46 @@ Storage deployment information in environment variables
 KVNAME=$(echo $DEP | jq -r '.properties.outputs.kvAppName.value')
 OIDCISSUERURL=$(echo $DEP | jq -r '.properties.outputs.aksOidcIssuerUrl.value')
 AKSCLUSTER=$(echo $DEP | jq -r '.properties.outputs.aksClusterName.value')
-EMBEDINGAPPID=$(echo $DEP | jq -r '.properties.outputs.idsuperappClientId.value')
+EMBEDINGAPPID=$(echo $DEP | jq -r '.properties.outputs.idembedingappClientId.value')
 TENANTID=$(az account show --query tenantId -o tsv)
 ACRNAME=$(az acr list -g $RGNAME --query [0].name  -o tsv)
 ```
 
-Update manifest files with the environment variables
-```bash
-sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" secret-provider-class.yaml
-sed -i  "s/<kv name>/$KVNAME/" secret-provider-class.yaml
-sed -i  "s/<tenant ID>/$TENANTID/" secret-provider-class.yaml
+Change directory to the kubernetes manifests folder, and update manifest files with the environment variables
 
-sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" svc-accounts.yaml
-sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+```bash
+    cd ../kubernetes/
+
+    sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" secret-provider-class.yaml
+    sed -i  "s/<kv name>/$KVNAME/" secret-provider-class.yaml
+    sed -i  "s/<tenant ID>/$TENANTID/" secret-provider-class.yaml
+
+    sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" svc-accounts.yaml
+    sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
 ```
-cd kubernetes
 
 
-Update the env-configmap.yaml file with the correct environment variables
+### Pass environment parameters to the container
 
-Log into the AKS cluster
+> **Note** 
+> OPENAI_API_KEY will be secured from KeyVault using the CSI Secret driver, so can be left empty in this configmap
+
+
+Update the `env-configmap.yaml` file with the correct environment variables.
+
+NOTE: Replacing the values in `<...>`.  These values can be taken from the deployments created in the previous steps, as seen in your Azure portal.
+
+
+
+### Log into the AKS cluster
 
 ```bash
-az aks get-credentials -g $RGNAME -n aks-embedings-cluster
+az aks get-credentials -g $RGNAME -n aks-embedhhdingsy
 kubectl get nodes
 ```
 
-cd to the manifests folder
-```bash
-cd ../kubernetes
-```
 
-deploy the kubernetes resources
+### Deploy the kubernetes resources
 ```
 kubectl apply -f .
 ```
