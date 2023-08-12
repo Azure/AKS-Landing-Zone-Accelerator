@@ -116,7 +116,7 @@ Change directory to the kubernetes manifests folder, and update manifest files w
 
     sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
 
-    sed -i -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s/<your OpenAI endpoint>/$OPENAI_ENDPOINT/" env-configmap.yaml
+    sed -i -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" env-configmap.yaml
 ```
 
 
