@@ -1,17 +1,68 @@
-param ResourcePrefix string
-param OpenAIEngine string
-param OpenAIEngineVersion string
-param OpenAIEmbeddingsEngineDoc string
-param OpenAIEmbeddingsEngineDocVersion string
+
+@description('Signed In User Id')
+param signedinuser string
+
+@minLength(3)
+@maxLength(10)
+@description('Used to name all resources')
+param ResourcePrefix string = 'aksembed'
+
+@minLength(3)
+@maxLength(10)
+@description('Used to name all resources')
 param UniqueString string // need to specify this in your deployment command
+
+
+param OpenAIEngine string = 'gpt-35-turbo'
+param OpenAIEngineVersion string = '0301'
+param OpenAIEmbeddingsEngineDoc string = 'text-embedding-ada-002'
+param OpenAIEmbeddingsEngineDocVersion string = '2'
+
 param location string = resourceGroup().location
 var BlobContainerName = 'documents'
 
 
-var OpenAIName = '${ResourcePrefix}-${UniqueString}'
+var openAIName = '${ResourcePrefix}-${UniqueString}'
+
+//---------Kubernetes Construction---------
+module aksconst 'AKS-Construction/bicep/main.bicep' = {
+  name: 'aksconstruction'
+  params: {
+    location: location
+    resourceName: openAIName
+    enable_aad: true
+    enableAzureRBAC: true
+    omsagent: true
+    retentionInDays: 30
+    agentCount: 2
+    agentVMSize: 'Standard_D2ds_v4'
+    osDiskType: 'Managed'
+    AksPaidSkuForSLA: true
+    networkPolicy: 'azure'
+    azurepolicy: 'audit'
+    acrPushRolePrincipalId: signedinuser
+    adminPrincipalId: signedinuser
+    AksDisableLocalAccounts: true
+    custom_vnet: true
+    upgradeChannel: 'stable'
+    workloadIdentity: true
+    CreateNetworkSecurityGroups:true
+    //Workload Identity requires OidcIssuer to be configured on AKS
+    oidcIssuer: true
+    //We'll also enable the CSI driver for Key Vault
+    keyVaultAksCSI: true
+    keyVaultCreate: true
+    keyVaultOfficerRolePrincipalId: signedinuser
+  }
+}
+
+output kvAppName string = aksconst.outputs.keyVaultName
+output aksOidcIssuerUrl string = aksconst.outputs.aksOidcIssuerUrl
+output aksClusterName string = aksconst.outputs.aksClusterName
+output containerRegistryName string = aksconst.outputs.containerRegistryName
 
 resource OpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: OpenAIName
+  name: openAIName
   location: location
   kind: 'OpenAI'
   sku: {
@@ -19,7 +70,7 @@ resource OpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
     tier: 'Standard'
   }
   properties: {
-    customSubDomainName: OpenAIName
+    customSubDomainName: openAIName
     networkAcls: {
       defaultAction: 'Allow'
       virtualNetworkRules: []

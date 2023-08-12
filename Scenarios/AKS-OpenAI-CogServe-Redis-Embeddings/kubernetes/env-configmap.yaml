@@ -18,7 +18,6 @@ data:
   FORM_RECOGNIZER_KEY: <your form recognizer service key>
   NUMBER_OF_EMBEDDINGS_FOR_QNA: "3"
   OPENAI_API_BASE: <your OpenAI endpoint>
-  OPENAI_API_KEY: ""
   OPENAI_DEPLOYMENT_TYPE: Chat
   OPENAI_EMBEDDINGS_ENGINE: text-embedding-ada-002
   OPENAI_EMBEDDINGS_ENGINE_DOC: text-embedding-ada-002
