@@ -46,25 +46,31 @@ Begin by cloning this repository locally, and change directory to the infrastrut
     cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
 ```
 
-Set environment variables to store your prefered `Resource Group` name and `Azure Region` for the subsequent scripts, and create the `resrouce group` where we will deploy the solution
-```bash
-    RGNAME=embedding-openai-rg
-    LOCATION=eastus
-    az group create -l $LOCATION -n $RGNAME
-```
+Ensure you are signed into the `az` CLI (use `az login` if not)
 
-Ensure you are signed into the `az` CLI (use `az login` if not), then get your signed in user Id  which will be used to ensure you have access to the cluster & Keyvault to deploy the solution and create the required secrets.
+#### Setup environment specific variables
+
+This script will set environment variables, including your prefered `Resource Group` name and `Azure Region` for the subsequent steps, and create the `resrouce group` where we will deploy the solution
+
+ > **Important**
+ > Set UNIQUESTRING to a value that will prevent your resources from clashing names, recommended combination of your initials, and 2-digit number (eg js07)
+
 ```bash
+UNIQUESTRING=<Your value here>
+RGNAME=embedding-openai-rg
+LOCATION=eastus
 SIGNEDINUSER=$(az ad signed-in-user show --query id --out tsv)
+TENANTID=$(az account show --query tenantId -o tsv)
+
+az group create -l $LOCATION -n $RGNAME
 ```
 
+#### Infrastructure as Code
 
-Create the Solution resources using the `bicep` template, including the AKS CLuster (OpenAI, StorageAccount, Translator, Form Reader).
+Create all the solution resources using the provided `bicep` template, and capture the environment configration in variables that are used later in the process.
 
 > **NOTE**
-> UPDATE the **UniqueString** parameter with your own value (between 3 and 10 characters, alphanumeric only)
-> 
-> Information: We are using the `AKS-Construction` project to provision the AKS Cluster and assosiated cluster services/addons
+> Our bicep template is using the [AKS-Construction](https://github.com/Azure/AKS-Construction) project to provision the AKS Cluster and assosiated cluster services/addons, in addition to the other workload specific resources
 
 ```bash
 INFRA_RESULT=($(az deployment group create \
@@ -86,8 +92,7 @@ TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
 
 #### Store the resource keys KeyVault Secrets
 
-> **Note** 
-> OpenAI API, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
+OpenAI API, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
 
 
 ```bash
@@ -100,14 +105,20 @@ az keyvault secret set --name translatekey  --vault-name $KVNAME --value $(az co
 az keyvault secret set --name blobaccountkey  --vault-name $KVNAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNTNAME --query [1].value -o tsv)
 ```
 
+Create and record the required federation to allow the CSI Secret driver to use the AD Workload identity, and to update the manifest files.
 
-Store additional deployment information in environment variables
 ```bash
-EMBEDINGAPPID=$(az aks show -g $RGNAME -n $AKSCLUSTER --query addonProfiles.azureKeyvaultSecretsProvider.identity.clientId -o tsv)
-TENANTID=$(az account show --query tenantId -o tsv)
+
+CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+
+EMBEDINGAPPID=${CSIIdentity[2]}
+
+az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group echo ${CSIIdentity[0]} --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
 ```
 
-Change directory to the kubernetes manifests folder, and update manifest files with the environment variables
+
+#### Update kubernetes Manifests
+Change directory to the kubernetes manifests folder, and update manifest files with your environment specific values
 
 ```bash
     cd ../kubernetes/
@@ -118,14 +129,6 @@ Change directory to the kubernetes manifests folder, and update manifest files w
 
     sed -i -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" env-configmap.yaml
 ```
-
-
-### Pass environment parameters to the container
-
-
-Update the `env-configmap.yaml` file with the correct environment variables.
-
-NOTE: Replacing the values in `<...>`.  These values can be taken from the deployments created in the previous steps, as seen in your Azure portal.
 
 
 
