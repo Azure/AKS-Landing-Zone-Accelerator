@@ -41,16 +41,16 @@ To Deploy this Scenario, yopu must be registered to use Azure's OpenAI Service. 
 
 Begin by cloning this repository locally, and change directory to the infrastruture folder
 ```bash
-    git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
+git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
 
-    cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
+cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
 ```
 
 Ensure you are signed into the `az` CLI (use `az login` if not)
 
 #### Setup environment specific variables
 
-This script will set environment variables, including your prefered `Resource Group` name and `Azure Region` for the subsequent steps, and create the `resrouce group` where we will deploy the solution
+This will set environment variables, including your prefered `Resource Group` name and `Azure Region` for the subsequent steps, and create the `resrouce group` where we will deploy the solution
 
  > **Important**
  > Set UNIQUESTRING to a value that will prevent your resources from clashing names, recommended combination of your initials, and 2-digit number (eg js07)
@@ -67,7 +67,7 @@ az group create -l $LOCATION -n $RGNAME
 
 #### Infrastructure as Code
 
-Create all the solution resources using the provided `bicep` template, and capture the environment configration in variables that are used later in the process.
+Create all the solution resources using the provided `bicep` template, and capture the output environment configration in variables that are used later in the process.
 
 > **NOTE**
 > Our bicep template is using the [AKS-Construction](https://github.com/Azure/AKS-Construction) project to provision the AKS Cluster and assosiated cluster services/addons, in addition to the other workload specific resources
@@ -76,7 +76,7 @@ Create all the solution resources using the provided `bicep` template, and captu
 INFRA_RESULT=($(az deployment group create \
         -g $RGNAME  \
         --template-file intelligent-services.bicep \
-        --parameters UniqueString=<your unique string> \
+        --parameters UniqueString=$UNIQUESTRING \
         --parameters signedinuser=$SIGNEDINUSER \
         --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value,properties.outputs.blobAccountName.value,properties.outputs.openAIAccountName.value,properties.outputs.openAIURL.value,properties.outputs.formRecognizerAccountName.value,properties.outputs.translatorAccountName.value]" -o tsv \
 ))
@@ -92,7 +92,7 @@ TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
 
 #### Store the resource keys KeyVault Secrets
 
-OpenAI API, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
+OpenAI API, Blob Storage, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
 
 
 ```bash
@@ -121,13 +121,13 @@ az identity federated-credential create --name aksfederatedidentity --identity-n
 Change directory to the kubernetes manifests folder, and update manifest files with your environment specific values
 
 ```bash
-    cd ../kubernetes/
+cd ../kubernetes/
 
-    sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/"  secret-provider-class.yaml
+sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/"  secret-provider-class.yaml
 
-    sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
 
-    sed -i -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" env-configmap.yaml
+sed -i -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" env-configmap.yaml
 ```
 
 
