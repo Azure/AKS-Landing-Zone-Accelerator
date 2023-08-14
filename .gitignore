@@ -73,3 +73,9 @@ override.tf.json
 
 .infracost/*
 **/.infracost/*
+
+
+#Kubernetes secrets
+**/env-configmap.yaml
+**/secret=provider-class.yaml
+**/svc-accounts.yaml
