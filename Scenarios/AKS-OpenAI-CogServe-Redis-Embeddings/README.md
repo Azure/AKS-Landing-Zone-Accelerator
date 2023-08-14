@@ -111,9 +111,9 @@ Create and record the required federation to allow the CSI Secret driver to use 
 
 ```bash
 
-CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
-EMBEDINGAPPID=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv))
+EMBEDINGAPPID=${CSIIdentity[2]}
 
 az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group ${CSIIdentity[0]}  --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
 ```
