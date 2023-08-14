@@ -39,77 +39,105 @@ To Deploy this Scenario, yopu must be registered to use Azure's OpenAI Service. 
 
 ### Deployment Process
 
-Begin by cloning this repository locally
+Begin by cloning this repository locally, and change directory to the infrastruture folder
 ```bash
-    git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
+git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
+
+cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
 ```
 
-Change directory to the infrastruture folder
+Ensure you are signed into the `az` CLI (use `az login` if not)
+
+#### Setup environment specific variables
+
+This will set environment variables, including your prefered `Resource Group` name and `Azure Region` for the subsequent steps, and create the `resrouce group` where we will deploy the solution
+
+ > **Important**
+ > Set UNIQUESTRING to a value that will prevent your resources from clashing names, recommended combination of your initials, and 2-digit number (eg js07)
 
 ```bash
-    cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
-```
-```bash
-    RGNAME=embedding-openai-rg
-    LOCATION=eastus
-    az group create -l $LOCATION -n $RGNAME
-```
-
-Create the supporting resources (openai, storageaccount, translator, form reader)
-```bash
- az deployment group create -g $RGNAME  --name intelligentappsdeployment --template-file intelligent-services.bicep --parameters parameters.json --parameters UniqueString=<your unique string>
-```
-
-get the openai api key from the created openai resource in the portal 
-
-create the aks cluster and other supporting resources (acr, keyvault, etc). Get your signed in user information first which will be used to ensure you have access to the cluster.
-```bash
+UNIQUESTRING=<Your value here>
+RGNAME=embedding-openai-rg
+LOCATION=eastus
 SIGNEDINUSER=$(az ad signed-in-user show --query id --out tsv)
-```
-
-```bash
-DEP=$(az deployment group create --name aksenvironmentdeployment -g $RGNAME  --parameters signedinuser=$SIGNEDINUSER api_key=<your openai key>  -f aks.bicep -o json)
-```
-Storage deployment information in environment variables
-```bash
-KVNAME=$(echo $DEP | jq -r '.properties.outputs.kvAppName.value')
-OIDCISSUERURL=$(echo $DEP | jq -r '.properties.outputs.aksOidcIssuerUrl.value')
-AKSCLUSTER=$(echo $DEP | jq -r '.properties.outputs.aksClusterName.value')
-EMBEDINGAPPID=$(echo $DEP | jq -r '.properties.outputs.idembedingappClientId.value')
 TENANTID=$(az account show --query tenantId -o tsv)
-ACRNAME=$(az acr list -g $RGNAME --query [0].name  -o tsv)
+
+az group create -l $LOCATION -n $RGNAME
 ```
 
-Change directory to the kubernetes manifests folder, and update manifest files with the environment variables
+#### Infrastructure as Code
+
+Create all the solution resources using the provided `bicep` template, and capture the output environment configration in variables that are used later in the process.
+
+> **NOTE**
+> Our bicep template is using the [AKS-Construction](https://github.com/Azure/AKS-Construction) project to provision the AKS Cluster and assosiated cluster services/addons, in addition to the other workload specific resources
 
 ```bash
-    cd ../kubernetes/
+INFRA_RESULT=($(az deployment group create \
+        -g $RGNAME  \
+        --template-file intelligent-services.bicep \
+        --parameters UniqueString=$UNIQUESTRING \
+        --parameters signedinuser=$SIGNEDINUSER \
+        --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value,properties.outputs.blobAccountName.value,properties.outputs.openAIAccountName.value,properties.outputs.openAIURL.value,properties.outputs.formRecognizerAccountName.value,properties.outputs.translatorAccountName.value]" -o tsv \
+))
+KVNAME=${INFRA_RESULT[0]}
+OIDCISSUERURL=${INFRA_RESULT[1]}
+AKSCLUSTER=${INFRA_RESULT[2]}
+BLOB_ACCOUNTNAME=${INFRA_RESULT[3]}
+OPENAI_ACCOUNTNAME=${INFRA_RESULT[4]}
+OPENAI_ENDPOINT=${INFRA_RESULT[5]}
+FORMREC_ACCOUNT=${INFRA_RESULT[6]}
+TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
+```
 
-    sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" secret-provider-class.yaml
-    sed -i  "s/<kv name>/$KVNAME/" secret-provider-class.yaml
-    sed -i  "s/<tenant ID>/$TENANTID/" secret-provider-class.yaml
+Note: Verify in Azure OpenAI studio you have available quota for GPT-35-turbo modelotherwise might get error: "code": "InsufficientQuota", "message": "The specified capacity '1' of account deployment is bigger than available capacity '0' for UsageName 'Tokens Per Minute (thousands) - GPT-35-Turbo'."
 
-    sed -i  "s/<identity clientID>/$EMBEDINGAPPID/" svc-accounts.yaml
-    sed -i  "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+#### Store the resource keys KeyVault Secrets
+
+OpenAI API, Blob Storage, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
+
+
+```bash
+az keyvault secret set --name openaiapikey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $OPENAI_ACCOUNTNAME --query key1 -o tsv)
+
+az keyvault secret set --name formrecognizerkey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $FORMREC_ACCOUNT --query key1 -o tsv)
+
+az keyvault secret set --name translatekey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $TRANSLATOR_ACCOUNT --query key1 -o tsv)
+
+az keyvault secret set --name blobaccountkey  --vault-name $KVNAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNTNAME --query [1].value -o tsv)
+```
+
+Create and record the required federation to allow the CSI Secret driver to use the AD Workload identity, and to update the manifest files.
+
+```bash
+
+CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+
+EMBEDINGAPPID=${CSIIdentity[2]}
+
+az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group ${CSIIdentity[0]} --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
 ```
 
 
-### Pass environment parameters to the container
+#### Update kubernetes Manifests
+Change directory to the kubernetes manifests folder, and update manifest files with your environment specific values
 
-> **Note** 
-> OPENAI_API_KEY will be secured from KeyVault using the CSI Secret driver, so can be left empty in this configmap
+```bash
+cd ../kubernetes/
 
+sed  -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/" ./templates/secret-provider-class.tpl > secret-provider-class.yaml
 
-Update the `env-configmap.yaml` file with the correct environment variables.
+sed  -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" ./templates/svc-accounts.tpl > svc-accounts.yaml
 
-NOTE: Replacing the values in `<...>`.  These values can be taken from the deployments created in the previous steps, as seen in your Azure portal.
+sed  -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" ./templates/env-configmap.tpl > env-configmap.yaml
+```
 
 
 
 ### Log into the AKS cluster
 
 ```bash
-az aks get-credentials -g $RGNAME -n aks-embedhhdingsy
+az aks get-credentials -g $RGNAME -n $AKSCLUSTER
 kubectl get nodes
 ```
 

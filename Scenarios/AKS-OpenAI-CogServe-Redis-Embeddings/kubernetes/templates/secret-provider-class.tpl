@@ -12,11 +12,26 @@ spec:
         - |
           objectName: openaiapikey
           objectType: secret
+        - |
+          objectName: formrecognizerkey
+          objectType: secret
+        - |
+          objectName: translatekey
+          objectType: secret
+        - |
+          objectName: blobaccountkey
+          objectType: secret
     tenantId: <tenant ID>
   provider: azure
   secretObjects:
   - data:
     - key: openaiapikey
       objectName: openaiapikey
+    - key: formrecognizerkey
+      objectName: formrecognizerkey
+    - key: translatekey
+      objectName: translatekey
+    - key: blobaccountkey
+      objectName: blobaccountkey
     secretName: openaiapikey
     type: Opaque

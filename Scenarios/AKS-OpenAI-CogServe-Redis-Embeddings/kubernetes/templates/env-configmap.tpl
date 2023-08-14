@@ -7,18 +7,15 @@ metadata:
 data:
   AZURE_SEARCH_ADMIN_KEY: ""
   AZURE_SEARCH_SERVICE_NAME: ""
-  AzureWebJobsStorage: <your web storage connection string>
-  BLOB_ACCOUNT_KEY: <your blob storage account key>
+  AzureWebJobsStorage: ""
   BLOB_ACCOUNT_NAME: <your blob storage account name>
   BLOB_CONTAINER_NAME: documents
   CHUNK_OVERLAP: "100"
   CHUNK_SIZE: "500"
   CONVERT_ADD_EMBEDDINGS_URL: http://batch/api/BatchStartProcessing
-  FORM_RECOGNIZER_ENDPOINT: https://eastus.api.cognitive.microsoft.com/
-  FORM_RECOGNIZER_KEY: <your form recognizer service key>
+  FORM_RECOGNIZER_ENDPOINT: https://<your region>.api.cognitive.microsoft.com/
   NUMBER_OF_EMBEDDINGS_FOR_QNA: "3"
   OPENAI_API_BASE: <your OpenAI endpoint>
-  OPENAI_API_KEY: ""
   OPENAI_DEPLOYMENT_TYPE: Chat
   OPENAI_EMBEDDINGS_ENGINE: text-embedding-ada-002
   OPENAI_EMBEDDINGS_ENGINE_DOC: text-embedding-ada-002
@@ -32,7 +29,6 @@ data:
   REDIS_PASSWORD: redis-stack-password
   REDIS_PORT: "6379"
   TRANSLATE_ENDPOINT: https://api.cognitive.microsofttranslator.com/
-  TRANSLATE_KEY: <your translate service key>
   TRANSLATE_REGION: <your region>
   VECTOR_STORE_TYPE: SomethingElse
   VNET_DEPLOYMENT: "false"

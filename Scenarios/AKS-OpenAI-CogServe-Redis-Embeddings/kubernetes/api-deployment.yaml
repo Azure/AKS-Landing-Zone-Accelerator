@@ -45,10 +45,10 @@ spec:
                   key: AzureWebJobsStorage
                   name: env
             - name: BLOB_ACCOUNT_KEY
-              valueFrom:
-                configMapKeyRef:
-                  key: BLOB_ACCOUNT_KEY
-                  name: env
+              valueFrom: 
+                secretKeyRef: 
+                  name: openaiapikey
+                  key: blobaccountkey
             - name: BLOB_ACCOUNT_NAME
               valueFrom:
                 configMapKeyRef:
@@ -80,10 +80,10 @@ spec:
                   key: FORM_RECOGNIZER_ENDPOINT
                   name: env
             - name: FORM_RECOGNIZER_KEY
-              valueFrom:
-                configMapKeyRef:
-                  key: FORM_RECOGNIZER_KEY
-                  name: env
+              valueFrom: 
+                secretKeyRef: 
+                  name: openaiapikey
+                  key: formrecognizerkey
             - name: NUMBER_OF_EMBEDDINGS_FOR_QNA
               valueFrom:
                 configMapKeyRef:
@@ -99,9 +99,6 @@ spec:
                 secretKeyRef: 
                   name: openaiapikey
                   key: openaiapikey
-                # configMapKeyRef:
-                #   key: OPENAI_API_KEY
-                #   name: env
             - name: OPENAI_DEPLOYMENT_TYPE
               valueFrom:
                 configMapKeyRef:
@@ -168,10 +165,10 @@ spec:
                   key: TRANSLATE_ENDPOINT
                   name: env
             - name: TRANSLATE_KEY
-              valueFrom:
-                configMapKeyRef:
-                  key: TRANSLATE_KEY
-                  name: env
+              valueFrom: 
+                secretKeyRef: 
+                  name: openaiapikey
+                  key: translatekey
             - name: TRANSLATE_REGION
               valueFrom:
                 configMapKeyRef:
