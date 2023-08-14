@@ -90,6 +90,8 @@ FORMREC_ACCOUNT=${INFRA_RESULT[6]}
 TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
 ```
 
+Note: Verify in Azure OpenAI studio you have available quota for GPT-35-turbo modelotherwise might get error: "code": "InsufficientQuota", "message": "The specified capacity '1' of account deployment is bigger than available capacity '0' for UsageName 'Tokens Per Minute (thousands) - GPT-35-Turbo'."
+
 #### Store the resource keys KeyVault Secrets
 
 OpenAI API, Blob Storage, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
@@ -123,11 +125,11 @@ Change directory to the kubernetes manifests folder, and update manifest files w
 ```bash
 cd ../kubernetes/
 
-sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/"  secret-provider-class.yaml
+sed  -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/" ./templates/secret-provider-class.tpl > secret-provider-class.yaml
 
-sed -i -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" svc-accounts.yaml
+sed  -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" ./templates/svc-accounts.tpl > svc-accounts.yaml
 
-sed -i -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" env-configmap.yaml
+sed  -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" ./templates/env-configmap.tpl > env-configmap.yaml
 ```
 
 
