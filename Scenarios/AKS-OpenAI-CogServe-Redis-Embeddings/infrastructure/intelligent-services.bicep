@@ -82,7 +82,7 @@ resource OpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
     name: 'gpt-deployment'
     sku: {
       name: 'Standard'
-      capacity: 30
+      capacity: 120
     }
     properties: {
       model: {
@@ -96,7 +96,11 @@ resource OpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   resource OpenAIDeploymentEmbeddings 'deployments' = {
 
     name: OpenAIEmbeddingsEngineDoc
-
+    sku: {
+      name: 'Standard'
+      capacity: 120
+    }
+    
     properties: {
       model: {
         format: 'OpenAI'
