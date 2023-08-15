@@ -88,6 +88,7 @@ OPENAI_ACCOUNTNAME=${INFRA_RESULT[4]}
 OPENAI_ENDPOINT=${INFRA_RESULT[5]}
 FORMREC_ACCOUNT=${INFRA_RESULT[6]}
 TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
+FORMREC_ENDPOINT=$(az cognitiveservices account show --name ${FORMREC_ACCOUNT} --resource-group ${RGNAME} --query properties.endpoint -o tsv)
 ```
 
 Note: Verify in Azure OpenAI studio you have available quota for GPT-35-turbo modelotherwise might get error: "code": "InsufficientQuota", "message": "The specified capacity '1' of account deployment is bigger than available capacity '0' for UsageName 'Tokens Per Minute (thousands) - GPT-35-Turbo'."
@@ -116,23 +117,29 @@ CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azur
 EMBEDINGAPPID=${CSIIdentity[2]}
 
 az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group ${CSIIdentity[0]} --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
+
 ```
 
+### Save variables
 
-#### Update kubernetes Manifests
-Change directory to the kubernetes manifests folder, and update manifest files with your environment specific values
+```bash
+cat << EOF >> .env
+CLIENT_ID=$EMBEDINGAPPID
+TENANT_ID=$TENANTID
+KV_NAME=$KVNAME
+OPENAI_API_BASE=$OPENAI_ENDPOINT
+LOCATION=$LOCATION
+BLOB_ACCOUNT_NAME=$BLOB_ACCOUNTNAME
+FORM_RECOGNIZER_ENDPOINT=$FORMREC_ENDPOINT
+EOF
+```
+
+#### kubernetes Manifests
+Change directory to the kubernetes manifests folder, deployment will be done using Kustomize declarations.
 
 ```bash
 cd ../kubernetes/
-
-sed  -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<kv name>/$KVNAME/" -e "s/<tenant ID>/$TENANTID/" ./templates/secret-provider-class.tpl > secret-provider-class.yaml
-
-sed  -e "s/<identity clientID>/$EMBEDINGAPPID/" -e "s/<tenant ID>/$TENANTID/" ./templates/svc-accounts.tpl > svc-accounts.yaml
-
-sed  -e "s/<your region>/$LOCATION/" -e "s/<your blob storage account name>/$BLOB_ACCOUNTNAME/" -e "s|<your OpenAI endpoint>|$OPENAI_ENDPOINT|" ./templates/env-configmap.tpl > env-configmap.yaml
 ```
-
-
 
 ### Log into the AKS cluster
 
@@ -144,7 +151,7 @@ kubectl get nodes
 
 ### Deploy the kubernetes resources
 ```
-kubectl apply -f .
+kubectl apply -k .
 ```
 
 
