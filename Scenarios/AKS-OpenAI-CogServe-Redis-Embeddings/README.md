@@ -117,7 +117,6 @@ CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azur
 EMBEDINGAPPID=${CSIIdentity[2]}
 
 az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group ${CSIIdentity[0]} --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
-
 ```
 
 ### Save variables
