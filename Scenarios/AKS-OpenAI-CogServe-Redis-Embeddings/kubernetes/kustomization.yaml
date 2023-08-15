@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+bases:
+ - bases 
+
+# namespace to deploy all Resources to
+namespace: default
+
+# labels added to all Resources
+commonLabels:
+  io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
+
+resources:
+  - patches/svc-accounts.yaml
+  - patches/secret-provider-class.yaml
+  - patches/env-configmap.yaml
+
+configMapGenerator:
+  - name: kvmap
+    envs:
+      - .env
+
+generatorOptions:
+  labels:
+    kustomize.generated.resources: cm-generated
+  disableNameSuffixHash: true  
+
+replacements:
+  - path: patches/replacements.yaml
+
+  
+
+
+#patches:
+#- patch: |-
+#    - op: replace
+#      path: /metadata/annotations/azure.workload.identity~1client-id  
+#      value: "$(echo ${EMBEDINGAPPID})"  
+#  target:
+#      kind: ServiceAccount
+#      name: serversa  

@@ -2,48 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    azure.workload.identity/use: "true"
-    service: api
-  name: api
+    service: web
+  name: web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: api
+      service: web
   strategy: {}
   template:
     metadata:
       labels:
         io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
-        service: api
+        service: web
     spec:
       serviceAccountName: serversa
-      volumes:
-        - name: secrets-mount
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: openaiapikey
       containers:
-        - image: redis/redis-stack-server:latest
-          name: api
-          env:
-            - name: AZURE_SEARCH_ADMIN_KEY
-              valueFrom:
-                configMapKeyRef:
-                  key: AZURE_SEARCH_ADMIN_KEY
-                  name: env
-            - name: AZURE_SEARCH_SERVICE_NAME
-              valueFrom:
-                configMapKeyRef:
-                  key: AZURE_SEARCH_SERVICE_NAME
-                  name: env
-            - name: AzureWebJobsStorage
-              valueFrom:
-                configMapKeyRef:
-                  key: AzureWebJobsStorage
-                  name: env
+        - env:
+            
             - name: BLOB_ACCOUNT_KEY
               valueFrom: 
                 secretKeyRef: 
@@ -184,25 +160,10 @@ spec:
                 configMapKeyRef:
                   key: VNET_DEPLOYMENT
                   name: env
-          livenessProbe:
-            exec:
-              command:
-                - redis-cli
-                - -h
-                - localhost
-                - -p
-                - "6379"
-                - ping
-            failureThreshold: 5
-            initialDelaySeconds: 5
-            periodSeconds: 2
-            timeoutSeconds: 90
-          volumeMounts:
-          - name: secrets-mount
-            mountPath: "/mnt/secrets-store"
-            readOnly: true
+          image: fruocco/oai-embeddings
+          name: web
           ports:
-            - containerPort: 6379
+            - containerPort: 80
           resources: {}
       restartPolicy: Always
 status: {}
