@@ -206,5 +206,6 @@ output blobAccountName string = StorageAccount.name
 output openAIAccountName string = OpenAI.name
 output openAIURL string = OpenAI.properties.endpoint
 output formRecognizerAccountName string = FormRecognizer.name 
+output formRecognizerURL string = FormRecognizer.properties.endpoint
 output translatorAccountName string = Translator.name
 

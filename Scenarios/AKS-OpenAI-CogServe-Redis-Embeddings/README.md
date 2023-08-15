@@ -78,7 +78,7 @@ INFRA_RESULT=($(az deployment group create \
         --template-file intelligent-services.bicep \
         --parameters UniqueString=$UNIQUESTRING \
         --parameters signedinuser=$SIGNEDINUSER \
-        --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value,properties.outputs.blobAccountName.value,properties.outputs.openAIAccountName.value,properties.outputs.openAIURL.value,properties.outputs.formRecognizerAccountName.value,properties.outputs.translatorAccountName.value]" -o tsv \
+        --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value,properties.outputs.blobAccountName.value,properties.outputs.openAIAccountName.value,properties.outputs.openAIURL.value,properties.outputs.formRecognizerAccountName.value,properties.outputs.translatorAccountName.value,properties.outputs.formRecognizerURL.value]" -o tsv \
 ))
 KVNAME=${INFRA_RESULT[0]}
 OIDCISSUERURL=${INFRA_RESULT[1]}
@@ -88,7 +88,7 @@ OPENAI_ACCOUNTNAME=${INFRA_RESULT[4]}
 OPENAI_ENDPOINT=${INFRA_RESULT[5]}
 FORMREC_ACCOUNT=${INFRA_RESULT[6]}
 TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
-FORMREC_ENDPOINT=$(az cognitiveservices account show --name ${FORMREC_ACCOUNT} --resource-group ${RGNAME} --query properties.endpoint -o tsv)
+FORMREC_ENDPOINT=${INFRA_RESULT[8]}
 ```
 
 Note: Verify in Azure OpenAI studio you have available quota for GPT-35-turbo modelotherwise might get error: "code": "InsufficientQuota", "message": "The specified capacity '1' of account deployment is bigger than available capacity '0' for UsageName 'Tokens Per Minute (thousands) - GPT-35-Turbo'."
