@@ -118,6 +118,13 @@ CLIENT_ID=${CSIIdentity[2]}
 az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group ${CSIIdentity[0]} --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
 ```
 
+#### kubernetes Manifests
+Change directory to the kubernetes manifests folder, deployment will be done using Kustomize declarations.
+
+```bash
+cd ../kubernetes/
+```
+
 ### Save variables
 
 ```bash
@@ -130,13 +137,6 @@ LOCATION=$LOCATION
 BLOB_ACCOUNT_NAME=$BLOB_ACCOUNT_NAME
 FORM_RECOGNIZER_ENDPOINT=$FORM_RECOGNIZER_ENDPOINT
 EOF
-```
-
-#### kubernetes Manifests
-Change directory to the kubernetes manifests folder, deployment will be done using Kustomize declarations.
-
-```bash
-cd ../kubernetes/
 ```
 
 ### Log into the AKS cluster
