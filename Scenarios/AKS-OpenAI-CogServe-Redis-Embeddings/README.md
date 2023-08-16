@@ -60,7 +60,6 @@ UNIQUESTRING=<Your value here>
 RGNAME=embedding-openai-rg
 LOCATION=eastus
 SIGNEDINUSER=$(az ad signed-in-user show --query id --out tsv)
-TENANTID=$(az account show --query tenantId -o tsv)
 
 az group create -l $LOCATION -n $RGNAME
 ```
@@ -78,17 +77,17 @@ INFRA_RESULT=($(az deployment group create \
         --template-file intelligent-services.bicep \
         --parameters UniqueString=$UNIQUESTRING \
         --parameters signedinuser=$SIGNEDINUSER \
-        --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value,properties.outputs.blobAccountName.value,properties.outputs.openAIAccountName.value,properties.outputs.openAIURL.value,properties.outputs.formRecognizerAccountName.value,properties.outputs.translatorAccountName.value]" -o tsv \
+        --query "[properties.outputs.kvAppName.value,properties.outputs.aksOidcIssuerUrl.value,properties.outputs.aksClusterName.value,properties.outputs.blobAccountName.value,properties.outputs.openAIAccountName.value,properties.outputs.openAIURL.value,properties.outputs.formRecognizerAccountName.value,properties.outputs.translatorAccountName.value,properties.outputs.formRecognizerURL.value]" -o tsv \
 ))
-KVNAME=${INFRA_RESULT[0]}
+KV_NAME=${INFRA_RESULT[0]}
 OIDCISSUERURL=${INFRA_RESULT[1]}
 AKSCLUSTER=${INFRA_RESULT[2]}
-BLOB_ACCOUNTNAME=${INFRA_RESULT[3]}
+BLOB_ACCOUNT_NAME=${INFRA_RESULT[3]}
 OPENAI_ACCOUNTNAME=${INFRA_RESULT[4]}
-OPENAI_ENDPOINT=${INFRA_RESULT[5]}
+OPENAI_API_BASE=${INFRA_RESULT[5]}
 FORMREC_ACCOUNT=${INFRA_RESULT[6]}
 TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
-FORMREC_ENDPOINT=$(az cognitiveservices account show --name ${FORMREC_ACCOUNT} --resource-group ${RGNAME} --query properties.endpoint -o tsv)
+FORM_RECOGNIZER_ENDPOINT=${INFRA_RESULT[8]}
 ```
 
 Note: Verify in Azure OpenAI studio you have available quota for GPT-35-turbo modelotherwise might get error: "code": "InsufficientQuota", "message": "The specified capacity '1' of account deployment is bigger than available capacity '0' for UsageName 'Tokens Per Minute (thousands) - GPT-35-Turbo'."
@@ -99,13 +98,13 @@ OpenAI API, Blob Storage, Form Recognisor and Translator keys will be secured in
 
 
 ```bash
-az keyvault secret set --name openaiapikey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $OPENAI_ACCOUNTNAME --query key1 -o tsv)
+az keyvault secret set --name openaiapikey  --vault-name $KV_NAME --value $(az cognitiveservices account keys list -g $RGNAME -n $OPENAI_ACCOUNTNAME --query key1 -o tsv)
 
-az keyvault secret set --name formrecognizerkey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $FORMREC_ACCOUNT --query key1 -o tsv)
+az keyvault secret set --name formrecognizerkey  --vault-name $KV_NAME --value $(az cognitiveservices account keys list -g $RGNAME -n $FORMREC_ACCOUNT --query key1 -o tsv)
 
-az keyvault secret set --name translatekey  --vault-name $KVNAME --value $(az cognitiveservices account keys list -g $RGNAME -n $TRANSLATOR_ACCOUNT --query key1 -o tsv)
+az keyvault secret set --name translatekey  --vault-name $KV_NAME --value $(az cognitiveservices account keys list -g $RGNAME -n $TRANSLATOR_ACCOUNT --query key1 -o tsv)
 
-az keyvault secret set --name blobaccountkey  --vault-name $KVNAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNTNAME --query [1].value -o tsv)
+az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNT_NAME --query [1].value -o tsv)
 ```
 
 Create and record the required federation to allow the CSI Secret driver to use the AD Workload identity, and to update the manifest files.
@@ -114,23 +113,9 @@ Create and record the required federation to allow the CSI Secret driver to use 
 
 CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
-EMBEDINGAPPID=${CSIIdentity[2]}
+CLIENT_ID=${CSIIdentity[2]}
 
 az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group ${CSIIdentity[0]} --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
-```
-
-### Save variables
-
-```bash
-cat << EOF >> .env
-CLIENT_ID=$EMBEDINGAPPID
-TENANT_ID=$TENANTID
-KV_NAME=$KVNAME
-OPENAI_API_BASE=$OPENAI_ENDPOINT
-LOCATION=$LOCATION
-BLOB_ACCOUNT_NAME=$BLOB_ACCOUNTNAME
-FORM_RECOGNIZER_ENDPOINT=$FORMREC_ENDPOINT
-EOF
 ```
 
 #### kubernetes Manifests
@@ -138,6 +123,20 @@ Change directory to the kubernetes manifests folder, deployment will be done usi
 
 ```bash
 cd ../kubernetes/
+```
+
+### Save variables
+
+```bash
+cat << EOF >> .env
+CLIENT_ID=$CLIENT_ID
+TENANT_ID=$(az account show --query tenantId -o tsv)
+KV_NAME=$KV_NAME
+OPENAI_API_BASE=$OPENAI_API_BASE
+LOCATION=$LOCATION
+BLOB_ACCOUNT_NAME=$BLOB_ACCOUNT_NAME
+FORM_RECOGNIZER_ENDPOINT=$FORM_RECOGNIZER_ENDPOINT
+EOF
 ```
 
 ### Log into the AKS cluster
