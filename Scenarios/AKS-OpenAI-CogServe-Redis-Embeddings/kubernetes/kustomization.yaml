@@ -1,20 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-bases:
- - bases 
-
 # namespace to deploy all Resources to
-namespace: default
-
-# labels added to all Resources
-commonLabels:
-  io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
+#namespace: default
 
 resources:
-  - patches/svc-accounts.yaml
-  - patches/secret-provider-class.yaml
-  - patches/env-configmap.yaml
+  - bases
+  - patches
 
 configMapGenerator:
   - name: kvmap

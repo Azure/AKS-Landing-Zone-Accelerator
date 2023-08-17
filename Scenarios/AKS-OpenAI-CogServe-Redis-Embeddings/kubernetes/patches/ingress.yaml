@@ -1,13 +1,11 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.azure.com/tls-cert-keyvault-uri: <KeyVaultCertificateUri>
   name: web
 spec:
   ingressClassName: webapprouting.kubernetes.azure.com
   rules:
- - host:
+  - host: "*.eastus.cloudapp.azure.com"
     http:
       paths:
       - backend:

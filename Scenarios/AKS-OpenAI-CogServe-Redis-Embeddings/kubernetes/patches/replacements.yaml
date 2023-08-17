@@ -86,5 +86,16 @@
       kind: ConfigMap
       name: env
     fieldPaths:
-    -   data.FORM_RECOGNIZER_ENDPOINT   
- 
+    -   data.FORM_RECOGNIZER_ENDPOINT  
+  
+## REPLACE DNS NAME
+- source:
+    kind: ConfigMap
+    fieldPath: data.DNS_NAME
+    name: kvmap
+  targets:
+  - select:
+      kind: Ingress
+      name: web
+    fieldPaths:
+    - spec.rules.*.host   

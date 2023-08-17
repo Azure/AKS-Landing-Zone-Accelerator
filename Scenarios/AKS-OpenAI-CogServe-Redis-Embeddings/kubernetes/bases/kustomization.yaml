@@ -5,9 +5,9 @@ kind: Kustomization
 resources:
   - api-deployment.yaml
   - api-service.yaml
-  - azure-open-ai-embeddings-qna-default-networkpolicy.yaml
+  - networkpolicy.yaml
   - batch-deployment.yaml
   - batch-service.yaml
   - web-deployment.yaml
   - web-service.yaml
-
+  

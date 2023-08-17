@@ -5,12 +5,11 @@ metadata:
     service: web
   name: web
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
-    - name: "8080"
+    - name: "80"
       port: 80
       targetPort: 80
   selector:
     service: web
-status:
-  loadBalancer: {}
+

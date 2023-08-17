@@ -125,7 +125,18 @@ Change directory to the kubernetes manifests folder, deployment will be done usi
 cd ../kubernetes/
 ```
 
+### Log into the AKS cluster
+
+```bash
+az aks get-credentials -g $RGNAME -n $AKSCLUSTER
+kubectl get nodes
+
+
+INGRESS_IP=$(kubectl get svc nginx -n app-routing-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+```
+
 ### Save variables
+
 
 ```bash
 cat << EOF >> .env
@@ -136,15 +147,12 @@ OPENAI_API_BASE=$OPENAI_API_BASE
 LOCATION=$LOCATION
 BLOB_ACCOUNT_NAME=$BLOB_ACCOUNT_NAME
 FORM_RECOGNIZER_ENDPOINT=$FORM_RECOGNIZER_ENDPOINT
+DNS_NAME=openai-$UNIQUESTRING.$INGRESS_IP.nip.io
 EOF
 ```
 
-### Log into the AKS cluster
-
-```bash
-az aks get-credentials -g $RGNAME -n $AKSCLUSTER
-kubectl get nodes
-```
+#DNS_LABEL=openai-$UNIQUESTRING
+#DNS_NAME=openai-$UNIQUESTRING.$LOCATION.cloudapp.azure.com
 
 
 ### Deploy the kubernetes resources
