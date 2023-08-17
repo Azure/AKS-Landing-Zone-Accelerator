@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 # namespace to deploy all Resources to
-#namespace: default
+namespace: default
 
 resources:
   - bases
@@ -21,14 +21,3 @@ generatorOptions:
 replacements:
   - path: patches/replacements.yaml
 
-  
-
-
-#patches:
-#- patch: |-
-#    - op: replace
-#      path: /metadata/annotations/azure.workload.identity~1client-id  
-#      value: "$(echo ${EMBEDINGAPPID})"  
-#  target:
-#      kind: ServiceAccount
-#      name: serversa  

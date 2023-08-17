@@ -17,7 +17,7 @@ During this workshop, you will be using various Azure and AKS features that make
 * Secure secrets with Azure Key vault
 * Provide individual pods access to Key vault secrets using workload identity
 * Secure your AKS environment with Azure Policy and Network policy
-* Protect access to your application using Application Gateway
+* Protect access to your application using Application Web routing Ingress Controller
 * Automatically scale your application with cluster autoscaler and horizontal pod autoscaler
 * Queue jobs using Azure queue
 * Store vectors of your knowledge base and perform vector search using a pod running on AKS
@@ -150,9 +150,6 @@ FORM_RECOGNIZER_ENDPOINT=$FORM_RECOGNIZER_ENDPOINT
 DNS_NAME=openai-$UNIQUESTRING.$INGRESS_IP.nip.io
 EOF
 ```
-
-#DNS_LABEL=openai-$UNIQUESTRING
-#DNS_NAME=openai-$UNIQUESTRING.$LOCATION.cloudapp.azure.com
 
 
 ### Deploy the kubernetes resources
