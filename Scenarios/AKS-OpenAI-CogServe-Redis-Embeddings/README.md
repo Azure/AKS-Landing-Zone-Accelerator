@@ -103,7 +103,7 @@ Note: Verify in Azure OpenAI studio you have available quota for GPT-35-turbo mo
 
 #### Store the resource keys Key Vault Secrets
 
-OpenAI API, Blob Storage, Form Recogniser and Translator keys will be secured in Key Vault, and passed to the workload using the CSI Secret driver
+OpenAI API, Blob Storage, Form Recognizer and Translator keys will be secured in Key Vault, and passed to the workload using the CSI Secret driver
 
 > Note: If you get a bad request error in any of the commands below, then it means the previous commands did not serialize the environment variable correctly. Use the echo command to get the name of the AI services used in the commands below and run the commands by replacing the environment variables with actual service names.
 
