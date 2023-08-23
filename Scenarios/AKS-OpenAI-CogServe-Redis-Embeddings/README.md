@@ -71,6 +71,9 @@ Create all the solution resources using the provided `bicep` template, and captu
 > **NOTE**
 > Our bicep template is using the [AKS-Construction](https://github.com/Azure/AKS-Construction) project to provision the AKS Cluster and assosiated cluster services/addons, in addition to the other workload specific resources
 
+ > **Important**
+ > Ensure you have enough quota to deploy the gpt-35-turbo and text-embedding-ada-002 models before running the command below. Failure to do this will lead to an "InsufficientQuota" error in the model deployment. Most subscriptions have quota of 1 of these models, so if you already have either of those models deployed, you might not be able to deploy another one in the same subscription and you might have to use that deployment as your model instead to proceed.
+
 ```bash
 INFRA_RESULT=($(az deployment group create \
         -g $RGNAME  \
@@ -90,12 +93,16 @@ TRANSLATOR_ACCOUNT=${INFRA_RESULT[7]}
 FORM_RECOGNIZER_ENDPOINT=${INFRA_RESULT[8]}
 ```
 
+ > **Important**
+ > Ensure you those commands above captured the correct values for the environment variables by using the echo command, otherwise you might run into errors in the next few commands.
+
 Note: Verify in Azure OpenAI studio you have available quota for GPT-35-turbo modelotherwise might get error: "code": "InsufficientQuota", "message": "The specified capacity '1' of account deployment is bigger than available capacity '0' for UsageName 'Tokens Per Minute (thousands) - GPT-35-Turbo'."
 
 #### Store the resource keys KeyVault Secrets
 
 OpenAI API, Blob Storage, Form Recognisor and Translator keys will be secured in KeyVault, and passed to the workload using the CSI Secret driver
 
+> Note: If you get a bad request error in any of the commands below, then it means the previous commands did not serialize the environment variable correctly. Use the echo command to get the name of the AI services used in the commands below and run the commands by replacing the environement variables with actual service names.
 
 ```bash
 az keyvault secret set --name openaiapikey  --vault-name $KV_NAME --value $(az cognitiveservices account keys list -g $RGNAME -n $OPENAI_ACCOUNTNAME --query key1 -o tsv)
@@ -111,11 +118,13 @@ Create and record the required federation to allow the CSI Secret driver to use 
 
 ```bash
 
-CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+CSIIdentity=($(az aks show -g $RGNAME -n aks-aksembed-aa05 --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
 CLIENT_ID=${CSIIdentity[2]}
+IDNAME=${CSIIdentity[1]} 
+IDRG=${CSIIdentity[0]} 
 
-az identity federated-credential create --name aksfederatedidentity --identity-name ${CSIIdentity[1]} --resource-group ${CSIIdentity[0]} --issuer ${OIDCISSUERURL} --subject system:serviceaccount:default:serversa
+az identity federated-credential create --name aksfederatedidentity --identity-name azurekeyvaultsecretsprovider-aks-aksembed-aa05 --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
 ```
 
 #### kubernetes Manifests
