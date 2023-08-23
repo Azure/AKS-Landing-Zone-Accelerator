@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# namespace to deploy all Resources to
+namespace: default
+
+resources:
+  - bases
+  - patches
+
+configMapGenerator:
+  - name: kvmap
+    envs:
+      - .env
+
+generatorOptions:
+  labels:
+    kustomize.generated.resources: cm-generated
+  disableNameSuffixHash: true  
+
+replacements:
+  - path: patches/replacements.yaml
+

@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: azure-open-ai-embeddings-qna-default
+spec:
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              io.kompose.network/azure-open-ai-embeddings-qna-default: "true"   
+  podSelector:
+    matchLabels:
+      io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ingress-to-web
+spec:
+  ingress:
+    - from:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: app-routing-system
+        podSelector:
+          matchLabels:
+            app: nginx
+
+  podSelector:
+    matchLabels:
+      io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
+      service: web
