@@ -182,7 +182,7 @@ Get the URL where the app can be reached
 kubectl get ingress
 ```
 1. Copy the url under **HOSTS** and paste it in your browser. 
-1. Try asking the chatbot a domain specific question and notice it fail to answer it correctly. 
+1. Try asking the chatbot a domain specific question by heading to the **Chat** tab and typing a question there. You will notice it fail to answer it correctly. 
 1. Click on the `Add Document` tab in the left pane and either upload a PDF with domain information you would like to ask the chatbot about or copy and paste text containing the knowledge base in `Add text to the knowledge base` section, then click on `Compute Embeddings`
 1. Head back to the **Chat** tab, try asking the same question again and watch the chatbot answer it correctly
 
