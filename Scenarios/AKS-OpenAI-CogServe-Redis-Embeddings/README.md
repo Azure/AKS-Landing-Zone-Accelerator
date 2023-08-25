@@ -37,7 +37,7 @@ This is a simple web application for an OpenAI-enabled document search. This rep
 ## Deploy this Scenario
 
 ### Pre-requisite
-To Deploy this cenario, you must have Azure OpenAI Service enabled in your subscription.  If you haven't registered it yet, follow the instructions [here](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access) to do so.
+To Deploy this scenario, you must have Azure OpenAI Service enabled in your subscription.  If you haven't registered it yet, follow the instructions [here](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access) to do so.
 
 > **Warning** 
 > Registration may take multiple hours.
