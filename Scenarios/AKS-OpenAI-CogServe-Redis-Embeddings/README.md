@@ -3,9 +3,14 @@
 AKS is a great platform for hosting modern AI based applications for various reasons. It provides a single control plane to host all the assets required to build applications from end to end and even allows the development of applications using a Microservice architecture. What this means is that the AI based components can be separated from the rest of the applications. AKS also allows hosting of some of Azure's AI services as containers withing your cluster, so that you can keep all the endpoints of your applications private as well as manage scaling however you need to. This is a significant advantage when it comes to securing your application. By hosting all components in a single control plane, you can streamline your DevOps process. 
 
 ## Core architecture components
-In this scenario, we will be building an application that uses various Azure AI services. It builds on top of the AKS secure baseline scenario so we will focus on discussing what is different in this scenario. For simplicity and quick deployment, you will be using the AKS construction helper to setup the base AKS environment. You will also be using Bicep to create the additional components that include Azure Form Recognizer, Translator, Storage account with Queue service as well as Blob storage. In a future revision of this scenario, an option to use Azure Cache for Redis for vector search as opposed to running Redis stack as a container within the AKS cluster. This will shows the flexibility you get when you run your intelligent applications on AKS.
+In this scenario, we will be building an application that uses various Azure AI services. It builds on top of the AKS secure baseline scenario so we will focus on discussing what is different in this scenario. For simplicity and quick deployment, you will be using the AKS construction helper to setup the base AKS environment. You will also be using Bicep to create the additional components that include Azure Form Recognizer, Translator, Storage account with Queue service as well as Blob storage. In a future revision of this scenario, an option to use Azure Cache for Redis for vector search as opposed to running a Redis stack as a container within the AKS cluster. This will demonstrate the flexibility you get when you run your intelligent applications on AKS.
 
-Within the cluster we will have three pods running. One for batch processing of the documents used to update the knowledge base of the conversational AI bot. Another is a customized Redis stack pod that is used for the vector search. The third will the front end application. You can run some of the AI services mentioned above as containers in the cluster as well, but for this vanilla installation, we will stick to running them as PaaS service on Azure. For more information about running Azure AI services on AKS, please check out [Azure Cognitive Services containers](https://learn.microsoft.com/en-us/azure/cognitive-services/cognitive-services-container-support) page.
+We will have three pods running within a cluster:
+- One for batch processing of the documents that are used to update the knowledge base of the conversational AI bot.
+- Another one is a customized Redis stack pod that is used for vector search.
+- The third pod will host the front end application.
+
+You can run some of the AI services mentioned above as containers in the cluster as well. However, for this vanilla installation, we will stick to running them as PaaS services on Azure. For more information about running Azure AI services on AKS, please check out [Azure Cognitive Services containers](https://learn.microsoft.com/en-us/azure/cognitive-services/cognitive-services-container-support) page.
 
 ![Architecture](../../media/architecture_aks_oai.png)
 
@@ -21,18 +26,18 @@ During this workshop, you will be using different Azure and AKS features that ma
 * Automatically scale your application with cluster autoscaler and horizontal pod autoscaler
 * Queue jobs using Azure queue
 * Store vectors of your knowledge base and perform vector search using a pod running on AKS
-* Store domain knowledge on Azure blog storage
+* Store domain knowledge on Azure blob storage
 * Load balance traffic across various pods using Azure Load balancer and Nginx
 * Limit network access using network security groups
 
 ## Azure OpenAI Embeddings QnA
 
-A simple web application for a OpenAI-enabled document search. This repo uses Azure OpenAI Service for creating embeddings vectors from documents. For answering the question of a user, it retrieves the most relevant document and then uses GPT-3 to extract the matching answer for the question. For more information about this application and how to run it on other Azure services, please check out the [Azure OpenAI Embeddings QnA](https://github.com/azure-samples/azure-open-ai-embeddings-qna) repository.
+This is a simple web application for an OpenAI-enabled document search. This repo uses Azure OpenAI Service for creating embeddings vectors from documents. In order to answering users questions, it retrieves the most relevant document and then uses GPT-3 model to extract a matching answer for a question. For more information about this application and how to run it on other Azure services, please check out the [Azure OpenAI Embeddings QnA](https://github.com/azure-samples/azure-open-ai-embeddings-qna) repository.
 
 ## Deploy this Scenario
 
 ### Pre-requisite
-To Deploy this Scenario, you must be registered to use Azure's OpenAI Service.  If you are not already registered, follow the instructions [here](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access)
+To Deploy this scenario, you must have Azure OpenAI Service enabled in your subscription.  If you haven't registered it yet, follow the instructions [here](https://learn.microsoft.com/legal/cognitive-services/openai/limited-access) to do so.
 
 > **Warning** 
 > Registration may take multiple hours.
@@ -42,7 +47,7 @@ To Deploy this Scenario, you must be registered to use Azure's OpenAI Service.  
 
 ### Deployment Process
 
-Begin by cloning this repository locally, and change directory to the infrastructure folder.
+Begin by cloning this repository locally, and change the directory to the `./infrastructure` folder.
 ```bash
 git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
 
