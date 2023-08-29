@@ -64,8 +64,29 @@
       name: env
     fieldPaths:
     -   data.OPENAI_API_BASE
-   
   ## REPLACE OPENAI  ConfigMap
+- source:
+    kind: ConfigMap
+    fieldPath: data.OPENAI_ENGINE
+    name: kvmap
+  targets:
+  - select:
+      kind: ConfigMap
+      name: env
+    fieldPaths:
+    -   data.OPENAI_ENGINE   
+## REPLACE OPENAI  ConfigMap
+- source:
+    kind: ConfigMap
+    fieldPath: data.OPENAI_EMBEDDINGS_ENGINE
+    name: kvmap
+  targets:
+  - select:
+      kind: ConfigMap
+      name: env
+    fieldPaths:
+    -   data.OPENAI_EMBEDDINGS_ENGINE   
+## REPLACE BLOB  ConfigMap
 - source:
     kind: ConfigMap
     fieldPath: data.BLOB_ACCOUNT_NAME
@@ -76,7 +97,8 @@
       name: env
     fieldPaths:
     -   data.BLOB_ACCOUNT_NAME  
-   ## REPLACE OPENAI  ConfigMap
+
+## REPLACE FR  ConfigMap
 - source:
     kind: ConfigMap
     fieldPath: data.FORM_RECOGNIZER_ENDPOINT
