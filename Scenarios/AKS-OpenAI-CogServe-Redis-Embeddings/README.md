@@ -55,7 +55,13 @@ git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Acceler
 cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
 ```
 
-Ensure you are **signed into** the `az` CLI (use `az login` if not)
+If running in **Codespaces**, update submodules explicitly run in `AKS-Landing-Zone-Accelerator/Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/`
+
+```bash
+git submodule update --init --recursive
+``````
+
+Ensure you are **signed into** the `az` CLI (use `az login` if not, or `az login --use-device-code` in codespaces)
 
 ### Setup environment specific variables
 
