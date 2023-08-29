@@ -55,7 +55,13 @@ git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Acceler
 cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
 ```
 
-Ensure you are **signed into** the `az` CLI (use `az login` if not)
+If running in **Github Code Spaces**, update submodules explicitly run in `AKS-Landing-Zone-Accelerator/Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/`
+
+```bash
+git submodule update --init --recursive
+``````
+
+Ensure you are **signed into** the `az` CLI (use `az login` if not, or `az login --use-device-code` in **Github Code Spaces**)
 
 ### Setup environment specific variables
 
@@ -79,7 +85,7 @@ Create all the solution resources using the provided `bicep` template and captur
 > Our bicep template is using the [AKS-Construction](https://github.com/Azure/AKS-Construction) project to provision the AKS Cluster and associated cluster services/addons, in addition to the other workload specific resources.
 
  > **Important**
- > Ensure you have enough **quota** to deploy the gpt-35-turbo and text-embedding-ada-002 models before running the command below. Failure to do this will lead to an "InsufficientQuota" error in the model deployment. Most subscriptions have quota of 1 of these models, so if you already have either of those models deployed, you might not be able to deploy another one in the same subscription and you might have to use that deployment as your model instead to proceed. If that is the case, use the **Resuing existing  OpenAI Service** option. Otherwise use the **Deploy new resources** option.
+ > Ensure you have enough **quota** to deploy the gpt-35-turbo and text-embedding-ada-002 models before running the command below. Failure to do this will lead to an "InsufficientQuota" error in the model deployment. Most subscriptions have quota of 1 of these models, so if you already have either of those models deployed, you might not be able to deploy another one in the same subscription and you might have to use that deployment as your model instead to proceed. If that is the case, use the **Reusing existing  OpenAI Service** option. Otherwise use the **Deploy new resources** option.
 
 #### Reusing existing OpenAI Service option
 
@@ -152,7 +158,7 @@ az keyvault secret set --name formrecognizerkey  --vault-name $KV_NAME --value $
 
 az keyvault secret set --name translatekey  --vault-name $KV_NAME --value $(az cognitiveservices account keys list -g $RGNAME -n $TRANSLATOR_ACCOUNT --query key1 -o tsv)
 
-az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNT_NAME --query [1].value -o tsv)
+az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNT_NAME --query \[1\].value -o tsv)
 ```
 
 
@@ -160,11 +166,22 @@ az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az
 Create and record the required federation to allow the CSI Secret driver to use the AD Workload identity, and to update the manifest files.
 
 ```bash
-CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query "[addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId]" -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
-CLIENT_ID=${CSIIdentity[2]}
-IDNAME=${CSIIdentity[1]} 
-IDRG=${CSIIdentity[0]} 
+CLIENT_ID=${CSIIdentity[2]} && echo "CLIENT_ID is $CLIENT_ID"
+IDNAME=${CSIIdentity[1]} && echo "IDNAME is $IDNAME"
+IDRG=${CSIIdentity[0]} && echo "IDRG is $IDRG"
+
+az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
+```
+
+Note: if running Federation in **zsh** or in **Github Code Spaces**, order of the variables is different
+```bash
+CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query "[addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId]" -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+
+CLIENT_ID=${CSIIdentity[3]} && echo "CLIENT_ID is $CLIENT_ID"
+IDNAME=${CSIIdentity[2]} && echo "IDNAME is $IDNAME"
+IDRG=${CSIIdentity[1]} && echo "IDRG is $IDRG"
 
 az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
 ```
