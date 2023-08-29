@@ -14,7 +14,7 @@
     // You can edit these settings after create using File > Preferences > Settings > Remote.
     "settings": {
         "files.eol": "\n",
-        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.defaultProfile.linux": "/bin/bash",
         "editor.tabSize": 2,
         "terminal.integrated.scrollback": 64000,
     },
