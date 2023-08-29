@@ -81,7 +81,7 @@ Create all the solution resources using the provided `bicep` template and captur
  > **Important**
  > Ensure you have enough **quota** to deploy the gpt-35-turbo and text-embedding-ada-002 models before running the command below. Failure to do this will lead to an "InsufficientQuota" error in the model deployment. Most subscriptions have quota of 1 of these models, so if you already have either of those models deployed, you might not be able to deploy another one in the same subscription and you might have to use that deployment as your model instead to proceed. If that is the case, use the **Resuing existing  OpenAI Service** option. Otherwise use the **Deploy new resources** option.
 
-#### Reusing existing OpenAI Service Option
+#### Reusing existing OpenAI Service option
 
 If you are re-using existing OpenAI resource set following variables and pass them to Bicep template
 
@@ -104,7 +104,7 @@ az deployment sub create \
       
 ```
 
-#### Deploy new resources
+#### Deploy new resources option
 ```bash
 az deployment sub create \
         --name main-$UNIQUESTRING \
