@@ -42,18 +42,27 @@ This is a simple web application for an OpenAI-enabled document search. This rep
 > **Warning** 
 > Registration may take multiple hours.
 
-- kubectl 1.25 and above  ( `az aks install-cli` )
+- kubectl, preferably 1.25 and above  ( `az aks install-cli` )
+- [Azure Subscription](https://azure.microsoft.com/free)
+- [Azure CLI](https://learn.microsoft.com/cli/azure/what-is-azure-cli?WT.mc_id=containers-105184-pauyu)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+- [Git](https://git-scm.com/)
+- Bash shell (e.g. [Windows Terminal](https://www.microsoft.com/p/windows-terminal/9n0dx20hk701) with [WSL](https://docs.microsoft.com/windows/wsl/install-win10) or [Azure Cloud Shell](https://shell.azure.com))
 
 > **Note** 
 > There are troubleshooting instructions at the end of this walkthrough.
 
-### Deployment Process
+## Deployment Process
 
-Begin by cloning this repository locally, and change the directory to the `./infrastructure` folder.
-```bash
-git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
-cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
-```
+## Fork and Clone the repo
+1. Skip this step if you have a local terminal ready with kubectl and Azure CLI installed. Using a web browser, navigate to the [Azure Cloud Shell](https://shell.azure.com). Ensure your Cloud Shell is set to Bash. If it is on PowerShell, click the drop down in the top left corner and select Bash.
+1. Clone this repository locally, and change the directory to the `./infrastructure` folder.
+  ```bash
+  git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
+  cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
+  ```
+1. Ensure you are signed into the `az` CLI (use `az login` if not)
 
 If running in **Github Code Spaces**, update submodules explicitly run in `AKS-Landing-Zone-Accelerator/Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/`
 
@@ -78,7 +87,7 @@ LOCATION=eastus
 SIGNEDINUSER=$(az ad signed-in-user show --query id --out tsv) && echo "Current user is $SIGNEDINUSER"
 ```
 
-### Deploy Infrastructure as Code
+### Deploy the environment using IaC (Bicep) and AKS Construction
 
 Create all the solution resources using the provided `bicep` template and capture the output environment configuration in variables that are used later in the process.
 
@@ -152,6 +161,7 @@ OpenAI API, Blob Storage, Form Recognizer and Translator keys will be secured in
 
 > Note: If you get a bad request error in any of the commands below, then it means the previous commands did not serialize the environment variable correctly. Use the echo command to get the name of the AI services used in the commands below and run the commands by replacing the environment variables with actual service names.
 
+Enter the commands below to store the required secrets in Key vault
 ```bash
 az keyvault secret set --name openaiapikey  --vault-name $KV_NAME --value $(az cognitiveservices account keys list -g $OPENAI_RGNAME -n $OPENAI_ACCOUNTNAME --query key1 -o tsv)
 
@@ -175,8 +185,9 @@ IDRG=${CSIIdentity[0]} && echo "IDRG is $IDRG"
 
 az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
 ```
+ > **Important**
+ > If running the commands below in **zsh** or in **Github Code Spaces**, the order of the variables is different. Make sure the variables make sense by taking a look at the echo'ed strings in your terminal. 
 
-Note: if running Federation in **zsh** or in **Github Code Spaces**, order of the variables is different
 ```bash
 CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query "[addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId]" -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
@@ -187,62 +198,54 @@ IDRG=${CSIIdentity[1]} && echo "IDRG is $IDRG"
 az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
 ```
 
-#### Kubernetes Manifests
-Change directory to the Kubernetes manifests folder, deployment will be done using Kustomize declarations.
+### Deploy the Kubernetes Resources
+In this step, you will deploy the kubernetes resources required to make the application run. This includes the ingress resources, deployments / pods, services, etc.
 
-```bash
-cd ../kubernetes/
-```
-
-### Log into the AKS cluster
-
-```bash
-az aks get-credentials -g $RGNAME -n $AKSCLUSTER
-kubectl get nodes
-
-INGRESS_IP=$(kubectl get svc nginx -n app-routing-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-echo "Ingress IP: $INGRESS_IP"
-```
-
-### Save variables in a new .env file
-
-```bash
-cat << EOF > .env
-CLIENT_ID=$CLIENT_ID
-TENANT_ID=$(az account show --query tenantId -o tsv)
-KV_NAME=$KV_NAME
-OPENAI_API_BASE=$OPENAI_API_BASE
-OPENAI_ENGINE=$OPENAI_ENGINE
-OPENAI_EMBEDDINGS_ENGINE=$OPENAI_EMBEDDINGS_ENGINE
-LOCATION=$LOCATION
-BLOB_ACCOUNT_NAME=$BLOB_ACCOUNT_NAME
-FORM_RECOGNIZER_ENDPOINT=$FORM_RECOGNIZER_ENDPOINT
-DNS_NAME=openai-$UNIQUESTRING.$INGRESS_IP.nip.io
-EOF
-```
-
-
-### Deploy the Kubernetes resources
-
-Deploy kustomize manifests
-```bash
-kubectl apply -k .
-```
-
-if you are using kubectl below version 1.25, you would have to download and run `kustomize` separately
-
-```bash
-kustomize build . > deploy-all.yaml
-kubectl apply -f deploy-all.yaml
-```
+1. Change directory to the Kubernetes manifests folder `Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/kubernetes`.
+  ```bash
+  cd ../kubernetes/
+  ```
+1. Log into your AKS cluster and ensure you are properly logged in. The command should return the nodes in your cluster.
+  ```bash
+  az aks get-credentials -g $RGNAME -n $AKSCLUSTER
+  kubectl get nodes
+  ```
+1. Get your ingress's IP address so you have the URL required to access your application on your browser
+  ```bash
+  INGRESS_IP=$(kubectl get svc nginx -n app-routing-system -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+  echo "Ingress IP: $INGRESS_IP"
+  ```
+1. Save variables in a new .env file
+  ```bash
+  cat << EOF > .env
+  CLIENT_ID=$CLIENT_ID
+  TENANT_ID=$(az account show --query tenantId -o tsv)
+  KV_NAME=$KV_NAME
+  OPENAI_API_BASE=$OPENAI_API_BASE
+  OPENAI_ENGINE=$OPENAI_ENGINE
+  OPENAI_EMBEDDINGS_ENGINE=$OPENAI_EMBEDDINGS_ENGINE
+  LOCATION=$LOCATION
+  BLOB_ACCOUNT_NAME=$BLOB_ACCOUNT_NAME
+  FORM_RECOGNIZER_ENDPOINT=$FORM_RECOGNIZER_ENDPOINT
+  DNS_NAME=openai-$UNIQUESTRING.$INGRESS_IP.nip.io
+  EOF
+  ```
+1. Deploy the Kubernetes resources. Use option 1 if you are using kubectl < 1.25. Use option 2 if you are using kubectl >= 1.25
+  **Option 1:**
+  ```bash
+  kustomize build . > deploy-all.yaml
+  kubectl apply -f deploy-all.yaml
+  ```
+  **Option 2:**
+  ```
+  kubectl apply -k .
+  ```
 
 ### Test the app
-Get the URL where the app can be reached
-
-```bash
-kubectl get ingress
-```
-
+1. Get the URL where the app can be reached
+  ```bash
+  kubectl get ingress
+  ```
 1. Copy the url under **HOSTS** and paste it in your browser. 
 1. Try asking the chatbot a domain specific question by heading to the **Chat** tab and typing a question there. You will notice it fail to answer it correctly. 
 1. Click on the `Add Document` tab in the left pane and either upload a PDF with domain information you would like to ask the chatbot about or copy and paste text containing the knowledge base in `Add text to the knowledge base` section, then click on `Compute Embeddings`
