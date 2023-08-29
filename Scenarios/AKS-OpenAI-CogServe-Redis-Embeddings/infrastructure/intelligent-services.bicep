@@ -1,124 +1,13 @@
-
-@description('Signed In User Id')
-param signedinuser string
-
-@minLength(3)
-@maxLength(10)
-@description('Used to name all resources')
-param ResourcePrefix string = 'aksembed'
-
-@minLength(3)
-@maxLength(10)
-@description('Used to name all resources')
-param UniqueString string // need to specify this in your deployment command
-
-
-param OpenAIEngine string = 'gpt-35-turbo'
-param OpenAIEngineVersion string = '0301'
-param OpenAIEmbeddingsEngineDoc string = 'text-embedding-ada-002'
-param OpenAIEmbeddingsEngineDocVersion string = '2'
-
 param location string = resourceGroup().location
+
+
+param resourcePrefix string = ''
 var BlobContainerName = 'documents'
 
 
-var openAIName = '${ResourcePrefix}-${UniqueString}'
-
-//---------Kubernetes Construction---------
-module aksconst 'AKS-Construction/bicep/main.bicep' = {
-  name: 'aksconstruction'
-  params: {
-    location: location
-    resourceName: openAIName
-    enable_aad: true
-    enableAzureRBAC: true
-    omsagent: true
-    retentionInDays: 30
-    agentCount: 2
-    agentVMSize: 'Standard_D2ds_v4'
-    osDiskType: 'Managed'
-    AksPaidSkuForSLA: true
-    networkPolicy: 'azure'
-    azurepolicy: 'audit'
-    acrPushRolePrincipalId: signedinuser
-    adminPrincipalId: signedinuser
-    AksDisableLocalAccounts: true
-    custom_vnet: true
-    upgradeChannel: 'stable'
-    workloadIdentity: true
-    CreateNetworkSecurityGroups:true
-    //Workload Identity requires OidcIssuer to be configured on AKS
-    oidcIssuer: true
-    //We'll also enable the CSI driver for Key Vault
-    keyVaultAksCSI: true
-    keyVaultCreate: true
-    keyVaultOfficerRolePrincipalId: signedinuser
-    warIngressNginx: true
-  }
-}
-
-output kvAppName string = aksconst.outputs.keyVaultName
-output aksOidcIssuerUrl string = aksconst.outputs.aksOidcIssuerUrl
-output aksClusterName string = aksconst.outputs.aksClusterName
-
-resource OpenAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: openAIName
-  location: location
-  kind: 'OpenAI'
-  sku: {
-    name: 'S0'
-    tier: 'Standard'
-  }
-  properties: {
-    customSubDomainName: openAIName
-    networkAcls: {
-      defaultAction: 'Allow'
-      virtualNetworkRules: []
-      ipRules: []
-    }
-    publicNetworkAccess: 'Enabled'
-  }
-
-  resource OpenAIDeploymentGPT 'deployments' = {
-    name: 'gpt-deployment'
-    sku: {
-      name: 'Standard'
-      capacity: 120
-    }
-    properties: {
-      model: {
-        format: 'OpenAI'
-        name: OpenAIEngine
-        version: OpenAIEngineVersion
-      }
-    }
-  }
-
-  resource OpenAIDeploymentEmbeddings 'deployments' = {
-
-    name: OpenAIEmbeddingsEngineDoc
-    sku: {
-      name: 'Standard'
-      capacity: 120
-    }
-    
-    properties: {
-      model: {
-        format: 'OpenAI'
-        name: OpenAIEmbeddingsEngineDoc
-        version: OpenAIEmbeddingsEngineDocVersion
-      }
-    }
-    
-    dependsOn: [
-      OpenAIDeploymentGPT
-    ]
-  }
-
-}
-
+//---------FormRecognizer Construction---------
 resource FormRecognizer 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: '${ResourcePrefix}-${UniqueString}-formrecog'
+  name: '${resourcePrefix}-formrecog'
   location: location
   kind: 'FormRecognizer'
   sku: {
@@ -133,9 +22,9 @@ resource FormRecognizer 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
     publicNetworkAccess: 'Enabled'
   }
 }
-
+//---------Translator Construction---------
 resource Translator 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: '${ResourcePrefix}-${UniqueString}-translator'
+  name: '${resourcePrefix}-translator'
   location: location
   kind: 'TextTranslation'
   sku: {
@@ -150,9 +39,9 @@ resource Translator 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
     publicNetworkAccess: 'Enabled'
   }
 }
-
+//-----------------Storage Account Construction-----------------
 resource StorageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
-  name: '${ResourcePrefix}${UniqueString}sa'
+  name: '${resourcePrefix}sa'
   location: location
   kind: 'StorageV2'
   sku: {
@@ -202,10 +91,8 @@ resource StorageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
 }
 
 
-output blobAccountName string = StorageAccount.name
-output openAIAccountName string = OpenAI.name
-output openAIURL string = OpenAI.properties.endpoint
-output formRecognizerAccountName string = FormRecognizer.name 
-output formRecognizerURL string = FormRecognizer.properties.endpoint
-output translatorAccountName string = Translator.name
+output TranslatorName string = Translator.name
+output FormRecognizerName string = FormRecognizer.name
+output FormRecognizerEndpoint string = FormRecognizer.properties.endpoint
+output StorageAccountName string = StorageAccount.name
 
