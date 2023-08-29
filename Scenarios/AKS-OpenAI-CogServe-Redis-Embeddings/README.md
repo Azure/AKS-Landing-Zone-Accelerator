@@ -199,7 +199,7 @@ az identity federated-credential create --name aksfederatedidentity --identity-n
 ```
 
 ### Deploy the Kubernetes Resources
-In this step, you will deploy the kubernetes resources required to make the applcation run. This includes the ingress resouces, deployments / pods, services, etc.
+In this step, you will deploy the kubernetes resources required to make the application run. This includes the ingress resources, deployments / pods, services, etc.
 
 1. Change directory to the Kubernetes manifests folder `Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/kubernetes`.
   ```bash
