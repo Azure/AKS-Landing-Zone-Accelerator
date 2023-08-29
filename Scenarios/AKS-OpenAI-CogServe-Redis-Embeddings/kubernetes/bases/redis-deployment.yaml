@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   labels:
     azure.workload.identity/use: "true"
-    service: api
-  name: api
+    service: redis
+  name: redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: api
+      service: redis
   strategy: {}
   template:
     metadata:
       labels:
         io.kompose.network/azure-open-ai-embeddings-qna-default: "true"
-        service: api
+        service: redis
     spec:
       serviceAccountName: serversa
       volumes:
@@ -27,7 +27,7 @@ spec:
               secretProviderClass: openaiapikey
       containers:
         - image: redis/redis-stack-server:latest
-          name: api
+          name: redis
           env:
             - name: REDIS_ARGS
               valueFrom:

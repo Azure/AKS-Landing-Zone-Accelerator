@@ -24,7 +24,7 @@ data:
   OPENAI_MAX_TOKENS: "-1"
   OPENAI_TEMPERATURE: "0.7"
   QUEUE_NAME: doc-processing
-  REDIS_ADDRESS: api
+  REDIS_ADDRESS: redis
   REDIS_ARGS: --requirepass redis-stack-password
   REDIS_PASSWORD: redis-stack-password
   REDIS_PORT: "6379"
