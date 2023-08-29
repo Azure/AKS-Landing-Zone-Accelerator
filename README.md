@@ -63,4 +63,3 @@ Pick one of the scenarios below to get started on a reference implementation. Fo
 
 :arrow_forward: [AKS Construction Helper](https://github.com/Azure/Aks-Construction#getting-started)
 <!-- :arrow_forward: [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation) -->
-

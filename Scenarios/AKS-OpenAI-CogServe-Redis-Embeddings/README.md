@@ -157,7 +157,7 @@ az keyvault secret set --name formrecognizerkey  --vault-name $KV_NAME --value $
 
 az keyvault secret set --name translatekey  --vault-name $KV_NAME --value $(az cognitiveservices account keys list -g $RGNAME -n $TRANSLATOR_ACCOUNT --query key1 -o tsv)
 
-az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNT_NAME --query [1].value -o tsv)
+az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNT_NAME --query \[1\].value -o tsv)
 ```
 
 
@@ -165,11 +165,22 @@ az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az
 Create and record the required federation to allow the CSI Secret driver to use the AD Workload identity, and to update the manifest files.
 
 ```bash
-CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query [addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId] -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query "[addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId]" -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
-CLIENT_ID=${CSIIdentity[2]}
-IDNAME=${CSIIdentity[1]} 
-IDRG=${CSIIdentity[0]} 
+CLIENT_ID=${CSIIdentity[2]} && echo "CLIENT_ID is $CLIENT_ID"
+IDNAME=${CSIIdentity[1]} && echo "IDNAME is $IDNAME"
+IDRG=${CSIIdentity[0]} && echo "IDRG is $IDRG"
+
+az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
+```
+
+Note: if running Federation in **zsh** or in codespaces, oreder of the variables is different
+```bash
+CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query "[addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId]" -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
+
+CLIENT_ID=${CSIIdentity[3]} && echo "CLIENT_ID is $CLIENT_ID"
+IDNAME=${CSIIdentity[2]} && echo "IDNAME is $IDNAME"
+IDRG=${CSIIdentity[1]} && echo "IDRG is $IDRG"
 
 az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
 ```
