@@ -3,8 +3,8 @@ kind: Kustomization
 
 
 resources:
-  - api-deployment.yaml
-  - api-service.yaml
+  - redis-deployment.yaml
+  - redis-service.yaml
   - networkpolicy.yaml
   - batch-deployment.yaml
   - batch-service.yaml

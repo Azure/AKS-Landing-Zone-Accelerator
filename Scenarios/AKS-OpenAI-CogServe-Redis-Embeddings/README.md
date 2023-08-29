@@ -68,6 +68,7 @@ If running in **Github Code Spaces**, update submodules explicitly run in `AKS-L
 
 ```bash
 git submodule update --init --recursive
+cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
 ``````
 
 Ensure you are **signed into** the `az` CLI (use `az login` if not, or `az login --use-device-code` in **Github Code Spaces**)
