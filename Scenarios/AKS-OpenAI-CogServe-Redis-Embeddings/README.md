@@ -1,6 +1,6 @@
 # Build Intelligent Apps on AKS
 
-AKS is a great platform for hosting modern AI based applications for various reasons. It provides a single control plane to host all the assets required to build applications from end to end and even allows the development of applications using a Microservice architecture. What this means is that the AI based components can be separated from the rest of the applications. AKS also allows hosting of some of Azure's AI services as containers withing your cluster, so that you can keep all the endpoints of your applications private as well as manage scaling however you need to. This is a significant advantage when it comes to securing your application. By hosting all components in a single control plane, you can streamline your DevOps process. 
+AKS is a great platform for hosting modern AI based applications for various reasons. It provides a single control plane to host all the assets required to build applications from end to end and even allows the development of applications using a Microservice architecture. What this means is that the AI based components can be separated from the rest of the applications. AKS also allows hosting of some of Azure's AI services as containers within your cluster, so that you can keep all the endpoints of your applications private as well as manage scaling however you need to. This is a significant advantage when it comes to securing your application. By hosting all components in a single cluster, you can streamline your DevOps process. 
 
 ## Core architecture components
 In this scenario, we will be building an application that uses various Azure AI services. It builds on top of the AKS secure baseline scenario so we will focus on discussing what is different in this scenario. For simplicity and quick deployment, you will be using the AKS construction helper to setup the base AKS environment. You will also be using Bicep to create the additional components that include Azure Form Recognizer, Translator, Storage account with Queue service as well as Blob storage. In a future revision of this scenario, an option to use Azure Cache for Redis for vector search as opposed to running a Redis stack as a container within the AKS cluster. This will demonstrate the flexibility you get when you run your intelligent applications on AKS.
@@ -50,8 +50,7 @@ To Deploy this scenario, you must have Azure OpenAI Service enabled in your subs
 Begin by cloning this repository locally, and change the directory to the `./infrastructure` folder.
 ```bash
 git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
-
-cd Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
+cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/infrastructure/
 ```
 
 Ensure you are signed into the `az` CLI (use `az login` if not)
