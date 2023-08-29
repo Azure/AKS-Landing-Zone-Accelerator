@@ -79,24 +79,14 @@ Create all the solution resources using the provided `bicep` template and captur
 > Our bicep template is using the [AKS-Construction](https://github.com/Azure/AKS-Construction) project to provision the AKS Cluster and associated cluster services/addons, in addition to the other workload specific resources.
 
  > **Important**
- > Ensure you have enough **quota** to deploy the gpt-35-turbo and text-embedding-ada-002 models before running the command below. Failure to do this will lead to an "InsufficientQuota" error in the model deployment. Most subscriptions have quota of 1 of these models, so if you already have either of those models deployed, you might not be able to deploy another one in the same subscription and you might have to use that deployment as your model instead to proceed.
+ > Ensure you have enough **quota** to deploy the gpt-35-turbo and text-embedding-ada-002 models before running the command below. Failure to do this will lead to an "InsufficientQuota" error in the model deployment. Most subscriptions have quota of 1 of these models, so if you already have either of those models deployed, you might not be able to deploy another one in the same subscription and you might have to use that deployment as your model instead to proceed. If that is the case, use the **Resuing existing  OpenAI Service** option. Otherwise use the **Deploy new resources** option.
 
-```bash
-az deployment sub create \
-        --name main-$UNIQUESTRING \
-        --template-file main.bicep \
-        --location=$LOCATION \
-        --parameters UniqueString=$UNIQUESTRING \
-        --parameters signedinuser=$SIGNEDINUSER \
-        --parameters resourceGroupName=$RGNAME      
-```
-
-#### Reusing existing OpenAI Service
+#### Reusing existing OpenAI Service Option
 
 If you are re-using existing OpenAI resource set following variables and pass them to Bicep template
 
 ```bash
-OPENAI_RGNAME=$RGNAME
+OPENAI_RGNAME=<Name of existing OpenAI RG>
 OPENAI_ACCOUNTNAME=<Name of existing OpenAI service>
 ```
 
@@ -112,6 +102,17 @@ az deployment sub create \
         --parameters openAIName=$OPENAI_ACCOUNTNAME \
         --parameters openAIRGName=$OPENAI_RGNAME 
       
+```
+
+#### Deploy new resources
+```bash
+az deployment sub create \
+        --name main-$UNIQUESTRING \
+        --template-file main.bicep \
+        --location=$LOCATION \
+        --parameters UniqueString=$UNIQUESTRING \
+        --parameters signedinuser=$SIGNEDINUSER \
+        --parameters resourceGroupName=$RGNAME      
 ```
 
 ### Set Output Variables
