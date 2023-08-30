@@ -8,6 +8,5 @@ resources:
   - networkpolicy.yaml
   - batch-deployment.yaml
   - batch-service.yaml
-  - web-deployment.yaml
   - web-service.yaml
   
