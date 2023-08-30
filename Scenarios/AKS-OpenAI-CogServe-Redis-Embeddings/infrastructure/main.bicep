@@ -28,7 +28,7 @@ param resourceGroupName string = ''
 param location string = deployment().location
 
 
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2022-09-01' = {
 name: !empty(resourceGroupName) ? resourceGroupName : 'openai-embedding-rg-${UniqueString}' 
   location: location
 }
@@ -74,7 +74,7 @@ output aksClusterName string = aksconst.outputs.aksClusterName
 
 //---------OpenAI Construction---------
 
-resource openAIRG 'Microsoft.Resources/resourceGroups@2021-04-01' existing = if (!empty(openAIRGName)) {
+resource openAIRG 'Microsoft.Resources/resourceGroups@2022-09-01' existing = if (!empty(openAIRGName)) {
   name: !empty(openAIRGName) ? openAIRGName : resourceGroup.name
 }
 
