@@ -14,10 +14,10 @@ Use option "Deploy an application"
 ## Update GitHub workflow for Kustomize steps
 Once deployment wizard is finished it will create PR with sample github flow that could be updated to match the steps required to run Kustomize
 
-- Add variables section and specify all variables that were quieried from deployment 
-- Add Repo secret `CLIENT_ID` to value retrived during infastructure setup
+- Add variables section and specify all variables that were queried from deployment 
+- Add Repo secret `CLIENT_ID` to value retrieved during infrastructure setup
 - Add step to prepare `.env` file with all replacement variables 
 - Add step to bake Kubernetes manifest from Kustomize files
-- Modify deployment step to refer to Kustimze built manifest
+- Modify deployment step to refer to Kustomize built manifest
 
 Check full workflow in following repo [https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml](https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml)
