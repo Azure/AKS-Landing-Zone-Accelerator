@@ -9,7 +9,7 @@ Assumption is that infrastructure, setting variables and keyvault secrets were d
 Simplest way to create template for Github workflow is to use AKS **Automated deployments** wizard.
 It will create Github identity federated with AAD and grant to it required permissions to AKS and ACR
 
-Use option "Deploy an application"
+Fork `AKS-Landing-Zone-Accelerator` repo and use wizard option to "Deploy an application" pointing it to your fork and selecting provisioned ACR and AKS
 
 ## Update GitHub workflow for Kustomize steps
 Once deployment wizard is finished it will create PR with sample github flow that could be updated to match the steps required to run Kustomize
@@ -20,4 +20,5 @@ Once deployment wizard is finished it will create PR with sample github flow tha
 - Add step to bake Kubernetes manifest from Kustomize files
 - Modify deployment step to refer to Kustomize built manifest
 
-Check full workflow in following repo [https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml](https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml)
+
+If you would like to see completed workflow - it could be found in the following repo [https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml](https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml)
