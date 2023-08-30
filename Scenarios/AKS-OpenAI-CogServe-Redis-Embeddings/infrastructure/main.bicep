@@ -64,6 +64,7 @@ module aksconst 'AKS-Construction/bicep/main.bicep' = {
     keyVaultCreate: true
     keyVaultOfficerRolePrincipalId: signedinuser
     warIngressNginx: true
+    registries_sku: 'Standard'
   }
 }
 

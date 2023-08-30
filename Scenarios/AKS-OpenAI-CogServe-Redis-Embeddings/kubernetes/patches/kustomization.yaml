@@ -7,4 +7,5 @@ resources:
 - secret-provider-class.yaml
 - svc-accounts.yaml
 - ingress.yaml
+- web-deployment.yaml
   

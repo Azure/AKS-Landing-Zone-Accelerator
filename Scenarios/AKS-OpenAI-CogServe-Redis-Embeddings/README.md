@@ -116,8 +116,7 @@ az deployment sub create \
         --parameters signedinuser=$SIGNEDINUSER \
         --parameters resourceGroupName=$RGNAME \
         --parameters openAIName=$OPENAI_ACCOUNTNAME \
-        --parameters openAIRGName=$OPENAI_RGNAME 
-      
+        --parameters openAIRGName=$OPENAI_RGNAME       
 ```
 
 #### Deploy new resources option
@@ -146,6 +145,7 @@ OPENAI_API_BASE=$(az deployment sub show --name main-$UNIQUESTRING  --query prop
 OPENAI_RGNAME=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIRGName.value -o tsv) && echo "The Azure OpenAI Resource Group is $OPENAI_RGNAME"
 OPENAI_ENGINE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIEngineName.value -o tsv) && echo "The Azure OpenAI GPT Model is $OPENAI_ENGINE"
 OPENAI_EMBEDDINGS_ENGINE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIEmbeddingEngine.value -o tsv) && echo "The Azure OpenAI Embedding Model is $OPENAI_EMBEDDINGS_ENGINE"
+ACR_NAME=$(az acr list -g $RGNAME --query '[0]'.name -o tsv)  && echo "The Azure OpenAI GPT Model is $ACR_NAME"
 ```
 
 If variables are empty (some shells like zsh may have this issue) - see Troubleshooting section below.
@@ -172,10 +172,10 @@ az keyvault secret set --name translatekey  --vault-name $KV_NAME --value $(az c
 az keyvault secret set --name blobaccountkey  --vault-name $KV_NAME --value $(az storage account keys list -g $RGNAME -n $BLOB_ACCOUNT_NAME --query \[1\].value -o tsv)
 ```
 
-
 ### Federate AKS MI with Service account 
 Create and record the required federation to allow the CSI Secret driver to use the AD Workload identity, and to update the manifest files.
 
+Note: if running Federation in **bash**, use below commands
 ```bash
 CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query "[addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId]" -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
@@ -196,6 +196,13 @@ IDNAME=${CSIIdentity[2]} && echo "IDNAME is $IDNAME"
 IDRG=${CSIIdentity[1]} && echo "IDRG is $IDRG"
 
 az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
+```
+
+### Build ACR Image for the web app
+```bash
+cd ../App/
+
+az acr build --image oai-embeddings:v1 --registry $ACR_NAME -g $RGNAME -f ./WebApp.Dockerfile ./
 ```
 
 ### Deploy the Kubernetes Resources
@@ -228,6 +235,7 @@ In this step, you will deploy the kubernetes resources required to make the appl
   BLOB_ACCOUNT_NAME=$BLOB_ACCOUNT_NAME
   FORM_RECOGNIZER_ENDPOINT=$FORM_RECOGNIZER_ENDPOINT
   DNS_NAME=openai-$UNIQUESTRING.$INGRESS_IP.nip.io
+  ACR_IMAGE=$ACR_NAME.azurecr.io/oai-embeddings:v1
   EOF
   ```
 1. Deploy the Kubernetes resources. Use option 1 if you are using kubectl < 1.25. Use option 2 if you are using kubectl >= 1.25
