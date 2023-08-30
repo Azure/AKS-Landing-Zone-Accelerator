@@ -78,7 +78,12 @@ Ensure you are **signed into** the `az` CLI (use `az login` if not, or `az login
 This will set environment variables, including your preferred `Resource Group` name and `Azure Region` for the subsequent steps, and create the `resource group` where we will deploy the solution.
 
  > **Important**
- > Set UNIQUESTRING to a value that will prevent your resources from clashing names, recommended combination of your initials, and 2-digit number (eg. js07)
+ > Set `UNIQUESTRING` to a value that will prevent your resources from clashing names, recommended combination of your initials, and 2-digit number (eg. js07).
+
+Alternatively, you can generate a unique string in Linux by running the following command:
+```bash
+UNIQUESTRING=$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 2 | head -n 1)$(cat /dev/urandom | tr -dc '0-9' | fold -w 2 | head -n 1)
+```
 
 ```bash
 UNIQUESTRING=<Your value here>
@@ -107,7 +112,7 @@ OPENAI_ACCOUNTNAME=<Name of existing OpenAI service>
 ```
 
 Add optional variable variables to the script below
-```bash
+```azcli
 az deployment sub create \
         --name main-$UNIQUESTRING \
         --template-file main.bicep \
@@ -133,19 +138,19 @@ az deployment sub create \
 ### Set Output Variables
 
 ```bash
-KV_NAME=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.kvAppName.value -o tsv) && echo "The Key Vault name is $KV_NAME"
-OIDCISSUERURL=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.aksOidcIssuerUrl.value -o tsv) && echo "The OIDC Issue URL is $OIDCISSUERURL"
-AKSCLUSTER=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.aksClusterName.value -o tsv) && echo "The AKS cluster name is $AKSCLUSTER"
-BLOB_ACCOUNT_NAME=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.blobAccountName.value -o tsv) && echo "The Azure Storage Blob account name is $BLOB_ACCOUNT_NAME"
-FORMREC_ACCOUNT=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.formRecognizerName.value -o tsv) && echo "The Document Intelligence account name is $FORMREC_ACCOUNT"
-FORM_RECOGNIZER_ENDPOINT=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.formRecognizerEndpoint.value -o tsv) && echo "The Document Intelligence endpoint URL is $FORM_RECOGNIZER_ENDPOINT"
-TRANSLATOR_ACCOUNT=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.translatorName.value -o tsv) && echo "The Translator account name is $TRANSLATOR_ACCOUNT"
-OPENAI_ACCOUNTNAME=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.openAIAccountName.value -o tsv) && echo "The Azure OpenAI account name is $OPENAI_ACCOUNTNAME"
-OPENAI_API_BASE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIURL.value -o tsv) && echo "The Azure OpenAI instance API URL is $OPENAI_API_BASE"
-OPENAI_RGNAME=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIRGName.value -o tsv) && echo "The Azure OpenAI Resource Group is $OPENAI_RGNAME"
-OPENAI_ENGINE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIEngineName.value -o tsv) && echo "The Azure OpenAI GPT Model is $OPENAI_ENGINE"
-OPENAI_EMBEDDINGS_ENGINE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIEmbeddingEngine.value -o tsv) && echo "The Azure OpenAI Embedding Model is $OPENAI_EMBEDDINGS_ENGINE"
-ACR_NAME=$(az acr list -g $RGNAME --query '[0]'.name -o tsv)  && echo "The Azure OpenAI GPT Model is $ACR_NAME"
+KV_NAME=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.kvAppName.value -o tsv) && echo "The Key Vault name is: $KV_NAME"
+OIDCISSUERURL=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.aksOidcIssuerUrl.value -o tsv) && echo "The OIDC Issue URL is: $OIDCISSUERURL"
+AKSCLUSTER=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.aksClusterName.value -o tsv) && echo "The AKS cluster name is: $AKSCLUSTER"
+BLOB_ACCOUNT_NAME=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.blobAccountName.value -o tsv) && echo "The Azure Storage Blob account name is: $BLOB_ACCOUNT_NAME"
+FORMREC_ACCOUNT=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.formRecognizerName.value -o tsv) && echo "The Document Intelligence account name is: $FORMREC_ACCOUNT"
+FORM_RECOGNIZER_ENDPOINT=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.formRecognizerEndpoint.value -o tsv) && echo "The Document Intelligence endpoint URL is: $FORM_RECOGNIZER_ENDPOINT"
+TRANSLATOR_ACCOUNT=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.translatorName.value -o tsv) && echo "The Translator account name is: $TRANSLATOR_ACCOUNT"
+OPENAI_ACCOUNTNAME=$(az deployment sub show --name main-$UNIQUESTRING --query properties.outputs.openAIAccountName.value -o tsv) && echo "The Azure OpenAI account name is: $OPENAI_ACCOUNTNAME"
+OPENAI_API_BASE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIURL.value -o tsv) && echo "The Azure OpenAI instance API URL is: $OPENAI_API_BASE"
+OPENAI_RGNAME=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIRGName.value -o tsv) && echo "The Azure OpenAI Resource Group is: $OPENAI_RGNAME"
+OPENAI_ENGINE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIEngineName.value -o tsv) && echo "The Azure OpenAI GPT Model is: $OPENAI_ENGINE"
+OPENAI_EMBEDDINGS_ENGINE=$(az deployment sub show --name main-$UNIQUESTRING  --query properties.outputs.openAIEmbeddingEngine.value -o tsv) && echo "The Azure OpenAI Embedding Model is: $OPENAI_EMBEDDINGS_ENGINE"
+ACR_NAME=$(az acr list -g $RGNAME --query '[0]'.name -o tsv)  && echo "The Azure Container Registry name is: $ACR_NAME"
 ```
 
 If variables are empty (some shells like zsh may have this issue) - see Troubleshooting section below.
@@ -179,9 +184,9 @@ Note: if running Federation in **bash**, use below commands
 ```bash
 CSIIdentity=($(az aks show -g $RGNAME -n $AKSCLUSTER --query "[addonProfiles.azureKeyvaultSecretsProvider.identity.resourceId,addonProfiles.azureKeyvaultSecretsProvider.identity.clientId]" -o tsv |  cut -d '/' -f 5,9 --output-delimiter ' '))
 
-CLIENT_ID=${CSIIdentity[2]} && echo "CLIENT_ID is $CLIENT_ID"
-IDNAME=${CSIIdentity[1]} && echo "IDNAME is $IDNAME"
-IDRG=${CSIIdentity[0]} && echo "IDRG is $IDRG"
+CLIENT_ID=${CSIIdentity[2]} && echo "CLIENT_ID is: $CLIENT_ID"
+IDNAME=${CSIIdentity[1]} && echo "IDNAME is: $IDNAME"
+IDRG=${CSIIdentity[0]} && echo "IDRG is: $IDRG"
 
 az identity federated-credential create --name aksfederatedidentity --identity-name $IDNAME --resource-group $IDRG --issuer $OIDCISSUERURL --subject system:serviceaccount:default:serversa
 ```
