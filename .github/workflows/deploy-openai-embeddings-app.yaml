@@ -1,0 +1,101 @@
+name: deploy-openaiapp
+"on":
+    workflow_dispatch: {}
+env:
+    ACR_RESOURCE_GROUP: embedding-openai-rg-en40
+    AZURE_CONTAINER_REGISTRY: craksembeden404k2qo6zfopubm
+    CLUSTER_NAME: aks-aksembed-en40
+    CLUSTER_RESOURCE_GROUP: embedding-openai-rg-en40
+    CONTAINER_NAME: oai-embeddings
+    KUSTOMIZE_PATH: ./Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/kubernetes/
+    KV_NAME: kv-aksembeden404k2qo6zfo
+    OPENAI_API_BASE: https://openaiaccelerator.openai.azure.com/
+    OPENAI_ENGINE: gpt-35-turbo
+    OPENAI_EMBEDDINGS_ENGINE: text-embedding-ada-002
+    LOCATION: eastus
+    BLOB_ACCOUNT_NAME: aksembeden40sa
+    FORM_RECOGNIZER_ENDPOINT: https://eastus.api.cognitive.microsoft.com/
+    INGRESS_IP: 20.102.22.169
+
+jobs:
+    buildImage:
+        permissions:
+            contents: read
+            id-token: write
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                submodules: 'true'
+            - uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+              name: Azure login
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            - name: Build and push image to ACR
+              run: az acr build --image ${{ env.CONTAINER_NAME }}:${{ github.sha }} --registry ${{ env.AZURE_CONTAINER_REGISTRY }} -g ${{ env.ACR_RESOURCE_GROUP }} -f ./Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/App/WebApp.Dockerfile ./Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/App/
+    deploy:
+        permissions:
+            actions: read
+            contents: read
+            id-token: write
+        runs-on: ubuntu-latest
+        needs:
+         - buildImage
+        steps:
+            - uses: actions/checkout@v3
+            - uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+              name: Azure login
+              with:
+                client-id: ${{ secrets.AZURE_CLIENT_ID }}
+                subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+                tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            - uses: azure/use-kubelogin@v1
+              name: Set up kubelogin for non-interactive login
+              with:
+                kubelogin-version: v0.0.25
+            - uses: azure/aks-set-context@v3
+              name: Get K8s context
+              with:
+                admin: "false"
+                cluster-name: ${{ env.CLUSTER_NAME }}
+                resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+                use-kubelogin: "true"
+            # Save Kustomization variables
+            - name: Save variables 
+              shell: bash
+              run: |
+                cat << EOF > ./Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/kubernetes/.env
+                CLIENT_ID=${{ secrets.CLIENT_ID }}
+                TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+                KV_NAME=${{ env.KV_NAME }}
+                OPENAI_API_BASE=${{ env.OPENAI_API_BASE }}
+                OPENAI_ENGINE=${{ env.OPENAI_ENGINE }}
+                OPENAI_EMBEDDINGS_ENGINE=${{ env.OPENAI_EMBEDDINGS_ENGINE }}
+                LOCATION=${{ env.LOCATION }}
+                BLOB_ACCOUNT_NAME=${{ env.BLOB_ACCOUNT_NAME }}
+                FORM_RECOGNIZER_ENDPOINT=${{ env.FORM_RECOGNIZER_ENDPOINT }}
+                DNS_NAME=openai.${{ env.INGRESS_IP }}.nip.io
+                EOF
+                
+            # Runs Kustomize to create manifest files
+            - name: Bake deployment
+              uses: azure/k8s-bake@v2
+              with:
+                renderEngine: "kustomize"
+                kustomizationPath: ${{ env.KUSTOMIZE_PATH }}
+                kubectl-version: latest
+              id: bake
+
+            # Deploys application based on manifest files from previous step
+            - name: Deploy application
+              uses: Azure/k8s-deploy@v4
+              with:
+                action: deploy
+                manifests: ${{ steps.bake.outputs.manifestsBundle }}
+                namespace: default
+                images: |
+                  ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
+
+      

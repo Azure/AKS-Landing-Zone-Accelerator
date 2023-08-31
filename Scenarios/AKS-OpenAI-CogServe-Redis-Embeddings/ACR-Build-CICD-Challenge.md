@@ -21,4 +21,7 @@ Once deployment wizard is finished it will create PR with sample github flow tha
 - Modify deployment step to refer to Kustomize built manifest
 
 
-If you would like to see completed workflow - it could be found in the following repo [https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml](https://github.com/lenisha/AKS-Landing-Zone-Accelerator/blob/openai-pipeline/.github/workflows/deploy-openaiapp.yaml)
+If you would like to see completed workflow - it could be found in the following repo in the [workflows folder](../../.github/workflows/deploy-openai-embeddings-app.yaml). 
+
+ > **Important**
+ > You will need to update the workflow env variables to match the correct values for your deployment.
