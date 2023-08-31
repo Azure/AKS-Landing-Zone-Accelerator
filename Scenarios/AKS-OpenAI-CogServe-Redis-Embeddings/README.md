@@ -285,4 +285,5 @@ Depending on type of terminal you are using, the command to create environment v
 #### Pod deployment issues
 If you notice that the api pod is stuck in *ContainerCreating* status, chances are that the federated identity was not created properly. To fix this, ensure that the "CSIIdentity" environment variable was created properly. You should then run the "az identity federated-credential create" command again using string values as opposed to environment variables. You can find the string values by using the **echo** command to print the environment variables in your terminal. It is the API deployment that brings the secrets from Key vault into the AKS cluster, so the other two pods require the API pod to be in a running state before they can start as well since they require the secrets.
 
-#### 
+#### Next steps
+:arrow_forward: [Build app in your ACR and Deploy using GH Actions](./ACR-Build-CICD-Challenge.md)
