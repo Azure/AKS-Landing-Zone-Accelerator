@@ -21,3 +21,6 @@
 * Bicep
 * Docker
 * Flask
+
+## Deploy this scenario
+:arrow_forward: [Deploy this scenario](./Bicep/README.md)
