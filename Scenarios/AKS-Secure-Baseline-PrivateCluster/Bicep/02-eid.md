@@ -1,4 +1,4 @@
-# Prerequisites and Micrisoft Entra ID 
+# Prerequisites and Microsoft Entra ID 
 
 This is the starting point for the instructions on deploying the [AKS Baseline private cluster reference implementation](../README.md). There is required access and tooling you'll need in order to accomplish this. Follow the instructions below and on the subsequent pages so that you can get your environment ready to proceed with the AKS cluster creation.
 
