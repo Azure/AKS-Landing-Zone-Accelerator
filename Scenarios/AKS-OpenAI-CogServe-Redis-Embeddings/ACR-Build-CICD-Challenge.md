@@ -4,10 +4,10 @@ Create CICD pipeline to automate OpenAI web application deployment to AKS.
 
 Assumption is that infrastructure, setting variables and keyvault secrets were done following OpenAI Scenario  steps in [README.md](../AKS-OpenAI-CogServe-Redis-Embeddings/README.md)
 
-## Create GitHub Identity Federated with AAD
+## Create GitHub Identity Federated with Microsoft Entra ID 
 
 Simplest way to create template for Github workflow is to use AKS **Automated deployments** wizard.
-It will create Github identity federated with AAD and grant to it required permissions to AKS and ACR
+It will create Github identity federated with Enter ID and grant to it required permissions to AKS and ACR
 
 Fork `AKS-Landing-Zone-Accelerator` repo and use wizard option to "Deploy an application" pointing it to your fork and selecting provisioned ACR and AKS
 

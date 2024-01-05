@@ -1,4 +1,4 @@
-# Prerequisites and AAD 
+# Prerequisites and Enter ID (EID) 
 
 This is the starting point for the instructions on deploying the [AKS Baseline private cluster reference implementation](../README.md). There is required access and tooling you'll need in order to accomplish this. Follow the instructions below and on the subsequent pages so that you can get your environment ready to proceed with the AKS cluster creation.
 
@@ -14,7 +14,7 @@ This is the starting point for the instructions on deploying the [AKS Baseline p
    > * [Contributor role](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#contributor) is _required_ at the subscription level to have the ability to create resource groups and perform deployments.
    > * [User Access Administrator role](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) is _required_ at the subscription level since you'll be performing role assignments to managed identities across various resource groups.
 
-1. **This step only applies if you are creating a new AAD group for this deployment. If you have one already existing and you are a part of it, you can skip this prerequisite, and follow the import portion of the instructions below**. 
+1. **This step only applies if you are creating a new EID group for this deployment. If you have one already existing and you are a part of it, you can skip this prerequisite, and follow the import portion of the instructions below**. 
    
    An Azure AD tenant to associate your Kubernetes RBAC Cluster API authentication to.
 
@@ -28,9 +28,9 @@ Before creating the Azure Active Directory integrated cluster, groups must be cr
 
 Depending on the needs of your organization, you may have a choice of existing groups to use or a new groups may need to be created for each cluster deployment.  
 
-Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/03-AAD" folder, either "03-AAD-create" or "03-AAD-import"
+Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/03-EID" folder, either "03-EID-create" or "03-EID-import"
 ```
-cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/03-AAD-import
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/03-EID-import
 ```
 
 In the "variables.tf" file, update the defaults to reflect the display names as needed to either match existing groups or create names that fit your requirements.  
@@ -51,14 +51,14 @@ terraform apply
 
 If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
 
-## Ensure you are part of the AAD group you just created or pointed to
+## Ensure you are part of the EID group you just created or pointed to
 
-1. Go to Azure portal and type AAD
+1. Go to Azure portal and type EID
 2. Select **Azure Active Directory**
 3. Click on **Groups** in the left blade
 4. Select the Admin User group you just created. For the default name, this should be *AKS App Admin Team*
 5. Click on **Members** in the left blade
-6. ![Location of private link for keyvault](../media/adding-to-aad-group.png)
+6. ![Location of private link for keyvault](../media/adding-to-eid-group.png)
 7. Click **+ Add members**
 8. Enter your name in the search bar and select your user(s)
 9. Click **Select**

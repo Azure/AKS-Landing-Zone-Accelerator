@@ -4,7 +4,7 @@ If you haven't yet, clone the repo and cd to the appropriate folder
 
 ```bash
 git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
-cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-AAD
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-EID
 ```
 
 The following will be created:

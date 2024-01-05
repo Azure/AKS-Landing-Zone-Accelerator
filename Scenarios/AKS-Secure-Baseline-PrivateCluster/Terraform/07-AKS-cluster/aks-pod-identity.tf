@@ -1,5 +1,5 @@
 # These resources will set up the required permissions for 
-# AAD Pod Identity (v1)
+# EID Pod Identity (v1)
 
 
 # Managed Identity for Pod Identity
@@ -26,7 +26,7 @@ resource "azurerm_role_assignment" "aks_vm_contributor" {
   principal_id         = each.value.kubelet_id
 }
 
-# Azure Key Vault Access Policy for Managed Identity for AAD Pod Identity
+# Azure Key Vault Access Policy for Managed Identity for EID Pod Identity
 resource "azurerm_key_vault_access_policy" "aad_pod_identity" {
   key_vault_id = data.terraform_remote_state.aks-support.outputs.key_vault_id
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -40,10 +40,10 @@ resource "azurerm_key_vault_access_policy" "aad_pod_identity" {
 # Outputs
 output "aad_pod_identity_resource_id" {
   value       = azurerm_user_assigned_identity.aks_pod_identity.id
-  description = "Resource ID for the Managed Identity for AAD Pod Identity"
+  description = "Resource ID for the Managed Identity for EID Pod Identity"
 }
 
 output "aad_pod_identity_client_id" {
   value       = azurerm_user_assigned_identity.aks_pod_identity.client_id
-  description = "Client ID for the Managed Identity for AAD Pod Identity"
+  description = "Client ID for the Managed Identity for EID Pod Identity"
 }
