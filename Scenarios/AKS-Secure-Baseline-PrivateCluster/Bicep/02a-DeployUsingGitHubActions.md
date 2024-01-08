@@ -18,7 +18,7 @@ This will require performing the following tasks:
 
 * Fork this [repository](https://github.com/Azure/AKS-Landing-Zone-Accelerator) into your GitHub account by clicking on the "Fork" button at the top right of its page. Use the default name "AKS-Landing-Zone-Accelerator" for this fork in your repo.
 
-## Create Microsoft Entra ID Accounts
+## Create Microsoft Entra accounts
 
 Use Azure Cloud Shell and Bash (not PowerShell) to run all the commands below in the subscription you want to deploy to.
 
