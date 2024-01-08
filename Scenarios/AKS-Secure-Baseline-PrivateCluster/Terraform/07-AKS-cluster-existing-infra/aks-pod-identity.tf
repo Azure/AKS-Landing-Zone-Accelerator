@@ -1,5 +1,5 @@
 # These resources will set up the required permissions for
-# EID Pod Identity (v1)
+# Microsoft Entra Pod Identity (v1)
 
 
 # Managed Identity for Pod Identity
@@ -23,7 +23,7 @@ resource "azurerm_role_assignment" "aks_vm_contributor" {
   principal_id         = module.aks.kubelet_id
 }
 
-# Azure Key Vault Access Policy for Managed Identity for EID Pod Identity
+# Azure Key Vault Access Policy for Managed Identity for Microsoft Entra Pod Identity
 resource "azurerm_key_vault_access_policy" "aad_pod_identity" {
   key_vault_id = var.existing_key_vault_id // change to data call
   tenant_id    = data.azurerm_client_config.current.tenant_id
@@ -37,10 +37,10 @@ resource "azurerm_key_vault_access_policy" "aad_pod_identity" {
 # Outputs
 output "aad_pod_identity_resource_id" {
   value       = azurerm_user_assigned_identity.aks_pod_identity.id
-  description = "Resource ID for the Managed Identity for EID Pod Identity"
+  description = "Resource ID for the Managed Identity for Microsoft Entra Pod Identity"
 }
 
 output "aad_pod_identity_client_id" {
   value       = azurerm_user_assigned_identity.aks_pod_identity.client_id
-  description = "Client ID for the Managed Identity for EID Pod Identity"
+  description = "Client ID for the Managed Identity for Microsoft Entra Pod Identity"
 }
