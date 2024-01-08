@@ -14,7 +14,7 @@ This is the starting point for the instructions on deploying the [AKS Baseline p
    > * [Contributor role](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#contributor) is _required_ at the subscription level to have the ability to create resource groups and perform deployments.
    > * [User Access Administrator role](https://learn.microsoft.com/azure/role-based-access-control/built-in-roles#user-access-administrator) is _required_ at the subscription level since you'll be performing role assignments to managed identities across various resource groups.
 
-1. **This step only applies if you are creating a new Entra ID group for this deployment. If you have one already existing and you are a part of it, you can skip this prerequisite, and the remaining steps in this page, move on to the next page by clicking on the link at the bottom**. 
+1. **This step only applies if you are creating a new Microsoft Entra group for this deployment. If you have one already existing and you are a part of it, you can skip this prerequisite, and the remaining steps in this page, move on to the next page by clicking on the link at the bottom**. 
    
    An Microsoft Entra ID tenant to associate your Kubernetes RBAC Cluster API authentication to.
 

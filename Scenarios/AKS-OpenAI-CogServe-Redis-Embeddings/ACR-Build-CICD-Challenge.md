@@ -7,7 +7,7 @@ Assumption is that infrastructure, setting variables and keyvault secrets were d
 ## Create GitHub Identity Federated with Microsoft Entra ID 
 
 Simplest way to create template for Github workflow is to use AKS **Automated deployments** wizard.
-It will create Github identity federated with Entra ID and grant to it required permissions to AKS and ACR
+It will create Github identity federated with Microsoft Entra and grant to it required permissions to AKS and ACR
 
 Fork `AKS-Landing-Zone-Accelerator` repo and use wizard option to "Deploy an application" pointing it to your fork and selecting provisioned ACR and AKS
 

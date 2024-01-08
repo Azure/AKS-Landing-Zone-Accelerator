@@ -1,4 +1,4 @@
-# Prerequisites and Entra ID (EID) 
+# Prerequisites and Microsoft Entra ID
 
 This is the starting point for the instructions on deploying the [AKS Baseline private cluster reference implementation](../README.md). There is required access and tooling you'll need in order to accomplish this. Follow the instructions below and on the subsequent pages so that you can get your environment ready to proceed with the AKS cluster creation.
 
@@ -51,9 +51,9 @@ terraform apply
 
 If you get an error about changes to the configuration, go with the `-reconfigure` flag option.
 
-## Ensure you are part of the EID group you just created or pointed to
+## Ensure you are part of the Microsoft Entra group you just created or pointed to
 
-1. Go to Azure portal and type EID
+1. Go to Azure portal and type Microsoft Entra
 2. Select **Microsoft Entra ID**
 3. Click on **Groups** in the left blade
 4. Select the Admin User group you just created. For the default name, this should be *AKS App Admin Team*
