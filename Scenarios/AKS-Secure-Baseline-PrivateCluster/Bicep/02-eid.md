@@ -66,7 +66,7 @@ Run the command below to create two new Microsoft Entra groups in your tenant.
 
 ## Ensure you are part of the Microsoft Entra group you just created or pointed to
 
-1. Go to Azure portal and type Entra ID
+1. Go to Azure portal and type Microsoft Entra ID
 2. Select **Microsoft Entra ID**
 3. Click on **Groups** in the left blade
 4. Select the Admin User group you just created. For the default name, this should be *AKS App Admin Team*
