@@ -22,7 +22,7 @@ This will require performing the following tasks:
 
 Use Azure Cloud Shell and Bash (not PowerShell) to run all the commands below in the subscription you want to deploy to.
 
-From the Cloud Shell, run these commands using Bash to create a group in your Azure AD tenant called "AKS Users". Users in this group will have user permissions to the cluster. You will use the value shown for this in a later step.
+From the Cloud Shell, run these commands using Bash to create a group in your Microsoft Entra ID tenant called "AKS Users". Users in this group will have user permissions to the cluster. You will use the value shown for this in a later step.
 
 ```bash
 az ad group create --display-name "AKS Users" --mail-nickname "AKS-Users"
@@ -32,7 +32,7 @@ echo $AKSUSERACCESSPRINCIPALID
 
 ## Configuring OpenID Connect in Azure
 
-1. Continue to use Bash in the same Cloud Shell to create an Azure AD application using these commands. This is used to deploy the IaC to your Azure Subscription. Make a note of the appId value that is shown by the last step, you will use this value in later steps.
+1. Continue to use Bash in the same Cloud Shell to create an Microsoft Entra ID application using these commands. This is used to deploy the IaC to your Azure Subscription. Make a note of the appId value that is shown by the last step, you will use this value in later steps.
 
    ```bash
    uniqueAppName=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10 ; echo '')
@@ -41,23 +41,23 @@ echo $AKSUSERACCESSPRINCIPALID
    echo $appId
    ```
 
-2. Create a service principal for the Azure AD app. Make a note of the assigneeObjectId value that is shown by the last step, you will use this value in later steps.
+2. Create a service principal for the Microsoft Entra ID app. Make a note of the assigneeObjectId value that is shown by the last step, you will use this value in later steps.
 
    ```bash
    assigneeObjectId=$(az ad sp create --id $appId --query id --output tsv)
    echo $assigneeObjectId 
    ```
 
-3. Create a role assignment for the Azure AD app. This gives that app contributor access to the currently selected subscription.
+3. Create a role assignment for the Microsoft Entra ID app. This gives that app contributor access to the currently selected subscription.
 
    ```bash
    subscriptionId=$(az account show --query id --output tsv)
    az role assignment create --role owner --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId
    ```
 
-4. Configure a federated identity credential on the Azure AD app.
+4. Configure a federated identity credential on the Microsoft Entra ID app.
 
-   You use workload identity federation to configure your Azure AD app registration to trust tokens from an external identity provider (IdP), in this case GitHub.
+   You use workload identity federation to configure your Microsoft Entra ID app registration to trust tokens from an external identity provider (IdP), in this case GitHub.
 
    In the parameter of the command below, replace `<your-github-username>` with your GitHub username used in your forked repo. If you name your new repository something other than `AKS-Landing-Zone-Accelerator`, you will need to replace `AKS-Landing-Zone-Accelerator` with the name of your repository. Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
 

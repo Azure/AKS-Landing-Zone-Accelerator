@@ -30,4 +30,4 @@ az storage container-rm create --storage-account $STORAGEACCOUNTNAME --name $CON
 
 ### Next step
 
-:arrow_forward: [Create or Import Azure Active Directory Groups for AKS Cluster Admins and AKS Cluster Users](./03-eid.md)
+:arrow_forward: [Create or Import Microsoft Entra ID Groups for AKS Cluster Admins and AKS Cluster Users](./03-eid.md)

@@ -1,4 +1,4 @@
-# Prerequisites and Enter ID (EID) 
+# Prerequisites and Entra ID (EID) 
 
 This is the starting point for the instructions on deploying the [AKS Baseline private cluster reference implementation](../README.md). There is required access and tooling you'll need in order to accomplish this. Follow the instructions below and on the subsequent pages so that you can get your environment ready to proceed with the AKS cluster creation.
 
@@ -16,15 +16,15 @@ This is the starting point for the instructions on deploying the [AKS Baseline p
 
 1. **This step only applies if you are creating a new EID group for this deployment. If you have one already existing and you are a part of it, you can skip this prerequisite, and follow the import portion of the instructions below**. 
    
-   An Azure AD tenant to associate your Kubernetes RBAC Cluster API authentication to.
+   An Microsoft Entra ID tenant to associate your Kubernetes RBAC Cluster API authentication to.
 
-   > :warning: The user or service principal initiating the deployment process _must_ have the following minimal set of Azure AD permissions assigned:
+   > :warning: The user or service principal initiating the deployment process _must_ have the following minimal set of Microsoft Entra ID permissions assigned:
    >
-   > * Azure AD [User Administrator](https://learn.microsoft.com/azure/active-directory/users-groups-roles/directory-assign-admin-roles#user-administrator-permissions) is _required_ to create a "break glass" AKS admin Active Directory Security Group and User. Alternatively, you could get your Azure AD admin to create this for you when instructed to do so.
-   >   * If you are not part of the User Administrator group in the tenant associated to your Azure subscription, please consider [creating a new tenant](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-access-create-new-tenant#create-a-new-tenant-for-your-organization) to use while evaluating this implementation. The Azure AD tenant backing your cluster's API RBAC does NOT need to be the same tenant associated with your Azure subscription.
+   > * Microsoft Entra ID [User Administrator](https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/permissions-reference#user-administrator-permissions) is _required_ to create a "break glass" AKS admin Microsoft Entra ID Security Group and User. Alternatively, you could get your Microsoft Entra ID admin to create this for you when instructed to do so.
+   >   * If you are not part of the User Administrator group in the tenant associated to your Azure subscription, please consider [creating a new tenant](https://learn.microsoft.com/en-us/entra/fundamentals/create-new-tenant#create-a-new-tenant-for-your-organization) to use while evaluating this implementation. The Microsoft Entra ID tenant backing your cluster's API RBAC does NOT need to be the same tenant associated with your Azure subscription.
 
-## Create or Import Azure Active Directory Groups for AKS
-Before creating the Azure Active Directory integrated cluster, groups must be created that can be later mapped to the Built-In Roles of "Azure Kubernetes Service Cluster User Role" and "Azure Kubernetes Service RBAC Cluster Admin".
+## Create or Import Azure Microsoft Entra ID for AKS
+Before creating the Microsoft Entra ID integrated cluster, groups must be created that can be later mapped to the Built-In Roles of "Azure Kubernetes Service Cluster User Role" and "Azure Kubernetes Service RBAC Cluster Admin".
 
 Depending on the needs of your organization, you may have a choice of existing groups to use or a new groups may need to be created for each cluster deployment.  
 
@@ -54,7 +54,7 @@ If you get an error about changes to the configuration, go with the `-reconfigur
 ## Ensure you are part of the EID group you just created or pointed to
 
 1. Go to Azure portal and type EID
-2. Select **Azure Active Directory**
+2. Select **Microsoft Entra ID**
 3. Click on **Groups** in the left blade
 4. Select the Admin User group you just created. For the default name, this should be *AKS App Admin Team*
 5. Click on **Members** in the left blade

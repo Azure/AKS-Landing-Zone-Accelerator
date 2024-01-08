@@ -17,7 +17,7 @@ This section is organized using folders that match the steps outlined below. Mak
 
 2. [Creation of Azure Storage Account for State Management](./02-state-storage.md)
 
-3. [Create or Import Azure Active Directory Groups for AKS Cluster Admins and AKS Cluster Users](./03-eid.md)
+3. [Create or Import Microsoft Entra ID Groups for AKS Cluster Admins and AKS Cluster Users](./03-eid.md)
 
 4. [Creation of Hub Network & its respective Components](./04-network-hub.md)
  

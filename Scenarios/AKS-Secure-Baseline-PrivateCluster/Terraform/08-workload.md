@@ -164,7 +164,7 @@ az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --co
 
 We need to deploy the key vaults secret add on somewhere before this step, it is in the original markdown file but not this new one
 
-In this section, you will be manipulating some of the deployment yaml files, replacing some entries related with Azure Key Vault, Azure Container Registry and Azure Active Directory references like ClientID, TenantID etc.
+In this section, you will be manipulating some of the deployment yaml files, replacing some entries related with Azure Key Vault, Azure Container Registry and Microsoft Entra ID references like ClientID, TenantID etc.
 
 All files will be under the following folder: "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp"
 
