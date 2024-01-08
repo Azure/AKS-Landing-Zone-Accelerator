@@ -71,7 +71,7 @@ You can choose which AKS network plugin you want to use when deploying the clust
 
 ## Deploy the cluster
 
-Review "**parameters-main.json**" file and update the values as required. Please make sure to update the Entra ID (EID) Group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell (code snippets are below).
+Review "**parameters-main.json**" file and update the values as required. Please make sure to update the Microsofr Entra ID Group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using az cli or Az PowerShell (code snippets are below).
 
    > :warning: There are two groups you need to change in parameters-main.json:
    >

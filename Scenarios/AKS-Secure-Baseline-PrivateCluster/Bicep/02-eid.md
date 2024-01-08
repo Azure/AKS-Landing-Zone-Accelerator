@@ -40,8 +40,8 @@ Use az cli or Az PowerShell to create the AD groups. Replace the Entra ID group 
 # [CLI](#tab/CLI)
 
 ```azurecli
-appdevs=<EID group name>
-aksops=<EID group name>
+appdevs=<Microsoft Entra group name>
+aksops=<Microsoft Entra group name>
 
 az ad group create --display-name $appdevs --mail-nickname $appdevs
 az ad group create --display-name $aksops --mail-nickname $aksops
@@ -49,7 +49,7 @@ az ad group create --display-name $aksops --mail-nickname $aksops
 
 # [PowerShell](#tab/PowerShell)
 
-Running the command to create the new EID groups requires the New-AzADGroup cmdlet. More details can be found [here](https://learn.microsoft.com/powershell/azure/install-az-ps).
+Running the command to create the new Microsoft Entra groups requires the New-AzADGroup cmdlet. More details can be found [here](https://learn.microsoft.com/powershell/azure/install-az-ps).
 
 Install New-AzADGroup cmdlet
 
@@ -58,13 +58,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 ```
 
-Run the command below to create two new EID groups in your tenant. 
+Run the command below to create two new Microsoft Entra groups in your tenant. 
 
 ```azurepowershell
 ./ad_groups.ps1 -appdevs <App Dev Group> -aksops <AKS Operations Team>
 ```
 
-## Ensure you are part of the EID group you just created or pointed to
+## Ensure you are part of the Microsoft Entra group you just created or pointed to
 
 1. Go to Azure portal and type Entra ID
 2. Select **Microsoft Entra ID**
