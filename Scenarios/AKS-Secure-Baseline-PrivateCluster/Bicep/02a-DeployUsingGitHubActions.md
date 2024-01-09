@@ -22,7 +22,7 @@ This will require performing the following tasks:
 
 Use Azure Cloud Shell and Bash (not PowerShell) to run all the commands below in the subscription you want to deploy to.
 
-From the Cloud Shell, run these commands using Bash to create a group in your Microsoft Entra ID tenant called "AKS Users". Users in this group will have user permissions to the cluster. You will use the value shown for this in a later step.
+From the Cloud Shell, run these commands using Bash to create a group in your Microsoft Entra tenant called "AKS Users". Users in this group will have user permissions to the cluster. You will use the value shown for this in a later step.
 
 ```bash
 az ad group create --display-name "AKS Users" --mail-nickname "AKS-Users"
@@ -32,7 +32,7 @@ echo $AKSUSERACCESSPRINCIPALID
 
 ## Configuring OpenID Connect in Azure
 
-1. Continue to use Bash in the same Cloud Shell to create an Microsoft Entra ID application using these commands. This is used to deploy the IaC to your Azure Subscription. Make a note of the appId value that is shown by the last step, you will use this value in later steps.
+1. Continue to use Bash in the same Cloud Shell to create a Microsoft Entra ID application using these commands. This is used to deploy the IaC to your Azure Subscription. Make a note of the appId value that is shown by the last step, you will use this value in later steps.
 
    ```bash
    uniqueAppName=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10 ; echo '')

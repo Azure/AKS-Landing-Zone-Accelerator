@@ -9,7 +9,7 @@ The code here is purposely written to avoid loops, complex variables and logic. 
 This section is organized using folders that match the steps outlined below. Make any necessary adjustments to the variables and settings within that folder to match the needs of your deployment.
 
 1. Prerequisites: Clone this repo, install [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli), install [Bicep tools](https://learn.microsoft.com/azure/azure-resource-manager/bicep/install)
-2. [Create or Import Microsoft Entra ID Groups for AKS Cluster Admins and AKS Cluster Users](./02-eid.md)
+2. [Create or Import Microsoft Entra groups for AKS Cluster Admins and AKS Cluster Users](./02-eid.md)
 3. [Creation of Hub Network & its respective Components](./03-network-hub.md)
 4. [Creation of Spoke Network & its respective Components](./04-network-lz.md)
 5. [Creation of Supporting Components for AKS](./05-aks-supporting.md)
