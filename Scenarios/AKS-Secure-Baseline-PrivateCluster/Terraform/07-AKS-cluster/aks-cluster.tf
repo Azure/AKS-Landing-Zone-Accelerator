@@ -120,7 +120,7 @@ module "aks" {
   ]
 }
 
-# These role assignments grant the groups made in "03-AAD" access to use
+# These role assignments grant the groups made in "03-EID" access to use
 
 # The AKS cluster. 
 # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
@@ -139,7 +139,7 @@ resource "azurerm_role_assignment" "aksops_admin" {
 }
 
 # This role assigned grants the current user running the deployment admin rights
-# to the cluster. In production, you should use just the AAD groups (above).
+# to the cluster. In production, you should use just the EID groups (above).
 # Based on the instances of AKS Clusters deployed are defined the role assignments per each cluster, this is mainly used in the blue green deployment scenario.
 resource "azurerm_role_assignment" "aks_rbac_admin" {
   for_each             = module.aks

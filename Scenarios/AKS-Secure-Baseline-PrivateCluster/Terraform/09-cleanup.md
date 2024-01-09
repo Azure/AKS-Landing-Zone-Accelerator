@@ -71,7 +71,7 @@ Remember to destroy resources that are not in use. The instructions below assume
 5. Delete the user groups you created
 
    ```
-   cd ../03-AAD
+   cd ../03-EID
    ```
 
    ```

@@ -80,7 +80,7 @@ Checkout the repo section on [High Availability Baseline](https://github.com/Azu
 
 * Run a Drill Tests:
 	* Create secondary AKS ecosystem (ACR, Keyvault, App Gateway, Firewall, NSG)
-	* Create secondary AKS Cluster (with its dependencies installed: aad-podid, velero, csi-drivers) + RBAC for Azure services & velero identity (backup tool)
+	* Create secondary AKS Cluster (with its dependencies installed: Pod Identity, Valero, csi-drivers) + RBAC for Azure services & Valero identity (backup tool)
 
 	To restore **Stateless** Application: 
 	* Redeploy Application Configuration using Devops CICD

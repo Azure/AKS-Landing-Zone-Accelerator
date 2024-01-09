@@ -66,7 +66,7 @@ module "aks" {
 
 }
 
-# These role assignments grant the groups made in "03-AAD" access to use
+# These role assignments grant the groups made in "03-EID" access to use
 # The AKS cluster.
 resource "azurerm_role_assignment" "appdevs_user" {
   scope                = module.aks.aks_id
@@ -81,7 +81,7 @@ resource "azurerm_role_assignment" "aksops_admin" {
 }
 
 # This role assigned grants the current user running the deployment admin rights
-# to the cluster. In production, you should use just the AAD groups (above).
+# to the cluster. In production, you should use just the Microsoft Entra groups (above).
 resource "azurerm_role_assignment" "aks_rbac_admin" {
   scope                = module.aks.aks_id
   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"

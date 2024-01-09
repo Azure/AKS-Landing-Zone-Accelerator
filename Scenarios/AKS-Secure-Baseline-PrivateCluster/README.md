@@ -29,7 +29,7 @@ For this scenario, we have various IaC technology that you can choose from depen
 * Helm
 * [Secret store CSI driver](https://learn.microsoft.com/azure/aks/csi-secrets-store-driver)
 * [Azure RBAC for Kubernetes Authorization](https://learn.microsoft.com/azure/aks/manage-azure-rbac)
-* [Azure Active Directory pod-managed identities](https://learn.microsoft.com/azure/aks/use-azure-ad-pod-identity)
+* [Microsoft Entra pod-managed identities](https://learn.microsoft.com/azure/aks/use-azure-ad-pod-identity)
 
 ## A future workload for this scenario will include the following 
 * Horizontal Pod Autoscaling

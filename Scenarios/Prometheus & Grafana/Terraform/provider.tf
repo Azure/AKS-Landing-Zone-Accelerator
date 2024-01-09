@@ -25,7 +25,7 @@ provider "azurerm" {
   features {}
 }
 
-# Configure the Azure Active Directory Provider
+# Configure the Microsoft Entra ID Provider
 provider "azuread" { # default takes current user/identity tenant
 }
 
