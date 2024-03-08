@@ -70,7 +70,9 @@ resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing =
 module aksPolicy 'modules/policy/policy.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksPolicy'
-  params: {}
+  params: {
+    location: location
+  }
 }
 
 module akslaworkspace 'modules/laworkspace/la.bicep' = {
@@ -157,7 +159,6 @@ module aksPvtDNSContrib 'modules/Identity/pvtdnscontribrole.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksPvtDNSContrib'
   params: {
-    location: location
     principalId: aksIdentity.properties.principalId
     roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
     pvtdnsAKSZoneName: privateDNSZoneAKSName
