@@ -2,7 +2,9 @@ param subnetId string
 param publicKey string
 param vmSize string
 param location string = resourceGroup().location
+@secure()
 param adminUsername string
+@secure()
 param adminPassword string
 //param script64 string
 

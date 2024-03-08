@@ -7,6 +7,7 @@ param vnetName string
 param pubkeydata string
 param vmSize string
 param location string = deployment().location
+@secure()
 param adminUsername string
 @secure()
 param adminPassword string
