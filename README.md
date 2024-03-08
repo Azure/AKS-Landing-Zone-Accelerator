@@ -1,10 +1,10 @@
 # AKS Landing Zone Accelerator
 
-Azure Landing Zone Accelerators are architectural guidance, reference architecture, reference implementations and automation packaged to deploy workload platforms on Azure at Scale and aligned with industry proven practices.
+Azure Landing Zone Accelerators are architectural guidance, reference architecture, reference implementations, and automation packaged to deploy workload platforms on Azure at Scale and aligned with industry-proven practices.
 
-AKS Landing Zone Accelerator represents the strategic design path and target technical state for an Azure Kubernetes Service (AKS) deployment. This solution provides an architectural approach and reference implementation to prepare subscriptions for a scalable Azure Kubernetes Service (AKS) cluster. For the architectural guidance, check out [AKS landing zone accelerator](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/app-platform/aks/landing-zone-accelerator) in Microsoft Learn. 
+The AKS Landing Zone Accelerator represents the strategic design path and target technical state for an Azure Kubernetes Service (AKS) deployment. This solution provides an architectural approach and reference implementation to prepare subscriptions for a scalable Azure Kubernetes Service (AKS) cluster. For architectural guidance, check out the [AKS landing zone accelerator](https://learn.microsoft.com/azure/cloud-adoption-framework/scenarios/app-platform/aks/landing-zone-accelerator) in Microsoft Learn. 
 
-Below is a picture of what a golden state looks like and open source software like flux and traefik integrate well within the AKS ecosystem.
+Below is a picture of what a golden state looks like, and open source software like flux and traefik integrate well within the AKS ecosystem.
 
 ![Golden state platform foundation with AKS landingzone highlighted in red](./media/aks-eslz-architecture.png)
 
