@@ -18,7 +18,7 @@ param autoScalingProfile object
 param networkPlugin string = 'azure'
 //param appGatewayIdentityResourceId string
 
-resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-01-01' = {
+resource aksCluster 'Microsoft.ContainerService/managedClusters@2022-04-01' = {
   name: clusterName
   location: location
   identity: {
