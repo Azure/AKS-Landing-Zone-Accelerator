@@ -1,7 +1,9 @@
+targetScope = 'subscription'
+
 @description('Enable usage and telemetry feedback to Microsoft.')
 
 param enableTelemetry bool = true
-param location string = deployment().location
+param location string
 
 var telemetryId = '0d807b2d-f7c3-4710-9a65-e88257df1ea0-${location}'
 
