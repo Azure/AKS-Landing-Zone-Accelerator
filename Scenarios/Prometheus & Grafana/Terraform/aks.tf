@@ -1,15 +1,22 @@
-# aks cluster
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = var.aks_name
-  location            = azurerm_resource_group.rg_aks_cluster.location
-  resource_group_name = azurerm_resource_group.rg_aks_cluster.name
+  name                = "aks-cluster"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "aks"
-  kubernetes_version  = "1.25.5"
+  kubernetes_version  = "1.29.0"
+
+  network_profile {
+    network_plugin      = "azure"
+    network_plugin_mode = "overlay"
+    ebpf_data_plane     = "cilium"
+    outbound_type       = "loadBalancer"
+  }
 
   default_node_pool {
-    name       = "default"
-    node_count = "3"
-    vm_size    = "Standard_DS2_v2"
+    name           = "systempool"
+    node_count     = 3
+    vm_size        = "standard_b2als_v2"
+    vnet_subnet_id = azurerm_subnet.snet-aks.id
   }
 
   identity {
@@ -21,9 +28,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     msi_auth_for_monitoring_enabled = true
   }
 
+  monitor_metrics {
+    annotations_allowed = null
+    labels_allowed      = null
+  }
+
   lifecycle {
     ignore_changes = [
-      monitor_metrics
+      default_node_pool.0.upgrade_settings,
     ]
   }
 }
