@@ -70,7 +70,9 @@ resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing =
 module aksPolicy 'modules/policy/policy.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksPolicy'
-  params: {}
+  params: {
+    location: location
+  }
 }
 
 module akslaworkspace 'modules/laworkspace/la.bicep' = {
@@ -157,7 +159,6 @@ module aksPvtDNSContrib 'modules/Identity/pvtdnscontribrole.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'aksPvtDNSContrib'
   params: {
-    location: location
     principalId: aksIdentity.properties.principalId
     roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
     pvtdnsAKSZoneName: privateDNSZoneAKSName
@@ -243,18 +244,26 @@ module appgwroutetableroutes 'modules/vnet/routetableroutes.bicep' = [for i in r
 }]
 
 //  Telemetry Deployment
-@description('Enable usage and telemetry feedback to Microsoft.')
-param enableTelemetry bool = true
-var telemetryId = 'a4c036ff-1c94-4378-862a-8e090a88da82-${location}'
-resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
-  name: telemetryId
-  location: location
-  properties: {
-    mode: 'Incremental'
-    template: {
-      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#'
-      contentVersion: '1.0.0.0'
-      resources: {}
-    }
+module telemetry 'modules/telemetry/telemetry.bicep' = {
+  name: 'telemetry'
+  params: {
+    enableTelemetry: true
+    location: location
   }
 }
+
+// @description('Enable usage and telemetry feedback to Microsoft.')
+// param enableTelemetry bool = true
+// var telemetryId = 'a4c036ff-1c94-4378-862a-8e090a88da82-${location}'
+// resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
+//   name: telemetryId
+//   location: location
+//   properties: {
+//     mode: 'Incremental'
+//     template: {
+//       '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#'
+//       contentVersion: '1.0.0.0'
+//       resources: {}
+//     }
+//   }
+// }

@@ -7,7 +7,9 @@ param vnetName string
 param pubkeydata string
 param vmSize string
 param location string = deployment().location
+@secure()
 param adminUsername string
+@secure()
 param adminPassword string
 
 resource subnetVM 'Microsoft.Network/virtualNetworks/subnets@2020-11-01' existing = {
