@@ -1,0 +1,133 @@
+# Infracost runs on pull requests (PR) and posts PR comments.
+# If you use Infracost Cloud, Infracost also runs on main/master branch pushes so the dashboard is updated.
+# The GitHub Action docs (https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows) describe other trigger options.
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+  push:
+    branches:
+      - main
+      - master
+
+env:
+  # If you use private modules you'll need this env variable to use
+  # the same ssh-agent socket value across all jobs & steps.
+  SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+jobs:
+  # This stage runs the Infracost CLI and posts PR comments.
+  # It also updates PR comments when the PR is updated (synchronize event).
+  infracost-pull-request-checks:
+    name: Infracost Pull Request Checks
+    if: github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # Required to post comments
+    # env:
+      # If you store Terraform variables or modules in a 3rd party such as TFC or Spacelift,
+      # specify the following so Infracost can automatically retrieve them.
+      # See https://www.infracost.io/docs/features/terraform_modules/#registry-modules for details.
+      #   INFRACOST_TERRAFORM_CLOUD_TOKEN: ${{ secrets.TFC_TOKEN }}
+      #   INFRACOST_TERRAFORM_CLOUD_HOST: app.terraform.io
+    steps:
+      # If you use private modules, add an environment variable or secret
+      # called GIT_SSH_KEY with your private key, so Infracost CLI can access
+      # private repositories (similar to how Terraform/Terragrunt does).
+      # - name: add GIT_SSH_KEY
+      #   run: |
+      #     ssh-agent -a $SSH_AUTH_SOCK
+      #     mkdir -p ~/.ssh
+      #     echo "${{ secrets.GIT_SSH_KEY }}" | tr -d '\r' | ssh-add -
+      #     ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v3
+        # See https://github.com/infracost/actions/tree/master/setup for other inputs
+        # If you can't use this action, use Docker image infracost/infracost:ci-0.10
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      # Checkout the base branch of the pull request (e.g. main/master).
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          ref: '${{ github.event.pull_request.base.ref }}'
+
+      # Generate Infracost JSON file as the baseline.
+      - name: Generate Infracost cost estimate baseline
+        run: |
+          infracost breakdown --path=. \
+                              --format=json \
+                              --out-file=/tmp/infracost-base.json
+
+      # Checkout the current PR branch so we can create a diff.
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+
+      # Generate an Infracost diff and save it to a JSON file.
+      - name: Generate Infracost diff
+        run: |
+          infracost diff --path=. \
+                          --format=json \
+                          --compare-to=/tmp/infracost-base.json \
+                          --out-file=/tmp/infracost.json
+
+      # Posts a comment to the PR using the 'update' behavior.
+      # This creates a single comment and updates it. The "quietest" option.
+      # The other valid behaviors are:
+      #   delete-and-new - Delete previous comments and create a new one.
+      #   hide-and-new - Minimize previous comments and create a new one.
+      #   new - Create a new cost estimate comment on every push.
+      # See https://www.infracost.io/docs/features/cli_commands/#comment-on-pull-requests for other options.
+      - name: Post Infracost comment
+        run: |
+            infracost comment github --path=/tmp/infracost.json \
+                                     --repo=$GITHUB_REPOSITORY \
+                                     --github-token=${{ github.token }} \
+                                     --pull-request=${{ github.event.pull_request.number }} \
+                                     --behavior=update
+
+  # Run Infracost on default branch and update Infracost Cloud
+  infracost-default-branch-update:
+    # If you use private modules, or store Terraform variables or modules in a 3rd party
+    # such as TFC or Spacelift, include the same steps/variables as the infracost-pull-request-checks job
+    name: Infracost Default Branch Update
+    if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'master')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v3
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Checkout main/master branch
+        uses: actions/checkout@v4
+
+      - name: Run Infracost on default branch and update Infracost Cloud
+        run: |
+          infracost breakdown --path=. \
+                    --format=json \
+                    --out-file=infracost.json
+
+          infracost upload --path=infracost.json || echo "Always pass main branch runs even if there are policy failures"
+
+  # Update PR status in Infracost Cloud
+  infracost-pull-request-status-update:
+    name: Infracost PR Status Update
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Infracost PR Status Update
+      run: |
+        PR_STATUS="MERGED"
+        if [[ ${{ github.event.pull_request.merged }} = false ]]; then PR_STATUS="CLOSED"; fi
+
+        echo "Updating status of ${{ github.event.pull_request.html_url }} to $PR_STATUS"
+        curl -i \
+          --request POST \
+          --header "Content-Type: application/json" \
+          --header "X-API-Key: $INFRACOST_API_KEY" \
+          --data "{ \"query\": \"mutation {updatePullRequestStatus( url: \\\"${{ github.event.pull_request.html_url }}\\\", status: $PR_STATUS )}\" }" \
+          "https://dashboard.api.infracost.io/graphql";
+      env:
+        INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
