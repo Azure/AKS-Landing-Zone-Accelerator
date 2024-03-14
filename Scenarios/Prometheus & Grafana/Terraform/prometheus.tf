@@ -1,9 +1,12 @@
-# https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/azure-monitor-workspace-overview?tabs=resource-manager#create-an-azure-monitor-workspace
-# https://registry.terraform.io/providers/azure/azapi/latest/docs/resources/azapi_resource
+resource "azurerm_monitor_workspace" "prometheus" {
+  name                          = "azure-prometheus"
+  resource_group_name           = azurerm_resource_group.rg.name
+  location                      = azurerm_resource_group.rg.location
+  public_network_access_enabled = true
+}
 
-resource "azapi_resource" "prometheus" {
-  type      = "microsoft.monitor/accounts@2021-06-03-preview"
-  name      = var.prometheus_name
-  parent_id = azurerm_resource_group.rg_monitoring.id
-  location  = azurerm_resource_group.rg_monitoring.location
+resource "azurerm_role_assignment" "role_monitoring_data_reader_me" {
+  scope                = azurerm_monitor_workspace.prometheus.id
+  role_definition_name = "Monitoring Data Reader"
+  principal_id         = data.azurerm_client_config.current.object_id
 }
