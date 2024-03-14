@@ -1,6 +1,5 @@
 param principalId string
 param roleGuid string
-param location string = resourceGroup().location
 param pvtdnsAKSZoneName string
 
 resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
