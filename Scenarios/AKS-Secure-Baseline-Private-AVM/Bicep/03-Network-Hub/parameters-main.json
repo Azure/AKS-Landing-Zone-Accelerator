@@ -5,18 +5,6 @@
     "rgName": {
       "value": "ESLZ-HUB"
     },
-    "pubkeydata": {
-      "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDpNpoh248rsraL3uejAwKlla+pHaDLbp4DM7bKFoc3Rt1DeXPs0XTutJcNtq4iRq+ooRQ1T7WaK42MfQQxt3qkXwjyv8lPJ4v7aElWkAbxZIRYVYmQVxxwfw+zyB1rFdaCQD/kISg/zXxCWw+gdds4rEy7eq23/bXFM0l7pNvbAULIB6ZY7MRpC304lIAJusuZC59iwvjT3dWsDNWifA1SJtgr39yaxB9Fb01UdacwJNuvfGC35GNYH0VJ56c+iCFeAnMXIT00cYuHf0FCRTP0WvTKl+PQmeD1pwxefdFvKCVpidU2hOARb4ooapT0SDM1SODqjaZ/qwWP18y/qQ/v imported-openssh-key"
-    },
-    "vmSize": {
-      "value": "Standard_B2ms"
-    },
-    "adminUsername": {
-      "value": "azureuser"
-    },
-    "adminPassword": {
-      "value": "Password123"
-    },
     "availabilityZones": {
       "value": [
         "1",
@@ -24,36 +12,9 @@
         "3"
       ]
     },
-    "vnetHubName": {
-      "value": "VNet-HUB"
-    },
     "hubVNETaddPrefixes": {
       "value": [
         "10.0.0.0/16"
-      ]
-    },
-    "hubSubnets": {
-      "value": [
-        {
-          "name": "default",
-          "addressPrefix": "10.0.0.0/24"
-        },
-        {
-          "name": "AzureFirewallSubnet",
-          "addressPrefix": "10.0.1.0/26"
-        },
-        {
-          "name": "AzureFirewallManagementSubnet",
-          "addressPrefix": "10.0.4.0/26"
-        },
-        {
-          "name": "AzureBastionSubnet",
-          "addressPrefix": "10.0.2.0/27"
-        },
-        {
-          "name": "vmsubnet",
-          "addressPrefix": "10.0.3.0/24"
-        }
       ]
     },
     "azfwName": {
@@ -257,6 +218,9 @@
     },
     "fwnatRuleCollections": {
       "value": []
+    },
+    "vnetHubName": {
+      "value": "VNet-HUB"
     }
   }
 }

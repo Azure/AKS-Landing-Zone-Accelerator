@@ -3,12 +3,10 @@ targetScope = 'subscription'
 param rgName string
 param vnetSpokeName string
 param spokeVNETaddPrefixes array
-param spokeSubnets array
 param rtAKSSubnetName string
 param firewallIP string
 param vnetHubName string
 param appGatewayName string
-param appGatewaySubnetName string
 param vnetHUBRGName string
 param nsgAKSName string
 param nsgAppGWName string
@@ -31,11 +29,6 @@ resource vnethub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   name: vnetHubName
 }
 
-resource appgwSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
-  scope: resourceGroup(rg.name)
-  name: '${vnetSpokeName}/${appGatewaySubnetName}'
-}
-
 module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   name: rgName
   params: {
@@ -52,7 +45,29 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
     addressPrefixes: spokeVNETaddPrefixes
     name: vnetSpokeName
     location: location
-    subnets: spokeSubnets
+    subnets: [
+      {
+        name: 'default'
+        addressPrefix: '10.1.0.0/24'
+      }
+      {
+        name: 'AKS'
+        addressPrefix: '10.1.1.0/24'
+        routeTableResourceId: routeTable.outputs.resourceId
+      }
+      {
+        name: 'AppGWSubnet'
+        addressPrefix: '10.1.2.0/27'
+      }
+      {
+        name: 'vmsubnet'
+        addressPrefix: '10.1.3.0/24'
+      }
+      {
+        name: 'servicespe'
+        addressPrefix: '10.1.4.0/24'
+      }
+    ]
     enableTelemetry: true
     dnsServers: dnsServers
     peerings: [
@@ -69,6 +84,10 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
       }
     ]
   }
+  dependsOn: [
+    routeTable
+    appGwyRouteTable
+  ]
 }
 
 module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.1.3' = {
@@ -152,17 +171,16 @@ module routeTable 'br/public:avm/res/network/route-table:0.2.2' = {
   params: {
     name: rtAKSSubnetName
     location: location
-    // routes: [
-    //   {
-    //     name: 'vm-to-internet'
-    //     properties: {
-    //       addressPrefix: '0.0.0.0/0'
-    //       nextHopIpAddress: azureFirewall.outputs.ipConfiguration.properties.privateIPAddress
-    //       nextHopType: 'VirtualAppliance'
-    //       enableTelemetry: true
-    //     }
-    //   }
-    // ]
+    routes: [
+      {
+        name: 'vm-to-internet'
+        properties: {
+          addressPrefix: '0.0.0.0/0'
+          nextHopIpAddress: firewallIP
+          nextHopType: 'VirtualAppliance'
+        }
+      }
+    ]
     enableTelemetry: true
   }
 }
@@ -173,17 +191,16 @@ module appGwyRouteTable 'br/public:avm/res/network/route-table:0.2.2' = {
   params: {
     name: rtAppGWSubnetName
     location: location
-    // routes: [
-    //   {
-    //     name: 'vm-to-internet'
-    //     properties: {
-    //       addressPrefix: '0.0.0.0/0'
-    //       nextHopIpAddress: azureFirewall.outputs.ipConfiguration.properties.privateIPAddress
-    //       nextHopType: 'VirtualAppliance'
-    //       enableTelemetry: true
-    //     }
-    //   }
-    // ]
+    routes: [
+      {
+        name: 'vm-to-internet'
+        properties: {
+          addressPrefix: '0.0.0.0/0'
+          nextHopIpAddress: firewallIP
+          nextHopType: 'VirtualAppliance'
+        }
+      }
+    ]
     enableTelemetry: true
   }
 }
@@ -262,6 +279,26 @@ module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   }
 }
 
-// app gateway module needs to go here
+module appgw 'appgw.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'appgw'
+  params: {
+    appGwyAutoScale: appGwyAutoScale
+    availabilityZones: availabilityZones
+    location: location
+    appgwname: appGatewayName
+    appgwpip: publicIpAppGwy.outputs.resourceId
+    subnetid: vnetspoke.outputs.subnetResourceIds[2]
+  }
+}
+
+module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
+  scope: resourceGroup(rg.name)
+  name: 'aksIdentity'
+  params: {
+    name: 'aksIdentity'
+    location: location
+  }
+}
 
 
