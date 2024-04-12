@@ -69,7 +69,7 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
       }
     ]
     enableTelemetry: true
-    dnsServers: dnsServers
+    // dnsServers: dnsServers
     peerings: [
       {
         allowForwardedTraffic: true
