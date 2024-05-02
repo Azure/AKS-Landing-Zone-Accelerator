@@ -1,4 +1,5 @@
 param appgwname string
+param rgName string
 param subnetid string
 param appgwpip string
 param location string = resourceGroup().location

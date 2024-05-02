@@ -279,18 +279,19 @@ module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   }
 }
 
-module appgw 'appgw.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'appgw'
-  params: {
-    appGwyAutoScale: appGwyAutoScale
-    availabilityZones: availabilityZones
-    location: location
-    appgwname: appGatewayName
-    appgwpip: publicIpAppGwy.outputs.resourceId
-    subnetid: vnetspoke.outputs.subnetResourceIds[2]
-  }
-}
+// module appgw 'appgw.bicep' = {
+//   scope: resourceGroup(rg.name)
+//   name: 'appgw'
+//   params: {
+//     appGwyAutoScale: appGwyAutoScale
+//     availabilityZones: availabilityZones
+//     location: location
+//     appgwname: appGatewayName
+//     appgwpip: publicIpAppGwy.outputs.resourceId
+//     subnetid: vnetspoke.outputs.subnetResourceIds[2]
+//     rgName: rgName
+//   }
+// }
 
 module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
   scope: resourceGroup(rg.name)

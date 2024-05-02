@@ -8,6 +8,7 @@ param aksIdentityName string
 param location string = deployment().location
 param enableAutoScaling bool
 param autoScalingProfile object
+param aksadminaccessprincipalId string
 
 @allowed([
   'azure'
@@ -120,18 +121,24 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     serviceCidr: '192.168.100.0/24'
     networkPolicy: 'calico'
     podCidr: networkPlugin == 'kubenet' ? '172.17.0.0/16' : null
-    enablePrivateCluster: true
-    privateDNSZone: pvtdnsAKSZone.id
+    // enablePrivateCluster: true
+    // privateDNSZone: pvtdnsAKSZone.id
     enablePrivateClusterPublicFQDN: false
     enableRBAC: true
+    aadProfileAdminGroupObjectIDs: [
+      aksadminaccessprincipalId
+    ]
     aadProfileEnableAzureRBAC: true
     aadProfileManaged: true
     aadProfileTenantId: subscription().tenantId
     omsAgentEnabled: true
     monitoringWorkspaceId: workspace.outputs.resourceId
     azurePolicyEnabled: true
-    ingressApplicationGatewayEnabled: true
-    appGatewayResourceId: appGateway.id
+    webApplicationRoutingEnabled: true
+    // dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
+    enableDnsZoneContributorRoleAssignment: true
+    // ingressApplicationGatewayEnabled: true
+    // appGatewayResourceId: appGateway.id
     enableKeyvaultSecretsProvider: true
     managedIdentities: {
       userAssignedResourcesIds: [
