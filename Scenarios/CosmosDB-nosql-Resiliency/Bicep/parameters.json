@@ -2,16 +2,13 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "rgname": {
-        "value": "DataStorage"
-      },
       "vnetaddressprefixes": {
         "value": [
           "10.0.0.0/16"
         ]
       },
       "vnetname" : {
-        "value" : "databasevnet"
+        "value" : "AKSClusterRegion1VNet"
       },
       "subnets": {
         "value": [
@@ -23,6 +20,29 @@
                   "service": "Microsoft.AzureCosmosDB"
                 }
             ]
+          },
+          {
+            "addressPrefix": "10.1.0.0/24",
+            "name": "aksregiononesubnet"
+          }
+        ]
+      },
+      "secondvnetaddressprefixes": {
+        "value": [
+          "10.2.0.0/16"
+        ]
+      },
+      "secondVnetName" : {
+        "value" : "AKSClusterRegion2VNet"
+      },
+      "secondRgName" : {
+        "value" : "AKSClusterRegion2RG"
+      },
+      "secondSubnet": {
+        "value": [
+          {
+            "addressPrefix": "10.2.0.0/24",
+            "name": "secondclustersubnet"
           }
         ]
       }

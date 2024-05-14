@@ -1,23 +1,14 @@
 targetScope = 'subscription'
 
-param rgname string
-param location string = deployment().location
+param rgName string
 param cosmosdbname string
 param aksClusterVnetRegion1ResourceId string
 param aksClusterVnetRegion2ResourceId string
 
-// Resource group to hold all database related resources
-module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
-  name: rgname
-  params: {
-    name: rgname
-    location: location
-  }
-}
 
 module privateDnsZone 'br/public:avm/res/network/private-dns-zone:0.2.5' = {
   name: 'privateDnsZoneDeployment'
-  scope: resourceGroup(rg.name)
+  scope: resourceGroup(rgName)
   params: {
     // Required parameters
     name: 'documents.azure.com'
