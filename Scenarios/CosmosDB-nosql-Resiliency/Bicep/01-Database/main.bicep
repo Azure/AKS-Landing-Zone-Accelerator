@@ -1,26 +1,17 @@
 targetScope = 'subscription'
 
-param location string = deployment().location
-param rgname string
 param vnetname string
 param subnets array
 param vnetaddressprefixes array
-param cosmosdbname string = 'cosmosdb-${uniqueString(subscription().subscriptionId)}'
+param cosmosdbname string 
+param rgName string
 
-// Resource group to hold all database related resources
-module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
-  name: rgname
-  params: {
-    name: rgname
-    location: location
-  }
-}
+
 
 // Main VNet with single subnet
 module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.6' = {
   name: 'virtualNetworkDeployment'
-  scope: resourceGroup(rg.name)
-  dependsOn: [rg]
+  scope: resourceGroup(rgName)
   params: {
     // Required parameters
     addressPrefixes: vnetaddressprefixes
@@ -31,7 +22,7 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.6' = {
 
 // CosmosDB with private endpoint on VNet
 module databaseAccount 'br/public:avm/res/document-db/database-account:0.5.1' = {
-  scope: resourceGroup(rg.name)
+  scope: resourceGroup(rgName)
   dependsOn: [virtualNetwork]
   name: 'databaseAccountDeployment'
   params: {
@@ -52,12 +43,15 @@ module databaseAccount 'br/public:avm/res/document-db/database-account:0.5.1' = 
     }
     privateEndpoints: [
       {
-        service: 'Sql'
+        service: 'cosmosdb'
         subnetResourceId: virtualNetwork.outputs.subnetResourceIds[0]
       }
     ]
   }
 }
 
-output cosmosDbVnetResourceId string = virtualNetwork.outputs.resourceId
+output clusterDbVnetResourceId string = virtualNetwork.outputs.resourceId
+output AKSSubnetResourceId string = virtualNetwork.outputs.subnetResourceIds[1]
+output cosmosDBResourceId string = databaseAccount.outputs.resourceId
 output cosmosDbName string = cosmosdbname
+// cosmosDbVnetResourceId

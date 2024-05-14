@@ -1,32 +1,31 @@
 targetScope = 'subscription'
 
-param rgname string
-param location string = deployment().location
-param vnetname string
-param subnets array
-param vnetaddressprefixes array
-param cosmosDbVnetResourceId string
+param secondRgName string
+param secondLocation string 
+param secondVnetName string
+param secondSubnet array
+param secondvnetaddressprefixes array
+param clusterDbVnetResourceId string
 param aksAdminsGroupId string
 
 // Create resource group for the AKS Cluster nodes and associated resources.
-module rgNodes 'br/public:avm/res/resources/resource-group:0.2.3' = {
-  name: '${rgname}-networking'
+module rgSecondCluster 'br/public:avm/res/resources/resource-group:0.2.3' = {
+  name: secondRgName
   params: {
-    name: '${rgname}-networking'
-    location: location
+    name: secondRgName
+    location: secondLocation
   }
 }
 
 // Create VNet with a single subnet for the AKS worker nodes
 module nodesVirtualNetwork2 'br/public:avm/res/network/virtual-network:0.1.6' = {
   name: 'virtualNetworkDeployment'
-  scope: resourceGroup(rgNodes.name)
-  dependsOn: [rgNodes]
+  scope: resourceGroup(rgSecondCluster.name)
   params: {
     // Required parameters
-    addressPrefixes: vnetaddressprefixes
-    subnets: subnets
-    name: vnetname
+    addressPrefixes: secondvnetaddressprefixes
+    subnets: secondSubnet
+    name: secondVnetName
     peerings: [
       {
         allowForwardedTraffic: true
@@ -36,25 +35,16 @@ module nodesVirtualNetwork2 'br/public:avm/res/network/virtual-network:0.1.6' = 
         remotePeeringAllowVirtualNetworkAccess: true
         remotePeeringEnabled: true
         remotePeeringName: 'aksclusterRegion2-database'
-        remoteVirtualNetworkId: cosmosDbVnetResourceId
+        remoteVirtualNetworkId: clusterDbVnetResourceId
         useRemoteGateways: false
       }
     ]
   }
 }
 
-// Create resource group for the AKS Cluster nodes and associated resources.
-module rgCluster 'br/public:avm/res/resources/resource-group:0.2.3' = {
-  name: 'AKSClusterRegion2'
-  params: {
-    name: 'AKSClusterRegion2'
-    location: location
-  }
-}
-
-module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7' = {
+module secondManagedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7' = {
   name: 'managedClusterDeployment2'
-  scope: resourceGroup(rgCluster.name)
+  scope: resourceGroup(rgSecondCluster.name)
   params: {
     // Required parameters
     name: 'aksclusterRegion2'
@@ -73,10 +63,10 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7
         vmSize: 'Standard_DS2_v2' 
         vnetSubnetID: nodesVirtualNetwork2.outputs.subnetResourceIds[0]
         webApplicationRoutingEnabled: true
-        nodeResourceGroup: rgNodes.name
+        nodeResourceGroup: 'secondClusterNodesRG'
       }
     ]
-    location: location
+    location: secondLocation
     managedIdentities: {
       systemAssigned: true
     }
@@ -84,3 +74,4 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7
 }
 
 output aksClusterVnetRegion2ResourceId string = nodesVirtualNetwork2.outputs.resourceId
+output secondoidcIssuerUrl string = secondManagedCluster.outputs.oidcIssuerUrl

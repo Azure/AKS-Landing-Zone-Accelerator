@@ -1,21 +1,12 @@
 targetScope = 'subscription'
 
-param rgname string
-param acrname string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
+param rgName string
+param acrname string 
 param location string = deployment().location
-
-// Resource group to hold all AKS supporting services
-module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
-  name: rgname
-  params: {
-    name: rgname
-    location: location
-  }
-}
 
 // Create an Azure Container Registry
 module registry 'br/public:avm/res/container-registry/registry:0.1.1' = {
-  scope: resourceGroup(rg.name)
+  scope: resourceGroup(rgName)
   name: acrname
   params: {
     name: acrname
