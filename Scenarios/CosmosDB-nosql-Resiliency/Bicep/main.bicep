@@ -2,19 +2,19 @@ targetScope = 'subscription'
 
 
 param UniqueString string = uniqueString(subscription().subscriptionId)
-param resourceGroupName string = 'AKSClusterRegion1'
+param resourceGroupName string = 'SimpleEcomRG'
 param location string = deployment().location
 
 
 /// Deployment for the cosmosdb and its virtual network (01-Database/main.bicep)
-param cosmosdbname string = 'cosmosdb-${UniqueString}'
+param cosmosdbname string = 'cosmosdb${UniqueString}'
 param subnets array
 param vnetaddressprefixes array
 param vnetname string
 
   // Create resource group for the AKS Cluster nodes and associated resources.
 module resourceGroup 'br/public:avm/res/resources/resource-group:0.2.3' = {
-  name: 'AKSClusterRegion1'
+  name: resourceGroupName
   params: {
     name: resourceGroupName
     location: location
@@ -33,11 +33,10 @@ module vnetDatabase './01-Database/main.bicep' = {
     cosmosdbname: cosmosdbname
   }
 }
-output AKSSubnetResourceId string = vnetDatabase.outputs.AKSSubnetResourceId
-output clusterDbVnetResourceId string = vnetDatabase.outputs.clusterDbVnetResourceId
+
 
   //// deploy the AKS and its supporting resources
-param acrname string = 'akssupporting-${UniqueString}'
+param acrname string = 'akssupporting${UniqueString}'
 
 module aksSupporting '02-AKS-Supporting/main.bicep' = {
   name: 'aksSupporting'
@@ -55,13 +54,12 @@ output acrName string = aksSupporting.outputs.acrName
 /// deploy AKS cluster for region 1
 
 param aksAdminsGroupId string
-param AKSSubnetResourceId string
 
 module aksCluster '03-AKSCluster-Region1/main.bicep' = {
   name: 'aksCluster'
   params: {
     aksAdminsGroupId:aksAdminsGroupId
-    AKSvnetSubnetID: AKSSubnetResourceId
+    AKSvnetSubnetID: vnetDatabase.outputs.AKSSubnetResourceId
     rgName: resourceGroup.name
   }
 }
@@ -70,8 +68,6 @@ output firstAKSCluseterName string = aksCluster.outputs.firstAKSCluseterName
 
 
 /// deploy the AKS cluster for region 2
-param clusterDbVnetResourceId string
-@secure()
 param secondLocation string 
 param secondSubnet array
 param secondvnetaddressprefixes array
@@ -80,10 +76,10 @@ param secondVnetName string
 module aksClusterRegion2 '04-AKSCluster-Region2/main.bicep' = {
   name: 'aksClusterRegion2'
   params: {
-    clusterDbVnetResourceId:clusterDbVnetResourceId
+    clusterDbVnetResourceId:vnetDatabase.outputs.clusterDbVnetResourceId
     aksAdminsGroupId:aksAdminsGroupId
     secondLocation: secondLocation
-    secondRgName: 'AKSClusterRegion2'
+    rgName: resourceGroupName
     secondSubnet: secondSubnet
     secondvnetaddressprefixes: secondvnetaddressprefixes
     secondVnetName: secondVnetName

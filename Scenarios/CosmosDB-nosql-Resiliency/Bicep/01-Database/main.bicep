@@ -43,7 +43,7 @@ module databaseAccount 'br/public:avm/res/document-db/database-account:0.5.1' = 
     }
     privateEndpoints: [
       {
-        service: 'cosmosdb'
+        service: 'Sql'
         subnetResourceId: virtualNetwork.outputs.subnetResourceIds[0]
       }
     ]

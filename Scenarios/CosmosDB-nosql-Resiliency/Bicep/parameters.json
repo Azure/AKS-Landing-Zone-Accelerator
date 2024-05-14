@@ -22,26 +22,23 @@
             ]
           },
           {
-            "addressPrefix": "10.1.0.0/24",
+            "addressPrefix": "10.0.1.0/24",
             "name": "aksregiononesubnet"
           }
         ]
       },
       "secondvnetaddressprefixes": {
         "value": [
-          "10.2.0.0/16"
+          "10.1.0.0/16"
         ]
       },
       "secondVnetName" : {
         "value" : "AKSClusterRegion2VNet"
       },
-      "secondRgName" : {
-        "value" : "AKSClusterRegion2RG"
-      },
       "secondSubnet": {
         "value": [
           {
-            "addressPrefix": "10.2.0.0/24",
+            "addressPrefix": "10.1.0.0/24",
             "name": "secondclustersubnet"
           }
         ]
