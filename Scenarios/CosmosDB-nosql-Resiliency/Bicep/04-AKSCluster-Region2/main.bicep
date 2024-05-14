@@ -16,6 +16,7 @@ module rgSecondCluster 'br/public:avm/res/resources/resource-group:0.2.3' = {
     location: secondLocation
   }
 }
+output rgSecondClusterName string = rgSecondCluster.outputs.name
 
 // Create VNet with a single subnet for the AKS worker nodes
 module nodesVirtualNetwork2 'br/public:avm/res/network/virtual-network:0.1.6' = {
@@ -75,3 +76,4 @@ module secondManagedCluster 'br/public:avm/res/container-service/managed-cluster
 
 output aksClusterVnetRegion2ResourceId string = nodesVirtualNetwork2.outputs.resourceId
 output secondoidcIssuerUrl string = secondManagedCluster.outputs.oidcIssuerUrl
+output secondAKSCluseterName string = secondManagedCluster.outputs.name

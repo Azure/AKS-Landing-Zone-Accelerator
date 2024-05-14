@@ -35,6 +35,9 @@
       "secondVnetName" : {
         "value" : "AKSClusterRegion2VNet"
       },
+      "secondRgName" : {
+        "value" : "AKSClusterRegion2RG"
+      },
       "secondSubnet": {
         "value": [
           {

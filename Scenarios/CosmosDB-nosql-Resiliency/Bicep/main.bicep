@@ -47,6 +47,10 @@ module aksSupporting '02-AKS-Supporting/main.bicep' = {
   }
 }
 
+output acrResourceId string = aksSupporting.outputs.acrResourceId
+output acrUrl string = aksSupporting.outputs.acrUrl
+output acrName string = aksSupporting.outputs.acrName
+
 
 /// deploy AKS cluster for region 1
 
@@ -62,6 +66,8 @@ module aksCluster '03-AKSCluster-Region1/main.bicep' = {
   }
 }
 output firstoidcIssuerUrl string = aksCluster.outputs.firstoidcIssuerUrl
+output firstAKSCluseterName string = aksCluster.outputs.firstAKSCluseterName
+
 
 /// deploy the AKS cluster for region 2
 param clusterDbVnetResourceId string
@@ -84,6 +90,8 @@ module aksClusterRegion2 '04-AKSCluster-Region2/main.bicep' = {
   }
 }
 output secondoidcIssuerUrl string = aksClusterRegion2.outputs.secondoidcIssuerUrl
+output secondAKSCluseterName string = aksClusterRegion2.outputs.secondAKSCluseterName
+output rgSecondClusterName string = aksClusterRegion2.outputs.rgSecondClusterName
 
 /// deploy private dns zone
 module privateDnsZone '05-InternalDNS/main.bicep' = {
