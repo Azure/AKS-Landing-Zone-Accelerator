@@ -1,0 +1,226 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "rgName": {
+      "value": "ESLZ-HUB"
+    },
+    "availabilityZones": {
+      "value": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "hubVNETaddPrefixes": {
+      "value": [
+        "10.0.0.0/16"
+      ]
+    },
+    "azfwName": {
+      "value": "AZFW"
+    },
+    "rtVMSubnetName":{
+      "value": "vm-subnet-rt"
+    },
+    "fwapplicationRuleCollections": {
+      "value": [
+        {
+          "name": "Helper-tools",
+          "properties": {
+            "priority": 101,
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "name": "Allow-ifconfig",
+                "protocols": [
+                  {
+                    "port": 80,
+                    "protocolType": "Http"
+                  },
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "targetFqdns": [
+                  "ifconfig.co",
+                  "api.snapcraft.io",
+                  "jsonip.com",
+                  "kubernaut.io",
+                  "motd.ubuntu.com"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "AKS-egress-application",
+          "properties": {
+            "priority": 102,
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "name": "Egress",
+                "protocols": [
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "targetFqdns": [
+                  "*.azmk8s.io",
+                  "aksrepos.azurecr.io",
+                  "*.blob.core.windows.net",
+                  "*.cdn.mscr.io",
+                  "*.opinsights.azure.com",
+                  "*.monitoring.azure.com"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ]
+              },
+              {
+                "name": "Registries",
+                "protocols": [
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "targetFqdns": [
+                  "*.azurecr.io",
+                  "*.gcr.io",
+                  "*.docker.io",
+                  "quay.io",
+                  "*.quay.io",
+                  "*.cloudfront.net",
+                  "production.cloudflare.docker.com"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ]
+              },
+              {
+                "name": "Additional-Usefull-Address",
+                "protocols": [
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "targetFqdns": [
+                  "grafana.net",
+                  "grafana.com",
+                  "stats.grafana.org",
+                  "github.com",
+                  "charts.bitnami.com",
+                  "raw.githubusercontent.com",
+                  "*.letsencrypt.org",
+                  "usage.projectcalico.org",
+                  "vortex.data.microsoft.com"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ]
+              },
+              {
+                "name": "AKS-FQDN-TAG",
+                "protocols": [
+                  {
+                    "port": 80,
+                    "protocolType": "Http"
+                  },
+                  {
+                    "port": 443,
+                    "protocolType": "Https"
+                  }
+                ],
+                "targetFqdns": [],
+                "fqdnTags": [
+                  "AzureKubernetesService"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "fwnetworkRuleCollections": {
+      "value": [
+        {
+          "name": "AKS-egress",
+          "properties": {
+            "priority": 200,
+            "action": {
+              "type": "Allow"
+            },
+            "rules": [
+              {
+                "name": "NTP",
+                "protocols": [
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "123"
+                ]
+              },
+              {
+                "name": "APITCP",
+                "protocols": [
+                  "TCP"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "9000"
+                ]
+              },
+              {
+                "name": "APIUDP",
+                "protocols": [
+                  "UDP"
+                ],
+                "sourceAddresses": [
+                  "10.1.1.0/24"
+                ],
+                "destinationAddresses": [
+                  "*"
+                ],
+                "destinationPorts": [
+                  "1194"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "fwnatRuleCollections": {
+      "value": []
+    },
+    "vnetHubName": {
+      "value": "VNet-HUB"
+    }
+  }
+}
