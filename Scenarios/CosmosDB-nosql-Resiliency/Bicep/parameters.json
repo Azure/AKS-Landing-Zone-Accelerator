@@ -1,47 +1,47 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "vnetaddressprefixes": {
-        "value": [
-          "10.0.0.0/16"
-        ]
-      },
-      "vnetname" : {
-        "value" : "AKSClusterRegion1VNet"
-      },
-      "subnets": {
-        "value": [
-          {
-            "addressPrefix": "10.0.0.0/24",
-            "name": "datasubnet",
-            "serviceEndpoints": [
-                {
-                  "service": "Microsoft.AzureCosmosDB"
-                }
-            ]
-          },
-          {
-            "addressPrefix": "10.0.1.0/24",
-            "name": "aksregiononesubnet"
-          }
-        ]
-      },
-      "secondvnetaddressprefixes": {
-        "value": [
-          "10.1.0.0/16"
-        ]
-      },
-      "secondVnetName" : {
-        "value" : "AKSClusterRegion2VNet"
-      },
-      "secondSubnet": {
-        "value": [
-          {
-            "addressPrefix": "10.1.0.0/24",
-            "name": "secondclustersubnet"
-          }
-        ]
-      }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetaddressprefixes": {
+      "value": [
+        "10.2.0.0/16"
+      ]
+    },
+    "vnetname": {
+      "value": "AKSClusterRegion1VNet"
+    },
+    "subnets": {
+      "value": [
+        {
+          "addressPrefix": "10.2.0.0/24",
+          "name": "datasubnet",
+          "serviceEndpoints": [
+            {
+              "service": "Microsoft.AzureCosmosDB"
+            }
+          ]
+        },
+        {
+          "addressPrefix": "10.2.1.0/24",
+          "name": "aksregiononesubnet"
+        }
+      ]
+    },
+    "secondvnetaddressprefixes": {
+      "value": [
+        "10.1.0.0/16"
+      ]
+    },
+    "secondVnetName": {
+      "value": "AKSClusterRegion2VNet"
+    },
+    "secondSubnet": {
+      "value": [
+        {
+          "addressPrefix": "10.1.0.0/24",
+          "name": "secondclustersubnet"
+        }
+      ]
     }
+  }
 }
