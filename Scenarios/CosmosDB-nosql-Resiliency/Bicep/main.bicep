@@ -11,6 +11,7 @@ param cosmosdbname string = 'cosmosdb${UniqueString}'
 param subnets array
 param vnetaddressprefixes array
 param vnetname string
+param arecords array
 
   // Create resource group for the AKS Cluster nodes and associated resources.
 module resourceGroup 'br/public:avm/res/resources/resource-group:0.2.3' = {
@@ -98,6 +99,7 @@ module privateDnsZone '05-InternalDNS/main.bicep' = {
     aksClusterVnetRegion1ResourceId: vnetDatabase.outputs.clusterDbVnetResourceId
     aksClusterVnetRegion2ResourceId: aksClusterRegion2.outputs.aksClusterVnetRegion2ResourceId
     cosmosdbname: vnetDatabase.outputs.cosmosDbName
+    ARECORDS: arecords
   }
 }
 
