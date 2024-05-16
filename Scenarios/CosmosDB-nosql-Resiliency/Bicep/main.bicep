@@ -1,7 +1,7 @@
 targetScope = 'subscription'
 
-
-param UniqueString string = uniqueString(subscription().subscriptionId)
+param timestamp string = utcNow()
+param UniqueString string = uniqueString(subscription().subscriptionId, resourceGroupName, timestamp)
 param resourceGroupName string = 'SimpleEcomRG'
 param location string = deployment().location
 
@@ -24,7 +24,7 @@ output resourceGroupName string = resourceGroup.outputs.name
 
 //// deploy the cosmosdb and its virtual network
 module vnetDatabase './01-Database/main.bicep' = {
-  name: 'vnetDatabase'
+  name: 'vnetDatabase${UniqueString}'
   params: {
     rgName: resourceGroup.name
     vnetname: vnetname
@@ -33,13 +33,14 @@ module vnetDatabase './01-Database/main.bicep' = {
     cosmosdbname: cosmosdbname
   }
 }
+output cosmosDbName string = vnetDatabase.outputs.cosmosDbName
 
 
   //// deploy the AKS and its supporting resources
 param acrname string = 'akssupporting${UniqueString}'
 
 module aksSupporting '02-AKS-Supporting/main.bicep' = {
-  name: 'aksSupporting'
+  name: acrname
   params: {
     rgName: resourceGroup.name
     acrname: acrname
@@ -56,7 +57,7 @@ output acrName string = aksSupporting.outputs.acrName
 param aksAdminsGroupId string
 
 module aksCluster '03-AKSCluster-Region1/main.bicep' = {
-  name: 'aksCluster'
+  name: 'aksCluster${UniqueString}'
   params: {
     aksAdminsGroupId:aksAdminsGroupId
     AKSvnetSubnetID: vnetDatabase.outputs.AKSSubnetResourceId
@@ -74,7 +75,7 @@ param secondvnetaddressprefixes array
 param secondVnetName string
 
 module aksClusterRegion2 '04-AKSCluster-Region2/main.bicep' = {
-  name: 'aksClusterRegion2'
+  name: 'aksClusterRegion2${UniqueString}'
   params: {
     clusterDbVnetResourceId:vnetDatabase.outputs.clusterDbVnetResourceId
     aksAdminsGroupId:aksAdminsGroupId
@@ -91,7 +92,7 @@ output rgSecondClusterName string = aksClusterRegion2.outputs.rgSecondClusterNam
 
 /// deploy private dns zone
 module privateDnsZone '05-InternalDNS/main.bicep' = {
-  name: 'privateDnsZone'
+  name: 'privateDnsZone${UniqueString}'
   params: {
     rgName: resourceGroup.name
     aksClusterVnetRegion1ResourceId: vnetDatabase.outputs.clusterDbVnetResourceId
@@ -102,7 +103,7 @@ module privateDnsZone '05-InternalDNS/main.bicep' = {
 
 // deploy workload identity
 module cosmosWorkloadIdentity './06-WorkloadIdentity/main.bicep' = {
-  name: 'aksWorkloadIdentity'
+  name: 'aksWorkloadIdentity${UniqueString}'
   params: {
     rgName: resourceGroup.name
     workloadIdentityName: 'aksWorkloadIdentity'

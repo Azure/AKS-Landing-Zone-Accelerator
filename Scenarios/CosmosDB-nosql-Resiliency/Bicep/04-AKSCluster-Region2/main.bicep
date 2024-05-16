@@ -8,13 +8,6 @@ param secondvnetaddressprefixes array
 param clusterDbVnetResourceId string
 param aksAdminsGroupId string
 
-module rgNodes 'br/public:avm/res/resources/resource-group:0.2.3' = {
-  name: '${rgName}-networkingtwo'
-  params: {
-    name: '${rgName}-networkingtwo'
-    location: secondLocation
-  }
-}
 
 // Create VNet with a single subnet for the AKS worker nodes
 module nodesVirtualNetwork2 'br/public:avm/res/network/virtual-network:0.1.6' = {
@@ -52,18 +45,22 @@ module secondManagedCluster 'br/public:avm/res/container-service/managed-cluster
       aksAdminsGroupId
     ]
     publicNetworkAccess: 'Enabled'
+    networkDataplane: 'azure'
+    networkPlugin: 'azure'
     enableWorkloadIdentity: true
     enableOidcIssuerProfile: true
     primaryAgentPoolProfile: [
       {
         count: 1
+        minCount: 1
+        enableAutoScaling: true
+        maxCount: 4
         osType: 'Linux'
         mode: 'System'
         name: 'systempool'
         vmSize: 'Standard_DS2_v2' 
         vnetSubnetID: nodesVirtualNetwork2.outputs.subnetResourceIds[0]
         webApplicationRoutingEnabled: true
-        nodeResourceGroup: rgNodes.name
       }
     ]
     location: secondLocation

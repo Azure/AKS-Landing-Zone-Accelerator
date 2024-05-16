@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: serversa
+  namespace: simpleecom
+  annotations:
+    azure.workload.identity/client-id: 46e4ed7c-ea0e-4cce-892a-6334f9b0ef10
+    azure.workload.identity/tenant-id: 449fbe1d-9c99-4509-9014-4fd5cf25b014
+  labels:
+    azure.workload.identity/use: "true"

@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carts-deployment
+  namespace: simpleecom
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: carts
+  template:
+    metadata:
+      labels:
+        app: carts
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: serversa
+      containers:
+      - name: carts
+        image: akssupportingxaz2lgqe2tj3o.azurecr.io/cart:v1
+        ports:
+        - containerPort: 8085
+        env:
+        - name: COSMOSDBOPTIONS__DATABASE_ID
+          value: "Simpleecom"
+        - name: COSMOSDBOPTIONS__PARTITION_KEY
+          value: "/userId"
+        - name: COSMOSDBOPTIONS__CONTAINER_NAME
+          value: "Carts"
+        - name: COSMOSDBOPTIONS__COSMOS_ENDPOINT
+          value: ""
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_HTTP_PORTS
+          value: "8085"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: carts
+  namespace: simpleecom
+spec:
+  selector:
+    app: carts
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8085
+  type: ClusterIP

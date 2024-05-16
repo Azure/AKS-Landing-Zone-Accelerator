@@ -1,0 +1,56 @@
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-ecom-ingress
+  namespace: simpleecom
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: /?(.*)
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /prepdata/?(.*)
+        backend:
+          service:
+            name: dataprep
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /api/Product/?(.*)
+        backend:
+          service:
+            name: products
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /api/Cart/?(.*)
+        backend:
+          service:
+            name: carts
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /api/Orders/?(.*)
+        backend:
+          service:
+            name: orders
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /api/Auth/?(.*)
+        backend:
+          service:
+            name: auth
+            port:
+              number: 80
