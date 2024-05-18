@@ -13,19 +13,17 @@ spec:
     metadata:
       labels:
         app: frontend
-        azure.workload.identity/use: "true"
     spec:
-      serviceAccountName: serversa
       containers:
       - name: frontend
-        image: akssupportingxaz2lgqe2tj3o.azurecr.io/frontend:v1
+        image: <acr-name>.azurecr.io/frontend:v1
         ports:
         - containerPort: 3000
         env:
         - name: REACT_APP_HOMEPAGE_PIC
           value: "https://simpleecom.blob.core.windows.net/awesomeeshop/eshop_homepage.png"
         - name: REACT_APP_API_BASE_URL
-          value: "none"
+          value: ""
 
 ---
 apiVersion: v1

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: dataprep
-        image: akssupportingxaz2lgqe2tj3o.azurecr.io/prepdata:v1
+        image: <acr-name>.azurecr.io/dataprep:v1
         ports:
         - containerPort: 5000
         env:

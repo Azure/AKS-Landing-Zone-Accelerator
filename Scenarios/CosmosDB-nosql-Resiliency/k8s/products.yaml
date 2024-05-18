@@ -12,12 +12,12 @@ spec:
     metadata:
       labels:
         app: products
-        azure.workload.identity/use: "true"
+        azure.workload.identity/use: "false"
     spec:
-      serviceAccountName: serversa
+      # serviceAccountName: serversa
       containers:
       - name: products
-        image: akssupportingxaz2lgqe2tj3o.azurecr.io/products:v1
+        image: <acr-name>.azurecr.io/products:v1
         ports:
         - containerPort: 8084
         env:
@@ -28,11 +28,13 @@ spec:
         - name: COSMOSDBOPTIONS__CONTAINER_NAME
           value: "Products"
         - name: COSMOSDBOPTIONS__COSMOS_ENDPOINT
-          value: ""
+          value: "<cosmosdb endpoint>"
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
         - name: ASPNETCORE_HTTP_PORTS
           value: "8084"
+        - name: COSMOSDBOPTIONS__CONNECTION_STRING
+          value: "<cosmosdb-conn-string>"
 
 ---
 apiVersion: v1

@@ -11,7 +11,6 @@ param cosmosdbname string = 'cosmosdb${UniqueString}'
 param subnets array
 param vnetaddressprefixes array
 param vnetname string
-param arecords array
 
   // Create resource group for the AKS Cluster nodes and associated resources.
 module resourceGroup 'br/public:avm/res/resources/resource-group:0.2.3' = {
@@ -90,18 +89,6 @@ module aksClusterRegion2 '04-AKSCluster-Region2/main.bicep' = {
 output secondoidcIssuerUrl string = aksClusterRegion2.outputs.secondoidcIssuerUrl
 output secondAKSCluseterName string = aksClusterRegion2.outputs.secondAKSCluseterName
 output rgSecondClusterName string = aksClusterRegion2.outputs.rgSecondClusterName
-
-/// deploy private dns zone
-module privateDnsZone '05-InternalDNS/main.bicep' = {
-  name: 'privateDnsZone${UniqueString}'
-  params: {
-    rgName: resourceGroup.name
-    aksClusterVnetRegion1ResourceId: vnetDatabase.outputs.clusterDbVnetResourceId
-    aksClusterVnetRegion2ResourceId: aksClusterRegion2.outputs.aksClusterVnetRegion2ResourceId
-    cosmosdbname: vnetDatabase.outputs.cosmosDbName
-    ARECORDS: arecords
-  }
-}
 
 // deploy workload identity
 module cosmosWorkloadIdentity './06-WorkloadIdentity/main.bicep' = {

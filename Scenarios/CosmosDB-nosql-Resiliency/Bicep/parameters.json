@@ -32,13 +32,6 @@
         "10.1.0.0/16"
       ]
     },
-    "arecords": {
-      "value":[
-        {
-          "ipv4Address": "10.2.0.4"
-        }
-      ]
-    },
     "secondVnetName": {
       "value": "AKSClusterRegion2VNet"
     },

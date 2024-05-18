@@ -4,7 +4,7 @@ metadata:
   name: serversa
   namespace: simpleecom
   annotations:
-    azure.workload.identity/client-id: 46e4ed7c-ea0e-4cce-892a-6334f9b0ef10
-    azure.workload.identity/tenant-id: 449fbe1d-9c99-4509-9014-4fd5cf25b014
+    azure.workload.identity/client-id: <client-id>
+    azure.workload.identity/tenant-id: <tenant-id>
   labels:
     azure.workload.identity/use: "true"
