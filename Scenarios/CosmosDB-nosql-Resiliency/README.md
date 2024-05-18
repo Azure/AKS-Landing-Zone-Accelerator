@@ -39,13 +39,6 @@ SECONDCLUSTERNAME=$(az deployment sub show --name $deploymentName --query proper
 az aks update -n $FIRSTCLUSTERNAME -g $RGNAME --attach-acr $ACRNAME
 az aks update -n $SECONDCLUSTERNAME -g $RGNAME --attach-acr $ACRNAME
 
-
-echo $ACRNAME
-echo $cosmosDbName
-echo $FIRSTCLUSTERNAME
-echo $SECONDCLUSTERNAME
-
-
 # Get the information required to create the federated identity crdentials
 FIRSTOIDCISSUERURL=$(az deployment sub show --name $deploymentName --query properties.outputs.firstoidcIssuerUrl.value -o tsv) && echo "The first OIDC Issuer URL is: $FIRSTOIDCISSUERURL"
 SECONDOIDCISSUERURL=$(az deployment sub show --name $deploymentName --query properties.outputs.secondoidcIssuerUrl.value -o tsv) && echo "The second OIDC Issuer URL is: $SECONDOIDCISSUERURL"
