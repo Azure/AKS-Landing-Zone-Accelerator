@@ -67,7 +67,7 @@ az aks approuting enable --resource-group $RGNAME --name $SECONDCLUSTERNAME
 az aks get-credentials -n $FIRSTCLUSTERNAME -g $RGNAME
 # az aks get-credentials -n $SECONDCLUSTERNAME -g $RGNAME
 
-# Deploy the images to ACR
+# Build images and push to ACR
 cd ../simpleecomapp/src
 
 az acr build --registry $ACRNAME --image frontend:v1 --file frontend/Dockerfile frontend
@@ -85,12 +85,14 @@ az acr repository list --name $ACRNAME --output table # make sure you have 6 ima
 # AS ITS NETWORK IF THAT WORKS
 
 # deploy the codes (make sure you update your manifest files first with correct tenant, and clientid in svc-account and acr in the deployment files)
-
 TENANTID=<your Azure tenant id>
-
 COSMOSDB_URI=https://cosmosdbqes3guu77ovag.documents.azure.com:443/
+COSMOSDB_CONN_ST=<your cosmosdb connection string> # get this from Cosmosdb -> Settings -> Keys
 
-COSMOSDB_CONN_ST=""
+
+# Deploy the namespace
+cd ../../k8s
+kubectl apply -f namespace.yaml
 
 # update deployment files with correct acr name
 sed -i "s/<acr-name>/${ACRNAME}/g" auth.yaml
@@ -113,7 +115,35 @@ sed -i "s|<cosmosdb endpoint>|${COSMOSDB_URI}|g" carts.yaml
 sed -i "s|<cosmosdb endpoint>|${COSMOSDB_URI}|g" orders.yaml
 sed -i "s|<cosmosdb endpoint>|${COSMOSDB_URI}|g" products.yaml
 
-# now lets use managed identity
+# Deploy the containers
+kubectl apply -f nginx-ingress.yaml # enabled by the webapp routing feature
+kubectl apply -f dataprep.yaml
+kubectl apply -f frontend.yaml
+kubectl apply -f auth.yaml
+kubectl apply -f carts.yaml
+kubectl apply -f products.yaml
+kubectl apply -f orders.yaml
+
+# set context of your kubectl to the namespace we are using simpleecom 
+kubectl config set-context --current --namespace=simpleecom
+
+# Get ingress's public ip address
+kubectl get ingress
+
+# Go to browser and enter this address to Load the product catalog into your database: http://<your ingress ip address>/prepdata/send_data
+
+# Go on browser and enter the address to test out the app: http://<your ingress ip address>. You need to sign up first by clicking on Registration page.
+
+# NOW lets use managed identity
+
+# First update the service account with correct tenantid and client id
+sed -i "s/<tenant-id>/${TENANTID}/g" svc-account.yaml
+sed -i "s/<client-id>/${CLIENT_ID}/g" svc-account.yaml
+
+# deploy the service account
+kubectl apply -f svc-account.yaml
+
+# eable the use of the service account on your pods
 sed -i "s|false|true|g" auth.yaml
 sed -i "s|false|true|g" carts.yaml
 sed -i "s|false|true|g" orders.yaml
@@ -124,51 +154,22 @@ sed -i "s| #||g" carts.yaml
 sed -i "s| #||g" orders.yaml
 sed -i "s| #||g" products.yaml
 
+# Get your pod to use default credentials instead of Cosmosdb connection string by switching the ASPNETCORE_ENVIRONMENT env variable from Development to Non-dev. This will allow the use of the managed identity we configured earlier to autheticate to the data plane of cosmosdb. Safer than using secrets. Thanks for AKS workload identity, only pods that need access to the database will have access to this service account. So frontend and dataprep, which dont need access to the database wont have access to cosmosdb.
+# When using workload identity, the pods can only handle data plane operations, so stuff like creating
+# database and collections on cosmosdb are not allowed. We expect that the IT team would have set this 
+# up for you anyway. But for demo purposes we started by using the Development mode with the connection
+# string so that our code can setup the database for you. Going forward the pods wont have access 
+# to do this anymore.
 sed -i "s|Development|Non-dev|g" auth.yaml
 sed -i "s|Development|Non-dev|g" carts.yaml
 sed -i "s|Development|Non-dev|g" orders.yaml
 sed -i "s|Development|Non-dev|g" products.yaml
 
-
-
-
-# update the service account with correct tenantid and client id
-sed -i "s/<tenant-id>/${TENANTID}/g" svc-account.yaml
-sed -i "s/<client-id>/${CLIENT_ID}/g" svc-account.yaml
-
-sed -i "s/<acr-name>/${ACRNAME}/g" products.yaml
-
-sed -i "s/<acr-name>/${ACRNAME}/g" frontend.yaml
-
-
-
-alias k=kubectl
-kubectl apply -f namespace.yaml
-kubectl apply -f nginx-ingress.yaml
-kubectl apply -f svc-account.yaml
-kubectl apply -f frontend.yaml
+# Redeploy the pods so that they now use the service account's workload identity
 kubectl apply -f auth.yaml
+kubectl apply -f carts.yaml
+kubectl apply -f products.yaml
+kubectl apply -f orders.yaml
 
-
-kubectl delete -f auth.yaml
-kubectl apply -f auth.yaml
-
-
-
-
-
-FIRSTCLUSTERNAME=aksclusterRegion1
-SECONDCLUSTERNAME=aksclusterRegion2
-RGNAME=SimpleEcomRGROUPSs
-az aks get-credentials -n $FIRSTCLUSTERNAME -g $RGNAME
-cd ../../k8s
-kubectl apply -f .
-kubectl apply -f .
-
-
-
-
-
-
-
+# Make sure the pods restarted. If they didnt delete the deployments and redeploy
 
