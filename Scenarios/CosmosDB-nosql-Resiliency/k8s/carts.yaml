@@ -12,12 +12,12 @@ spec:
     metadata:
       labels:
         app: carts
-        azure.workload.identity/use: "true"
+        azure.workload.identity/use: "false"
     spec:
-      serviceAccountName: serversa
+      # serviceAccountName: serversa
       containers:
       - name: carts
-        image: akssupportingxaz2lgqe2tj3o.azurecr.io/cart:v1
+        image: <acr-name>.azurecr.io/carts:v1
         ports:
         - containerPort: 8085
         env:
@@ -28,12 +28,13 @@ spec:
         - name: COSMOSDBOPTIONS__CONTAINER_NAME
           value: "Carts"
         - name: COSMOSDBOPTIONS__COSMOS_ENDPOINT
-          value: ""
+          value: "<cosmosdb endpoint>"
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
         - name: ASPNETCORE_HTTP_PORTS
           value: "8085"
-
+        - name: COSMOSDBOPTIONS__CONNECTION_STRING
+          value: "<cosmosdb-conn-string>"
 ---
 apiVersion: v1
 kind: Service
