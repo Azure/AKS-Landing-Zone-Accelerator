@@ -402,6 +402,6 @@ Now that our application is running in two different regions, it wont help if th
 This brings up to the end of the guided portion of our levelup. Below are some additional challenges
 
 1. Use a self signed certificate to enable TLS on your ingress controller. You can learn how to do that at our [previous levelup workshop on webapp routing](https://github.com/sabbour/app-routing-tutorial)
-1. Add a fleet manager in front of the two clusters so you can manage deployments, upgrades, etc more seamlessly
+1. Add a fleet manager in front of the two clusters so you can manage deployments, upgrades, etc more seamlessly. You can follow the instructions in the [step 7 folder of this scenario](./Bicep/07-Fleet/README.md) to get started.
 1. Add front door to your resource groups and add add your cluster's ingress controllers as origins so that customers can access your application from either cluster using the same url
 1. Use the automated deployments feature to configure a CI/CD pipeline for your clusters
