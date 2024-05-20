@@ -40,7 +40,7 @@ module secondManagedCluster 'br/public:avm/res/container-service/managed-cluster
   scope: resourceGroup(rgName)
   params: {
     // Required parameters
-    name: 'aksclusterRegion2'
+    name: 'aksclusterregion2'
     aadProfileAdminGroupObjectIDs: [
       aksAdminsGroupId
     ]
