@@ -10,7 +10,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7
   scope: resourceGroup(rgName)
   params: {
     // Required parameters
-    name: 'aksclusterRegion1'
+    name: 'aksclusterregion1'
     aadProfileAdminGroupObjectIDs: [
       aksAdminsGroupId
     ]

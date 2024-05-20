@@ -48,7 +48,7 @@ RGNAME=SimpleEcomRGROUP
 currentUserGuid=$(az ad signed-in-user show --query id -o tsv )
 az ad group create --display-name AKSCADMs --mail-nickname AKSCADMs --description "Members who can administer AKS Clusters"
 aksAdminsGroupId=$(az ad group show --group AKSCADMs --query id -o tsv)
-az ad group member add --group $aksAdminsGroup --member-id $currentUserGuid
+az ad group member add --group $aksAdminsGroupId --member-id $currentUserGuid
 ```
 
 Make sure your env variables were configured properly and cd to the directory with the bicep files
@@ -402,6 +402,6 @@ Now that our application is running in two different regions, it wont help if th
 This brings up to the end of the guided portion of our levelup. Below are some additional challenges
 
 1. Use a self signed certificate to enable TLS on your ingress controller. You can learn how to do that at our [previous levelup workshop on webapp routing](https://github.com/sabbour/app-routing-tutorial)
-1. Add a fleet manager in front of the two clusters so you can manage deployments, upgrades, etc more seamlessly
+1. Add a fleet manager in front of the two clusters so you can manage deployments, upgrades, etc more seamlessly. You can follow the instructions in the [step 7 folder of this scenario](./Bicep/07-Fleet/README.md) to get started.
 1. Add front door to your resource groups and add add your cluster's ingress controllers as origins so that customers can access your application from either cluster using the same url
 1. Use the automated deployments feature to configure a CI/CD pipeline for your clusters

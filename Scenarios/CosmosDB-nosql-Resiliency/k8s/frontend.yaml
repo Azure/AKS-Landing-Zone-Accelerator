@@ -23,7 +23,7 @@ spec:
         - name: REACT_APP_HOMEPAGE_PIC
           value: "https://simpleecom.blob.core.windows.net/awesomeeshop/eshop_homepage.png"
         - name: REACT_APP_API_BASE_URL
-          value: ""
+          value: " "
         - name: REACT_APP_SERVER_NAME
           value: "aksclusterRegion1"
 
