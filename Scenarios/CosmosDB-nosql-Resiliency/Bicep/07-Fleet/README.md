@@ -6,7 +6,7 @@ In order to enable and manage AKS Fleet Manager, configure the following permiss
 
 aksAdminsGroupId=$(az ad group show --group AKSCADMs --query id -o tsv)
 
-az role assignment create --assignee-object-id $aksAdminsGroupId --role 'Azure Kubernetes Fleet Manager RBAC Cluster Admin' --scope 'the ID of your RG'
+az role assignment create --assignee-object-id $aksAdminsGroupId --role 'Azure Kubernetes Fleet Manager RBAC Cluster Admin' --scope 'subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RGNAME}'
 
 # Ensure you have installed Azure CLI to version 2.53.1 or later
 
