@@ -110,6 +110,12 @@ az identity federated-credential create --name aksfederatedidentity --identity-n
 az identity federated-credential create --name aksfederatedidentityreg2 --identity-name $IDNAME --resource-group $RGNAME --issuer $SECONDOIDCISSUERURL --subject system:serviceaccount:simpleecom:serversa
 ```
 
+If you run into parsing issues, run the following command
+
+```bash
+export MSYS_NO_PATHCONV=1
+```
+
 Grant your managed identity access to read cosmosdb data. Scope / means you are granting it access to the entire cosmosdb instance
 
 ```bash
