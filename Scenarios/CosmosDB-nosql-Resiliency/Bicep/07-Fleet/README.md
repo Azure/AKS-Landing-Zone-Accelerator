@@ -70,7 +70,7 @@ az fleet member list --resource-group ${GROUP} --fleet-name ${FLEET} -o table
 az fleet get-credentials --resource-group ${GROUP} --name ${FLEET}
 ```
 
-Create the namespace to synchronise to other clusters in the fleet
+Create the namespace to synchronize to other clusters in the fleet
 ```bash
 kubectl create namespace fleet-namespace
 ```
