@@ -25,11 +25,9 @@ az aks install-cli
 ## Set environment variables
 
 ```bash
-
 export SUBSCRIPTION_ID=<subscription_id>
-export GROUP=<your_resource_group_name>
+export GROUP=$RGNAME
 export FLEET=<your_fleet_name> #Keep the value of this lowercase
-
 ```
 
 ## Configure Fleet
@@ -39,38 +37,47 @@ There are 2 options when configuring Fleet - With or without a hub. Hubless flee
 In this example we will be configuring a lot of the defaults, however there are additional parameters you can pass in production environments such as managed identity support and private cluster networking.
 
 ```bash
-
 az fleet create --resource-group ${GROUP} --name ${FLEET} --location eastus --enable-hub
+```
 
-# Set environment variables for the member clusters
+Set environment variables for the member clusters
 
-export MEMBER_NAME_1=aks-cluster-1 #Ensure this value is lowercase
+```bash
+export MEMBER_NAME_1=${FIRSTCLUSTERNAME} #Ensure this value is lowercase
 export MEMBER_CLUSTER_ID_1=/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${GROUP}/providers/Microsoft.ContainerService/managedClusters/${FIRSTCLUSTERNAME}
 
-export MEMBER_NAME_2=aks-cluster-2 #Ensure this value is lowercase
+export MEMBER_NAME_2=${SECONDCLUSTERNAME} #Ensure this value is lowercase
 export MEMBER_CLUSTER_ID_2=/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${GROUP}/providers/Microsoft.ContainerService/managedClusters/${SECONDCLUSTERNAME}
+```
 
-# Add both clusters as members to the fleet hub.
+Add both clusters as members to the fleet hub.
 
+```bash
 az fleet member create --resource-group ${GROUP} --fleet-name ${FLEET} --name ${MEMBER_NAME_1} --member-cluster-id ${MEMBER_CLUSTER_ID_1}
 
 az fleet member create --resource-group ${GROUP} --fleet-name ${FLEET} --name ${MEMBER_NAME_2} --member-cluster-id ${MEMBER_CLUSTER_ID_2}
+```
 
+You can run the following command to check that both members have been added as members successfully.
 
-#You can run the following command to check that both members have been added as members successfully.
-
+```bash
 az fleet member list --resource-group ${GROUP} --fleet-name ${FLEET} -o table
+```
 
 #Access the API of the Fleet resource
 
+```bash
 az fleet get-credentials --resource-group ${GROUP} --name ${FLEET}
+```
 
-#Create the namespace to synchronise to other clusters in the fleet
-
+Create the namespace to synchronize to other clusters in the fleet
+```bash
 kubectl create namespace fleet-namespace
+```
 
-#Apply the ClusterResourcePlacement which will tell the hub cluster to deploy the namespaces to the member clusters.
+Apply the ClusterResourcePlacement which will tell the hub cluster to deploy the namespaces to the member clusters.
 
+```bash
 kubectl apply -f - <<EOF
 apiVersion: placement.kubernetes-fleet.io/v1beta1
 kind: ClusterResourcePlacement
@@ -85,13 +92,18 @@ spec:
   policy:
     placementType: PickAll
 EOF
+```
 
-#You can check the status of the CRP by using the following command
+You can check the status of the CRP by using the following command
 
+```bash
 kubectl describe clusterresourceplacement crp
+```
 
-#Finally you can log in to one of the member clusters and check if the namespace is present
+Finally you can log in to one of the member clusters and check if the namespace is present
 
+```bash
 az aks get-credentials -n $SECONDCLUSTERNAME -g $GROUP
 kubectl get ns
+```
 
