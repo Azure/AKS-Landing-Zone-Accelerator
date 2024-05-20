@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "rgName": {
+      "value": "ESLZ-SPOKE"
+    },
+    "availabilityZones": {
+      "value": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+    "vnetSpokeName": {
+      "value": "VNet-SPOKE"
+    },
+    "spokeVNETaddPrefixes": {
+      "value": [
+        "10.1.0.0/16"
+      ]
+    },
+    "rtAKSSubnetName": {
+      "value": "AKS-RT"
+    },
+    "firewallIP": {
+      "value": "10.0.1.4"
+    },
+    "vnetHubName": {
+      "value": "VNet-HUB"
+    },
+    "appGatewayName": {
+      "value": "APPGW"
+    },
+    "appGwyAutoScale": {
+      "value": {
+        "maxCapacity": 2,
+        "minCapacity": 1
+      }
+    },
+    "rtAppGWSubnetName" :{
+      "value": "AppGWSubnet-RT"
+    },
+    "vnetHUBRGName": {
+      "value": "ESLZ-HUB"
+    },
+    "nsgAKSName": {
+      "value": "AKS-NSG"
+    },
+    "nsgAppGWName": {
+      "value": "APPGW-NSG"
+    },
+    "dnsServers": {
+      "value": [
+        "10.0.1.4"
+      ]
+    }
+  }
+}

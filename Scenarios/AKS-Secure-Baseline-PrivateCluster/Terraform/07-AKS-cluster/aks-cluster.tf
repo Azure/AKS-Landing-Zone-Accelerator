@@ -33,13 +33,13 @@ locals {
     "aks_blue" = {
       name_prefix = "blue"
       aks_turn_on = true
-      k8s_version = "1.25.5"
+      k8s_version = "1.29"
       appgw_name  = "lzappgw-blue"
     },
     "aks_green" = {
       name_prefix = "green"
       aks_turn_on = false
-      k8s_version = "1.25.5"
+      k8s_version = "1.29"
       appgw_name  = "lzappgw-green"
     }
   }

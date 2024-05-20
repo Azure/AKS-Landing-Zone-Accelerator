@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenarios", "Scenarios", "{26A0F15A-E621-44C1-A5DA-EA0E4E368718}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing-Scalability", "Testing-Scalability", "{6B4D453A-73F8-48A8-BF50-304B1B4BC52D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleApi", "Scenarios\Testing-Scalability\dotnet\SimpleApi.csproj", "{D418CBFB-FF6E-48F2-8690-F516E6E41CBE}"
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scenarios", "Scenarios", "{9733CD30-401E-4C44-AFB8-1DEA545B5DAE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing-Scalability", "Testing-Scalability", "{6493926B-A2F9-49BD-96FE-35AA519863EB}"
@@ -15,6 +20,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D418CBFB-FF6E-48F2-8690-F516E6E41CBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D418CBFB-FF6E-48F2-8690-F516E6E41CBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D418CBFB-FF6E-48F2-8690-F516E6E41CBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D418CBFB-FF6E-48F2-8690-F516E6E41CBE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8810C871-4FAC-405F-8BA4-2D7C11B2FBD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8810C871-4FAC-405F-8BA4-2D7C11B2FBD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8810C871-4FAC-405F-8BA4-2D7C11B2FBD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -24,6 +33,11 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{6B4D453A-73F8-48A8-BF50-304B1B4BC52D} = {26A0F15A-E621-44C1-A5DA-EA0E4E368718}
+		{D418CBFB-FF6E-48F2-8690-F516E6E41CBE} = {6B4D453A-73F8-48A8-BF50-304B1B4BC52D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A7C74157-FDE1-49D4-942B-A2BCEE59311E}
 		{6493926B-A2F9-49BD-96FE-35AA519863EB} = {9733CD30-401E-4C44-AFB8-1DEA545B5DAE}
 		{8810C871-4FAC-405F-8BA4-2D7C11B2FBD8} = {6493926B-A2F9-49BD-96FE-35AA519863EB}
 	EndGlobalSection
