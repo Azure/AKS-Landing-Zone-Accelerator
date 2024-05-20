@@ -4,3 +4,6 @@
 [submodule "Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/App"]
 	path = Scenarios/AKS-OpenAI-CogServe-Redis-Embeddings/App
 	url = https://github.com/azure-samples/azure-open-ai-embeddings-qna
+[submodule "Scenarios/CosmosDB-nosql-Resiliency/simpleecomapp"]
+	path = Scenarios/CosmosDB-nosql-Resiliency/simpleecomapp
+	url = https://github.com/mosabami/simpleecom

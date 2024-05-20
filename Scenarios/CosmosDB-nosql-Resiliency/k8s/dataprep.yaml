@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataprep-deployment
+  namespace: simpleecom
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dataprep
+  template:
+    metadata:
+      labels:
+        app: dataprep
+    spec:
+      containers:
+      - name: dataprep
+        image: <acr-name>.azurecr.io/dataprep:v1
+        ports:
+        - containerPort: 5000
+        env:
+        - name: STORAGE_BASE_URL
+          value: "https://simpleecom.blob.core.windows.net/awesomeeshop"
+        - name: PRODUCTS_BASE_URL
+          value: "http://products"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataprep
+  namespace: simpleecom
+spec:
+  selector:
+    app: dataprep
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP

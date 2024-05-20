@@ -1,0 +1,43 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  namespace: simpleecom
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: <acr-name>.azurecr.io/frontend:v1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: REACT_APP_HOMEPAGE_PIC
+          value: "https://simpleecom.blob.core.windows.net/awesomeeshop/eshop_homepage.png"
+        - name: REACT_APP_API_BASE_URL
+          value: ""
+        - name: REACT_APP_SERVER_NAME
+          value: "aksclusterRegion1"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: simpleecom
+spec:
+  selector:
+    app: frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
