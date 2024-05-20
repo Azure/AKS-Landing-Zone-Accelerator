@@ -75,4 +75,5 @@ override.tf.json
 .infracost/*
 **/.infracost/*
 k8s-Copy/*
+*/k8s-Copy/*
 
