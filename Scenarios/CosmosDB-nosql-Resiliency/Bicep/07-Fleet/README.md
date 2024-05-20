@@ -42,7 +42,7 @@ az fleet create --resource-group ${GROUP} --name ${FLEET} --location eastus --en
 
 Set environment variables for the member clusters
 
-``bash
+```bash
 export MEMBER_NAME_1=${FIRSTCLUSTERNAME} #Ensure this value is lowercase
 export MEMBER_CLUSTER_ID_1=/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${GROUP}/providers/Microsoft.ContainerService/managedClusters/${FIRSTCLUSTERNAME}
 
