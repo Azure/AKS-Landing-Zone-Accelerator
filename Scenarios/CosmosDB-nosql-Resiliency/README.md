@@ -48,7 +48,7 @@ RGNAME=SimpleEcomRGROUP
 currentUserGuid=$(az ad signed-in-user show --query id -o tsv )
 az ad group create --display-name AKSCADMs --mail-nickname AKSCADMs --description "Members who can administer AKS Clusters"
 aksAdminsGroupId=$(az ad group show --group AKSCADMs --query id -o tsv)
-az ad group member add --group $aksAdminsGroup --member-id $currentUserGuid
+az ad group member add --group $aksAdminsGroupId --member-id $currentUserGuid
 ```
 
 Make sure your env variables were configured properly and cd to the directory with the bicep files
