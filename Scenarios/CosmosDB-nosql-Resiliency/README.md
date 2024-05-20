@@ -3,12 +3,14 @@
 Imagine you are building a new e-commerce application and you would like to deploy it to AKS. You have decided you would build it a microservices and use CosmosDB's NoSQL API as your database. You have completed building the first version of the app. You have tested it locally using docker-compose and you have an insecure test CosmosDB instance you used for development and testing. Your next step is to deploy it to AKS.
 
 ## Architecture
+
 For information about the application architecture, check it out at the [code repository](https://github.com/mosabami/simpleecom/blob/main/README.md#application-architecture)
 
 The diagram below shows the architecture of our environment after the resources have been deployed
 ![cloud architecture](./media/architecture-cloud.png)
 
-### AKS Components 
+### AKS Components
+
 The following AKS features will be used in this workshop
 
 1. AKS workload identity / user defined managed identity
@@ -16,6 +18,7 @@ The following AKS features will be used in this workshop
 1. ACR Build
 
 ### Cosmos DB Components
+
 1. Private link / endpoint (disabling public network access)
 1. Geo replication
 1. Event sourcing (change feed)
@@ -23,7 +26,17 @@ The following AKS features will be used in this workshop
 Most of the resources will be deployed using Bicep with the others deployed manually to aid learning.
 
 ## Deploy the Azure Environment
-We begin by setting some environment variables
+
+### Clone the repo
+
+We begin by cloning the repo while pulling the simpleecom application code as a submodule at the same time.
+```bash
+git clone --recurse-submodules https://github.com/Azure/AKS-Landing-Zone-Accelerator
+```
+
+### Set environment variables
+
+Next we set some environment variables
 
 ```bash
 region1=eastus
@@ -148,6 +161,7 @@ COSMOSDB_URI=<your Cosmos DB URI> # get this from Cosmos DB resource overview pa
 ```
 
 ## Deploy the application using connection string
+
 First we will deploy the application using connection string which is insecure. We will later switch to use Workload Identity.
 
 ```bash
@@ -188,6 +202,7 @@ kubectl apply -f orders.yaml
 ```
 
 ### NOTE: What we have done so far - Insecure
+
 Using the connection string gives the containers elevated access to the Cosmos DB and should not be done in production. It grants access to both the control plan and data plane. The microservices have lines of code in them that create the database and collections if they don't exist. This is great for demo purposes to save time. 
 
 When we switch to using workload identity, the containers wont be able to perform these control plane operations. Just CRUD operations on existing databases and collections. In production, connection string Authentication should be disabled for security purposes.
@@ -204,6 +219,7 @@ Go to browser and enter this address to Load the product catalog into your datab
 Go on browser and enter the address to test out the app: http://<your ingress ip address>. You need to sign up first by clicking on Registration page.
 
 ## Deploy the app using managed identity and private link
+
 Our first step here is to make our Cosmos DB only accessible from our private network.
 
 1. Head to the portal and click on your Cosmos DB resource
@@ -221,7 +237,7 @@ sed -i "s/<tenant-id>/${TENANTID}/g" svc-account.yaml
 sed -i "s/<client-id>/${CLIENT_ID}/g" svc-account.yaml
 ```
 
-# deploy the service account
+Deploy the service account
 
 ```bash
 kubectl apply -f svc-account.yaml
@@ -283,19 +299,21 @@ Make sure the pods restarted. If they didnt delete the deployments and redeploy
 
 
 ## Deploy into your second cluster
+
 Log into the second cluster
 
 ```bash
 az aks get-credentials -n $SECONDCLUSTERNAME -g $RGNAME
 ```
 
-# Deploy the namespace
+Deploy the namespace
 
 ```bash
 kubectl apply -f namespace.yaml
 ```
 
 ## Deploy the other resources
+
 Since we are using the same ACR and the same managed identity in both clusters, we can just deploy the resources using the existing configuration file.
 
 We will however make a minor configuration change to the frontend deployment file so that it sets the REACT_APP_SERVER_NAME value to `aksclusterRegion1`
@@ -363,7 +381,9 @@ kubectl get ingress
 ```
 
 ## Add geo replication for your Cosmos DB
+
 Now that our application is running in two different regions, it wont help if the regon where Cosmos DB is deployed goes down. To counter that, we will enable geo replications on Cosmos DB.
+
 1. Go on your portal and click on your Cosmos DB
 1. Click on Settings -> **Replicate data globally**
 1. Click on Sweden central on the presented map
