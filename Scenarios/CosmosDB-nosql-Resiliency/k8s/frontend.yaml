@@ -24,6 +24,8 @@ spec:
           value: "https://simpleecom.blob.core.windows.net/awesomeeshop/eshop_homepage.png"
         - name: REACT_APP_API_BASE_URL
           value: ""
+        - name: REACT_APP_SERVER_NAME
+          value: "aksclusterRegion1"
 
 ---
 apiVersion: v1
