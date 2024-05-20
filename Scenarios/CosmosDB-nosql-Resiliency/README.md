@@ -92,7 +92,7 @@ az aks update -n $FIRSTCLUSTERNAME -g $RGNAME --attach-acr $ACRNAME
 az aks update -n $SECONDCLUSTERNAME -g $RGNAME --attach-acr $ACRNAME
 ```
 
-Get the information required to create the federated identity crdentials
+Get the information required to create the federated identity credentials
 
 ```bash
 FIRSTOIDCISSUERURL=$(az deployment sub show --name $deploymentName --query properties.outputs.firstoidcIssuerUrl.value -o tsv) && echo "The first OIDC Issuer URL is: $FIRSTOIDCISSUERURL"
@@ -230,7 +230,7 @@ Our first step here is to make our Cosmos DB only accessible from our private ne
 
 Next up, we will create a service account which will use the AKS workload identity feature to map the pod's access to the access granted to the managed identity. We will then use default credentials to authenticate to our cosmosdb. Only pods using the service account will have direct access to Cosmos DB. The frontend and dataprep pods wont. This is how you can limit access to sensitive resources.
 
-First update the service account with correct tenantid and client id
+First update the service account with correct Tenant ID and Client ID.
 
 ```bash
 sed -i "s/<tenant-id>/${TENANTID}/g" svc-account.yaml
@@ -275,7 +275,7 @@ sed -i "s| #||g" orders.yaml
 sed -i "s| #||g" products.yaml
 ```
 
-Get your pod to use default credentials instead of Cosmosdb connection string by switching the ASPNETCORE_ENVIRONMENT env variable from Development to Non-dev. This will allow the use of the managed identity we configured earlier to authenticate to the data plane of cosmosdb. Safer than using secrets. Thanks for AKS workload identity, only pods that need access to the database will have access to this service account. So frontend and dataprep, which dont need access to the database wont have access to cosmosdb.
+Get your pod to use default credentials instead of Cosmosdb connection string by switching the ASPNETCORE_ENVIRONMENT env variable from Development to Non-dev. This will allow the use of the managed identity we configured earlier to authenticate to the data plane of cosmosdb. Safer than using secrets. Thanks for AKS workload identity, only pods that need access to the database will have access to this service account. So frontend and dataprep, which don't need access to the database wont have access to cosmosdb.
 
 When using workload identity, the pods can only handle data plane operations. Operations like creating database and collections on cosmosdb are not allowed. We expect that the Ops team would have set this up for developers. But for demo purposes, we started by using the `Development` mode with the connection string so that our code can setup the database for you. Going forward the pods wont have access to do this anymore.
 
@@ -295,7 +295,7 @@ kubectl apply -f products.yaml
 kubectl apply -f orders.yaml
 ```
 
-Make sure the pods restarted. If they didnt delete the deployments and redeploy
+Make sure the pods restarted. If they didn't delete the deployments and redeploy
 
 
 ## Deploy into your second cluster
@@ -382,7 +382,7 @@ kubectl get ingress
 
 ## Add geo replication for your Cosmos DB
 
-Now that our application is running in two different regions, it wont help if the regon where Cosmos DB is deployed goes down. To counter that, we will enable geo replications on Cosmos DB.
+Now that our application is running in two different regions, it wont help if the region where Cosmos DB is deployed goes down. To counter that, we will enable Geo replications on Cosmos DB.
 
 1. Go on your portal and click on your Cosmos DB
 1. Click on Settings -> **Replicate data globally**
@@ -396,6 +396,6 @@ Now that our application is running in two different regions, it wont help if th
 This brings up to the end of the guided portion of our levelup. Below are some additional challenges
 
 1. Use a self signed certificate to enable TLS on your ingress controller. You can learn how to do that at our [previous levelup workshop on webapp routing](https://github.com/sabbour/app-routing-tutorial)
-1. Add a fleet manager infront of the two clusters so you can manage deployments, upgrades, etc more seamlessly
-1. Add frontdoor to your resource groups and add add your cluster's ingress controllers as origins so that customers can access your applicaton from either cluster using the same url
+1. Add a fleet manager in front of the two clusters so you can manage deployments, upgrades, etc more seamlessly
+1. Add front door to your resource groups and add add your cluster's ingress controllers as origins so that customers can access your application from either cluster using the same url
 1. Use the automated deployments feature to configure a CI/CD pipeline for your clusters
