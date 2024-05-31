@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-deployment
+  namespace: simpleecom
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders
+  template:
+    metadata:
+      labels:
+        app: orders
+        azure.workload.identity/use: "false"
+    spec:
+      # serviceAccountName: serversa
+      containers:
+      - name: orders
+        image: <acr-name>.azurecr.io/orders:v1
+        ports:
+        - containerPort: 8082
+        env:
+        - name: COSMOSDBOPTIONS__DATABASE_ID
+          value: "Simpleecom"
+        - name: COSMOSDBOPTIONS__PARTITION_KEY
+          value: "/userId"
+        - name: COSMOSDBOPTIONS__CONTAINER_NAME
+          value: "Orders"
+        - name: COSMOSDBOPTIONS__COSMOS_ENDPOINT
+          value: "<cosmosdb endpoint>"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_HTTP_PORTS
+          value: "8082"
+        - name: COSMOSDBOPTIONS__CONNECTION_STRING
+          value: "<cosmosdb-conn-string>"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+  namespace: simpleecom
+spec:
+  selector:
+    app: orders
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8082
+  type: ClusterIP
