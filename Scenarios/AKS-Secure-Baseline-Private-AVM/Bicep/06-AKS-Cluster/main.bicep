@@ -108,13 +108,15 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     autoScalerProfileOkTotalUnreadyCount: enableAutoScaling ? autoScalingProfile.okTotalUnreadyCount : null
     autoScalerProfileScaleDownDelayAfterAdd: enableAutoScaling ? autoScalingProfile.scaleDownDelayAfterAdd : null
     autoScalerProfileScaleDownDelayAfterDelete: enableAutoScaling ? autoScalingProfile.scaleDownDelayAfterDelete : null
-    autoScalerProfileScaleDownDelayAfterFailure: enableAutoScaling ? autoScalingProfile.scaleDownDelayAfterFailure : null
+    autoScalerProfileScaleDownDelayAfterFailure: enableAutoScaling
+      ? autoScalingProfile.scaleDownDelayAfterFailure
+      : null
     autoScalerProfileScaleDownUnneededTime: enableAutoScaling ? autoScalingProfile.scaleDownUnneededTime : null
     autoScalerProfileScaleDownUnreadyTime: enableAutoScaling ? autoScalingProfile.scaleDownUnreadyTime : null
     autoScalerProfileScanInterval: enableAutoScaling ? autoScalingProfile.scanInterval : null
     autoScalerProfileSkipNodesWithLocalStorage: enableAutoScaling ? autoScalingProfile.skipNodesWithLocalStorage : null
     autoScalerProfileSkipNodesWithSystemPods: enableAutoScaling ? autoScalingProfile.skipNodesWithSystemPods : null
-    autoScalerProfileUtilizationThreshold: enableAutoScaling ? autoScalingProfile.utilizationThreshold : null
+    autoScalerProfileUtilizationThreshold: enableAutoScaling ? autoScalingProfile.scaleDownUtilizationThreshold : null
     networkPlugin: networkPlugin == 'azure' ? 'azure' : 'kubenet'
     outboundType: 'loadBalancer'
     dnsServiceIP: '192.168.100.10'
@@ -147,7 +149,3 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     }
   }
 }
-
-
-
-
