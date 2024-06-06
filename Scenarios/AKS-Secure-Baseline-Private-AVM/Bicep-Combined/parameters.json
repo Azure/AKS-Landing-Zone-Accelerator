@@ -1,0 +1,315 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "spokeRgName": {
+        "value": "ESLZ-SPOKE"
+      },
+      "hubRgName": {
+        "value": "ESLZ-HUB"
+      },
+      "availabilityZones": {
+        "value": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "hubVNETaddPrefixes": {
+        "value": [
+          "10.0.0.0/16"
+        ]
+      },
+      "azfwName": {
+        "value": "AZFW"
+      },
+      "rtVMSubnetName": {
+        "value": "vm-subnet-rt"
+      },
+      "fwapplicationRuleCollections": {
+        "value": [
+          {
+            "name": "Helper-tools",
+            "properties": {
+              "priority": 101,
+              "action": {
+                "type": "Allow"
+              },
+              "rules": [
+                {
+                  "name": "Allow-ifconfig",
+                  "protocols": [
+                    {
+                      "port": 80,
+                      "protocolType": "Http"
+                    },
+                    {
+                      "port": 443,
+                      "protocolType": "Https"
+                    }
+                  ],
+                  "targetFqdns": [
+                    "ifconfig.co",
+                    "api.snapcraft.io",
+                    "jsonip.com",
+                    "kubernaut.io",
+                    "motd.ubuntu.com"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "name": "AKS-egress-application",
+            "properties": {
+              "priority": 102,
+              "action": {
+                "type": "Allow"
+              },
+              "rules": [
+                {
+                  "name": "Egress",
+                  "protocols": [
+                    {
+                      "port": 443,
+                      "protocolType": "Https"
+                    }
+                  ],
+                  "targetFqdns": [
+                    "*.azmk8s.io",
+                    "aksrepos.azurecr.io",
+                    "*.blob.core.windows.net",
+                    "*.cdn.mscr.io",
+                    "*.opinsights.azure.com",
+                    "*.monitoring.azure.com"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ]
+                },
+                {
+                  "name": "Registries",
+                  "protocols": [
+                    {
+                      "port": 443,
+                      "protocolType": "Https"
+                    }
+                  ],
+                  "targetFqdns": [
+                    "*.azurecr.io",
+                    "*.gcr.io",
+                    "*.docker.io",
+                    "quay.io",
+                    "*.quay.io",
+                    "*.cloudfront.net",
+                    "production.cloudflare.docker.com"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ]
+                },
+                {
+                  "name": "Additional-Usefull-Address",
+                  "protocols": [
+                    {
+                      "port": 443,
+                      "protocolType": "Https"
+                    }
+                  ],
+                  "targetFqdns": [
+                    "grafana.net",
+                    "grafana.com",
+                    "stats.grafana.org",
+                    "github.com",
+                    "charts.bitnami.com",
+                    "raw.githubusercontent.com",
+                    "*.letsencrypt.org",
+                    "usage.projectcalico.org",
+                    "vortex.data.microsoft.com"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ]
+                },
+                {
+                  "name": "AKS-FQDN-TAG",
+                  "protocols": [
+                    {
+                      "port": 80,
+                      "protocolType": "Http"
+                    },
+                    {
+                      "port": 443,
+                      "protocolType": "Https"
+                    }
+                  ],
+                  "targetFqdns": [],
+                  "fqdnTags": [
+                    "AzureKubernetesService"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "fwnetworkRuleCollections": {
+        "value": [
+          {
+            "name": "AKS-egress",
+            "properties": {
+              "priority": 200,
+              "action": {
+                "type": "Allow"
+              },
+              "rules": [
+                {
+                  "name": "NTP",
+                  "protocols": [
+                    "UDP"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "destinationPorts": [
+                    "123"
+                  ]
+                },
+                {
+                  "name": "APITCP",
+                  "protocols": [
+                    "TCP"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "destinationPorts": [
+                    "9000"
+                  ]
+                },
+                {
+                  "name": "APIUDP",
+                  "protocols": [
+                    "UDP"
+                  ],
+                  "sourceAddresses": [
+                    "10.1.1.0/24"
+                  ],
+                  "destinationAddresses": [
+                    "*"
+                  ],
+                  "destinationPorts": [
+                    "1194"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "fwnatRuleCollections": {
+        "value": []
+      },
+      "vnetHubName": {
+        "value": "VNet-HUB"
+      },
+      "vnetSpokeName": {
+        "value": "VNet-SPOKE"
+      },
+      "spokeVNETaddPrefixes": {
+        "value": [
+          "10.1.0.0/16"
+        ]
+      },
+      "rtAKSSubnetName": {
+        "value": "AKS-RT"
+      },
+      "firewallIP": {
+        "value": "10.0.1.4"
+      },
+      "appGatewayName": {
+        "value": "APPGW"
+      },
+      "appGwyAutoScale": {
+        "value": {
+          "maxCapacity": 2,
+          "minCapacity": 1
+        }
+      },
+      "rtAppGWSubnetName": {
+        "value": "AppGWSubnet-RT"
+      },
+      "vnetHUBRGName": {
+        "value": "ESLZ-HUB"
+      },
+      "nsgAKSName": {
+        "value": "AKS-NSG"
+      },
+      "nsgAppGWName": {
+        "value": "APPGW-NSG"
+      },
+      "dnsServers": {
+        "value": [
+          "10.0.1.4"
+        ]
+      },
+      "vnetName": {
+        "value": "VNet-SPOKE"
+      },
+      "subnetName": {
+        "value": "AKS"
+      },
+      "storageAccountType": {
+        "value": "Standard_GZRS"
+      },
+      "enableAutoScaling": {
+        "value": false
+      },
+      "autoScalingProfile": {
+        "value": {
+          "balance-similar-node-groups": "false",
+          "expander": "random",
+          "max-empty-bulk-delete": "10",
+          "max-graceful-termination-sec": "600",
+          "max-node-provision-time": "15m",
+          "max-total-unready-percentage": "45",
+          "new-pod-scale-up-delay": "0s",
+          "ok-total-unready-count": "3",
+          "scale-down-delay-after-add": "10m",
+          "scale-down-delay-after-delete": "10s",
+          "scale-down-delay-after-failure": "3m",
+          "scale-down-unneeded-time": "10m",
+          "scale-down-unready-time": "20m",
+          "scale-down-utilization-threshold": "0.5",
+          "scan-interval": "10s",
+          "skip-nodes-with-local-storage": "false",
+          "skip-nodes-with-system-pods": "true"
+        }
+      },
+      "aksIdentityName": {
+        "value": "aksIdentity"
+      },
+      "aksadminaccessprincipalId": {
+        "value": "6e358f55-6fdc-4a5a-a2b5-068788941677"
+      },
+      "appgwpip": {
+        "value": "/subscriptions/74d71e41-f04b-4d6f-ac02-a984373c50b1/resourceGroups/ESLZ-SPOKE/providers/Microsoft.Network/publicIPAddresses/APPGW-PIP"
+      },
+      "subnetid": {
+        "value": "/subscriptions/74d71e41-f04b-4d6f-ac02-a984373c50b1/resourceGroups/ESLZ-SPOKE/providers/Microsoft.Network/virtualNetworks/VNet-SPOKE/subnets/AppGWSubnet"
+      }
+    }
+  }
+  
