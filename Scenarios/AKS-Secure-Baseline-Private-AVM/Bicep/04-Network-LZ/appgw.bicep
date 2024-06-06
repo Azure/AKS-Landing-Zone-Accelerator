@@ -1,5 +1,5 @@
 param appgwname string
-param rgName string
+// param rgName string
 param subnetid string
 param appgwpip string
 param location string = resourceGroup().location
@@ -20,7 +20,7 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
     sku: {
       tier: 'Standard_v2'
       name: 'Standard_v2'
-       capacity: empty(appGwyAutoScale) ? 2 : null
+      capacity: empty(appGwyAutoScale) ? 2 : null
     }
     gatewayIPConfigurations: [
       {
@@ -72,7 +72,11 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
         name: httplistenerName
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appgwname, frontendIPConfigurationName)
+            id: resourceId(
+              'Microsoft.Network/applicationGateways/frontendIPConfigurations',
+              appgwname,
+              frontendIPConfigurationName
+            )
           }
           frontendPort: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appgwname, frontendPortName)
@@ -84,16 +88,24 @@ resource appgw 'Microsoft.Network/applicationGateways@2021-02-01' = {
     requestRoutingRules: [
       {
         name: 'rule1'
-        properties:{
+        properties: {
           ruleType: 'Basic'
           httpListener: {
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appgwname, httplistenerName)
           }
           backendAddressPool: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appgwname, backendAddressPoolName)
+            id: resourceId(
+              'Microsoft.Network/applicationGateways/backendAddressPools',
+              appgwname,
+              backendAddressPoolName
+            )
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appgwname, backendHttpSettingsCollectionName)
+            id: resourceId(
+              'Microsoft.Network/applicationGateways/backendHttpSettingsCollection',
+              appgwname,
+              backendHttpSettingsCollectionName
+            )
           }
         }
       }
