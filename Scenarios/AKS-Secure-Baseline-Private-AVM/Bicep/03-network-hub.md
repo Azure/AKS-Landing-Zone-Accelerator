@@ -5,12 +5,7 @@ Modules will then align to these standards, across languages (Bicep, Terraform e
 
 # Create the Hub Network
 
-If you haven't yet, clone the repo and cd to the appropriate folder
-
-```bash
-git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
-cd ./Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/02-EID
-```
+If you haven't yet, go back to 02-EID and complete the steps.
 
 The following will be created:
 

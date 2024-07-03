@@ -9,6 +9,7 @@ param location string = deployment().location
 param enableAutoScaling bool
 param autoScalingProfile object
 param aksadminaccessprincipalId string
+param kubernetesVersion string
 
 @allowed([
   'azure'
@@ -130,6 +131,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     aadProfileAdminGroupObjectIDs: [
       aksadminaccessprincipalId
     ]
+    kubernetesVersion: kubernetesVersion
     aadProfileEnableAzureRBAC: true
     aadProfileManaged: true
     aadProfileTenantId: subscription().tenantId

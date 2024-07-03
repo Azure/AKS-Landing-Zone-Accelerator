@@ -40,6 +40,9 @@
       },
       "aksIdentityName": {
         "value": "aksIdentity"
+      },
+      "aksadminaccessprincipalId": {
+        "value": "<service principal id for admin Microsoft Entra user group>"
       }
     }
   }
