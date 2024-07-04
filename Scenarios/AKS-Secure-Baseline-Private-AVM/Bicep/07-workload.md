@@ -110,7 +110,7 @@ Create the secret in key vault. You may use anything you'd like for the username
 
 ```bash
 # update keyvault name, username and password before running the command below
-KEYVAULTNAME=$(az deployment sub show -n "AKS-LZA-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv)
+KEYVAULTNAME="Name of your keyvault"
 PGUSERNAME=<postgres db user name>
 PGPASSWORD=<postgres db password>
 az keyvault secret set --name mongodburi --vault-name $KEYVAULTNAME --value "mongodb://$PGUSERNAME:$PGPASSWORD@ratings-mongodb.ratingsapp:27017/ratingsdb"
@@ -166,7 +166,7 @@ You will have to carefully update the following files:
 
 ### Deploy workload
 
-Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder.
+Navigate to "Scenarios/AKS-Secure-Baseline-Private-AVM/Apps/RatingsApp" folder.
 
 1. Updating **api-secret-provider-class.yaml**
 

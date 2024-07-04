@@ -15,7 +15,7 @@ param kubernetesVersion string
   'azure'
   'kubenet'
 ])
-param networkPlugin string = 'azure'
+param networkPlugin string
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -124,8 +124,8 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     serviceCidr: '192.168.100.0/24'
     networkPolicy: 'calico'
     podCidr: networkPlugin == 'kubenet' ? '172.17.0.0/16' : null
-    // enablePrivateCluster: true
-    // privateDNSZone: pvtdnsAKSZone.id
+    enablePrivateCluster: true
+    privateDNSZone: pvtdnsAKSZone.id
     enablePrivateClusterPublicFQDN: false
     enableRBAC: true
     aadProfileAdminGroupObjectIDs: [
