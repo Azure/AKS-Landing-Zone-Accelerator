@@ -111,14 +111,12 @@ You should also connect your AKS Cluster to the Azure Container Registry (ACR) s
 az aks update --name <Change to your cluster name, probably "aksCluster"> --resource-group <Change to your spoke resource group name, probably "AKS-LZA-SPOKE"> --attach-acr $ACRNAME
 ```
 
-Now deploy the application using the YAML file. Open the `shoppingDemo/values.yaml` file and update the *containerRegistry* entry with the name of your ACR.
+Now deploy the application using the HELM chart. Make sure to update the value of the containerRegistry in the command below to your ACR name:
 
 ```bash
 cd 07-Workload
-helm install full-coral ./shoppingDemo
+helm install monkey-magic ./shoppingDemo --set containerRegistry=<yourACRname-updateMe>.azurecr.io
 ```
-
-
 
 XXXXXXXXXXXXXXXXXXXXXX
 
@@ -126,8 +124,6 @@ Nothing below this line has been changed.
 TODO: Setup ingress via AppGW and point to the store-front service
 
 XXXXXXXXXXXXXXXXXXXXXX
-
-
 
 
 Create the secret in key vault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps.
