@@ -1,33 +1,35 @@
 # Deploy a Basic Workload using the Fruit Smoothie Ratings Application
 
-This application consists of a web frontend, an API service and a MongoDB database.
+This application consists of a group of containerized microservices that can be easily deployed into an Azure Kubernetes Service (AKS) cluster. This is meant to show a realistic scenario using a polyglot architecture, event-driven design, and common open source back-end services (eg - RabbitMQ, MongoDB). The application also leverages OpenAI's GPT-3 models to generate product descriptions. You can find out more about the application at https://github.com/Azure-Samples/aks-store-demo
 
-Because the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
+As the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service.
+
+ If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
 
 ## Prepare your Jumpbox VM with tools
 
 * Add a rule in the Firewall to allow internet access to the Jumpbox's private IP and your computer's IP. Verify VM's private IP and update if necessary
 
    ```bash
-   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'AKS-LZA-SPOKE' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
+   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'AKS-LZA-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
    ```
 
 ## Connecting to the Bastion Host
 
 1. Use Bastion Host to connect to the jumpbox.
-2. Enter the username and password. If you have used a public key, then select upload private key (corresponding to the public key) to connect.
-3. Once you connect ensure you permit the site to read the content of your clipboard
+2. Enter the username and password (azureuser/Password123). If you have used a public key, then select upload private key (corresponding to the public key) to connect.
+3. Once you connect ensure you permit the site to read the content of your clipboard.
 
-* Clone it on the jumpbox.
+* Clone the repository to the jumpbox.
 
    ```bash
    git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
    ```
 
-* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub" folder.
+* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "07-Workload" folder.
 
    ```bash
-   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub
+   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
    chmod +x script.sh
    sudo ./script.sh
    ```
@@ -45,21 +47,23 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
    az account set --subscription <subscription id>
    ```
 
+* If you want to control Kubernetes directly from the jumpbox, you will need *kubectl* to be installed and to download the credentials:
+
+  ```bash
+  # sudo snap install kubectl --classic
+  az aks get-credentials  --admin --name akscluster --resource-group aks-lza-spoke
+  kubectl get nodes
+  ```
+
 ## Build Container Images
 
-Clone the required repos to the Dev Jumpbox:
+Clone the sample application Git Repo to the Dev Jumpbox:
 
-1. The Ratings API repo
+1. The AKS Store Demo repo:
 
 ```bash
 cd ..
-git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
-```
-
-2. The Ratings Web repo
-
-```bash
-git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
+git clone https://github.com/Azure-Samples/aks-store-demo
 ```
 
 Navigate to each of the application code directories, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
@@ -68,12 +72,12 @@ Navigate to each of the application code directories, build and tag the containe
 
 ```bash
 # enter the name of your ACR below
-SPOKERG=<resource group name for spoke>
+SPOKERG=<resource group name for spoke, probably AKS-LZA-SPOKE>
 ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
-cd mslearn-aks-workshop-ratings-api
-sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
-cd ../mslearn-aks-workshop-ratings-web
-sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
+
+for dir in * ; do
+   (cd "$dir" && sudo docker build . -t $ACRNAME.azurecr.io/$dir:v1 && cd ..)
+done
 ```
 
 Log into ACR (Azure Container Registry)
@@ -89,9 +93,39 @@ Push the images into the container registry. Ensure you are logged into the Azur
 *NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
 
 ```bash
-sudo docker push $ACRNAME.azurecr.io/ratings-api:v1
-sudo docker push $ACRNAME.azurecr.io/ratings-web:v1
+for i in $(sudo docker images | awk 'NR>1 { print $1}') ; do
+   (echo "Pushing $i" && sudo docker push $i:v1)
+done
 ```
+
+In addition to the above, there are additional images which we can just import from a public repository. Import these using the `az acr import` command:
+
+```bash
+az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/mongo:4.2 --image mongo:4.2
+az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/rabbitmq:3.10-management-alpine --image rabbitmq:3.10-management-alpine
+```
+
+You should also connect your AKS Cluster to the Azure Container Registry (ACR) so when it attempts to pull images it can authenticate correctly:
+
+```bash
+az aks update --name <Change to your cluster name, probably "aksCluster"> --resource-group <Change to your spoke resource group name, probably "AKS-LZA-SPOKE"> --attach-acr $ACRNAME
+```
+
+Now deploy the application using the YAML file:
+
+```bash
+cd 07-Workload
+helm install full-coral ./shoppingDemo
+```
+
+XXXXXXXXXXXXXXXXXXXXXX
+Nothing below this line has been changed.
+
+TODO: Setup ingress via AppGW.
+XXXXXXXXXXXXXXXXXXXXXX
+
+
+
 
 Create the secret in key vault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps.
 
