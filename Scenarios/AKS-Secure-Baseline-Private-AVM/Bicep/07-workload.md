@@ -9,17 +9,7 @@ Because the infrastructure has been deployed in a private AKS cluster setup with
 * Add a rule in the Firewall to allow internet access to the Jumpbox's private IP and your computer's IP. Verify VM's private IP and update if necessary
 
    ```bash
-   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
-   ```
-
-   ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 215 --source-addresses '<your vm or computer's ip>'
-   ```
-
-* Add a rule in the Firewall to allow internet access to the your VM or computer's IP. Verify VM's private IP and update if necessary
-
-   ```bash
-   az network firewall network-rule create --collection-name 'access-VM' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 202 --source-addresses '<your vm or computer's ip>'
+   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'AKS-LZA-SPOKE' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
    ```
 
 ## Connecting to the Bastion Host
@@ -88,7 +78,7 @@ sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
 
 Log into ACR (Azure Container Registry)
 
-> :warning: If you run into issues logging into ACR this way, head to the portal and get login credentials from Access Keys tab in the left plane of your ACR.
+> :warning: If you run into issues logging into ACR, ensure your user account has the right RBAC permissions on the ACR resource and that the Jumpbox can reach the ACR from a networking standpoint.
 
 ```bash
 sudo az acr login -n $ACRNAME

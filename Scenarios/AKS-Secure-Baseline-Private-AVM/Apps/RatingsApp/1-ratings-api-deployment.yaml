@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ratings-api
-        image: eslzacreh7qp4jx57xkw.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository, if using Azure Government, also update change the URI to end with *.us instead of *.io
+        image: eslzacrzoa3jyku3nwmk.azurecr.io/ratings-api:v1 # IMPORTANT: update with your own repository, if using Azure Government, also update change the URI to end with *.us instead of *.io
         imagePullPolicy: Always
         volumeMounts:
         - name: secrets-store-inline

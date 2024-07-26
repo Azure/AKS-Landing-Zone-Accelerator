@@ -215,6 +215,9 @@ module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
       {
         virtualNetworkResourceId: vnethub.id
       }
+      {
+        virtualNetworkResourceId: vnetspoke.outputs.resourceId
+      }
     ]
     enableTelemetry: true
   }
@@ -229,6 +232,9 @@ module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
     virtualNetworkLinks: [
       {
         virtualNetworkResourceId: vnethub.id
+      }
+      {
+        virtualNetworkResourceId: vnetspoke.outputs.resourceId
       }
     ]
     enableTelemetry: true
