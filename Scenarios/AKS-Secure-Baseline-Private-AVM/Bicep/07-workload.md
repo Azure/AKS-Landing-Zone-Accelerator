@@ -23,7 +23,7 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 * Clone the repository to the jumpbox.
 
    ```bash
-   git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
+   git clone -b ml-addjumpbox https://github.com/Azure/AKS-Landing-Zone-Accelerator/
    ```
 
 * Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "07-Workload" folder.
@@ -111,17 +111,20 @@ You should also connect your AKS Cluster to the Azure Container Registry (ACR) s
 az aks update --name <Change to your cluster name, probably "aksCluster"> --resource-group <Change to your spoke resource group name, probably "AKS-LZA-SPOKE"> --attach-acr $ACRNAME
 ```
 
-Now deploy the application using the YAML file:
+Now deploy the application using the YAML file. Open the `shoppingDemo/values.yaml` file and update the *containerRegistry* entry with the name of your ACR.
 
 ```bash
 cd 07-Workload
 helm install full-coral ./shoppingDemo
 ```
 
-XXXXXXXXXXXXXXXXXXXXXX
-Nothing below this line has been changed.
 
-TODO: Setup ingress via AppGW.
+
+XXXXXXXXXXXXXXXXXXXXXX
+
+Nothing below this line has been changed.
+TODO: Setup ingress via AppGW and point to the store-front service
+
 XXXXXXXXXXXXXXXXXXXXXX
 
 
