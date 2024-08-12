@@ -47,7 +47,7 @@ Pick one of two options below
 
 Pick one of the scenarios below to get started on a reference implementation. For the AKS secure baseline with non-private cluster, use the [AKS baseline](https://github.com/mspnp/aks-baseline) reference implementation.
 
-:arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-PrivateCluster)
+:arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-Private-AVM/README.md)
 
 ▶️ [Running Azure ML workloads on a private AKS cluster](./Scenarios/AzureML-on-Private-AKS)
 
