@@ -9,12 +9,16 @@ param location string = deployment().location
 param enableAutoScaling bool
 param autoScalingProfile object
 param aksadminaccessprincipalId string
+param kubernetesVersion string
+param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', utcNow('u'))}'
+param acrName string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
+
 
 @allowed([
   'azure'
   'kubenet'
 ])
-param networkPlugin string = 'azure'
+param networkPlugin string
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -43,6 +47,16 @@ resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existi
 resource appGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing = {
   scope: resourceGroup(rg.name)
   name: appGatewayName
+}
+
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  scope: resourceGroup(rg.name)
+  name: keyvaultName
+}
+
+resource ACR 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
+  scope: resourceGroup(rg.name)
+  name: acrName
 }
 
 module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
@@ -123,13 +137,14 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     serviceCidr: '192.168.100.0/24'
     networkPolicy: 'calico'
     podCidr: networkPlugin == 'kubenet' ? '172.17.0.0/16' : null
-    // enablePrivateCluster: true
-    // privateDNSZone: pvtdnsAKSZone.id
+    enablePrivateCluster: true
+    privateDNSZone: pvtdnsAKSZone.id
     enablePrivateClusterPublicFQDN: false
     enableRBAC: true
     aadProfileAdminGroupObjectIDs: [
       aksadminaccessprincipalId
     ]
+    kubernetesVersion: kubernetesVersion
     aadProfileEnableAzureRBAC: true
     aadProfileManaged: true
     aadProfileTenantId: subscription().tenantId
@@ -149,3 +164,27 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     }
   }
 }
+
+module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = {
+  scope: resourceGroup(rg.name)
+  name: 'keyvault-aks-identity'
+  params: {
+    principalId: managedCluster.outputs.keyvaultIdentityClientId
+    resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
+    roleDefinitionId: '00482a5a-887f-4fb3-b363-3b7fe8e74483'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = {
+  scope: resourceGroup(rg.name)
+  name: 'acr-aks-identity'
+  params: {
+    principalId: managedCluster.outputs.kubeletidentityObjectId
+    resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
+    roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+

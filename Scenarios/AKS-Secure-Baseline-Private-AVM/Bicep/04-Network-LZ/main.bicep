@@ -215,6 +215,9 @@ module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
       {
         virtualNetworkResourceId: vnethub.id
       }
+      {
+        virtualNetworkResourceId: vnetspoke.outputs.resourceId
+      }
     ]
     enableTelemetry: true
   }
@@ -229,6 +232,9 @@ module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
     virtualNetworkLinks: [
       {
         virtualNetworkResourceId: vnethub.id
+      }
+      {
+        virtualNetworkResourceId: vnetspoke.outputs.resourceId
       }
     ]
     enableTelemetry: true
@@ -298,6 +304,50 @@ module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-id
   name: 'aksIdentity'
   params: {
     name: 'aksIdentity'
+    location: location
+  }
+}
+
+module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
+  scope: resourceGroup(rg.name)
+  name: 'virtualMachineDeployment'
+  params: {
+    // Required parameters
+    adminUsername: 'azureuser'
+    imageReference: {
+      offer: '0001-com-ubuntu-server-jammy'
+      publisher: 'Canonical'
+      sku: '22_04-lts-gen2'
+      version: 'latest'
+    }
+    name: 'jumpbox'
+    nicConfigurations: [
+      {
+        ipConfigurations: [
+          {
+            name: 'ipconfig01'
+            pipConfiguration: {
+              name: 'pip-01'
+            }
+            subnetResourceId: vnetspoke.outputs.subnetResourceIds[3]
+          }
+        ]
+        nicSuffix: '-nic-01'
+      }
+    ]
+    osDisk: {
+      caching: 'ReadWrite'
+      diskSizeGB: 128
+      managedDisk: {
+        storageAccountType: 'Premium_LRS'
+      }
+    }
+    osType: 'Linux'
+    vmSize: 'Standard_DS2_v2'
+    zone: 0
+    // Non-required parameters
+    disablePasswordAuthentication: false
+    adminPassword: 'Password123'
     location: location
   }
 }
