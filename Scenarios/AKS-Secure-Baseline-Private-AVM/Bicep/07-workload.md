@@ -15,6 +15,7 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 * Clone the repository to the jumpbox.
 
    ```bash
+   cd
    git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator/
    ```
 
@@ -32,6 +33,11 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
    TENANTID=<tenant id>
    az login -t $TENANTID
    ```
+   Now login a second time, but this time as root. This is to get around a problem later on where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it's just much easier if that part runs as root.
+   ```bash
+   TENANTID=<tenant id>
+   sudo az login -t $TENANTID
+   ```
 
 * Ensure you are connected to the correct subscription
 
@@ -42,7 +48,7 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 * If you want to control Kubernetes directly from the jumpbox, you will need *kubectl* to be installed and to download the credentials:
 
   ```bash
-  # sudo snap install kubectl --classic
+  sudo snap install kubectl --classic
   az aks get-credentials  --admin --name akscluster --resource-group aks-lza-spoke
   kubectl get nodes
   ```
@@ -54,7 +60,7 @@ Clone the sample application Git Repo to the Dev Jumpbox:
 1. The AKS Store Demo repo:
 
 ```bash
-cd ..
+cd
 git clone https://github.com/Azure-Samples/aks-store-demo
 ```
 
@@ -71,21 +77,40 @@ cd aks-store-demo/src
 # Change directory into each app folder and build/tag the image. Example:
 cd ai-service
 sudo docker build . -t $ACRNAME.azurecr.io/ai-service:v1
-#Do this for each app in the directory. There should be 8 in total.
-
+#Do this for each app in the directory, there should be 8 in total. Remember to change the tag name for each folder:
+# e.g.
+# cd makeline-service
+# sudo docker build . -t $ACRNAME.azurecr.io/makeline-service:v1
 ```
 
-Log into ACR (Azure Container Registry)
+Now check all container images have built correctly:
+```bash
+sudo docker images
+```
+You should see output similar to
+```bash
+REPOSITORY                                         TAG       IMAGE ID       CREATED          SIZE
+eslzacrguilfdnvzjuum.azurecr.io/virtual-worker     v1        0d6da98b7a1f   12 minutes ago   97MB
+eslzacrguilfdnvzjuum.azurecr.io/virtual-customer   v1        a07be343f9d4   13 minutes ago   96.7MB
+eslzacrguilfdnvzjuum.azurecr.io/store-front        v1        692284db83ac   15 minutes ago   16.6MB
+eslzacrguilfdnvzjuum.azurecr.io/store-admin        v1        9fd83b91a176   17 minutes ago   15MB
+eslzacrguilfdnvzjuum.azurecr.io/product-service    v1        2056e083ede1   18 minutes ago   121MB
+eslzacrguilfdnvzjuum.azurecr.io/order-service      v1        6d68a60bacc4   25 minutes ago   172MB
+eslzacrguilfdnvzjuum.azurecr.io/makeline-service   v1        1a0232d81f29   26 minutes ago   27.6MB
+eslzacrguilfdnvzjuum.azurecr.io/ai-service         v1        fddf58277b93   29 minutes ago   431MB
+```
 
-> :warning: If you run into issues logging into ACR, ensure your user account has the right RBAC permissions on the ACR resource and that the Jumpbox can reach the ACR from a networking standpoint.
+## Log into Azure Container Registry
 
+You must now login to the ACR to upload the new images.
+
+> Notice this is being run as root because the command needs access to the Docker daemon (this is why you had to login twice earlier - once as 'azureuser' and once as 'root').
 ```bash
 sudo az acr login -n $ACRNAME
+# Login Succeeded
 ```
 
-Push the images into the container registry. Ensure you are logged into the Azure Container Registry, you should show a successful login from the command above.
-
-*NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
+## Push the images to the container registry.
 
 ```bash
 for i in $(sudo docker images | awk 'NR>1 { print $1}') ; do
@@ -93,7 +118,7 @@ for i in $(sudo docker images | awk 'NR>1 { print $1}') ; do
 done
 ```
 
-In addition to the above, there are additional images which we can just import from a public repository. Import these using the `az acr import` command:
+As well as the custom images uploaded above, there are additional images which we can just import from a public repository. Import these using the `az acr import` command:
 
 ```bash
 az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/mongo:4.2 --image mongo:4.2
@@ -109,8 +134,33 @@ az aks update --name "aksCluster" --resource-group "AKS-LZA-SPOKE" --attach-acr 
 Now deploy the application using the HELM chart. Make sure to update the value of the containerRegistry in the command below to your ACR name:
 
 ```bash
-cd 07-Workload
+cd $HOME/AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+
 helm install monkey-magic ./shoppingDemo --set containerRegistry=$ACRNAME.azurecr.io
+```
+After deployment, check the pods have created correctly:
+```bash
+kubectl get pods
+```
+A correct installation looks like this:
+```bash
+NAME                                READY   STATUS    RESTARTS   AGE
+makeline-service-57c7b44d6b-mqc97   1/1     Running   0          107s
+mongodb-0                           1/1     Running   0          107s
+order-service-6df845965-8kg27       1/1     Running   0          107s
+product-service-79f7cc5cd-fw6r2     1/1     Running   0          107s
+rabbitmq-0                          1/1     Running   0          107s
+store-admin-6d5cf5676-9cmrj         1/1     Running   0          107s
+store-front-56b745cbf-57f27         1/1     Running   0          107s
+virtual-customer-59d74777d6-qvwkd   1/1     Running   0          107s
+virtual-worker-69576c848b-49g24     1/1     Running   0          107s
+```
+
+### Test the application
+
+To test access to the new application, get the EXTERNAL-IP of the store front service then open the address from a browser:
+```bash
+kubectl get service/store-front
 ```
 
 XXXXXXXXXXXXXXXXXXXXXX
@@ -118,5 +168,3 @@ XXXXXXXXXXXXXXXXXXXXXX
 TODO: Setup ingress via AppGW and point to the store-front service
 
 XXXXXXXXXXXXXXXXXXXXXX
-
-
