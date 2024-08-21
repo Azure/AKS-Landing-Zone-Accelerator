@@ -8,50 +8,67 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 
 ## Connecting to the Bastion Host
 
-1. Use Bastion Host to connect to the jumpbox.
-2. Enter the username and password (azureuser/Password123). If you have used a public key, then select upload private key (corresponding to the public key) to connect.
-3. Once you connect ensure you permit the site to read the content of your clipboard.
+The first major step to deploying the application is to connect to the jumpbox inside the private network and authenticate to Azure and the AKS cluster.
 
-* Clone the repository to the jumpbox.
+1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resouce group, connect to the VM using the **Connect via Bastion** option using the credentials provided in the Bicep template (azureuser/Password123).
+
+1. If prompted, allow the browser to read the contents of your clipboard.
+
+1. From the jumpbox command line, clone the *aks-landing-Zone-Accelerator* repository which contains some setup scripts needed shortly.
 
    ```bash
    cd
+
    git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator/
    ```
 
-* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "07-Workload" folder.
+1. Run the setup script to apply the latest updates to the jumpbox and to install other required packages.
 
    ```bash
    cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+
    chmod +x script.sh
+
    sudo ./script.sh
    ```
 
-* Login to Azure
+1. Login to Azure and select your subscription
 
    ```bash
-   TENANTID=<tenant id>
+   TENANTID=<your AAD tenant id>
+
    az login -t $TENANTID
    ```
-   Now login a second time, but this time as root. This is to get around a problem later on where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it's just much easier if that part runs as root.
+   If your account has access to multiple subscriptions, you will be prompted to select the one you wish to use.
+
+   Now login a second time whilst sudo'ed as root. *This is to get around a problem later where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it makes installation easier if that one command runs as root.*
+
    ```bash
-   TENANTID=<tenant id>
+   TENANTID=<your AAD tenant id>
+
    sudo az login -t $TENANTID
    ```
 
-* Ensure you are connected to the correct subscription
+1. If you selected the wrong subscription, it can be set correctly as shown.
 
    ```bash
    az account set --subscription <subscription id>
    ```
 
-* If you want to control Kubernetes directly from the jumpbox, you will need *kubectl* to be installed and to download the credentials:
+1. To control Kubernetes directly from the jumpbox, *kubectl* and the *kubelogin* commands must be installed.
+   ```bash
+   sudo snap install kubectl --classic
 
-  ```bash
-  sudo snap install kubectl --classic
-  az aks get-credentials  --admin --name akscluster --resource-group aks-lza-spoke
-  kubectl get nodes
-  ```
+   sudo az aks install-cli
+   ```
+1. Download from Azure the configuration file for connecting to AKS.
+   ```bash
+   az aks get-credentials --name akscluster --resource-group aks-lza-spoke
+   ```
+1. Test the connection by requesting a list of nodes in the cluster (you will be asked to login again so that you can obtain an AKS specific token).
+   ```bash
+   kubectl get nodes
+   ```
 
 ## Build Container Images
 
@@ -69,15 +86,18 @@ Navigate to each application code directory, build and tag the containers with t
 *NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
 
 ```bash
-# enter the name of your ACR below
+# Enter the name of your ACR below
 SPOKERG=AKS-LZA-SPOKE
 ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
 
 cd aks-store-demo/src
+
 # Change directory into each app folder and build/tag the image. Example:
 cd ai-service
 sudo docker build . -t $ACRNAME.azurecr.io/ai-service:v1
-#Do this for each app in the directory, there should be 8 in total. Remember to change the tag name for each folder:
+
+# Do this for each app in the directory, there should be 8 in total. Remember to change the tag name for each folder:
+
 # e.g.
 # cd makeline-service
 # sudo docker build . -t $ACRNAME.azurecr.io/makeline-service:v1
@@ -122,6 +142,7 @@ As well as the custom images uploaded above, there are additional images which w
 
 ```bash
 az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/mongo:4.2 --image mongo:4.2
+
 az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/rabbitmq:3.10-management-alpine --image rabbitmq:3.10-management-alpine
 ```
 
