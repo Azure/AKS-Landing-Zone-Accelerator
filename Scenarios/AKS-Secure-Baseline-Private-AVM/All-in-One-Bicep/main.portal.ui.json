@@ -117,7 +117,7 @@
                 {
                     "name": "vnetAddressPrefixes",
                     "type": "Microsoft.Common.TextBox",
-                    "label": "Hub Virtual Network Address Space",
+                    "label": "Hub Virtual Network address space",
                     "subLabel": "",
                     "defaultValue": "[[\"10.0.0.0/16\"]",
                     "placeholder": "[[\"10.0.0.0/16\"]",
@@ -134,7 +134,7 @@
                 {
                     "name": "azfwName",
                     "type": "Microsoft.Common.TextBox",
-                    "label": "Azure Firewall resource",
+                    "label": "Azure Firewall name",
                     "subLabel": "",
                     "defaultValue": "AZFW",
                     "placeholder": "AZFW",
