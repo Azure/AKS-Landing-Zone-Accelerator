@@ -5,7 +5,7 @@ The individual markdown files in the [Bicep](../Bicep/) folder are a great way t
 
 However if you need to deploy multiple clusters, manual deployment can become rather tedious. A better option is to use the [Deploy to Azure](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-to-azure-button) button which fully automates the process.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.portal.ui.json)
 
 This button links to a single all-in-one template which is located in this same folder as the page you are reading.
 
