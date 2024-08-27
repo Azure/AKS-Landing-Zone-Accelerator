@@ -233,6 +233,7 @@ module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
     appGwyAutoScale: { value: { maxCapacity: 2, minCapacity: 1 } }
     securityRules: []
   }
+  dependsOn: [networkHub]
 }
 
 // /////////////////
@@ -253,6 +254,7 @@ module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
     storageAccountName: 'eslzsa${uniqueString('aks', uniqueString(subscription().id))}'
     storageAccountType: 'Standard_GZRS'
   }
+  dependsOn: [networkSpoke]
 }
 
 // /////////////////
@@ -293,6 +295,7 @@ module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
     keyvaultName: 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
     networkPlugin: 'azure'
   }
+  dependsOn: [aksSupporting]
 }
 
 // /////////////////
