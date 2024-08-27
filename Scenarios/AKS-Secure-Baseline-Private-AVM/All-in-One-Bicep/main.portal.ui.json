@@ -212,13 +212,13 @@
 
 
                 {
-                    "name": "rtAKSSubnetName",
+                    "name": "rtVMSubnetName",
                     "type": "Microsoft.Common.TextBox",
-                    "label": "AKS Subnet routing table name",
+                    "label": "Route table name for bastion host",
                     "subLabel": "",
                     "defaultValue": "AKS-RT",
                     "placeholder": "AKS-RT",
-                    "toolTip": "Name of subnet which hosts the AKS cluster.",
+                    "toolTip": "Route table name for bastion host.",
                     "constraints": {
                         "required": true,
                         "regex": "",
@@ -402,11 +402,10 @@
 
         "vnetAddressPrefixes": "[steps('hubnetwork').vnetAddressPrefixes]",
         "azfwName": "[steps('hubnetwork').azfwName]",
-        "rtVMSubnetName": "[steps('hubnetwork').rtVMSubnetName]",
-
+        
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
-        "rtAKSSubnetName": "[steps('spokenetwork').rtAKSSubnetName]",
+        "rtVMSubnetName": "[steps('hubnetwork').rtVMSubnetName]",
         "firewallIP": "[steps('spokenetwork').firewallIP]",
 
         "acrName": "[steps('supportingresources').acrName]",
