@@ -89,13 +89,13 @@
               "infoMessages": [],
               "visible": true
             },
-            
+
             {
               "name": "spokeResourceGroupName",
               "type": "Microsoft.Common.TextBox",
               "label": "Spoke Resource Group Name",
               "subLabel": "",
-              "defaultValue": "AKS-LZA-HUB",
+              "defaultValue": "AKS-LZA-SPOKE",
               "placeholder": "i.e. aks-lza-spoke or rg-aks-spoke",
               "toolTip": "The name of the spoke resource group to create the resources in. If set, it overrides the default name in the template.",
               "constraints": {
@@ -113,7 +113,8 @@
     },
     "outputs": {
       "parameters": {
-        "dummy": "blah"
+        "rgHubName": "[steps('basics').hubResourceGroupName]",
+        "rgSpokeName": "[steps('basics').spokeResourceGroupName]"
       },
       "kind": "Subscription",
       "location": "[steps('basics').resourceScope.location.name]",
