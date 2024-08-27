@@ -43,6 +43,12 @@ There is only a few steps required to deploy the template:
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json)
 
+
+PREVIEW: Deployment with custom UI
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.portal.ui.json)
+
+
 Right-click the blue button above and choose *Open link in new tab* to open the Azure Portal. This will download the template from GitHub and open an automatically generated page from where you can edit any of the default parameter values built into the template.
 
 The custom template page opens with default values completed for all but one of the input parameters. Locate the empty field called **Aksadminaccessprincipal Id** and enter the GUID which you generated in step 1.
