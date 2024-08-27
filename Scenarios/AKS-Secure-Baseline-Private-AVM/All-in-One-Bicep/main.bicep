@@ -215,14 +215,14 @@ param availabilityZones array = ['1', '2', '3']
 /////////////////
 
 param rgSpokeName string = 'AKS-LZA-SPOKE'
-//param vnetSpokeName string = 'VNet-SPOKE'
+param vnetSpokeName string = 'VNet-SPOKE'
 //param availabilityZones array = ['1', '2', '3']
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
 param rtAKSSubnetName string = 'AKS-RT'
 param firewallIP string = '10.0.1.4'
 //param vnetHubName string = 'VNet-HUB'
 param appGatewayName string = 'APPGW'
-param vnetHUBRGName string = 'AKS-LZA-HUB'
+//param vnetHUBRGName string = 'AKS-LZA-HUB'
 param nsgAKSName string = 'AKS-NSG'
 param nsgAppGWName string = 'APPGW-NSG'
 param rtAppGWSubnetName string = 'AppGWSubnet-RT'
@@ -235,7 +235,7 @@ param securityRules array = []
 /////////////////
 
 //param rgSpokeName string = 'AKS-LZA-SPOKE'
-param vnetSpokeName string = 'VNet-SPOKE'
+//param vnetSpokeName string = 'VNet-SPOKE'
 param subnetName string = 'servicespe'
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
 param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
@@ -306,72 +306,72 @@ module networkHub '../Bicep/03-Network-Hub/main.bicep' = {
   }
 }
 
-// /////////////////
-// // 04-Network-LZ
-// /////////////////
+/////////////////
+// 04-Network-LZ
+/////////////////
 
-// module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
-//   name: 'landingZoneDeploy'
-//   params: {
-//     rgName: rgSpokeName
-//     vnetSpokeName: vnetSpokeName
-//     availabilityZones: availabilityZones
-//     spokeVNETaddPrefixes: spokeVNETaddPrefixes
-//     rtAKSSubnetName: rtAKSSubnetName
-//     firewallIP: firewallIP
-//     vnetHubName: vnetHubName
-//     appGatewayName: appGatewayName
-//     vnetHUBRGName: vnetHUBRGName
-//     nsgAKSName: nsgAKSName
-//     nsgAppGWName: nsgAppGWName
-//     rtAppGWSubnetName: rtAppGWSubnetName
-//     dnsServers: dnsServers
-//     appGwyAutoScale: appGwyAutoScale
-//     securityRules: securityRules
-//   }
-//   dependsOn: [networkHub]
-// }
+module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
+  name: 'landingZoneDeploy'
+  params: {
+    rgName: rgSpokeName
+    vnetSpokeName: vnetSpokeName
+    availabilityZones: availabilityZones
+    spokeVNETaddPrefixes: spokeVNETaddPrefixes
+    rtAKSSubnetName: rtAKSSubnetName
+    firewallIP: firewallIP
+    vnetHubName: vnetHubName
+    appGatewayName: appGatewayName
+    vnetHUBRGName: vnetHubName
+    nsgAKSName: nsgAKSName
+    nsgAppGWName: nsgAppGWName
+    rtAppGWSubnetName: rtAppGWSubnetName
+    dnsServers: dnsServers
+    appGwyAutoScale: appGwyAutoScale
+    securityRules: securityRules
+  }
+  dependsOn: [networkHub]
+}
 
-// /////////////////
-// // 05-AKS-Supporting
-// /////////////////
+/////////////////
+// 05-AKS-Supporting
+/////////////////
 
-// module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
-//   name: 'aksSupporting'
-//   params: {
-//     rgName: rgSpokeName
-//     vnetName: vnetSpokeName
-//     subnetName: subnetName
-//     privateDNSZoneACRName: privateDNSZoneACRName
-//     privateDNSZoneKVName: privateDNSZoneKVName
-//     privateDNSZoneSAName: privateDNSZoneSAName
-//     acrName: acrName
-//     keyvaultName: keyvaultName
-//     storageAccountName: storageAccountName
-//     storageAccountType: storageAccountType
-//   }
-//   dependsOn: [networkSpoke]
-// }
+module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
+  name: 'aksSupporting'
+  params: {
+    rgName: rgSpokeName
+    vnetName: vnetSpokeName
+    subnetName: subnetName
+    privateDNSZoneACRName: privateDNSZoneACRName
+    privateDNSZoneKVName: privateDNSZoneKVName
+    privateDNSZoneSAName: privateDNSZoneSAName
+    acrName: acrName
+    keyvaultName: keyvaultName
+    storageAccountName: storageAccountName
+    storageAccountType: storageAccountType
+  }
+  dependsOn: [networkSpoke]
+}
 
-// /////////////////
-// // 06-AKS-Cluster
-// /////////////////
+/////////////////
+// 06-AKS-Cluster
+/////////////////
 
-// module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
-//   name: 'aksCluster'
-//   params: {
-//     rgName: rgSpokeName
-//     vnetName: vnetSpokeName
-//     subnetName: aksSubnetName
-//     appGatewayName: appGatewayName
-//     aksIdentityName: aksIdentityName
-//     //location: deployment().location
-//     enableAutoScaling: enableAutoScaling
-//     autoScalingProfile: autoScalingProfile
-//     aksadminaccessprincipalId: aksadminaccessprincipalId
-//     kubernetesVersion: kubernetesVersion
-//     keyvaultName: keyvaultName
-//     networkPlugin: networkPlugin
-//   }
-//   dependsOn: [aksSupporting]
-// }
+module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
+  name: 'aksCluster'
+  params: {
+    rgName: rgSpokeName
+    vnetName: vnetSpokeName
+    subnetName: aksSubnetName
+    appGatewayName: appGatewayName
+    aksIdentityName: aksIdentityName
+    //location: deployment().location
+    enableAutoScaling: enableAutoScaling
+    autoScalingProfile: autoScalingProfile
+    aksadminaccessprincipalId: aksadminaccessprincipalId
+    kubernetesVersion: kubernetesVersion
+    keyvaultName: keyvaultName
+    networkPlugin: networkPlugin
+  }
+  dependsOn: [aksSupporting]
+}

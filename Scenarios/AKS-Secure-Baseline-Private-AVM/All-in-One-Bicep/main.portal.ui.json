@@ -55,7 +55,7 @@
             {
               "name": "sctnRgNames",
               "type": "Microsoft.Common.Section",
-              "label": "Optional Resource Group Names",
+              "label": "Hub & Spoke Resource Group Names",
               "elements": [
                 {
                   "name": "lblRgNameInfo",
@@ -108,13 +108,177 @@
               "visible": true
             }
           ]
+        },
+
+        {
+            "name": "hubnetwork",
+            "label": "Hub network settings",
+            "elements": [
+                {
+                    "name": "vnetAddressPrefixes",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Hub Virtual Network Address Space",
+                    "subLabel": "",
+                    "defaultValue": "[[\"10.0.0.0/16\"]",
+                    "placeholder": "[[\"10.0.0.0/16\"]",
+                    "toolTip": "The address prefixs to use for the Hub virtual network.",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                },
+                {
+                    "name": "azfwName",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Azure Firewall resource",
+                    "subLabel": "",
+                    "defaultValue": "AZFW",
+                    "placeholder": "AZFW",
+                    "toolTip": "Name of the Azure Firewall resource.",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                },
+                {
+                    "name": "rtVMSubnetName",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Subnet for bastion VM",
+                    "subLabel": "",
+                    "defaultValue": "vm-subnet-rt",
+                    "placeholder": "vm-subnet-rt",
+                    "toolTip": "Name of subnet where the basion VM is located.",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                }
+               
+                     
+            ]
+        },
+
+        {
+            "name": "spokenetwork",
+            "label": "Spoke network settings",
+            "elements": [
+                {
+                    "name": "vnetSpokeName",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Spoke virtual network name",
+                    "subLabel": "",
+                    "defaultValue": "VNet-SPOKE",
+                    "placeholder": "VNet-SPOKE",
+                    "toolTip": "The name of the VNet for the spoke.",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                },
+
+                {
+                    "name": "spokeVNETaddPrefixes",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Spoke network Address Space",
+                    "subLabel": "",
+                    "defaultValue": "[[\"10.1.0.0/16\"]",
+                    "placeholder": "[[\"10.1.0.0/16\"]",
+                    "toolTip": "Name of subnet which hosts the Azure Firewall.",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                },
+
+
+                {
+                    "name": "rtAKSSubnetName",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "AKS Subnet name",
+                    "subLabel": "",
+                    "defaultValue": "AKS-RT",
+                    "placeholder": "AKS-RT",
+                    "toolTip": "Name of subnet which hosts the AKS cluster.",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                },
+
+                {
+                    "name": "firewallIP",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Firewall IP Address",
+                    "subLabel": "",
+                    "defaultValue": "10.0.1.4",
+                    "placeholder": "10.0.1.4",
+                    "toolTip": "IP address for the Azure Firewall",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                }
+
+
+            ]
+        },
+
+        {
+            "name": "supportingresources",
+            "label": "Supporting resource settings",
+            "elements": []
+        },
+
+        {
+            "name": "createakscluster",
+            "label": "AKS Cluster creation settings",
+            "elements": []
         }
       ]
     },
     "outputs": {
       "parameters": {
         "rgHubName": "[steps('basics').hubResourceGroupName]",
-        "rgSpokeName": "[steps('basics').spokeResourceGroupName]"
+        "rgSpokeName": "[steps('basics').spokeResourceGroupName]",
+
+        "vnetAddressPrefixes": "[steps('hubnetwork').vnetAddressPrefixes]",
+        "azfwName": "[steps('hubnetwork').azfwName]",
+        "rtVMSubnetName": "[steps('hubnetwork').rtVMSubnetName]",
+
+        "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
+        "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
+
+        "rtAKSSubnetName": "[steps('spokenetwork').rtAKSSubnetName]",
+        "firewallIP": "[steps('spokenetwork').spokeVNETaddPrefixes]"
+
       },
       "kind": "Subscription",
       "location": "[steps('basics').resourceScope.location.name]",
