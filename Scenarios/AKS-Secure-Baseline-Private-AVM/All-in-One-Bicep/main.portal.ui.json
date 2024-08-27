@@ -195,7 +195,7 @@
                 {
                     "name": "spokeVNETaddPrefixes",
                     "type": "Microsoft.Common.TextBox",
-                    "label": "Spoke network Address Space",
+                    "label": "Spoke network address space",
                     "subLabel": "",
                     "defaultValue": "[[\"10.1.0.0/16\"]",
                     "placeholder": "[[\"10.1.0.0/16\"]",
