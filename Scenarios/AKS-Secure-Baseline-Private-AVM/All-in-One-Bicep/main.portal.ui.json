@@ -407,11 +407,11 @@
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
         "rtAKSSubnetName": "[steps('spokenetwork').rtAKSSubnetName]",
-        "firewallIP": "[steps('spokenetwork').spokeVNETaddPrefixes]",
+        "firewallIP": "[steps('spokenetwork').firewallIP]",
 
         "acrName": "[steps('spokenetwork').rtAKSSubnetName]",
-        "keyvaultName": "[steps('spokenetwork').spokeVNETaddPrefixes]",
-        "storageAccountName": "[steps('spokenetwork').spokeVNETaddPrefixes]"
+        "keyvaultName": "[steps('spokenetwork').keyvaultName]",
+        "storageAccountName": "[steps('spokenetwork').storageAccountName]"
 
       },
       "kind": "Subscription",
