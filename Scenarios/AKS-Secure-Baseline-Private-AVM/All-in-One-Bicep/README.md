@@ -41,19 +41,17 @@ There is only a few steps required to deploy the template:
 
 ### Step 2 - Launch the template to create the infrastructure.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json)
-
-
-PREVIEW: Deployment with custom UI
-
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.portal.ui.json)
 
+Right-click the blue button above and choose *Open link in new tab* to open the Azure Portal. This will download the template from GitHub and open a custom form from where you can edit several of the key default parameter values built into the template.
 
-Right-click the blue button above and choose *Open link in new tab* to open the Azure Portal. This will download the template from GitHub and open an automatically generated page from where you can edit any of the default parameter values built into the template.
-
-The custom template page opens with default values completed for all but one of the input parameters. Locate the empty field called **Aksadminaccessprincipal Id** and enter the GUID which you generated in step 1.
+Locate the empty field **AKS Admin Group GUID** and enter the GUID which you generated in step 1.
 
 Now press the **Review + Create** button, followed by **Create** to start the deployment.
+
+> You may use the button below to run the template with an auto-generated UI. This provides access to ALL the configurable settings in the template.
+>
+> [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json)
    
 ### Step 3 - Deploy the application to AKS.
 The final stage of deployment is to [Deploy a Basic Workload using the AKS-Store-Demo Application](../Bicep/07-workload.md). As this requires running command line tools to build containers and deploy a configuration to AKS, it's rather difficult to do from Bicep, therefore [follow the manual steps to deployment the application](../Bicep/07-workload.md).

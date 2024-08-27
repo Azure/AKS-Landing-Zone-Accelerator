@@ -409,9 +409,9 @@
         "rtAKSSubnetName": "[steps('spokenetwork').rtAKSSubnetName]",
         "firewallIP": "[steps('spokenetwork').firewallIP]",
 
-        "acrName": "[steps('spokenetwork').rtAKSSubnetName]",
-        "keyvaultName": "[steps('spokenetwork').keyvaultName]",
-        "storageAccountName": "[steps('spokenetwork').storageAccountName]"
+        "acrName": "[steps('supportingresources').rtAKSSubnetName]",
+        "keyvaultName": "[steps('supportingresources').keyvaultName]",
+        "storageAccountName": "[steps('supportingresources').storageAccountName]"
 
       },
       "kind": "Subscription",
