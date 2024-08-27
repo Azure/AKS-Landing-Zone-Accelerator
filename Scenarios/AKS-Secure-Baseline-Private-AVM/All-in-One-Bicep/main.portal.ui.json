@@ -214,7 +214,7 @@
                 {
                     "name": "rtAKSSubnetName",
                     "type": "Microsoft.Common.TextBox",
-                    "label": "AKS Subnet name",
+                    "label": "AKS Subnet routing table name",
                     "subLabel": "",
                     "defaultValue": "AKS-RT",
                     "placeholder": "AKS-RT",
@@ -232,7 +232,7 @@
                 {
                     "name": "firewallIP",
                     "type": "Microsoft.Common.TextBox",
-                    "label": "Firewall IP Address",
+                    "label": "Firewall IP address",
                     "subLabel": "",
                     "defaultValue": "10.0.1.4",
                     "placeholder": "10.0.1.4",
@@ -254,18 +254,149 @@
         {
             "name": "supportingresources",
             "label": "Supporting resource settings",
-            "elements": []
+            "elements": [
+                {
+                    "name": "acrName",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Azure Container Registry name",
+                    "subLabel": "",
+                    "defaultValue": "eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}",
+                    "placeholder": "eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}",
+                    "toolTip": "Name for the Azure Container Registry",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                },
+                {
+                    "name": "keyvaultName",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Key Vault name",
+                    "subLabel": "",
+                    "defaultValue": "eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}",
+                    "placeholder": "eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}",
+                    "toolTip": "Name for the Azure Key Vault",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                },
+                {
+                    "name": "storageAccountName",
+                    "type": "Microsoft.Common.TextBox",
+                    "label": "Storage Account name",
+                    "subLabel": "",
+                    "defaultValue": "eslzsa${uniqueString('aks', uniqueString(subscription().id))}",
+                    "placeholder": "eslzsa${uniqueString('aks', uniqueString(subscription().id))}",
+                    "toolTip": "Name for the Azure Key Vault",
+                    "constraints": {
+                        "required": true,
+                        "regex": "",
+                        "validationMessage": "",
+                        "validations": []
+                    },
+                    "infoMessages": [],
+                    "visible": true
+                }
+
+            ]
         },
 
         {
             "name": "createakscluster",
             "label": "AKS Cluster creation settings",
-            "elements": []
+            "elements": [
+
+            {
+                "name": "aksSubnetName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "AKS Subnet name",
+                "subLabel": "",
+                "defaultValue": "AKS",
+                "placeholder": "AKS",
+                "toolTip": "Name for the AKS subnet",
+                "constraints": {
+                    "required": true,
+                    "regex": "",
+                    "validationMessage": "",
+                    "validations": []
+                },
+                "infoMessages": [],
+                "visible": true
+            },
+
+            {
+                "name": "aksIdentityName",
+                "type": "Microsoft.Common.TextBox",
+                "label": "User identity name for running AKS",
+                "subLabel": "",
+                "defaultValue": "aksIdentity",
+                "placeholder": "aksIdentity",
+                "toolTip": "Name of the user identity account for running AKS",
+                "constraints": {
+                    "required": true,
+                    "regex": "",
+                    "validationMessage": "",
+                    "validations": []
+                },
+                "infoMessages": [],
+                "visible": true
+            },
+
+
+            {
+                "name": "aksadminaccessprincipalId",
+                "type": "Microsoft.Common.TextBox",
+                "label": "AKS Admin Group GUID",
+                "subLabel": "",
+                "defaultValue": "",
+                "placeholder": "<GUID>",
+                "toolTip": "Unique GUID of the AAD security group which will be make AKS cluster administrator.",
+                "constraints": {
+                    "required": true,
+                    "regex": "",
+                    "validationMessage": "",
+                    "validations": []
+                },
+                "infoMessages": [],
+                "visible": true
+            },
+
+
+            {
+                "name": "kubernetesVersion",
+                "type": "Microsoft.Common.TextBox",
+                "label": "Kubernetes Version",
+                "subLabel": "",
+                "defaultValue": "1.30",
+                "placeholder": "1.30",
+                "toolTip": "Supported version of AKS to deploy.",
+                "constraints": {
+                    "required": true,
+                    "regex": "",
+                    "validationMessage": "",
+                    "validations": []
+                },
+                "infoMessages": [],
+                "visible": true
+            }
+
+        ]
         }
-      ]
-    },
+    ]
+
+},
     "outputs": {
       "parameters": {
+
         "rgHubName": "[steps('basics').hubResourceGroupName]",
         "rgSpokeName": "[steps('basics').spokeResourceGroupName]",
 
@@ -275,9 +406,12 @@
 
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
-
         "rtAKSSubnetName": "[steps('spokenetwork').rtAKSSubnetName]",
-        "firewallIP": "[steps('spokenetwork').spokeVNETaddPrefixes]"
+        "firewallIP": "[steps('spokenetwork').spokeVNETaddPrefixes]",
+
+        "acrName": "[steps('spokenetwork').rtAKSSubnetName]",
+        "keyvaultName": "[steps('spokenetwork').spokeVNETaddPrefixes]",
+        "storageAccountName": "[steps('spokenetwork').spokeVNETaddPrefixes]"
 
       },
       "kind": "Subscription",
