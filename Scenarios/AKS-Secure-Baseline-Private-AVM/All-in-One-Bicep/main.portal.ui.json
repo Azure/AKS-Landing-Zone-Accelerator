@@ -409,7 +409,7 @@
         "rtAKSSubnetName": "[steps('spokenetwork').rtAKSSubnetName]",
         "firewallIP": "[steps('spokenetwork').firewallIP]",
 
-        "acrName": "[steps('supportingresources').rtAKSSubnetName]",
+        "acrName": "[steps('supportingresources').acrName]",
         "keyvaultName": "[steps('supportingresources').keyvaultName]",
         "storageAccountName": "[steps('supportingresources').storageAccountName]"
 
