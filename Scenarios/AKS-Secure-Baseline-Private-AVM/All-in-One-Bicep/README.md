@@ -11,12 +11,6 @@ This button links to a single all-in-one template which is located in this same 
 
 > At time of writing, the Azure Portal cannot directly work with Bicep files which have been linked with the **Deploy to Azure** button. Therefore after every change to the file, a developer must run `bicep build main.bicep --outfile main.json` to transpile this into a traditional ARM json template. It is this latter file which the Azure Portal downloads and deploys.
 
-## Changes from the individual Bicep templates & deployment process
-
-The contents of the individual [Bicep files](../Bicep/) have been manually merged into a new [main.bicep](./main.bicep) file and will continue to be manually kept in-sync as changes are made to the original source files.
-
-However, to support the deployment of the new all-in-one template, there are a small number of steps which still need to be performed manually. These prerequisites must be in place in order to build the AKS cluster (e.g. creating security groups) but will not be automated as most organisations will already have a good understanding of how to do this anyway.
-
 ## Running the deployment
 
 ### Step 1 - Create security group for the AKS Admins.
@@ -45,7 +39,7 @@ There is only a few steps required to deploy the template:
 
 Right-click the blue button above and choose *Open link in new tab* to open the Azure Portal. This will download the template from GitHub and open a custom form from where you can edit several of the key default parameter values built into the template.
 
-Locate the empty field **AKS Admin Group GUID** and enter the GUID which you generated in step 1.
+On the **AKS Cluster creation settings** tab, locate the empty field **AKS Admin Group GUID** and enter the GUID which you generated in step 1.
 
 Now press the **Review + Create** button, followed by **Create** to start the deployment.
 
