@@ -252,65 +252,6 @@
         },
 
         {
-            "name": "supportingresources",
-            "label": "Supporting resource settings",
-            "elements": [
-                {
-                    "name": "acrName",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Azure Container Registry name",
-                    "subLabel": "",
-                    "defaultValue": "eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}",
-                    "placeholder": "eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}",
-                    "toolTip": "Name for the Azure Container Registry",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                },
-                {
-                    "name": "keyvaultName",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Key Vault name",
-                    "subLabel": "",
-                    "defaultValue": "eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}",
-                    "placeholder": "eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}",
-                    "toolTip": "Name for the Azure Key Vault",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                },
-                {
-                    "name": "storageAccountName",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Storage Account name",
-                    "subLabel": "",
-                    "defaultValue": "eslzsa${uniqueString('aks', uniqueString(subscription().id))}",
-                    "placeholder": "eslzsa${uniqueString('aks', uniqueString(subscription().id))}",
-                    "toolTip": "Name for the Azure Key Vault",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                }
-
-            ]
-        },
-
-        {
             "name": "createakscluster",
             "label": "AKS Cluster creation settings",
             "elements": [
@@ -406,11 +347,7 @@
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
         "rtVMSubnetName": "[steps('hubnetwork').rtVMSubnetName]",
-        "firewallIP": "[steps('spokenetwork').firewallIP]",
-
-        "acrName": "[steps('supportingresources').acrName]",
-        "keyvaultName": "[steps('supportingresources').keyvaultName]",
-        "storageAccountName": "[steps('supportingresources').storageAccountName]"
+        "firewallIP": "[steps('spokenetwork').firewallIP]"
 
       },
       "kind": "Subscription",
