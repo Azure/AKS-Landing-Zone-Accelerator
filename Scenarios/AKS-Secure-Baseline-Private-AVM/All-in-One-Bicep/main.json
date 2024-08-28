@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "12854000739869896752"
+      "templateHash": "17403896257248733859"
     }
   },
   "parameters": {
@@ -37473,6 +37473,9 @@
           },
           "networkPlugin": {
             "value": "[parameters('networkPlugin')]"
+          },
+          "acrName": {
+            "value": "[parameters('acrName')]"
           }
         },
         "template": {

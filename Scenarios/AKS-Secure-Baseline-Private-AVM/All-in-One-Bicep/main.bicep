@@ -372,6 +372,8 @@ module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
     kubernetesVersion: kubernetesVersion
     keyvaultName: keyvaultName
     networkPlugin: networkPlugin
+    acrName: acrName
+
   }
   dependsOn: [aksSupporting]
 }
