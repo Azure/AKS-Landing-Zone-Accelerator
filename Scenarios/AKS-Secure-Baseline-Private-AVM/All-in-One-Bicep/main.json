@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "15292511935990637382"
+      "templateHash": "8449994847382854725"
     }
   },
   "parameters": {
@@ -309,11 +309,11 @@
     },
     "acrName": {
       "type": "string",
-      "defaultValue": "myaceacr99"
+      "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
     },
     "keyvaultName": {
       "type": "string",
-      "defaultValue": "myacekeyvault99"
+      "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
     },
     "storageAccountName": {
       "type": "string",
@@ -37485,7 +37485,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "1849153731495369593"
+              "templateHash": "17606965065351391937"
             }
           },
           "parameters": {
@@ -42924,7 +42924,7 @@
                     "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'aksCluster'), '2022-09-01').outputs.keyvaultIdentityClientId.value]"
                   },
                   "resourceId": {
-                    "value": "/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy"
+                    "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyvaultName'))]"
                   },
                   "roleDefinitionId": {
                     "value": "00482a5a-887f-4fb3-b363-3b7fe8e74483"
@@ -43173,7 +43173,7 @@
                     "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'aksCluster'), '2022-09-01').outputs.kubeletidentityObjectId.value]"
                   },
                   "resourceId": {
-                    "value": "/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy"
+                    "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.ContainerRegistry/registries', parameters('acrName'))]"
                   },
                   "roleDefinitionId": {
                     "value": "7f951dda-4ed3-4680-a7ca-43fe172d538d"
