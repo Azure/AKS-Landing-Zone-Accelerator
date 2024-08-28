@@ -240,8 +240,8 @@ param subnetName string = 'servicespe'
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
 param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
 param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.storage}'
-param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}'
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
+param acrName string = 'myaceacr99'
+param keyvaultName string = 'myacekeyvault99'
 param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id))}'
 param storageAccountType string = 'Standard_GZRS'
 
@@ -373,7 +373,6 @@ module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
     keyvaultName: keyvaultName
     networkPlugin: networkPlugin
     acrName: acrName
-
   }
   dependsOn: [aksSupporting]
 }
