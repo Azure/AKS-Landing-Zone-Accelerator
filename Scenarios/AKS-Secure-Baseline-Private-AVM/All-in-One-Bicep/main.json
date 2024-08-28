@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "17403896257248733859"
+      "templateHash": "15292511935990637382"
     }
   },
   "parameters": {
@@ -309,11 +309,11 @@
     },
     "acrName": {
       "type": "string",
-      "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
+      "defaultValue": "myaceacr99"
     },
     "keyvaultName": {
       "type": "string",
-      "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
+      "defaultValue": "myacekeyvault99"
     },
     "storageAccountName": {
       "type": "string",
