@@ -111,244 +111,250 @@
         },
 
         {
-            "name": "hubnetwork",
-            "label": "Hub network settings",
-            "elements": [
-                {
-                    "name": "vnetAddressPrefixes",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Hub Virtual Network address space",
-                    "subLabel": "",
-                    "defaultValue": "[[\"10.0.0.0/16\"]",
-                    "placeholder": "[[\"10.0.0.0/16\"]",
-                    "toolTip": "The address prefixs to use for the Hub virtual network.",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                },
-                {
-                    "name": "azfwName",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Azure Firewall name",
-                    "subLabel": "",
-                    "defaultValue": "AZFW",
-                    "placeholder": "AZFW",
-                    "toolTip": "Name of the Azure Firewall resource.",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                },
-                {
-                    "name": "rtVMSubnetName",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Subnet for bastion VM",
-                    "subLabel": "",
-                    "defaultValue": "vm-subnet-rt",
-                    "placeholder": "vm-subnet-rt",
-                    "toolTip": "Name of subnet where the basion VM is located.",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                }
-               
-                     
-            ]
-        },
-
-        {
-            "name": "spokenetwork",
-            "label": "Spoke network settings",
-            "elements": [
-                {
-                    "name": "vnetSpokeName",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Spoke virtual network name",
-                    "subLabel": "",
-                    "defaultValue": "VNet-SPOKE",
-                    "placeholder": "VNet-SPOKE",
-                    "toolTip": "The name of the VNet for the spoke.",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                },
-
-                {
-                    "name": "spokeVNETaddPrefixes",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Spoke network address space",
-                    "subLabel": "",
-                    "defaultValue": "[[\"10.1.0.0/16\"]",
-                    "placeholder": "[[\"10.1.0.0/16\"]",
-                    "toolTip": "Name of subnet which hosts the Azure Firewall.",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                },
-
-
-                {
-                    "name": "rtVMSubnetName",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Route table name for bastion host",
-                    "subLabel": "",
-                    "defaultValue": "AKS-RT",
-                    "placeholder": "AKS-RT",
-                    "toolTip": "Route table name for bastion host.",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                },
-
-                {
-                    "name": "firewallIP",
-                    "type": "Microsoft.Common.TextBox",
-                    "label": "Firewall IP address",
-                    "subLabel": "",
-                    "defaultValue": "10.0.1.4",
-                    "placeholder": "10.0.1.4",
-                    "toolTip": "IP address for the Azure Firewall",
-                    "constraints": {
-                        "required": true,
-                        "regex": "",
-                        "validationMessage": "",
-                        "validations": []
-                    },
-                    "infoMessages": [],
-                    "visible": true
-                }
-
-
-            ]
-        },
-
-        {
-            "name": "createakscluster",
-            "label": "AKS Cluster creation settings",
-            "elements": [
-
+          "name": "hubnetwork",
+          "label": "Hub network settings",
+          "elements": [
             {
-                "name": "aksSubnetName",
-                "type": "Microsoft.Common.TextBox",
-                "label": "AKS Subnet name",
-                "subLabel": "",
-                "defaultValue": "AKS",
-                "placeholder": "AKS",
-                "toolTip": "Name for the AKS subnet",
-                "constraints": {
-                    "required": true,
-                    "regex": "",
-                    "validationMessage": "",
-                    "validations": []
-                },
-                "infoMessages": [],
-                "visible": true
+              "name": "vnetAddressPrefixes",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Hub Virtual Network address space",
+              "subLabel": "",
+              "defaultValue": "[[\"10.0.0.0/16\"]",
+              "placeholder": "[[\"10.0.0.0/16\"]",
+              "toolTip": "The address prefixs to use for the Hub virtual network.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
             },
-
             {
-                "name": "aksIdentityName",
-                "type": "Microsoft.Common.TextBox",
-                "label": "User identity name for running AKS",
-                "subLabel": "",
-                "defaultValue": "aksIdentity",
-                "placeholder": "aksIdentity",
-                "toolTip": "Name of the user identity account for running AKS",
-                "constraints": {
-                    "required": true,
-                    "regex": "",
-                    "validationMessage": "",
-                    "validations": []
-                },
-                "infoMessages": [],
-                "visible": true
+              "name": "azfwName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Azure Firewall name",
+              "subLabel": "",
+              "defaultValue": "AZFW",
+              "placeholder": "AZFW",
+              "toolTip": "Name of the Azure Firewall resource.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
             },
-
-
             {
-                "name": "aksadminaccessprincipalId",
-                "type": "Microsoft.Common.TextBox",
-                "label": "AKS Admin Group GUID",
-                "subLabel": "",
-                "defaultValue": "",
-                "placeholder": "<GUID>",
-                "toolTip": "Unique GUID of the AAD security group which will be make AKS cluster administrator.",
-                "constraints": {
-                    "required": true,
-                    "regex": "",
-                    "validationMessage": "",
-                    "validations": []
-                },
-                "infoMessages": [],
-                "visible": true
-            },
-
-
-            {
-                "name": "kubernetesVersion",
-                "type": "Microsoft.Common.TextBox",
-                "label": "Kubernetes Version",
-                "subLabel": "",
-                "defaultValue": "1.30",
-                "placeholder": "1.30",
-                "toolTip": "Supported version of AKS to deploy.",
-                "constraints": {
-                    "required": true,
-                    "regex": "",
-                    "validationMessage": "",
-                    "validations": []
-                },
-                "infoMessages": [],
-                "visible": true
+              "name": "rtVmSubnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Route table namefor bastion VM",
+              "subLabel": "",
+              "defaultValue": "vm-subnet-rt",
+              "placeholder": "vm-subnet-rt",
+              "toolTip": "Name of route table for the subnet where the basion VM is located.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
             }
+          ]
+        },
 
-        ]
+        {
+          "name": "spokenetwork",
+          "label": "Spoke network settings",
+          "elements": [
+            {
+              "name": "vnetSpokeName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Spoke virtual network name",
+              "subLabel": "",
+              "defaultValue": "VNet-SPOKE",
+              "placeholder": "VNet-SPOKE",
+              "toolTip": "The name of the VNet for the spoke.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+
+            {
+              "name": "spokeVNETaddPrefixes",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Spoke network address space",
+              "subLabel": "",
+              "defaultValue": "[[\"10.1.0.0/16\"]",
+              "placeholder": "[[\"10.1.0.0/16\"]",
+              "toolTip": "Name of subnet which hosts the Azure Firewall.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+
+            {
+              "name": "firewallIP",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Firewall IP address",
+              "subLabel": "",
+              "defaultValue": "10.0.1.4",
+              "placeholder": "10.0.1.4",
+              "toolTip": "IP address for the Azure Firewall",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            }
+          ]
+        },
+
+        {
+          "name": "aksclustersettings",
+          "label": "Cluster creation settings",
+          "elements": [
+            {
+              "name": "sctnRgAdmins",
+              "type": "Microsoft.Common.Section",
+              "label": "Administrator security group settings",
+              "elements": [
+                {
+                  "name": "lblRgAdminGroupText",
+                  "type": "Microsoft.Common.TextBlock",
+                  "visible": true,
+                  "options": {
+                    "text": "The new cluster will be created with Azure Entra (AAD) integration and members of the given security group will have the ClusterAdmin role inside Kubernetes.",
+                    "link": {
+                      "label": "Create the required security group before running this deployment.",
+                      "uri": "https://github.com/Azure/AKS-Landing-Zone-Accelerator/blob/main/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/02-eid.md"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "aksadminaccessprincipalId",
+              "type": "Microsoft.Common.TextBox",
+              "label": "AKS Admin Group GUID",
+              "subLabel": "",
+              "defaultValue": "",
+              "placeholder": "<GUID>",
+              "toolTip": "Unique GUID of the AAD security group which will be make AKS cluster administrator.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "sctnaksCore",
+              "type": "Microsoft.Common.Section",
+              "label": "AKS core creation settings",
+              "elements": [
+                {
+                  "name": "lblaksCoreText",
+                  "type": "Microsoft.Common.TextBlock",
+                  "visible": true,
+                  "options": {
+                    "text": "Standard settings for creating the cluster."
+                  }
+                }
+              ]
+            },
+            {
+              "name": "aksSubnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "AKS Subnet name",
+              "subLabel": "",
+              "defaultValue": "AKS",
+              "placeholder": "AKS",
+              "toolTip": "Name for the AKS subnet",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "aksIdentityName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "User identity name for running AKS",
+              "subLabel": "",
+              "defaultValue": "aksIdentity",
+              "placeholder": "aksIdentity",
+              "toolTip": "Name of the user identity account for running AKS",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "kubernetesVersion",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Kubernetes Version",
+              "subLabel": "",
+              "defaultValue": "1.30",
+              "placeholder": "1.30",
+              "toolTip": "Supported version of AKS to deploy.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            }
+          ]
         }
-    ]
-
-},
+      ]
+    },
     "outputs": {
       "parameters": {
-
         "rgHubName": "[steps('basics').hubResourceGroupName]",
         "rgSpokeName": "[steps('basics').spokeResourceGroupName]",
 
         "vnetAddressPrefixes": "[steps('hubnetwork').vnetAddressPrefixes]",
         "azfwName": "[steps('hubnetwork').azfwName]",
-        
+        "rtVMSubnetName": "[steps('hubnetwork').rtVmSubnetName]",
+
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
-        "rtVMSubnetName": "[steps('hubnetwork').rtVMSubnetName]",
-        "firewallIP": "[steps('spokenetwork').firewallIP]"
+        "firewallIP": "[steps('spokenetwork').firewallIP]",
 
+        "aksadminaccessprincipalId": "[steps('aksclustersettings').aksadminaccessprincipalId]",
+        "aksSubnetName": "[steps('aksclustersettings').aksSubnetName]",
+        "aksIdentityName": "[steps('aksclustersettings').aksIdentityName]",
+        "kubernetesVersion": "[steps('aksclustersettings').kubernetesVersion]"
       },
       "kind": "Subscription",
       "location": "[steps('basics').resourceScope.location.name]",
