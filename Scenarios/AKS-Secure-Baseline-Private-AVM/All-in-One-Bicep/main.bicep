@@ -227,7 +227,7 @@ param nsgAKSName string = 'AKS-NSG'
 param nsgAppGWName string = 'APPGW-NSG'
 param rtAppGWSubnetName string = 'AppGWSubnet-RT'
 param dnsServers array = []
-param appGwyAutoScale object = { value: { maxCapacity: 2, minCapacity: 1 } }
+param appGwyAutoScale object = { maxCapacity: 2, minCapacity: 1 }
 param securityRules array = []
 
 /////////////////

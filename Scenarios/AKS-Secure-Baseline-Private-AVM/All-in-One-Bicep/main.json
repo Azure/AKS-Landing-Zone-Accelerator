@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "13652056632246426366"
+      "templateHash": "12854000739869896752"
     }
   },
   "parameters": {
@@ -283,10 +283,8 @@
     "appGwyAutoScale": {
       "type": "object",
       "defaultValue": {
-        "value": {
-          "maxCapacity": 2,
-          "minCapacity": 1
-        }
+        "maxCapacity": 2,
+        "minCapacity": 1
       }
     },
     "securityRules": {
