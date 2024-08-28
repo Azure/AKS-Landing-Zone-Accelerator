@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "7875474245513046215"
+      "templateHash": "13652056632246426366"
     }
   },
   "parameters": {
@@ -7274,7 +7274,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
-      "name": "landingZoneDeploy",
+      "name": "lzSpokeDeploy",
       "location": "[deployment().location]",
       "properties": {
         "expressionEvaluationOptions": {
@@ -7307,7 +7307,7 @@
             "value": "[parameters('appGatewayName')]"
           },
           "vnetHUBRGName": {
-            "value": "[parameters('vnetHubName')]"
+            "value": "[parameters('rgHubName')]"
           },
           "nsgAKSName": {
             "value": "[parameters('nsgAKSName')]"
@@ -37429,7 +37429,7 @@
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', 'landingZoneDeploy')]"
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'lzSpokeDeploy')]"
       ]
     },
     {

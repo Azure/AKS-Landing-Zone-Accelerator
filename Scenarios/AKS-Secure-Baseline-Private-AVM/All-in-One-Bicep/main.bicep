@@ -311,7 +311,7 @@ module networkHub '../Bicep/03-Network-Hub/main.bicep' = {
 /////////////////
 
 module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
-  name: 'landingZoneDeploy'
+  name: 'lzSpokeDeploy'
   params: {
     rgName: rgSpokeName
     vnetSpokeName: vnetSpokeName
@@ -321,7 +321,7 @@ module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
     firewallIP: firewallIP
     vnetHubName: vnetHubName
     appGatewayName: appGatewayName
-    vnetHUBRGName: vnetHubName
+    vnetHUBRGName: rgHubName
     nsgAKSName: nsgAKSName
     nsgAppGWName: nsgAppGWName
     rtAppGWSubnetName: rtAppGWSubnetName
