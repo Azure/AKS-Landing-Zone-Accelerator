@@ -274,7 +274,7 @@
               "label": "AKS Admin Group GUID",
               "subLabel": "",
               "defaultValue": "",
-              "placeholder": "<GUID>",
+              "placeholder": "<Azure Entra ID Security Group Object GUID>",
               "toolTip": "Unique GUID of the AAD security group which will be make AKS cluster administrator.",
               "constraints": {
                 "required": true,
