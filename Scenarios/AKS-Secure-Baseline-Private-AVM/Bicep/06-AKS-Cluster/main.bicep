@@ -12,6 +12,7 @@ param aksadminaccessprincipalId string
 param kubernetesVersion string
 param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', utcNow('u'))}'
 param acrName string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
+param aksClusterName string
 
 
 @allowed([
@@ -89,9 +90,9 @@ module workspace 'br/public:avm/res/operational-insights/workspace:0.3.4' = {
 
 module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2' = {
   scope: resourceGroup(rg.name)
-  name: 'aksCluster'
+  name: aksClusterName
   params: {
-    name: 'aksCluster'
+    name: aksClusterName
     primaryAgentPoolProfile: [
       {
         availabilityZones: [

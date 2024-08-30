@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "8449994847382854725"
+      "templateHash": "4703893307404903560"
     }
   },
   "parameters": {
@@ -368,6 +368,10 @@
     "networkPlugin": {
       "type": "string",
       "defaultValue": "azure"
+    },
+    "aksClusterName": {
+      "type": "string",
+      "defaultValue": "aksCluster"
     }
   },
   "resources": [
@@ -37476,6 +37480,9 @@
           },
           "acrName": {
             "value": "[parameters('acrName')]"
+          },
+          "aksClusterName": {
+            "value": "[parameters('aksClusterName')]"
           }
         },
         "template": {
@@ -37485,7 +37492,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "17606965065351391937"
+              "templateHash": "3634059970151105324"
             }
           },
           "parameters": {
@@ -37527,6 +37534,9 @@
             "acrName": {
               "type": "string",
               "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', utcNow('u')))]"
+            },
+            "aksClusterName": {
+              "type": "string"
             },
             "networkPlugin": {
               "type": "string",
@@ -39994,7 +40004,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
-              "name": "aksCluster",
+              "name": "[parameters('aksClusterName')]",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -40003,7 +40013,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "aksCluster"
+                    "value": "[parameters('aksClusterName')]"
                   },
                   "primaryAgentPoolProfile": {
                     "value": [
@@ -42921,7 +42931,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "principalId": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'aksCluster'), '2022-09-01').outputs.keyvaultIdentityClientId.value]"
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('aksClusterName')), '2022-09-01').outputs.keyvaultIdentityClientId.value]"
                   },
                   "resourceId": {
                     "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyvaultName'))]"
@@ -43154,7 +43164,7 @@
                 }
               },
               "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'aksCluster')]",
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('aksClusterName'))]",
                 "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]"
               ]
             },
@@ -43170,7 +43180,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "principalId": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'aksCluster'), '2022-09-01').outputs.kubeletidentityObjectId.value]"
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('aksClusterName')), '2022-09-01').outputs.kubeletidentityObjectId.value]"
                   },
                   "resourceId": {
                     "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.ContainerRegistry/registries', parameters('acrName'))]"
@@ -43403,7 +43413,7 @@
                 }
               },
               "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'aksCluster')]",
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('aksClusterName'))]",
                 "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]"
               ]
             }

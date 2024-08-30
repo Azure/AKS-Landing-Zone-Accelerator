@@ -43,6 +43,9 @@
       },
       "aksadminaccessprincipalId": {
         "value": "b6723f14-bfbe-441c-99bb-55d4e5d971ad"
+      },
+      "aksClusterName": {
+        "value": "aksCluster"
       }
     }
   }

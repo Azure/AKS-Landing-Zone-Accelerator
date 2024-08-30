@@ -279,6 +279,7 @@ param aksadminaccessprincipalId string = ''
 param kubernetesVersion string = '1.30'
 //param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
 param networkPlugin string = 'azure'
+param aksClusterName string = 'aksCluster'
 
 //////////////////////////////////
 //////////////////////////////////
@@ -373,6 +374,7 @@ module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
     keyvaultName: keyvaultName
     networkPlugin: networkPlugin
     acrName: acrName
+    aksClusterName: aksClusterName
   }
   dependsOn: [aksSupporting]
 }

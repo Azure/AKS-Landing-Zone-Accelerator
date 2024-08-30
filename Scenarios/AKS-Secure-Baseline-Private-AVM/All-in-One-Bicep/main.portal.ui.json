@@ -233,6 +233,23 @@
           "label": "Cluster creation settings",
           "elements": [
             {
+              "name": "aksclustername",
+              "type": "Microsoft.Common.TextBox",
+              "label": "AKS cluster name",
+              "subLabel": "",
+              "defaultValue": "aksCluster",
+              "placeholder": "aksCluster",
+              "toolTip": "Name of the AKS cluster resource",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
               "name": "sctnRgAdmins",
               "type": "Microsoft.Common.Section",
               "label": "Administrator security group settings",
@@ -354,7 +371,8 @@
         "aksadminaccessprincipalId": "[steps('aksclustersettings').aksadminaccessprincipalId]",
         "aksSubnetName": "[steps('aksclustersettings').aksSubnetName]",
         "aksIdentityName": "[steps('aksclustersettings').aksIdentityName]",
-        "kubernetesVersion": "[steps('aksclustersettings').kubernetesVersion]"
+        "kubernetesVersion": "[steps('aksclustersettings').kubernetesVersion]",
+        "aksClusterName": "[steps('aksclustersettings').aksclustername]"
       },
       "kind": "Subscription",
       "location": "[steps('basics').resourceScope.location.name]",
