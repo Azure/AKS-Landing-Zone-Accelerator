@@ -10,7 +10,7 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 
 The first major step to deploying the application is to connect to the jumpbox inside the private network and authenticate to Azure and the AKS cluster.
 
-1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resouce group, connect to the VM using the **Connect via Bastion** option using the credentials provided in the Bicep template (azureuser/Password123).
+1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resource group, connect to the VM using the **Connect via Bastion** option using the credentials provided in the Bicep template (azureuser/Password123).
 
 1. If prompted, allow the browser to read the contents of your clipboard.
 
