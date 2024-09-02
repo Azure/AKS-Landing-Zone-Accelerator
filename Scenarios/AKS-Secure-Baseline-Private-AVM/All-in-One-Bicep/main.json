@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "4703893307404903560"
+      "templateHash": "14006199598836096987"
     }
   },
   "parameters": {
@@ -291,6 +291,46 @@
       "type": "array",
       "defaultValue": []
     },
+    "defaultSubnetName": {
+      "type": "string",
+      "defaultValue": "default"
+    },
+    "defaultSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24"
+    },
+    "azureFirewallSubnetName": {
+      "type": "string",
+      "defaultValue": "AzureFirewallSubnet"
+    },
+    "azureFirewallSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.1.0/26"
+    },
+    "azureFirewallManagementSubnetName": {
+      "type": "string",
+      "defaultValue": "AzureFirewallManagementSubnet"
+    },
+    "azureFirewallManagementSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.4.0/26"
+    },
+    "azureBastionSubnetName": {
+      "type": "string",
+      "defaultValue": "AzureBastionSubnet"
+    },
+    "azureBastionSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.2.0/27"
+    },
+    "vmsubnetSubnetName": {
+      "type": "string",
+      "defaultValue": "vmsubnet"
+    },
+    "vmsubnetSubnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.3.0/24"
+    },
     "subnetName": {
       "type": "string",
       "defaultValue": "servicespe"
@@ -412,6 +452,36 @@
           },
           "fwnatRuleCollections": {
             "value": "[parameters('fwnatRuleCollections')]"
+          },
+          "defaultSubnetName": {
+            "value": "[parameters('defaultSubnetName')]"
+          },
+          "defaultSubnetAddressPrefix": {
+            "value": "[parameters('defaultSubnetAddressPrefix')]"
+          },
+          "azureFirewallSubnetName": {
+            "value": "[parameters('azureFirewallSubnetName')]"
+          },
+          "azureFirewallSubnetAddressPrefix": {
+            "value": "[parameters('azureFirewallSubnetAddressPrefix')]"
+          },
+          "azureFirewallManagementSubnetName": {
+            "value": "[parameters('azureFirewallManagementSubnetName')]"
+          },
+          "azureFirewallManagementSubnetAddressPrefix": {
+            "value": "[parameters('azureFirewallManagementSubnetAddressPrefix')]"
+          },
+          "azureBastionSubnetName": {
+            "value": "[parameters('azureBastionSubnetName')]"
+          },
+          "azureBastionSubnetAddressPrefix": {
+            "value": "[parameters('azureBastionSubnetAddressPrefix')]"
+          },
+          "vmsubnetSubnetName": {
+            "value": "[parameters('vmsubnetSubnetName')]"
+          },
+          "vmsubnetSubnetAddressPrefix": {
+            "value": "[parameters('vmsubnetSubnetAddressPrefix')]"
           }
         },
         "template": {
@@ -421,7 +491,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "12576548708275452029"
+              "templateHash": "9044908153866634279"
             }
           },
           "parameters": {
@@ -455,6 +525,36 @@
             },
             "availabilityZones": {
               "type": "array"
+            },
+            "defaultSubnetName": {
+              "type": "string"
+            },
+            "defaultSubnetAddressPrefix": {
+              "type": "string"
+            },
+            "azureFirewallSubnetName": {
+              "type": "string"
+            },
+            "azureFirewallSubnetAddressPrefix": {
+              "type": "string"
+            },
+            "azureFirewallManagementSubnetName": {
+              "type": "string"
+            },
+            "azureFirewallManagementSubnetAddressPrefix": {
+              "type": "string"
+            },
+            "azureBastionSubnetName": {
+              "type": "string"
+            },
+            "azureBastionSubnetAddressPrefix": {
+              "type": "string"
+            },
+            "vmsubnetSubnetName": {
+              "type": "string"
+            },
+            "vmsubnetSubnetAddressPrefix": {
+              "type": "string"
             }
           },
           "resources": [
@@ -939,24 +1039,24 @@
                   "subnets": {
                     "value": [
                       {
-                        "name": "default",
-                        "addressPrefix": "10.0.0.0/24"
+                        "name": "[parameters('defaultSubnetName')]",
+                        "addressPrefix": "[parameters('defaultSubnetAddressPrefix')]"
                       },
                       {
-                        "name": "AzureFirewallSubnet",
-                        "addressPrefix": "10.0.1.0/26"
+                        "name": "[parameters('azureFirewallSubnetName')]",
+                        "addressPrefix": "[parameters('azureFirewallSubnetAddressPrefix')]"
                       },
                       {
-                        "name": "AzureFirewallManagementSubnet",
-                        "addressPrefix": "10.0.4.0/26"
+                        "name": "[parameters('azureFirewallManagementSubnetName')]",
+                        "addressPrefix": "[parameters('azureFirewallManagementSubnetAddressPrefix')]"
                       },
                       {
-                        "name": "AzureBastionSubnet",
-                        "addressPrefix": "10.0.2.0/27"
+                        "name": "[parameters('azureBastionSubnetName')]",
+                        "addressPrefix": "[parameters('azureBastionSubnetAddressPrefix')]"
                       },
                       {
-                        "name": "vmsubnet",
-                        "addressPrefix": "10.0.3.0/24"
+                        "name": "[parameters('vmsubnetSubnetName')]",
+                        "addressPrefix": "[parameters('vmsubnetSubnetAddressPrefix')]"
                       }
                     ]
                   },

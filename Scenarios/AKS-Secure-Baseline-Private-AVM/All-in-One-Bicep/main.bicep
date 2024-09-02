@@ -229,6 +229,16 @@ param rtAppGWSubnetName string = 'AppGWSubnet-RT'
 param dnsServers array = []
 param appGwyAutoScale object = { maxCapacity: 2, minCapacity: 1 }
 param securityRules array = []
+param defaultSubnetName string = 'default'
+param defaultSubnetAddressPrefix string = '10.0.0.0/24'
+param azureFirewallSubnetName string = 'AzureFirewallSubnet'
+param azureFirewallSubnetAddressPrefix string = '10.0.1.0/26'
+param azureFirewallManagementSubnetName string = 'AzureFirewallManagementSubnet'
+param azureFirewallManagementSubnetAddressPrefix string = '10.0.4.0/26'
+param azureBastionSubnetName string = 'AzureBastionSubnet'
+param azureBastionSubnetAddressPrefix string = '10.0.2.0/27'
+param vmsubnetSubnetName string = 'vmsubnet'
+param vmsubnetSubnetAddressPrefix string = '10.0.3.0/24'
 
 /////////////////
 // 05-AKS-Supporting
@@ -304,6 +314,16 @@ module networkHub '../Bicep/03-Network-Hub/main.bicep' = {
     fwapplicationRuleCollections: fwapplicationRuleCollections
     fwnetworkRuleCollections: fwnetworkRuleCollections
     fwnatRuleCollections: fwnatRuleCollections
+    defaultSubnetName: defaultSubnetName
+    defaultSubnetAddressPrefix: defaultSubnetAddressPrefix
+    azureFirewallSubnetName: azureFirewallSubnetName
+    azureFirewallSubnetAddressPrefix: azureFirewallSubnetAddressPrefix
+    azureFirewallManagementSubnetName: azureFirewallManagementSubnetName
+    azureFirewallManagementSubnetAddressPrefix: azureFirewallManagementSubnetAddressPrefix
+    azureBastionSubnetName: azureBastionSubnetName
+    azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
+    vmsubnetSubnetName: vmsubnetSubnetName
+    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
   }
 }
 

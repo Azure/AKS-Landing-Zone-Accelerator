@@ -121,7 +121,7 @@
               "subLabel": "",
               "defaultValue": "[[\"10.0.0.0/16\"]",
               "placeholder": "[[\"10.0.0.0/16\"]",
-              "toolTip": "The address prefixs to use for the Hub virtual network.",
+              "toolTip": "The address prefixes to use for the Hub virtual network.",
               "constraints": {
                 "required": true,
                 "regex": "",
@@ -156,6 +156,176 @@
               "defaultValue": "vm-subnet-rt",
               "placeholder": "vm-subnet-rt",
               "toolTip": "Name of route table for the subnet where the basion VM is located.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "defaultSubnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Hub Virtual Network default subnet name",
+              "subLabel": "",
+              "defaultValue": "default",
+              "placeholder": "default",
+              "toolTip": "The name of the first subnet in the hub vnet.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "defaultSubnetAddressPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Default subnet address prefix",
+              "subLabel": "",
+              "defaultValue": "[[\"10.0.0.0/24\"]",
+              "placeholder": "[[\"10.0.0.0/24\"]",
+              "toolTip": "The address prefix for the default subnet in CIDR format.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "azureFirewallSubnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Azure Firewall subnet name",
+              "subLabel": "",
+              "defaultValue": "AzureFirewallSubnet",
+              "placeholder": "AzureFirewallSubnet",
+              "toolTip": "Name of the subnet into which the firewall resource will located.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "azureFirewallSubnetAddressPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Azure Firewall subnet address space",
+              "subLabel": "",
+              "defaultValue": "[[\"10.0.1.0/26\"]",
+              "placeholder": "[[\"10.0.1.0/26\"]",
+              "toolTip": "The address prefix for the Azure Firewall subnet in CIDR format.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "azureFirewallManagementSubnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Azure Firewall management subnet name",
+              "subLabel": "",
+              "defaultValue": "AzureFirewallManagementSubnet",
+              "placeholder": "AzureFirewallManagementSubnet",
+              "toolTip": "Azure Firewall management subnet name.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "azureFirewallManagementSubnetAddressPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Azure Firewall management subnet address space",
+              "subLabel": "",
+              "defaultValue": "[[\"10.0.4.0/26\"]",
+              "placeholder": "[[\"10.0.4.0/26\"]",
+              "toolTip": "Azure Firewall management subnet address space in CIDR format.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "azureBastionSubnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Azure Bastion Host subnet name",
+              "subLabel": "",
+              "defaultValue": "AzureBastionSubnet",
+              "placeholder": "AzureBastionSubnet",
+              "toolTip": "Azure Bastion Host subnet name",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "azureBastionSubnetAddressPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Azure Bastion subnet address prefix",
+              "subLabel": "",
+              "defaultValue": "[[\"10.0.2.0/27\"]",
+              "placeholder": "[[\"10.0.2.0/27\"]",
+              "toolTip": "Azure Bastion subnet address prefix in CIDR format.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "vmsubnetSubnetName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Jumpbox subnet name",
+              "subLabel": "",
+              "defaultValue": "vmsubnet",
+              "placeholder": "vmsubnet",
+              "toolTip": "Jumpbox subnet name.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "vmsubnetSubnetAddressPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Jump box subnet address space",
+              "subLabel": "",
+              "defaultValue": "[[\"10.0.3.0/24\"]",
+              "placeholder": "[[\"10.0.3.0/24\"]",
+              "toolTip": "Jump box subnet address space in CIDR format.",
               "constraints": {
                 "required": true,
                 "regex": "",

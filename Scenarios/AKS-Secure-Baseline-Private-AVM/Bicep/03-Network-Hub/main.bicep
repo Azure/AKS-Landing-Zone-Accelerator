@@ -11,6 +11,16 @@ param fwnetworkRuleCollections array
 param fwnatRuleCollections array
 param location string = deployment().location
 param availabilityZones array
+param defaultSubnetName string
+param defaultSubnetAddressPrefix string
+param azureFirewallSubnetName string
+param azureFirewallSubnetAddressPrefix string
+param azureFirewallManagementSubnetName string
+param azureFirewallManagementSubnetAddressPrefix string
+param azureBastionSubnetName string
+param azureBastionSubnetAddressPrefix string
+param vmsubnetSubnetName string
+param vmsubnetSubnetAddressPrefix string
 
 module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   name: rgName
@@ -30,24 +40,24 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
     location: location
     subnets: [
       {
-        name: 'default'
-        addressPrefix: '10.0.0.0/24'
+        name: defaultSubnetName
+        addressPrefix: defaultSubnetAddressPrefix
       }
       {
-        name: 'AzureFirewallSubnet'
-        addressPrefix: '10.0.1.0/26'
+        name: azureFirewallSubnetName
+        addressPrefix: azureFirewallSubnetAddressPrefix
       }
       {
-        name: 'AzureFirewallManagementSubnet'
-        addressPrefix: '10.0.4.0/26'
+        name: azureFirewallManagementSubnetName
+        addressPrefix: azureFirewallManagementSubnetAddressPrefix
       }
       {
-        name: 'AzureBastionSubnet'
-        addressPrefix: '10.0.2.0/27'
+        name: azureBastionSubnetName
+        addressPrefix: azureBastionSubnetAddressPrefix
       }
       {
-        name: 'vmsubnet'
-        addressPrefix: '10.0.3.0/24'
+        name: vmsubnetSubnetName
+        addressPrefix: vmsubnetSubnetAddressPrefix
       }
     ]
     enableTelemetry: true
