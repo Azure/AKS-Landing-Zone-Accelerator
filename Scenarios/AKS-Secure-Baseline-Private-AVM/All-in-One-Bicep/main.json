@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "3583535247526312521"
+      "templateHash": "8548378562744967560"
     }
   },
   "parameters": {
@@ -275,10 +275,6 @@
     "rtAppGWSubnetName": {
       "type": "string",
       "defaultValue": "AppGWSubnet-RT"
-    },
-    "dnsServers": {
-      "type": "array",
-      "defaultValue": []
     },
     "appGwyAutoScale": {
       "type": "object",
@@ -7420,9 +7416,6 @@
           "rtAppGWSubnetName": {
             "value": "[parameters('rtAppGWSubnetName')]"
           },
-          "dnsServers": {
-            "value": "[parameters('dnsServers')]"
-          },
           "appGwyAutoScale": {
             "value": "[parameters('appGwyAutoScale')]"
           },
@@ -7437,7 +7430,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "17932630722678174872"
+              "templateHash": "7008423282837492516"
             }
           },
           "parameters": {
@@ -7473,9 +7466,6 @@
             },
             "rtAppGWSubnetName": {
               "type": "string"
-            },
-            "dnsServers": {
-              "type": "array"
             },
             "location": {
               "type": "string",
