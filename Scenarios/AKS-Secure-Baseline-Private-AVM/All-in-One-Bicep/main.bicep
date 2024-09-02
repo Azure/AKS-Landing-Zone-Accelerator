@@ -226,7 +226,7 @@ param appGatewayName string = 'APPGW'
 param nsgAKSName string = 'AKS-NSG'
 param nsgAppGWName string = 'APPGW-NSG'
 param rtAppGWSubnetName string = 'AppGWSubnet-RT'
-param dnsServers array = []
+//param dnsServers array = []
 param appGwyAutoScale object = { maxCapacity: 2, minCapacity: 1 }
 param securityRules array = []
 param defaultSubnetName string = 'default'
@@ -346,7 +346,7 @@ module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
     nsgAKSName: nsgAKSName
     nsgAppGWName: nsgAppGWName
     rtAppGWSubnetName: rtAppGWSubnetName
-    dnsServers: dnsServers
+    //dnsServers: dnsServers
     appGwyAutoScale: appGwyAutoScale
     securityRules: securityRules
   }

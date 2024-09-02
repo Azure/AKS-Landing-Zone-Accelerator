@@ -11,7 +11,7 @@ param vnetHUBRGName string
 param nsgAKSName string
 param nsgAppGWName string
 param rtAppGWSubnetName string
-param dnsServers array
+// param dnsServers array
 param location string = deployment().location
 param availabilityZones array
 param appGwyAutoScale object
