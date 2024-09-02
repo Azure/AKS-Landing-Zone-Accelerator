@@ -149,6 +149,23 @@
               "visible": true
             },
             {
+              "name": "firewallIP",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Firewall IP address",
+              "subLabel": "",
+              "defaultValue": "10.0.1.4",
+              "placeholder": "10.0.1.4",
+              "toolTip": "IP address for the Azure Firewall",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
               "name": "rtVmSubnetName",
               "type": "Microsoft.Common.TextBox",
               "label": "Route table namefor bastion VM",
@@ -376,24 +393,6 @@
               },
               "infoMessages": [],
               "visible": true
-            },
-
-            {
-              "name": "firewallIP",
-              "type": "Microsoft.Common.TextBox",
-              "label": "Firewall IP address",
-              "subLabel": "",
-              "defaultValue": "10.0.1.4",
-              "placeholder": "10.0.1.4",
-              "toolTip": "IP address for the Azure Firewall",
-              "constraints": {
-                "required": true,
-                "regex": "",
-                "validationMessage": "",
-                "validations": []
-              },
-              "infoMessages": [],
-              "visible": true
             }
           ]
         },
@@ -544,10 +543,11 @@
         "azureBastionSubnetAddressPrefix": "[steps('hubnetwork').azureBastionSubnetAddressPrefix]",
         "vmsubnetSubnetName": "[steps('hubnetwork').vmsubnetSubnetName]",
         "vmsubnetSubnetAddressPrefix": "[steps('hubnetwork').vmsubnetSubnetAddressPrefix]",
+        "firewallIP": "[steps('hubnetwork').firewallIP]",
 
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
-        "firewallIP": "[steps('spokenetwork').firewallIP]",
+        
 
         "aksadminaccessprincipalId": "[steps('aksclustersettings').aksadminaccessprincipalId]",
         "aksSubnetName": "[steps('aksclustersettings').aksSubnetName]",
