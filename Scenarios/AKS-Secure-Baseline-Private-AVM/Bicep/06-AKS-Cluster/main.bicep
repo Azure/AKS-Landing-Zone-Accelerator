@@ -10,8 +10,8 @@ param enableAutoScaling bool
 param autoScalingProfile object
 param aksadminaccessprincipalId string
 param kubernetesVersion string
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', utcNow('u'))}'
-param acrName string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
+param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
+param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}'
 param aksClusterName string
 
 

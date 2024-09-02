@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.29.47.4906",
-      "templateHash": "7602050953073150427"
+      "templateHash": "3583535247526312521"
     }
   },
   "parameters": {
@@ -27740,7 +27740,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "14416992484262678786"
+              "templateHash": "3129202628968075967"
             }
           },
           "parameters": {
@@ -27767,15 +27767,15 @@
             },
             "acrName": {
               "type": "string",
-              "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', utcNow('u')))]"
+              "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
             },
             "keyvaultName": {
               "type": "string",
-              "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', utcNow('u')))]"
+              "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
             },
             "storageAccountName": {
               "type": "string",
-              "defaultValue": "[format('eslzsa{0}', uniqueString('aks', utcNow('u')))]"
+              "defaultValue": "[format('eslzsa{0}', uniqueString('aks', uniqueString(subscription().id)))]"
             },
             "storageAccountType": {
               "type": "string"
@@ -37592,7 +37592,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.29.47.4906",
-              "templateHash": "14850898445737041995"
+              "templateHash": "9854510645028221438"
             }
           },
           "parameters": {
@@ -37629,11 +37629,11 @@
             },
             "keyvaultName": {
               "type": "string",
-              "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', utcNow('u')))]"
+              "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
             },
             "acrName": {
               "type": "string",
-              "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', utcNow('u')))]"
+              "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
             },
             "aksClusterName": {
               "type": "string"

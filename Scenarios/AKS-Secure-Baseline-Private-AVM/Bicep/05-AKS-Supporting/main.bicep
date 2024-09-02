@@ -6,9 +6,9 @@ param subnetName string
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
 param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
 param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.storage}'
-param acrName string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', utcNow('u'))}'
-param storageAccountName string = 'eslzsa${uniqueString('aks', utcNow('u'))}'
+param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}'
+param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
+param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id))}'
 param storageAccountType string
 param location string = deployment().location
 
