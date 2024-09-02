@@ -534,6 +534,17 @@
         "azfwName": "[steps('hubnetwork').azfwName]",
         "rtVMSubnetName": "[steps('hubnetwork').rtVmSubnetName]",
 
+        "defaultSubnetName": "[steps('hubnetwork').defaultSubnetName]",
+        "defaultSubnetAddressPrefix": "[steps('hubnetwork').defaultSubnetAddressPrefix]",
+        "azureFirewallSubnetName": "[steps('hubnetwork').azureFirewallSubnetName]",
+        "azureFirewallSubnetAddressPrefix": "[steps('hubnetwork').azureFirewallSubnetAddressPrefix]",
+        "azureFirewallManagementSubnetName": "[steps('hubnetwork').azureFirewallManagementSubnetName]",
+        "azureFirewallManagementSubnetAddressPrefix": "[steps('hubnetwork').azureFirewallManagementSubnetAddressPrefix]",
+        "azureBastionSubnetName": "[steps('hubnetwork').azureBastionSubnetName]",
+        "azureBastionSubnetAddressPrefix": "[steps('hubnetwork').azureBastionSubnetAddressPrefix]",
+        "vmsubnetSubnetName": "[steps('hubnetwork').vmsubnetSubnetName]",
+        "vmsubnetSubnetAddressPrefix": "[steps('hubnetwork').vmsubnetSubnetAddressPrefix]",
+
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
         "firewallIP": "[steps('spokenetwork').firewallIP]",
