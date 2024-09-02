@@ -177,16 +177,44 @@ virtual-customer-59d74777d6-qvwkd   1/1     Running   0          107s
 virtual-worker-69576c848b-49g24     1/1     Running   0          107s
 ```
 
-### Test the application
+### Testing the application
+There are two ingress controllers configured in the cluster, Application Gateway (AppGW) which will expose the application to the internet and managed NGINX (Application Routing) for accessing from the jumpbox VM. Both are forwarding requests to the **store-front** service in Kubernetes.
 
-To test the application use the command below to get the IP address of the Application Gateway (which is forwarding requests to the store-front service in Kubernetes), then open the address in a browser:
+In either case you can `curl` the website on an accessible IP address & port.
+
+To get the public AppGw IP address for public access:
 ```bash
 az network public-ip show -g AKS-LZA-SPOKE -n APPGW-PIP --query ipAddress -o tsv
+
+# 74.241.209.184
 ```
+
+To get the NodePort endpoint IP for jumpbox access:
+```bash
+kubectl describe endpoints/store-front
+
+# NAME          ENDPOINTS        AGE
+# store-front   10.1.1.60:8080   18m
+```
+
+
+```bash
+# curl 74.241.209.184
+# or 
+# curl 10.1.1.60:8080
+
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-
+scale=1"><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/j
+s/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without
+ JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>azureuser@jumpbox:~/AKS-Landing-Zone-Accelerator/Scenarios/AKS-S
+ecure-Baseline-Private-AVM/Bicep/07-Workload$ 
+```
+
+## Status
 
 The application has two web based services:
 
 1. *store-front* - This is the main application from where you can buy toys for your pet.
 2. *store-admin* - An administration site for the main application.
 
-Currently only the **store-front** application is exposed through Application Gateway.
+Currently only the **store-front** application is exposed through Application Gateway and NGINX.
