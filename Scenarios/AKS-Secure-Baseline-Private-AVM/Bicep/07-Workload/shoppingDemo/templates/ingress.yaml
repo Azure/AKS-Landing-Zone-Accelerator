@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aks-store-front
+spec:
+  ingressClassName: azure-application-gateway 
+  rules:
+  - http:
+      paths:
+      - backend:
+          service:
+            name: store-front 
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
