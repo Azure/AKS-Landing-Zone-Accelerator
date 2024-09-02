@@ -179,13 +179,14 @@ virtual-worker-69576c848b-49g24     1/1     Running   0          107s
 
 ### Test the application
 
-To test access to the new application, get the EXTERNAL-IP of the store front service then open the address from a browser:
+To test the application use the command below to get the IP address of the Application Gateway (which is forwarding requests to the store-front service in Kubernetes), then open the address in a browser:
 ```bash
-kubectl get service/store-front
+az network public-ip show -g AKS-LZA-SPOKE -n APPGW-PIP --query ipAddress -o tsv
 ```
 
-XXXXXXXXXXXXXXXXXXXXXX
+The application has two web based services:
 
-TODO: Setup ingress via AppGW and point to the store-front service
+1. *store-front* - This is the main application from where you can buy toys for your pet.
+2. *store-admin* - An administration site for the main application.
 
-XXXXXXXXXXXXXXXXXXXXXX
+Currently only the **store-front** application is exposed through Application Gateway.
