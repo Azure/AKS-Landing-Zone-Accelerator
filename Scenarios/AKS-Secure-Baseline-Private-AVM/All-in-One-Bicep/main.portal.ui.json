@@ -204,7 +204,7 @@
               "type": "Microsoft.Common.TextBox",
               "label": "Default subnet address prefix",
               "subLabel": "",
-              "defaultValue": "10.0.0.0/24\"",
+              "defaultValue": "10.0.0.0/24",
               "placeholder": "10.0.0.0/24",
               "toolTip": "The address prefix for the default subnet in CIDR format.",
               "constraints": {
