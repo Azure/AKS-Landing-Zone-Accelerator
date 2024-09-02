@@ -153,10 +153,10 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     monitoringWorkspaceId: workspace.outputs.resourceId
     azurePolicyEnabled: true
     webApplicationRoutingEnabled: true
-    // dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
+    dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
     enableDnsZoneContributorRoleAssignment: true
-    // ingressApplicationGatewayEnabled: true
-    // appGatewayResourceId: appGateway.id
+    ingressApplicationGatewayEnabled: true
+    appGatewayResourceId: appGateway.id
     enableKeyvaultSecretsProvider: true
     managedIdentities: {
       userAssignedResourcesIds: [
