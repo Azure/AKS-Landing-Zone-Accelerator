@@ -218,3 +218,16 @@ The application has two web based services:
 2. *store-admin* - An administration site for the main application.
 
 Currently only the **store-front** application is exposed through Application Gateway and NGINX.
+
+## Optional - Private DNS Zone
+If you need a private DNS zone which is integrated with AKS and accessible from the jump box, the following commands will create the DNS zone, create a private link on the VNET pointing to the new zone and then update AKS.
+
+```
+az network private-dns zone create --resource-group aks-lza-spoke --name private.contoso.com
+
+az network private-dns link vnet create --resource-group aks-lza-spoke --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
+
+$ZONEID=$(az network private-dns zone show --resource-group aks-lza-spoke --name private.contoso.com --query "id" --output tsv)
+
+az aks approuting zone add --resource-group aks-lza-spoke --name aksCluster --ids=${$ZONEID} --attach-zones
+```
