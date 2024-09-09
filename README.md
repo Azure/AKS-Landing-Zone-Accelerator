@@ -18,7 +18,6 @@ The reference implementations are spread across three repos that all build on to
 
 1. This one
 1. The [AKS Construction Helper](https://github.com/Azure/Aks-Construction)
-1. The [Baseline Automation Module](https://github.com/Azure/aks-baseline-automation)
 
 ### This repo
 
@@ -41,7 +40,7 @@ This reference implementation demonstrates recommended ways to automate the depl
 Use [this repo](https://github.com/Azure/aks-baseline-automation) if you would like to learn how to quickly setup and get access to templates to help setup your own DevOps environments for AKS workloads.  -->
 
 ## Next Steps to implement AKS Landing Zone Accelerator
-Pick one of two options below
+Pick one of the options below
 
 ### Follow a scenario driven tutorial within this repo
 
