@@ -192,7 +192,7 @@ cd $HOME/AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/
 
 helm install monkey-magic ./shoppingDemo --set containerRegistry=$ACRNAME.azurecr.io
 # apply the ingress controller
-kubectl apply -f 07-Workload/shoppingDemo/templates/ingress-via-nginx-internal.yaml
+kubectl apply -f shoppingDemo/templates/ingress-via-nginx-internal.yaml
 ```
 After deployment, check the pods have created correctly:
 ```bash
