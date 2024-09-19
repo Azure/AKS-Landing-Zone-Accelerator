@@ -161,7 +161,9 @@ sudo az acr login -n $ACRNAME
 # Login Succeeded
 ```
 
-## Push the images to the container registry.
+> NOTE: If this fails and requires providing username and password, you might have to log into your Azure Portal and head to the ACR instance. On the left panel under settings, click on Access Keys. You will see the admin username and password there if Admin user is enabled.
+
+## Push the images to the container registry
 
 ```bash
 for i in $(sudo docker images | awk 'NR>1 { print $1}') ; do
@@ -208,10 +210,42 @@ virtual-customer-59d74777d6-qvwkd   1/1     Running   0          107s
 virtual-worker-69576c848b-49g24     1/1     Running   0          107s
 ```
 
-### Testing the application
-There are two ingress controllers configured in the cluster, Application Gateway (AppGW) which will expose the application to the internet and managed NGINX (Application Routing) for accessing from the jumpbox VM. Both are forwarding requests to the **store-front** service in Kubernetes.
+### Testing the application internally
+Your ingress controller is accessible from within the virtual network but not from the internet. Get the IP address of your ingress controller.
 
-In either case you can `curl` the website on an accessible IP address & port.
+```bash
+external_ip=$(kubectl get svc -n app-routing-system -o jsonpath='{.items[*].status.loadBalancer.ingress[*].ip}')
+```
+
+Use `curl` command to test that the application is running in the cluster and the ingress was configured properly
+
+```bash
+curl $external_ip/front
+```
+
+You should see HTML code of the front end web applicatoin. If it was configured correctly, there will be no "nginx" in the HTML
+
+### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
+First we create a backend pool name, and create the backend pool.
+```bash
+BACKENDPOOLNAME=aksnginxingress
+
+az network application-gateway address-pool create \
+  --resource-group $SPOKERG \
+  --gateway-name APPGW \
+  --name $BACKENDPOOLNAME
+
+```
+
+We then run the application-gateway address-pool command to add the ingress IP address to the backend pool.
+```bash
+az network application-gateway address-pool update \
+  --resource-group $SPOKERG \
+  --gateway-name APPGW \
+  --name $BACKENDPOOLNAME \
+  --servers $external_ip
+```
+
 
 To get the public AppGw IP address for public access:
 ```bash
@@ -219,36 +253,9 @@ az network public-ip show -g $SPOKERG -n APPGW-PIP --query ipAddress -o tsv
 
 # 74.241.209.184
 ```
+Go on your browser and try to access the application
 
-To get the NodePort endpoint IP for jumpbox access:
-```bash
-kubectl describe endpoints/store-front
-
-# NAME          ENDPOINTS        AGE
-# store-front   10.1.1.60:8080   18m
-```
-
-
-```bash
-# curl 74.241.209.184
-# or 
-# curl 10.1.1.60:8080
-
-<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-
-scale=1"><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/j
-s/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without
- JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>azureuser@jumpbox:~/AKS-Landing-Zone-Accelerator/Scenarios/AKS-S
-ecure-Baseline-Private-AVM/Bicep/07-Workload$ 
-```
-
-## Status
-
-The application has two web based services:
-
-1. *store-front* - This is the main application from where you can buy toys for your pet.
-2. *store-admin* - An administration site for the main application.
-
-Currently only the **store-front** application is exposed through Application Gateway and NGINX.
+`<ip-address>/front`
 
 ## Optional - Private DNS Zone
 If you need a private DNS zone which is integrated with AKS and accessible from the jump box, the following commands will create the DNS zone, create a private link on the VNET pointing to the new zone and then update AKS.
