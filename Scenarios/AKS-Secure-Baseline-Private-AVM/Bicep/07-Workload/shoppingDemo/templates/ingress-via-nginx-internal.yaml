@@ -1,8 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: store-front
-  namespace: aks-store
+  name: internal-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
