@@ -478,7 +478,7 @@ spec:
     targetPort: 8081
   selector:
     app: store-admin
-  type: LoadBalancer  
+  type: ClusterIP  
 ---
 apiVersion: apps/v1
 kind: Deployment

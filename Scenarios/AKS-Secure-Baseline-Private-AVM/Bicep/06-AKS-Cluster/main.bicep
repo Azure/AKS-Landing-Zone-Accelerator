@@ -45,10 +45,10 @@ resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existi
   name: '${vnetName}/${subnetName}'
 }
 
-resource appGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing = {
-  scope: resourceGroup(rg.name)
-  name: appGatewayName
-}
+// resource appGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing = {
+//   scope: resourceGroup(rg.name)
+//   name: appGatewayName
+// }
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   scope: resourceGroup(rg.name)
@@ -155,8 +155,8 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     webApplicationRoutingEnabled: true
     //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
     enableDnsZoneContributorRoleAssignment: true
-    ingressApplicationGatewayEnabled: true
-    appGatewayResourceId: appGateway.id
+    ingressApplicationGatewayEnabled: false
+    // appGatewayResourceId: appGateway.id
     enableKeyvaultSecretsProvider: true
     managedIdentities: {
       userAssignedResourcesIds: [

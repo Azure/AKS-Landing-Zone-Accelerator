@@ -32,6 +32,15 @@ The first major step to deploying the application is to connect to the jumpbox i
    sudo ./script.sh
    ```
 
+1. Set environment variables
+
+   ```bash
+      # Enter the name of your ACR below
+      SPOKERG=AKS-LZA-SPOKE
+      AKSCLUSTERNAME=$(az aks list -g $SPOKERG --query [0].name -o tsv)
+      ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
+   ```
+
 1. Login to Azure and select your subscription
 
    ```bash
@@ -63,12 +72,37 @@ The first major step to deploying the application is to connect to the jumpbox i
    ```
 1. Download from Azure the configuration file for connecting to AKS.
    ```bash
-   az aks get-credentials --name akscluster --resource-group aks-lza-spoke
+   az aks get-credentials --name $AKSCLUSTERNAME --resource-group $SPOKERG
    ```
 1. Test the connection by requesting a list of nodes in the cluster (you will be asked to login again so that you can obtain an AKS specific token).
    ```bash
    kubectl get nodes
    ```
+
+### Control the default NGINX ingress controller configuration (preview)
+As part of deploying our AKS environment, we enabled the [AKS app routing addon](https://learn.microsoft.com/en-us/azure/aks/app-routing). For better security, we will ensure that our applications, including the ingress controller are only available within the internal network of your orgnization. We will later expose our application to the internet using a web applicaion firewall enabled application gateway. Our first step is to ensure that our default settings for the nginx ingress controller managed by the AKS app routing addon ensures the ingress has only internal IP addresses. As of the time of writing, this is a preview feature that requires the use of aks-preview Azure CLI extension. If you do not have this installed, use the commands below to install it.
+
+```bash
+az extension add --name aks-preview
+```
+
+If you have a version of AKS-preview that is version 7.0.0b5 or later, you can just update it.
+
+```bash
+az extension update --name aks-preview
+```
+
+In addition, some preview features require you to register them. For example, to register the Deployment Safeguards feature
+
+```bash
+az feature register --namespace Microsoft.ContainerService --name SafeguardsPreview
+```
+
+Once this feature is registered, refresh the registration of the Microsoft.ContainerService provider
+
+```bash
+az provider register --namespace Microsoft.ContainerService
+```
 
 ## Build Container Images
 
@@ -86,9 +120,6 @@ Navigate to each application code directory, build and tag the containers with t
 *NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
 
 ```bash
-# Enter the name of your ACR below
-SPOKERG=AKS-LZA-SPOKE
-ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
 
 cd aks-store-demo/src
 
@@ -149,7 +180,7 @@ az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/r
 You should also connect your AKS Cluster to the Azure Container Registry (ACR) so when it attempts to pull images it can authenticate correctly:
 
 ```bash
-az aks update --name "aksCluster" --resource-group "AKS-LZA-SPOKE" --attach-acr $ACRNAME
+az aks update --name $AKSCLUSTERNAME  --resource-group $SPOKERG --attach-acr $ACRNAME
 ```
 
 Now deploy the application using the HELM chart. Make sure to update the value of the containerRegistry in the command below to your ACR name:
@@ -184,7 +215,7 @@ In either case you can `curl` the website on an accessible IP address & port.
 
 To get the public AppGw IP address for public access:
 ```bash
-az network public-ip show -g AKS-LZA-SPOKE -n APPGW-PIP --query ipAddress -o tsv
+az network public-ip show -g $SPOKERG -n APPGW-PIP --query ipAddress -o tsv
 
 # 74.241.209.184
 ```
@@ -223,11 +254,11 @@ Currently only the **store-front** application is exposed through Application Ga
 If you need a private DNS zone which is integrated with AKS and accessible from the jump box, the following commands will create the DNS zone, create a private link on the VNET pointing to the new zone and then update AKS.
 
 ```
-az network private-dns zone create --resource-group aks-lza-spoke --name private.contoso.com
+az network private-dns zone create --resource-group $SPOKERG --name private.contoso.com
 
-az network private-dns link vnet create --resource-group aks-lza-spoke --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
+az network private-dns link vnet create --resource-group $SPOKERG --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
 
-$ZONEID=$(az network private-dns zone show --resource-group aks-lza-spoke --name private.contoso.com --query "id" --output tsv)
+$ZONEID=$(az network private-dns zone show --resource-group $SPOKERG --name private.contoso.com --query "id" --output tsv)
 
-az aks approuting zone add --resource-group aks-lza-spoke --name aksCluster --ids=${$ZONEID} --attach-zones
+az aks approuting zone add --resource-group $SPOKERG --name $AKSCLUSTERNAME --ids=${$ZONEID} --attach-zones
 ```

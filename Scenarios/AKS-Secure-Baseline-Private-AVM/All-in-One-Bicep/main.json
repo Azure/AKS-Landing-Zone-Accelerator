@@ -11,7 +11,7 @@
   "parameters": {
     "rgHubName": {
       "type": "string",
-      "defaultValue": "AKS-LZA-HUB"
+      "defaultValue": "AKS-LZA-HUBB"
     },
     "vnetHubName": {
       "type": "string",
@@ -240,7 +240,7 @@
     },
     "rgSpokeName": {
       "type": "string",
-      "defaultValue": "AKS-LZA-SPOKE"
+      "defaultValue": "AKS-LZA-SPOKEE"
     },
     "vnetSpokeName": {
       "type": "string",
@@ -395,7 +395,7 @@
     },
     "aksadminaccessprincipalId": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "b6723f14-bfbe-441c-99bb-55d4e5d971ad"
     },
     "kubernetesVersion": {
       "type": "string",

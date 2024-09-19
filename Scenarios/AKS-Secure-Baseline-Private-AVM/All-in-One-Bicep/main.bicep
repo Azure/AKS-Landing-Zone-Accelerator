@@ -13,7 +13,7 @@ targetScope = 'subscription'
 /////////////////
 // 03-network-Hub
 /////////////////
-param rgHubName string = 'AKS-LZA-HUB'
+param rgHubName string = 'AKS-LZA-HUBB'
 param vnetHubName string = 'VNet-HUB'
 param hubVNETaddPrefixes array = ['10.0.0.0/16']
 param azfwName string = 'AZFW'
@@ -214,7 +214,7 @@ param availabilityZones array = ['1', '2', '3']
 // 04-Network-LZ
 /////////////////
 
-param rgSpokeName string = 'AKS-LZA-SPOKE'
+param rgSpokeName string = 'AKS-LZA-SPOKEE'
 param vnetSpokeName string = 'VNet-SPOKE'
 //param availabilityZones array = ['1', '2', '3']
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
@@ -285,7 +285,7 @@ param autoScalingProfile object = {
   skipNodesWithLocalStorage: 'false'
   skipNodesWithSystemPods: 'true'
 }
-param aksadminaccessprincipalId string = ''
+param aksadminaccessprincipalId string = 'b6723f14-bfbe-441c-99bb-55d4e5d971ad'
 param kubernetesVersion string = '1.30'
 //param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
 param networkPlugin string = 'azure'
@@ -358,7 +358,7 @@ module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
 /////////////////
 
 module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
-  name: 'aksSupporting'
+  name: 'aksSupportingg'
   params: {
     rgName: rgSpokeName
     vnetName: vnetSpokeName
@@ -379,7 +379,7 @@ module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
 /////////////////
 
 module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
-  name: 'aksCluster'
+  name: 'aksClusterr'
   params: {
     rgName: rgSpokeName
     vnetName: vnetSpokeName
