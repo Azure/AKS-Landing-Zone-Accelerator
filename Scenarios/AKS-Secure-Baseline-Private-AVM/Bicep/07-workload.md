@@ -191,6 +191,8 @@ Now deploy the application using the HELM chart. Make sure to update the value o
 cd $HOME/AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
 
 helm install monkey-magic ./shoppingDemo --set containerRegistry=$ACRNAME.azurecr.io
+# apply the ingress controller
+kubectl apply -f 07-Workload/shoppingDemo/templates/ingress-via-nginx-internal.yaml
 ```
 After deployment, check the pods have created correctly:
 ```bash
