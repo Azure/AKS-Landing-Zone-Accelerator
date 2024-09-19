@@ -23,3 +23,10 @@ spec:
               number: 80
         path: /admin(/|$)(.*)
         pathType: ImplementationSpecific
+      - backend:
+          service:
+            name: store-front
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
