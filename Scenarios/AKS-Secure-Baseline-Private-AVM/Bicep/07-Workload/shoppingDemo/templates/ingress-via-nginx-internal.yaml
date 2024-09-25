@@ -9,7 +9,8 @@ metadata:
 spec:
   ingressClassName: webapprouting.kubernetes.azure.com
   rules:
-  - http:
+  - host: private.contoso.com
+    http:
       paths:
       - path: /front(/|$)(.*)
         pathType: ImplementationSpecific
