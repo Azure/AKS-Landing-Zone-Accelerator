@@ -81,20 +81,15 @@ Review "**parameters-main.json**" file and update the values as required. Please
 The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://learn.microsoft.com/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
 
 ```azurecli
-az aks get-versions -l <region>
+az aks get-versions -l $REGION
 ```
 
 # [CLI](#tab/CLI)
 
-```azurecli
-acrName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.acrName.value -o tsv)
-keyVaultName=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv)
-```
-
 ### Reference: Follow the below steps if you are going with the Azure CNI Networking option
 
 ```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.25.5 -p networkPlugin=azure
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p kubernetesVersion=1.29.2 -p networkPlugin=azure
 ```
 
 ### Reference: Follow the below steps if you are going with the Kubenet option
@@ -108,7 +103,7 @@ Step 2: (Optional - *if you don't do this, you'll have to manually update the ro
 [Using AKS kubenet egress control with AGIC](https://github.com/Welasco/AKS-AGIC-UDR-AutoUpdate)
 
 ```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.22.6 -p networkPlugin=kubenet
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.29.2 -p networkPlugin=kubenet
 ```
 
 # [PowerShell](#tab/PowerShell)

@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "rgName": {
-      "value": "ESLZ-HUB"
+      "value": "AKS-LZA-HUB"
     },
     "availabilityZones": {
       "value": [
@@ -12,46 +12,9 @@
         "3"
       ]
     },
-    "vnetHubName": {
-      "value": "VNet-HUB"
-    },
     "hubVNETaddPrefixes": {
       "value": [
         "10.0.0.0/16"
-      ]
-    },
-    "hubSubnets": {
-      "value": [
-        {
-          "name": "default",
-          "properties": {
-            "addressPrefix": "10.0.0.0/24"
-          }
-        },
-        {
-          "name": "AzureFirewallSubnet",
-          "properties": {
-            "addressPrefix": "10.0.1.0/26"
-          }
-        },
-        {
-          "name": "AzureFirewallManagementSubnet",
-          "properties": {
-            "addressPrefix": "10.0.4.0/26"
-          }
-        },
-        {
-          "name": "AzureBastionSubnet",
-          "properties": {
-            "addressPrefix": "10.0.2.0/27"
-          }
-        },
-        {
-          "name": "vmsubnet",
-          "properties": {
-            "addressPrefix": "10.0.3.0/24"
-          }
-        }
       ]
     },
     "azfwName": {
@@ -255,6 +218,40 @@
     },
     "fwnatRuleCollections": {
       "value": []
+    },
+    "vnetHubName": {
+      "value": "VNet-HUB"
+    }
+    ,
+    "defaultSubnetName": {
+      "value": "default"
+    },
+    "defaultSubnetAddressPrefix": {
+      "value": "10.0.0.0/24"
+    },
+    "azureFirewallSubnetName": {
+      "value": "AzureFirewallSubnet"
+    },
+    "azureFirewallSubnetAddressPrefix": {
+      "value": "10.0.1.0/26"
+    },
+    "AzureFirewallManagementSubnetName": {
+      "value": "AzureFirewallManagementSubnet"
+    },
+    "AzureFirewallManagementSubnetAddressPrefix": {
+      "value": "10.0.4.0/26"
+    },
+    "AzureBastionSubnetName": {
+      "value": "AzureBastionSubnet"
+    },
+    "AzureBastionSubnetAddressPrefix": {
+      "value": "10.0.2.0/27"
+    },
+    "vmsubnetSubnetName": {
+      "value": "vmsubnet"
+    },
+    "vmsubnetSubnetAddressPrefix": {
+      "value": "10.0.3.0/24"
     }
   }
 }

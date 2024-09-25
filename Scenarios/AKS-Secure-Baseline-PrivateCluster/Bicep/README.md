@@ -16,9 +16,10 @@ This section is organized using folders that match the steps outlined below. Mak
 6. [Creation of AKS & enabling Addons](./06-aks-cluster.md)
 7. [Deploy a Basic Workload](./07-workload.md)
 
-## Getting Started - Option 2: Fully Automated Deploy using GitHub Actions
+## Getting Started - Option 2: All in 1 Deployment
 
-This section can be followed instead of the "Getting Started" section above, if using GitHub. Follow these steps to have GitHub Actions deploy the templates automatically instead of manually following the steps above for a fully automated deployment of the same templates.
+With this option, you can use ur deploy to Azure Button to deploy the landing zone using the Azure Portal, or run the entire deployment using a single command. For more information check out the [All-in-One-Bicep](./All-in-One-Bicep/) folder
 
-1. Prerequisites: Clone or Fork this repo to your own GitHub Account
-2. [Deploy using GitHub Actions](./02a-DeployUsingGitHubActions.md)
+## Getting Started - Option 3: Fully Automated Deploy using GitHub Actions
+
+This option is under construction. Stay tuned.

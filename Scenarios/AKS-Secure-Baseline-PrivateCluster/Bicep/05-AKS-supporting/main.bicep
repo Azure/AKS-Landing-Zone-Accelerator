@@ -1,135 +1,20 @@
 targetScope = 'subscription'
 
 param rgName string
-param keyVaultPrivateEndpointName string
-param acrPrivateEndpointName string
-param saPrivateEndpointName string
 param vnetName string
 param subnetName string
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
 param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
 param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.storage}'
-param acrName string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', utcNow('u'))}'
-param storageAccountName string = 'eslzsa${uniqueString('aks', utcNow('u'))}'
+param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
+param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
+param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id), utcNow())}'
 param storageAccountType string
 param location string = deployment().location
-
-module rg 'modules/resource-group/rg.bicep' = {
-  name: rgName
-  params: {
-    rgName: rgName
-    location: location
-  }
-}
-
-module acr 'modules/acr/acr.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: acrName
-  params: {
-    location: location
-    acrName: acrName
-    acrSkuName: 'Premium'
-  }
-}
-
-module keyvault 'modules/keyvault/keyvault.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: keyvaultName
-  params: {
-    location: location
-    keyVaultsku: 'Standard'
-    name: keyvaultName
-    tenantId: subscription().tenantId
-  }
-}
-
-module storage 'modules/storage/storage.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: storageAccountName
-  params: {
-    location: location
-    storageAccountName: storageAccountName
-    storageAccountType: storageAccountType
-  }
-}
 
 resource servicesSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
   scope: resourceGroup(rg.name)
   name: '${vnetName}/${subnetName}'
-}
-
-module privateEndpointKeyVault 'modules/vnet/privateendpoint.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: keyVaultPrivateEndpointName
-  params: {
-    location: location
-    groupIds: [
-      'Vault'
-    ]
-    privateEndpointName: keyVaultPrivateEndpointName
-    privatelinkConnName: '${keyVaultPrivateEndpointName}-conn'
-    resourceId: keyvault.outputs.keyvaultId
-    subnetid: servicesSubnet.id
-  }
-}
-
-module privateEndpointAcr 'modules/vnet/privateendpoint.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: acrPrivateEndpointName
-  params: {
-    location: location
-    groupIds: [
-      'registry'
-    ]
-    privateEndpointName: acrPrivateEndpointName
-    privatelinkConnName: '${acrPrivateEndpointName}-conn'
-    resourceId: acr.outputs.acrid
-    subnetid: servicesSubnet.id
-  }
-}
-
-module privateEndpointSA 'modules/vnet/privateendpoint.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: saPrivateEndpointName
-  params: {
-    location: location
-    groupIds: [
-      'file'
-    ]
-    privateEndpointName: saPrivateEndpointName
-    privatelinkConnName: '${saPrivateEndpointName}-conn'
-    resourceId: storage.outputs.storageAccountId
-    subnetid: servicesSubnet.id
-  }
-}
-
-resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  scope: resourceGroup(rg.name)
-  name: privateDNSZoneACRName
-}
-
-module privateEndpointACRDNSSetting 'modules/vnet/privatedns.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'acr-pvtep-dns'
-  params: {
-    privateDNSZoneId: privateDNSZoneACR.id
-    privateEndpointName: privateEndpointAcr.name
-  }
-}
-
-resource privateDNSZoneKV 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
-  scope: resourceGroup(rg.name)
-  name: privateDNSZoneKVName
-}
-
-module privateEndpointKVDNSSetting 'modules/vnet/privatedns.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'kv-pvtep-dns'
-  params: {
-    privateDNSZoneId: privateDNSZoneKV.id
-    privateEndpointName: privateEndpointKeyVault.name
-  }
 }
 
 resource privateDNSZoneSA 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
@@ -137,23 +22,90 @@ resource privateDNSZoneSA 'Microsoft.Network/privateDnsZones@2020-06-01' existin
   name: privateDNSZoneSAName
 }
 
-module privateEndpointSADNSSetting 'modules/vnet/privatedns.bicep' = {
+resource privateDNSZoneKV 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
   scope: resourceGroup(rg.name)
-  name: 'sa-pvtep-dns'
-  params: {
-    privateDNSZoneId: privateDNSZoneSA.id
-    privateEndpointName: privateEndpointSA.name
-  }
+  name: privateDNSZoneKVName
 }
 
-module aksIdentity 'modules/Identity/userassigned.bicep' = {
+resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
   scope: resourceGroup(rg.name)
-  name: 'aksIdentity'
+  name: privateDNSZoneACRName
+}
+
+module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
+  name: rgName
   params: {
+    name: rgName
     location: location
-    identityName: 'aksIdentity'
+    enableTelemetry: true
   }
 }
 
-output acrName string = acr.name
-output keyvaultName string = keyvault.name
+module registry 'br/public:avm/res/container-registry/registry:0.1.1' = {
+  scope: resourceGroup(rg.name)
+  name: acrName
+  params: {
+    name: acrName
+    location: location
+    acrAdminUserEnabled: true
+    publicNetworkAccess: 'Disabled'
+    acrSku: 'Premium'
+    privateEndpoints: [
+      {
+        privateDnsZoneResourceIds: [
+          privateDNSZoneACR.id
+        ]
+        subnetResourceId: servicesSubnet.id
+      }
+    ]
+  }
+}
+
+module vault 'br/public:avm/res/key-vault/vault:0.4.0' = {
+  scope: resourceGroup(rg.name)
+  name: keyvaultName
+  params: {
+    name: keyvaultName
+    enablePurgeProtection: true
+    location: location
+    sku: 'standard'
+    enableVaultForDiskEncryption: true
+    softDeleteRetentionInDays: 7
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Deny'
+    }
+    privateEndpoints: [
+      {
+        privateDnsZoneResourceIds: [
+          privateDNSZoneKV.id
+        ]
+        subnetResourceId: servicesSubnet.id
+      }
+    ]
+  }
+}
+
+module storageAccount 'br/public:avm/res/storage/storage-account:0.8.2' = {
+  scope: resourceGroup(rg.name)
+  name: storageAccountName
+  params: {
+    name: storageAccountName
+    allowBlobPublicAccess: false
+    location: location
+    skuName: storageAccountType
+    kind: 'StorageV2'
+    privateEndpoints: [
+      {
+        privateDnsZoneResourceIds: [
+          privateDNSZoneSA.id
+        ]
+        service: 'file'
+        subnetResourceId: servicesSubnet.id
+      }
+    ]
+  }
+}
+
+output acrName string = registry.outputs.name
+output keyVaultName string = vault.outputs.name

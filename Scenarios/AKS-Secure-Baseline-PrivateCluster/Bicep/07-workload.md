@@ -1,372 +1,336 @@
-# Deploy a Basic Workload using the Fruit Smoothie Ratings Application
+# Deploy a Basic Workload using the AKS-Store-Demo Application
 
-This application consists of a web frontend, an API service and a MongoDB database.
+This application consists of a group of containerized microservices that can be easily deployed into an Azure Kubernetes Service (AKS) cluster. This is meant to show a realistic scenario using a polyglot architecture, event-driven design, and common open source back-end services (eg - RabbitMQ, MongoDB). The application also leverages OpenAI's GPT-3 models to generate product descriptions. You can find out more about the application at https://github.com/Azure-Samples/aks-store-demo.
 
-Because the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service. If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
+As the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service.
 
-## Prepare your Jumpbox VM with tools
-
-* Add a rule in the Firewall to allow internet access to the Jumpbox's private IP and your computer's IP. Verify VM's private IP and update if necessary
-
-   ```bash
-   az network firewall network-rule create --collection-name 'jumpbox-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 201 --source-addresses '10.0.3.4/32'
-   ```
-
-   ```bash
-   az network firewall network-rule create --collection-name 'VM-egress' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 215 --source-addresses '<your vm or computer's ip>'
-   ```
-
-* Add a rule in the Firewall to allow internet access to the your VM or computer's IP. Verify VM's private IP and update if necessary
-
-   ```bash
-   az network firewall network-rule create --collection-name 'access-VM' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-Internet' --protocols Any --resource-group 'ESLZ-HUB' --action Allow --dest-addr '*' --priority 202 --source-addresses '<your vm or computer's ip>'
-   ```
+ If your computer is connected to the hub network, you may be able to just use that as well. The rest of the steps can be performed on your local machine by using AKS Run commands which allow access into private clusters using RBAC. This will help with improving security and will provide a more user-friendly way of editing YAML files.
 
 ## Connecting to the Bastion Host
 
-1. Use Bastion Host to connect to the jumpbox.
-2. Enter the username and password. If you have used a public key, then select upload private key (corresponding to the public key) to connect.
-3. Once you connect ensure you permit the site to read the content of your clipboard
+The first major step to deploying the application is to connect to the jumpbox inside the private network and authenticate to Azure and the AKS cluster.
 
-* Clone it on the jumpbox.
+1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resource group, connect to the VM using the **Connect via Bastion** option using the credentials provided in the Bicep template (azureuser/Password123).
+
+1. If prompted, allow the browser to read the contents of your clipboard.
+
+1. From the jumpbox command line, clone the *aks-landing-Zone-Accelerator* repository which contains some setup scripts needed shortly.
 
    ```bash
-   git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
+   cd
+
+   git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator/
    ```
 
-* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub" folder.
+1. Run the setup script to apply the latest updates to the jumpbox and to install other required packages.
 
    ```bash
-   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub
+   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+
    chmod +x script.sh
+
    sudo ./script.sh
    ```
 
-* Login to Azure
+   NOTE: You might need to hit Enter when it says "Restarting services..."
+
+1. Login to Azure and select your subscription
 
    ```bash
-   TENANTID=<tenant id>
+   TENANTID=<your AAD tenant id>
+
    az login -t $TENANTID
    ```
 
-* Ensure you are connected to the correct subscription
+   If your account has access to multiple subscriptions, you will be prompted to select the one you wish to use.
+
+1. If you selected the wrong subscription, it can be set correctly as shown.
 
    ```bash
    az account set --subscription <subscription id>
    ```
 
+1. Set environment variables
+
+   ```bash
+      # Enter the name of your ACR below
+      SPOKERG=AKS-LZA-SPOKE
+      AKSCLUSTERNAME=$(az aks list -g $SPOKERG --query [0].name -o tsv)
+      ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
+   ```
+
+   Now login a second time whilst sudo'ed as root. *This is to get around a problem later where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it makes installation easier if that one command runs as root.*
+
+1. To control Kubernetes directly from the jumpbox, *kubectl* and the *kubelogin* commands must be installed.
+
+   ```bash
+   sudo snap install kubectl --classic
+
+   sudo az aks install-cli
+   ```
+
+1. Download from Azure the configuration file for connecting to AKS.
+
+   ```bash
+   az aks get-credentials --name $AKSCLUSTERNAME --resource-group $SPOKERG
+   ```
+
+1. Test the connection by requesting a list of nodes in the cluster (you will be asked to login again so that you can obtain an AKS specific token).
+
+   ```bash
+   kubectl get nodes
+   ```
+
+### Control the default NGINX ingress controller configuration (preview)
+
+As part of deploying our AKS environment, we enabled the [AKS app routing addon](https://learn.microsoft.com/en-us/azure/aks/app-routing). For better security, we will ensure that our applications, including the ingress controller are only available within the internal network of your orgnization. We will later expose our application to the internet using a web applicaion firewall enabled application gateway. Our first step is to ensure that our default settings for the nginx ingress controller managed by the AKS app routing addon ensures the ingress has only internal IP addresses. As of the time of writing, this is a preview feature that requires the use of aks-preview Azure CLI extension. If you do not have this installed, use the commands below to install it.
+
+```bash
+az extension add --name aks-preview
+```
+
+If you have a version of AKS-preview that is version 7.0.0b5 or later, you can just update it.
+
+```bash
+az extension update --name aks-preview
+```
+
+In addition, some preview features require you to register them. For example, to register the Deployment Safeguards feature
+
+```bash
+az feature register --namespace Microsoft.ContainerService --name SafeguardsPreview
+```
+
+Once this feature is registered, refresh the registration of the Microsoft.ContainerService provider
+
+```bash
+az provider register --namespace Microsoft.ContainerService
+```
+
+Now that you have enabled the preview feature, run the command below to update the default configuration of your app routing addon so that by default, it deploys ingress controllers with internal ip addresses.
+
+```bash
+az aks approuting update --resource-group $SPOKERG --name $AKSCLUSTERNAME --nginx Internal
+```
+
 ## Build Container Images
 
-Clone the required repos to the Dev Jumpbox:
+Clone the sample application Git Repo to the Dev Jumpbox:
 
-1. The Ratings API repo
-
-```bash
-cd ..
-git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-api.git
-```
-
-2. The Ratings Web repo
+1. The AKS Store Demo repo:
 
 ```bash
-git clone https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git
+cd
+git clone https://github.com/Azure-Samples/aks-store-demo
 ```
 
-Navigate to each of the application code directories, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
+Navigate to each application code directory, build and tag the containers with the name of your Azure Container Registry and push the images to ACR.
 
 *NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
 
 ```bash
-# enter the name of your ACR below
-SPOKERG=<resource group name for spoke>
-ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
-cd mslearn-aks-workshop-ratings-api
-sudo docker build . -t $ACRNAME.azurecr.io/ratings-api:v1
-cd ../mslearn-aks-workshop-ratings-web
-sudo docker build . -t $ACRNAME.azurecr.io/ratings-web:v1
+
+cd aks-store-demo/src
+
+# Change directory into each app folder and build/tag the image. Example:
+cd ai-service
+sudo docker build . -t $ACRNAME.azurecr.io/ai-service:v1
+
+# Do this for each app in the directory, there should be 8 in total. Remember to change the tag name for each folder:
+
+# e.g.
+# cd makeline-service
+# sudo docker build . -t $ACRNAME.azurecr.io/makeline-service:v1
 ```
 
-Log into ACR (Azure Container Registry)
+Now check all container images have built correctly:
 
-> :warning: If you run into issues logging into ACR this way, head to the portal and get login credentials from Access Keys tab in the left plane of your ACR.
+```bash
+sudo docker images
+```
+
+You should see output similar to
+
+```bash
+REPOSITORY                                         TAG       IMAGE ID       CREATED          SIZE
+eslzacrguilfdnvzjuum.azurecr.io/virtual-worker     v1        0d6da98b7a1f   12 minutes ago   97MB
+eslzacrguilfdnvzjuum.azurecr.io/virtual-customer   v1        a07be343f9d4   13 minutes ago   96.7MB
+eslzacrguilfdnvzjuum.azurecr.io/store-front        v1        692284db83ac   15 minutes ago   16.6MB
+eslzacrguilfdnvzjuum.azurecr.io/store-admin        v1        9fd83b91a176   17 minutes ago   15MB
+eslzacrguilfdnvzjuum.azurecr.io/product-service    v1        2056e083ede1   18 minutes ago   121MB
+eslzacrguilfdnvzjuum.azurecr.io/order-service      v1        6d68a60bacc4   25 minutes ago   172MB
+eslzacrguilfdnvzjuum.azurecr.io/makeline-service   v1        1a0232d81f29   26 minutes ago   27.6MB
+eslzacrguilfdnvzjuum.azurecr.io/ai-service         v1        fddf58277b93   29 minutes ago   431MB
+```
+
+## Log into Azure Container Registry
+
+You must now login to the ACR to upload the new images.
+
+> Notice this is being run as root because the command needs access to the Docker daemon (this is why you had to login twice earlier - once as 'azureuser' and once as 'root').
 
 ```bash
 sudo az acr login -n $ACRNAME
+# Login Succeeded
 ```
 
-Push the images into the container registry. Ensure you are logged into the Azure Container Registry, you should show a successful login from the command above.
+> NOTE: If this fails and requires providing username and password, you might have to log into your Azure Portal and head to the ACR instance. On the left panel under settings, click on Access Keys. You will see the admin username and password there if Admin user is enabled.
 
-*NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
+## Push the images to the container registry
 
 ```bash
-sudo docker push $ACRNAME.azurecr.io/ratings-api:v1
-sudo docker push $ACRNAME.azurecr.io/ratings-web:v1
+for i in $(sudo docker images | awk 'NR>1 { print $1}') ; do
+   (echo "Pushing $i" && sudo docker push $i:v1)
+done
 ```
 
-Create the secret in key vault. You may use anything you'd like for the username and password for the MongoDB database but this needs to match what you will use when you create the helm chart in the next steps.
-
-**Note:** Passwords with special characters in a connection string might break the connection because of wrong encoding.
-**Note:** Ensure you have access to create passwords in keyvault by going to the Key vault in Azure Portal, clicking on Access Policies and Add Access Policy. **Don't forget to hit "Save" after adding yourself or user group to Key vault access**
+As well as the custom images uploaded above, there are additional images which we can just import from a public repository. Import these using the `az acr import` command:
 
 ```bash
-# update keyvault name, username and password before running the command below
-KEYVAULTNAME=$(az deployment sub show -n "ESLZ-AKS-Supporting" --query properties.outputs.keyvaultName.value -o tsv)
-PGUSERNAME=<postgres db user name>
-PGPASSWORD=<postgres db password>
-az keyvault secret set --name mongodburi --vault-name $KEYVAULTNAME --value "mongodb://$PGUSERNAME:$PGPASSWORD@ratings-mongodb.ratingsapp:27017/ratingsdb"
+az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/mongo:4.2 --image mongo:4.2
+
+az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/rabbitmq:3.10-management-alpine --image rabbitmq:3.10-management-alpine
 ```
 
-# The following Steps can be performed using AKS Run Commands from your local machine provided you have the correct permissions.
-
-## Deploy the database into the cluster
-
-The following steps can be performed using AKS Run Commands from your local machine provided you have the correct permissions.
-
-Ensure the AKS run commands are working as expected.
+Ensure your ACR now has all the images you need by running the command below
 
 ```bash
-# create environment variable for cluster and its resource group name
-ClusterRGName=<cluster resource group name>
-ClusterName=<AKS cluster name>
-SPOKERG=<resource group name of spoke network default same as ClusterRGName>
-PGUSERNAME=<postgres db user name>
-PGPASSWORD=<postgres db password>
-echo $PGUSERNAME
-echo $PGPASSWORD
+az acr repository list --name $ACRNAME --output table
+
+# Result
+# ----------------
+# ai-service
+# makeline-service
+# mongo
+# order-service
+# product-service
+# rabbitmq
+# store-admin
+# store-front
+# virtual-customer
+# virtual-worker
+```
+
+You should also connect your AKS Cluster to the Azure Container Registry (ACR) so when it attempts to pull images it can authenticate correctly:
+
+```bash
+az aks update --name $AKSCLUSTERNAME  --resource-group $SPOKERG --attach-acr $ACRNAME
+```
+
+Now deploy the application using the HELM chart. Make sure to update the value of the containerRegistry in the command below to your ACR name:
+
+```bash
+cd $HOME/AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+
+helm install monkey-magic ./shoppingDemo --set containerRegistry=$ACRNAME.azurecr.io
+# apply the ingress controller
+kubectl apply -f shoppingDemo/templates/ingress-via-nginx-internal.yaml
+```
+
+After deployment, check the pods have created correctly:
+
+```bash
+kubectl get pods
+```
+
+A correct installation looks like this:
+
+```bash
+NAME                                READY   STATUS    RESTARTS   AGE
+makeline-service-57c7b44d6b-mqc97   1/1     Running   0          107s
+mongodb-0                           1/1     Running   0          107s
+order-service-6df845965-8kg27       1/1     Running   0          107s
+product-service-79f7cc5cd-fw6r2     1/1     Running   0          107s
+rabbitmq-0                          1/1     Running   0          107s
+store-admin-6d5cf5676-9cmrj         1/1     Running   0          107s
+store-front-56b745cbf-57f27         1/1     Running   0          107s
+virtual-customer-59d74777d6-qvwkd   1/1     Running   0          107s
+virtual-worker-69576c848b-49g24     1/1     Running   0          107s
 ```
 
 ```bash
-az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl get nodes"
+kubectl get ingress
 ```
-
-On the Kubernetes cluster, create a namespace for the Ratings Application.
 
 ```bash
-az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl create namespace ratingsapp"
+NAME               CLASS                                HOSTS   ADDRESS     PORTS   AGE
+internal-ingress   webapprouting.kubernetes.azure.com   *       10.1.1.10   80      14s
 ```
 
-The MongoDB backend application is installed using Helm. Your username and password must be the same username and password using in the connection string secret that was created in Key vault in the previous step.
+### Testing the application internally
+
+Your ingress controller is accessible from within the virtual network but not from the internet. Get the IP address of your ingress controller.
 
 ```bash
-az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "helm repo add bitnami https://charts.bitnami.com/bitnami && helm install ratings bitnami/mongodb --namespace ratingsapp --set auth.username=$PGUSERNAME,auth.password=$PGPASSWORD,auth.database=ratingsdb"
+INGRESS_IP=$(kubectl get svc -n app-routing-system -o jsonpath='{.items[*].status.loadBalancer.ingress[*].ip}')
 ```
 
-## Deploy the workload into the cluster
-
-In this section, you will be manipulating some of the deployment yaml files, replacing some entries related with Azure Key Vault, Azure Container Registry and Microsoft Entra ID references like ClientID, TenantID etc.
-
-All files will be under the following folder: "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp"
-
-You will have to carefully update the following files:
-
-- [api-secret-provider-class.yaml](../Apps/RatingsApp/api-secret-provider-class.yaml)
-- [1-ratings-api-deployment.yaml](../Apps/RatingsApp/1-ratings-api-deployment.yaml)
-- [3a-ratings-web-deployment.yaml](../Apps/RatingsApp/3a-ratings-web-deployment.yaml)
-- [4-ratings-web-service.yaml](../Apps/RatingsApp/4-ratings-web-service.yaml)
-
-### Deploy workload
-
-Navigate to "Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp" folder.
-
-1. Updating **api-secret-provider-class.yaml**
-
-   Update the **"api-secret-provider-class.yaml"** file to reflect the correct value for the following items:
-
-   - Key Vault name
-   - Client ID for the AKS Key Vault Add-on
-   - Tenant ID for the subscription.
-
-   *Note: if you are deploying to Azure US Government, you will also need to update the `cloudName` attribute to `AzureUSGovernment`.*
-
-   > If you don't have the Client ID, you can find it by going to the Key vault and clicking on **Access Policies** in the left blade. Find the identity that starts with "azurekeyvaultsecrets", then look for the resource by searching for the name in the search bar at the top. When you click on the resource, you will find the Client ID on the right side of the screen.
-
-   Deploy the edited yaml file.
-
-   ```bash
-   cd ../../Apps/RatingsApp
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f api-secret-provider-class.yaml -n ratingsapp" --file api-secret-provider-class.yaml
-   ```
-
-1. Updating **1-ratings-api-deployment.yaml**
-
-   Update the **"1-ratings-api-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
-
-   *NOTE: if you deploying to Azure US Government, you need to ensure the image name is suffixed with `.azurecr.us`.*
-
-   ```bash
-      az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl apply -f 1-ratings-api-deployment.yaml -n ratingsapp" --file 1-ratings-api-deployment.yaml
-   ```
-
-1. Ensure the ratings-api deployment was successful.
-
-   If you don't get a running state then it is likely that the pod was unable to get the secret from Key vault. This may be because the username and password of the db doesn't match the connection string that was created in Key vault, **api-secret-provider-class.yaml** file wasn't updated properly or because the proper access to the Key vault wasn't granted to the azuresecret identity.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName   --command "kubectl get pods -n ratingsapp"
-   ```
-
-   You can troubleshoot container creation issues by running
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl describe pod <pod name> -n ratingsapp"
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl logs <pod name> -n ratingsapp"
-   ```
-
-1. Updating **2-ratings-api-service.yaml**
-
-   Deploy the "2-ratings-api-service.yaml" file.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 2-ratings-api-service.yaml -n ratingsapp" --file 2-ratings-api-service.yaml
-   ```
-
-1. Updating **3a-ratings-web-deployment.yaml**
-
-   Update the **"3a-ratings-web-deployment.yaml"** file to reflect the correct name for the Azure Container Registry. Deploy the file.
-
-   _NOTE: if you deploying to Azure US Government, you need to ensure the image name is suffixed with `.azurecr.us`._
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 3a-ratings-web-deployment.yaml -n ratingsapp" --file 3a-ratings-web-deployment.yaml
-   ```
-
-1. Deploy the "4-ratings-web-service.yaml" file.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 4-ratings-web-service.yaml -n ratingsapp" --file 4-ratings-web-service.yaml
-   ```
-
-## **(Optional)** Deploy the Ingress without support for HTTPS
-
-This step is optional. If you would like to go straight to using https which is the secure option, skip this section and go straight to the **Update the Ingress to support HTTPS traffic** section.
-
-It is important to first configure the NSG for the Application Gateway to accept traffic on port 80 if using the HTTP option. Run the following command to allow HTTP.
+Use `curl` command to test that the application is running in the cluster and the ingress was configured properly
 
 ```bash
-   APPGWNSG=<name of nsg for app gateway subnet default APPGW-NSG>
-   az network nsg rule create -g $SPOKERG --nsg-name $APPGWNSG -n AllowHTTPInbound --priority 222 \
-      --source-address-prefixes '*' --source-port-ranges '*' \
-      --destination-address-prefixes '*' --destination-port-ranges 80 --access Allow \
-      --protocol Tcp --description "Allow Inbound traffic through the Application Gateway on port 80"
+curl $INGRESS_IP
 ```
-
-1. Deploy the **"5-ratings-web-ingress.yaml"** file.
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 5a-http-ratings-web-ingress.yaml -n ratingsapp" --file 5a-http-ratings-web-ingress.yaml
-   ```
-
-1. Get the ip address of your ingress controller
-
-   ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl get ingress -n ratingsapp"
-   ```
-
-### Check your deployed workload
-
-1. Copy the ip address displayed, open a browser, navigate to the IP address obtained above from the ingress controller and explore your website
-
-   ![deployed workload](../media/deployed-workload.png)
-
-It is important to delete the rule that allows HTTP traffic to keep the cluster safe since we have completed the test.
 
 ```bash
-   az network nsg rule delete -g $SPOKERG --nsg-name $APPGWNSG -n AllowHTTPInbound
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/js/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without JavaScript enabled. Please enable it to continue.
 ```
 
-A few seconds after you delete the rule, you should no longer be able to access the website with the IP address on a **new** browser
-**the optional steps end here**
-
-## Deploy the Ingress with HTTPS support
-
-A fully qualified DNS name and a certificate are needed to configure HTTPS support on the the front end of the web application. You are welcome to bring your own certificate and DNS if you have them available, however a simple way to demonstrate this is to use a letsencrypt certificate with an FQDN configured on the IP address used by the Application Gateway.
-
-**Objectives**
-
-1. Configure the Public IP address of your Application Gateway to have a DNS name. It will be in the format of <customPrefix>.<region>.cloudapp.azure.com
-1. Secure the web application using TLS
-
-### Creating Public IP address for your Application Gateway
-
-1. Find your application gateway in your landing zone resource group and click on it. By default it should be in the spoke resource group.
-
-2. Click on the *Frontend public IP address*
-
-   ![front end public ip address](../media/front-end-pip-link.png)
-
-3. Click on configuration in the left blade of the resulting page.
-
-4. Enter a unique DNS name in the field provided and click **Save**.
-
-   ![creating nds](../media/dns-created.png)
-
-### Add Firewall Rule
-
-We need to allow Let's Encrypt, which we will get running on our cluster in the next step, to be able to call itself via our Application Gateway. Add a rule in the Firewall to permit traffic from the cluster to the Public IP of your Application Gateway using these commands:
- 
-```bash
-az config set extension.use_dynamic_install=yes_without_prompt
-APPGW_PIP="$(az network public-ip show --resource-group $ClusterRGName --name 'APPGW-PIP' --query '{address: ipAddress}' -o tsv)"
-az network firewall network-rule create --collection-name 'aks-egress-to-application-gateway' --destination-ports '*' --firewall-name 'AZFW' --name 'Allow-AppGW' --protocols Tcp --resource-group 'ESLZ-HUB' --action Allow --dest-addr $APPGW_PIP --source-addresses '10.1.1.0/24' --priority 350
-```
-
-### Create the self-signed certificate using Lets Encrypt
-
-We are going to use Lets Encrypt and Cert-Manager to provide easy to use certificate management for the application within AKS. Cert-Manager will also handle future certificate renewals removing any manual processes.
-
-1. First of all, you will need to install cert-manager into your cluster.
+The ingress controller is also able to reach the store-admin service
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml"
-
+curl $INGRESS_IP/admin
 ```
-
-First of all this will create a new namespace called cert-manager which is where all of the resources for cert-manager will be kept. This will then go ahead and download some CRDs (CustomResourceDefinitions) which provides extra functionality in the cluster for the creation of certificates.
-
-We will then proceed to test this certificate process with a staging certificate. For production, get a certificate from a certified authority.
-
-2. Edit the 'certificateIssuer.yaml' file and include your email address. This will be used for certificate renewal notifications.
-
-Deploy certificateIssuer.yaml
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f certificateIssuer.yaml -n ratingsapp" --file certificateIssuer.yaml
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>store-admin</title><script defer="defer" src="/js/chunk-vendors.ee0766ad.js"></script><script defer="defer" src="/js/app.3a737ea9.js"></script><link href="/css/app.3505fa4f.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-admin doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
 ```
 
-3. Edit the '5-https-ratings-web-ingress.yaml' file with the FQDN of your host that you created earlier on the public IP of the Application Gateway.
+You should see HTML code of the front end web application. If it was configured correctly, there will be no "nginx" in the HTML
 
-Deploy 5-https-ratings-web-ingress.yaml
+### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
+
+As part of our Bicep deployment code, we already created a backend pool, routing rule, HTTP rules, a PUBLIC frontend IP configuration and a HTTP Listener for the App gateway. This will allow us to expose our app externally with our WAF enabled App gateway. Run the application-gateway address-pool command to add the ingress IP address to the backend pool.
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file 5-https-ratings-web-ingress.yaml
-
+BACKENDPOOLNAME=aksAppRoutingPool
+# change APPGW below to the correct app gateway name
+az network application-gateway address-pool update \
+  --resource-group $SPOKERG \
+  --gateway-name APPGW \
+  --name $BACKENDPOOLNAME \
+  --servers $INGRESS_IP
 ```
 
-After updating the ingress, A request will be sent to letsEncrypt to provide a 'staging' certificate. This can take a few minutes. You can check on the progress by running the below command. When the status Ready = True. You should be able to browse to the same URL you configured on the PIP of the Application Gateway earlier.
+To get the public AppGw IP address for public access:
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl get certificate -n ratingsapp"
+az network public-ip show -g $SPOKERG -n APPGW-PIP --query ipAddress -o tsv
+
+# 74.241.209.184
 ```
 
-> :warning: Letsencrypt does not always work. If you continue to encounter issues whereby the status isnt changing to Ready = True, skip this step and test the optional http deployment above instead, then move on to the next step.
+Go on your browser and enter the IP address to access your application.
 
-If you notice the status is not changing after a few minutes, there could be a problem with your certificate request. You can gather more information by running a describe on the request using the below command.
+## Optional - Private DNS Zone
+
+If you need a private DNS zone which is integrated with AKS and accessible from the jump box, the following commands will create the DNS zone, create a private link on the VNET pointing to the new zone and then update AKS.
 
 ```bash
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl get certificaterequest -n ratingsapp"
-   az aks command invoke --resource-group $ClusterRGName --name $ClusterName --command "kubectl describe certificaterequest <certificaterequestname> -n ratingsapp"
+az network private-dns zone create --resource-group $SPOKERG --name private.contoso.com
 
+az network private-dns link vnet create --resource-group $SPOKERG --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
+
+ZONEID=$(az network private-dns zone show --resource-group $SPOKERG --name private.contoso.com --query "id" --output tsv)
+
+az aks approuting zone add --resource-group $SPOKERG --name $AKSCLUSTERNAME --ids=$ZONEID --attach-zones
 ```
 
-Upon navigating to your new FQDN you will see you receive a certificate warning because it is not a production certificate.
-![deployed workload https](../media/deployed-workload-https.png)
+Give it a few minutes, then you should be able to access the ingress resource from the jumpbox by running the command below
 
-Please note: Using LetsEncrypt staging certificates for your Application Gateway/Ingress Controller is only advised for non-production environments. If you are using Ingress Controllers in your production workloads, we recommend you to purchase a paid TLS certificate.
+```bash
+curl private.contoso.com
+```
 
-## Next Step
-
-:arrow_forward: [Deploy and test Azure Policy for AKS-LZA](./07b-QuickStartOptionalExtra.md)
-
-or
-
-:arrow_forward: [Cleanup](./08-cleanup.md)
+```bash
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/js/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without JavaScript enabled. Please enable it to continue.
+```
