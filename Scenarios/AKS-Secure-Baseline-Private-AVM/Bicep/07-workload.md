@@ -285,11 +285,6 @@ curl $INGRESS_IP/admin
 <!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>store-admin</title><script defer="defer" src="/js/chunk-vendors.ee0766ad.js"></script><script defer="defer" src="/js/app.3a737ea9.js"></script><link href="/css/app.3505fa4f.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-admin doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
 ```
 
-```bash
-<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"
-><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/js/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without JavaScript enabled. Please enable it to continue.
-```
-
 You should see HTML code of the front end web application. If it was configured correctly, there will be no "nginx" in the HTML
 
 ### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
@@ -328,4 +323,14 @@ az network private-dns link vnet create --resource-group $SPOKERG --name private
 ZONEID=$(az network private-dns zone show --resource-group $SPOKERG --name private.contoso.com --query "id" --output tsv)
 
 az aks approuting zone add --resource-group $SPOKERG --name $AKSCLUSTERNAME --ids=$ZONEID --attach-zones
+```
+
+Give it a few minutes, then you should be able to access the ingress resource from the jumpbox by running the command below
+
+```bash
+curl private.contoso.com
+```
+
+```bash
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/js/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without JavaScript enabled. Please enable it to continue.
 ```
