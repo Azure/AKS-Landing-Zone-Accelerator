@@ -10,8 +10,9 @@ param enableAutoScaling bool
 param autoScalingProfile object
 param aksadminaccessprincipalId string
 param kubernetesVersion string
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', utcNow('u'))}'
-param acrName string = 'eslzacr${uniqueString('acrvws', utcNow('u'))}'
+param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
+param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}'
+param aksClusterName string
 
 
 @allowed([
@@ -89,9 +90,9 @@ module workspace 'br/public:avm/res/operational-insights/workspace:0.3.4' = {
 
 module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2' = {
   scope: resourceGroup(rg.name)
-  name: 'aksCluster'
+  name: aksClusterName
   params: {
-    name: 'aksCluster'
+    name: aksClusterName
     primaryAgentPoolProfile: [
       {
         availabilityZones: [
@@ -152,10 +153,10 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     monitoringWorkspaceId: workspace.outputs.resourceId
     azurePolicyEnabled: true
     webApplicationRoutingEnabled: true
-    // dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
+    //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
     enableDnsZoneContributorRoleAssignment: true
-    // ingressApplicationGatewayEnabled: true
-    // appGatewayResourceId: appGateway.id
+    ingressApplicationGatewayEnabled: true
+    appGatewayResourceId: appGateway.id
     enableKeyvaultSecretsProvider: true
     managedIdentities: {
       userAssignedResourcesIds: [
@@ -170,7 +171,8 @@ module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.
   name: 'keyvault-aks-identity'
   params: {
     principalId: managedCluster.outputs.keyvaultIdentityClientId
-    resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
+    resourceId: keyVault.id
     roleDefinitionId: '00482a5a-887f-4fb3-b363-3b7fe8e74483'
     principalType: 'ServicePrincipal'
   }
@@ -181,7 +183,8 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
   name: 'acr-aks-identity'
   params: {
     principalId: managedCluster.outputs.kubeletidentityObjectId
-    resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
+    resourceId: ACR.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
     principalType: 'ServicePrincipal'
   }

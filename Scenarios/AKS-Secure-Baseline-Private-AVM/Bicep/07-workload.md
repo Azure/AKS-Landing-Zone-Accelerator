@@ -8,44 +8,67 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 
 ## Connecting to the Bastion Host
 
-1. Use Bastion Host to connect to the jumpbox.
-2. Enter the username and password (azureuser/Password123). If you have used a public key, then select upload private key (corresponding to the public key) to connect.
-3. Once you connect ensure you permit the site to read the content of your clipboard.
+The first major step to deploying the application is to connect to the jumpbox inside the private network and authenticate to Azure and the AKS cluster.
 
-* Clone the repository to the jumpbox.
+1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resource group, connect to the VM using the **Connect via Bastion** option using the credentials provided in the Bicep template (azureuser/Password123).
+
+1. If prompted, allow the browser to read the contents of your clipboard.
+
+1. From the jumpbox command line, clone the *aks-landing-Zone-Accelerator* repository which contains some setup scripts needed shortly.
 
    ```bash
+   cd
+
    git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator/
    ```
 
-* Run the script below to install the required tools (Az CLI, Docker, Kubectl, Helm etc). Navigate to "07-Workload" folder.
+1. Run the setup script to apply the latest updates to the jumpbox and to install other required packages.
 
    ```bash
    cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+
    chmod +x script.sh
+
    sudo ./script.sh
    ```
 
-* Login to Azure
+1. Login to Azure and select your subscription
 
    ```bash
-   TENANTID=<tenant id>
+   TENANTID=<your AAD tenant id>
+
    az login -t $TENANTID
    ```
+   If your account has access to multiple subscriptions, you will be prompted to select the one you wish to use.
 
-* Ensure you are connected to the correct subscription
+   Now login a second time whilst sudo'ed as root. *This is to get around a problem later where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it makes installation easier if that one command runs as root.*
+
+   ```bash
+   TENANTID=<your AAD tenant id>
+
+   sudo az login -t $TENANTID
+   ```
+
+1. If you selected the wrong subscription, it can be set correctly as shown.
 
    ```bash
    az account set --subscription <subscription id>
    ```
 
-* If you want to control Kubernetes directly from the jumpbox, you will need *kubectl* to be installed and to download the credentials:
+1. To control Kubernetes directly from the jumpbox, *kubectl* and the *kubelogin* commands must be installed.
+   ```bash
+   sudo snap install kubectl --classic
 
-  ```bash
-  # sudo snap install kubectl --classic
-  az aks get-credentials  --admin --name akscluster --resource-group aks-lza-spoke
-  kubectl get nodes
-  ```
+   sudo az aks install-cli
+   ```
+1. Download from Azure the configuration file for connecting to AKS.
+   ```bash
+   az aks get-credentials --name akscluster --resource-group aks-lza-spoke
+   ```
+1. Test the connection by requesting a list of nodes in the cluster (you will be asked to login again so that you can obtain an AKS specific token).
+   ```bash
+   kubectl get nodes
+   ```
 
 ## Build Container Images
 
@@ -54,7 +77,7 @@ Clone the sample application Git Repo to the Dev Jumpbox:
 1. The AKS Store Demo repo:
 
 ```bash
-cd ..
+cd
 git clone https://github.com/Azure-Samples/aks-store-demo
 ```
 
@@ -63,29 +86,51 @@ Navigate to each application code directory, build and tag the containers with t
 *NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
 
 ```bash
-# enter the name of your ACR below
+# Enter the name of your ACR below
 SPOKERG=AKS-LZA-SPOKE
 ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
 
 cd aks-store-demo/src
+
 # Change directory into each app folder and build/tag the image. Example:
 cd ai-service
 sudo docker build . -t $ACRNAME.azurecr.io/ai-service:v1
-#Do this for each app in the directory. There should be 8 in total.
 
+# Do this for each app in the directory, there should be 8 in total. Remember to change the tag name for each folder:
+
+# e.g.
+# cd makeline-service
+# sudo docker build . -t $ACRNAME.azurecr.io/makeline-service:v1
 ```
 
-Log into ACR (Azure Container Registry)
+Now check all container images have built correctly:
+```bash
+sudo docker images
+```
+You should see output similar to
+```bash
+REPOSITORY                                         TAG       IMAGE ID       CREATED          SIZE
+eslzacrguilfdnvzjuum.azurecr.io/virtual-worker     v1        0d6da98b7a1f   12 minutes ago   97MB
+eslzacrguilfdnvzjuum.azurecr.io/virtual-customer   v1        a07be343f9d4   13 minutes ago   96.7MB
+eslzacrguilfdnvzjuum.azurecr.io/store-front        v1        692284db83ac   15 minutes ago   16.6MB
+eslzacrguilfdnvzjuum.azurecr.io/store-admin        v1        9fd83b91a176   17 minutes ago   15MB
+eslzacrguilfdnvzjuum.azurecr.io/product-service    v1        2056e083ede1   18 minutes ago   121MB
+eslzacrguilfdnvzjuum.azurecr.io/order-service      v1        6d68a60bacc4   25 minutes ago   172MB
+eslzacrguilfdnvzjuum.azurecr.io/makeline-service   v1        1a0232d81f29   26 minutes ago   27.6MB
+eslzacrguilfdnvzjuum.azurecr.io/ai-service         v1        fddf58277b93   29 minutes ago   431MB
+```
 
-> :warning: If you run into issues logging into ACR, ensure your user account has the right RBAC permissions on the ACR resource and that the Jumpbox can reach the ACR from a networking standpoint.
+## Log into Azure Container Registry
 
+You must now login to the ACR to upload the new images.
+
+> Notice this is being run as root because the command needs access to the Docker daemon (this is why you had to login twice earlier - once as 'azureuser' and once as 'root').
 ```bash
 sudo az acr login -n $ACRNAME
+# Login Succeeded
 ```
 
-Push the images into the container registry. Ensure you are logged into the Azure Container Registry, you should show a successful login from the command above.
-
-*NOTE: If you are deploying to Azure US Government, use '.azurecr.us' instead of '.azurecr.io' in the commands below.*
+## Push the images to the container registry.
 
 ```bash
 for i in $(sudo docker images | awk 'NR>1 { print $1}') ; do
@@ -93,10 +138,11 @@ for i in $(sudo docker images | awk 'NR>1 { print $1}') ; do
 done
 ```
 
-In addition to the above, there are additional images which we can just import from a public repository. Import these using the `az acr import` command:
+As well as the custom images uploaded above, there are additional images which we can just import from a public repository. Import these using the `az acr import` command:
 
 ```bash
 az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/mongo:4.2 --image mongo:4.2
+
 az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/rabbitmq:3.10-management-alpine --image rabbitmq:3.10-management-alpine
 ```
 
@@ -109,14 +155,79 @@ az aks update --name "aksCluster" --resource-group "AKS-LZA-SPOKE" --attach-acr 
 Now deploy the application using the HELM chart. Make sure to update the value of the containerRegistry in the command below to your ACR name:
 
 ```bash
-cd 07-Workload
+cd $HOME/AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+
 helm install monkey-magic ./shoppingDemo --set containerRegistry=$ACRNAME.azurecr.io
 ```
+After deployment, check the pods have created correctly:
+```bash
+kubectl get pods
+```
+A correct installation looks like this:
+```bash
+NAME                                READY   STATUS    RESTARTS   AGE
+makeline-service-57c7b44d6b-mqc97   1/1     Running   0          107s
+mongodb-0                           1/1     Running   0          107s
+order-service-6df845965-8kg27       1/1     Running   0          107s
+product-service-79f7cc5cd-fw6r2     1/1     Running   0          107s
+rabbitmq-0                          1/1     Running   0          107s
+store-admin-6d5cf5676-9cmrj         1/1     Running   0          107s
+store-front-56b745cbf-57f27         1/1     Running   0          107s
+virtual-customer-59d74777d6-qvwkd   1/1     Running   0          107s
+virtual-worker-69576c848b-49g24     1/1     Running   0          107s
+```
 
-XXXXXXXXXXXXXXXXXXXXXX
+### Testing the application
+There are two ingress controllers configured in the cluster, Application Gateway (AppGW) which will expose the application to the internet and managed NGINX (Application Routing) for accessing from the jumpbox VM. Both are forwarding requests to the **store-front** service in Kubernetes.
 
-TODO: Setup ingress via AppGW and point to the store-front service
+In either case you can `curl` the website on an accessible IP address & port.
 
-XXXXXXXXXXXXXXXXXXXXXX
+To get the public AppGw IP address for public access:
+```bash
+az network public-ip show -g AKS-LZA-SPOKE -n APPGW-PIP --query ipAddress -o tsv
+
+# 74.241.209.184
+```
+
+To get the NodePort endpoint IP for jumpbox access:
+```bash
+kubectl describe endpoints/store-front
+
+# NAME          ENDPOINTS        AGE
+# store-front   10.1.1.60:8080   18m
+```
 
 
+```bash
+# curl 74.241.209.184
+# or 
+# curl 10.1.1.60:8080
+
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-
+scale=1"><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/j
+s/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without
+ JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>azureuser@jumpbox:~/AKS-Landing-Zone-Accelerator/Scenarios/AKS-S
+ecure-Baseline-Private-AVM/Bicep/07-Workload$ 
+```
+
+## Status
+
+The application has two web based services:
+
+1. *store-front* - This is the main application from where you can buy toys for your pet.
+2. *store-admin* - An administration site for the main application.
+
+Currently only the **store-front** application is exposed through Application Gateway and NGINX.
+
+## Optional - Private DNS Zone
+If you need a private DNS zone which is integrated with AKS and accessible from the jump box, the following commands will create the DNS zone, create a private link on the VNET pointing to the new zone and then update AKS.
+
+```
+az network private-dns zone create --resource-group aks-lza-spoke --name private.contoso.com
+
+az network private-dns link vnet create --resource-group aks-lza-spoke --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
+
+$ZONEID=$(az network private-dns zone show --resource-group aks-lza-spoke --name private.contoso.com --query "id" --output tsv)
+
+az aks approuting zone add --resource-group aks-lza-spoke --name aksCluster --ids=${$ZONEID} --attach-zones
+```
