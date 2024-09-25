@@ -3,7 +3,7 @@ targetScope = 'subscription'
 // Parameters
 param rgName string
 param vnetHubName string
-// param hubVNETaddPrefixes array
+param hubVNETaddPrefixes array
 param azfwName string
 param rtVMSubnetName string
 param fwapplicationRuleCollections array
@@ -11,16 +11,16 @@ param fwnetworkRuleCollections array
 param fwnatRuleCollections array
 param location string = deployment().location
 param availabilityZones array
-// param defaultSubnetName string
-// param defaultSubnetAddressPrefix string
-// param azureFirewallSubnetName string
-// param azureFirewallSubnetAddressPrefix string
-// param azureFirewallManagementSubnetName string
-// param azureFirewallManagementSubnetAddressPrefix string
-// param azureBastionSubnetName string
-// param azureBastionSubnetAddressPrefix string
-// param vmsubnetSubnetName string
-// param vmsubnetSubnetAddressPrefix string
+param defaultSubnetName string
+param defaultSubnetAddressPrefix string
+param azureFirewallSubnetName string
+param azureFirewallSubnetAddressPrefix string
+param azureFirewallManagementSubnetName string
+param azureFirewallManagementSubnetAddressPrefix string
+param azureBastionSubnetName string
+param azureBastionSubnetAddressPrefix string
+param vmsubnetSubnetName string
+param vmsubnetSubnetAddressPrefix string
 
 module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   name: rgName
@@ -31,43 +31,38 @@ module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   }
 }
 
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
+module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
+  scope: resourceGroup(rg.name)
   name: vnetHubName
-  scope: resourceGroup(rgName)
+  params: {
+    addressPrefixes: hubVNETaddPrefixes
+    name: vnetHubName
+    location: location
+    subnets: [
+      {
+        name: defaultSubnetName
+        addressPrefix: defaultSubnetAddressPrefix
+      }
+      {
+        name: azureFirewallSubnetName
+        addressPrefix: azureFirewallSubnetAddressPrefix
+      }
+      {
+        name: azureFirewallManagementSubnetName
+        addressPrefix: azureFirewallManagementSubnetAddressPrefix
+      }
+      {
+        name: azureBastionSubnetName
+        addressPrefix: azureBastionSubnetAddressPrefix
+      }
+      {
+        name: vmsubnetSubnetName
+        addressPrefix: vmsubnetSubnetAddressPrefix
+      }
+    ]
+    enableTelemetry: true
+  }
 }
-
-// module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
-//   scope: resourceGroup(rg.name)
-//   name: vnetHubName
-//   params: {
-//     addressPrefixes: hubVNETaddPrefixes
-//     name: vnetHubName
-//     location: location
-//     subnets: [
-//       {
-//         name: defaultSubnetName
-//         addressPrefix: defaultSubnetAddressPrefix
-//       }
-//       {
-//         name: azureFirewallSubnetName
-//         addressPrefix: azureFirewallSubnetAddressPrefix
-//       }
-//       {
-//         name: azureFirewallManagementSubnetName
-//         addressPrefix: azureFirewallManagementSubnetAddressPrefix
-//       }
-//       {
-//         name: azureBastionSubnetName
-//         addressPrefix: azureBastionSubnetAddressPrefix
-//       }
-//       {
-//         name: vmsubnetSubnetName
-//         addressPrefix: vmsubnetSubnetAddressPrefix
-//       }
-//     ]
-//     enableTelemetry: true
-//   }
-// }
 
 module publicIpFW 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   scope: resourceGroup(rg.name)
@@ -116,7 +111,7 @@ module bastionHost 'br/public:avm/res/network/bastion-host:0.1.1' = {
   name: 'bastion'
   params: {
     name: 'bastion'
-    vNetId: virtualNetwork.id
+    vNetId: virtualNetwork.outputs.resourceId
     bastionSubnetPublicIpResourceId: publicipbastion.outputs.resourceId
     location: location
     enableTelemetry: true
@@ -149,7 +144,7 @@ module azureFirewall 'br/public:avm/res/network/azure-firewall:0.1.1' = {
   params: {
     name: azfwName
     location: location
-    virtualNetworkResourceId: virtualNetwork.id
+    virtualNetworkResourceId: virtualNetwork.outputs.resourceId
     zones: availabilityZones
     publicIPResourceID: publicIpFW.outputs.resourceId
     managementIPResourceID: publicIpFWMgmt.outputs.resourceId

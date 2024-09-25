@@ -40,6 +40,7 @@ The first major step to deploying the application is to connect to the jumpbox i
 
    az login -t $TENANTID
    ```
+
    If your account has access to multiple subscriptions, you will be prompted to select the one you wish to use.
 
 1. If you selected the wrong subscription, it can be set correctly as shown.
@@ -98,6 +99,12 @@ Once this feature is registered, refresh the registration of the Microsoft.Conta
 
 ```bash
 az provider register --namespace Microsoft.ContainerService
+```
+
+Now that you have enabled the preview feature, run the command below to update the default configuration of your app routing addon so that by default, it deploys ingress controllers with internal ip addresses.
+
+```bash
+az aks approuting update --resource-group $SPOKERG --name $AKSCLUSTERNAME --nginx Internal
 ```
 
 ## Build Container Images
@@ -175,6 +182,25 @@ az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/m
 az acr import --name $ACRNAME --source mcr.microsoft.com/mirror/docker/library/rabbitmq:3.10-management-alpine --image rabbitmq:3.10-management-alpine
 ```
 
+Ensure your ACR now has all the images you need by running the command below
+
+```bash
+az acr repository list --name $ACRNAME --output table
+
+# Result
+# ----------------
+# ai-service
+# makeline-service
+# mongo
+# order-service
+# product-service
+# rabbitmq
+# store-admin
+# store-front
+# virtual-customer
+# virtual-worker
+```
+
 You should also connect your AKS Cluster to the Azure Container Registry (ACR) so when it attempts to pull images it can authenticate correctly:
 
 ```bash
@@ -208,6 +234,16 @@ virtual-customer-59d74777d6-qvwkd   1/1     Running   0          107s
 virtual-worker-69576c848b-49g24     1/1     Running   0          107s
 ```
 
+```bash
+kubectl get ingress
+```
+
+```bash
+NAME               CLASS                                HOSTS   ADDRESS     PORTS   AGE
+internal-ingress   webapprouting.kubernetes.azure.com   *       10.1.1.10   80      14s
+```
+
+
 ### Testing the application internally
 Your ingress controller is accessible from within the virtual network but not from the internet. Get the IP address of your ingress controller.
 
@@ -224,28 +260,21 @@ curl $INGRESS_IP/front
 You should see HTML code of the front end web applicatoin. If it was configured correctly, there will be no "nginx" in the HTML
 
 ### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
-First we create a backend pool name, and create the backend pool.
+
+As part of our Bicep deployment code, we already created a backend pool, routing rule, HTTP rules, a PUBLIC frontend IP configuration and a HTTP Listener. This will allow us to expose our app externally with our WAF enabled App gateway. Run the application-gateway address-pool command to add the ingress IP address to the backend pool.
+
 ```bash
 BACKENDPOOLNAME=aksAppRoutingPool
 # change APPGW below to the correct app gateway name
 az network application-gateway address-pool update \
   --resource-group $SPOKERG \
-  --gateway-name APPGW \ 
-  --name $BACKENDPOOLNAME \
-  --servers $INGRESS_IP
-
-```
-
-We then run the application-gateway address-pool command to add the ingress IP address to the backend pool.
-```bash
-az network application-gateway address-pool update \
-  --resource-group $SPOKERG \
   --gateway-name APPGW \
   --name $BACKENDPOOLNAME \
-  --servers $external_ip
+  --servers $INGRESS_IP
 ```
 
-Crete HTTP Listeenr, HTTP settings and Routing rules.
+Create HTTP Listener leveraging the already created Backend pool, http rules and Front end IP configuration.
+
 ```bash
 az network application-gateway http-listener create \
   --resource-group $SPOKERG \

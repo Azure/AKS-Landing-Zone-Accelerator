@@ -283,9 +283,8 @@ param autoScalingProfile object = {
   skipNodesWithLocalStorage: 'false'
   skipNodesWithSystemPods: 'true'
 }
-param aksadminaccessprincipalId string = 'b6723f14-bfbe-441c-99bb-55d4e5d971ad'
+param aksadminaccessprincipalId string = ''
 param kubernetesVersion string = '1.30'
-//param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
 param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
 
@@ -306,22 +305,22 @@ module networkHub '../Bicep/03-Network-Hub/main.bicep' = {
     rgName: rgHubName
     availabilityZones: availabilityZones
     vnetHubName: vnetHubName
-    // hubVNETaddPrefixes: hubVNETaddPrefixes
     azfwName: azfwName
     rtVMSubnetName: rtVMSubnetName
     fwapplicationRuleCollections: fwapplicationRuleCollections
     fwnetworkRuleCollections: fwnetworkRuleCollections
     fwnatRuleCollections: fwnatRuleCollections
-    // defaultSubnetName: defaultSubnetName
-    // defaultSubnetAddressPrefix: defaultSubnetAddressPrefix
-    // azureFirewallSubnetName: azureFirewallSubnetName
-    // azureFirewallSubnetAddressPrefix: azureFirewallSubnetAddressPrefix
-    // azureFirewallManagementSubnetName: azureFirewallManagementSubnetName
-    // azureFirewallManagementSubnetAddressPrefix: azureFirewallManagementSubnetAddressPrefix
-    // azureBastionSubnetName: azureBastionSubnetName
-    // azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
-    // vmsubnetSubnetName: vmsubnetSubnetName
-    // vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
+    hubVNETaddPrefixes: hubVNETaddPrefixes
+    defaultSubnetName: defaultSubnetName
+    defaultSubnetAddressPrefix: defaultSubnetAddressPrefix
+    azureFirewallSubnetName: azureFirewallSubnetName
+    azureFirewallSubnetAddressPrefix: azureFirewallSubnetAddressPrefix
+    azureFirewallManagementSubnetName: azureFirewallManagementSubnetName
+    azureFirewallManagementSubnetAddressPrefix: azureFirewallManagementSubnetAddressPrefix
+    azureBastionSubnetName: azureBastionSubnetName
+    azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
+    vmsubnetSubnetName: vmsubnetSubnetName
+    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
   }
 }
 
@@ -356,7 +355,7 @@ module networkSpoke '../Bicep/04-Network-LZ/main.bicep' = {
 /////////////////
 
 module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
-  name: 'aksSupportingg'
+  name: 'aksSupporting'
   params: {
     rgName: rgSpokeName
     vnetName: vnetSpokeName
@@ -375,7 +374,7 @@ module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
 /////////////////
 
 module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
-  name: 'aksClusterr'
+  name: 'aksCluster'
   params: {
     rgName: rgSpokeName
     vnetName: vnetSpokeName
