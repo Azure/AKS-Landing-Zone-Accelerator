@@ -35,6 +35,8 @@ There is only a few steps required to deploy the template:
 
 ### Step 2 - Launch the template to create the infrastructure.
 
+#### Option 1: Using the Deploy to Azure Button
+
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.portal.ui.json)
 
 Right-click the blue button above and choose *Open link in new tab* to open the Azure Portal. This will download the template from GitHub and open a custom form from where you can edit several of the key default parameter values built into the template.
@@ -46,6 +48,18 @@ Now press the **Review + Create** button, followed by **Create** to start the de
 > You may use the button below to run the template with an auto-generated UI. This provides access to ALL the configurable settings in the template.
 >
 > [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fdd-all-in-one-avm%2FScenarios%2FAKS-Secure-Baseline-Private-AVM%2FAll-in-One-Bicep%2Fmain.json)
+
+#### Option 2: Using Azure CLI
+
+Log into your Azure CLI and run the command below
+
+```bash
+LOCATION=<Your azure region>
+```
+
+```bash
+az deployment sub create --location $LOCATION --template-file main.bicep --parameters @main.json --name aksLZAAllInOne
+```
 
 
    

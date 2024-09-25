@@ -31,15 +31,7 @@ The first major step to deploying the application is to connect to the jumpbox i
 
    sudo ./script.sh
    ```
-
-1. Set environment variables
-
-   ```bash
-      # Enter the name of your ACR below
-      SPOKERG=AKS-LZA-SPOKE
-      AKSCLUSTERNAME=$(az aks list -g $SPOKERG --query [0].name -o tsv)
-      ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
-   ```
+   NOTE: You might need to hit Enter when it says "Restarting services..."
 
 1. Login to Azure and select your subscription
 
@@ -50,19 +42,23 @@ The first major step to deploying the application is to connect to the jumpbox i
    ```
    If your account has access to multiple subscriptions, you will be prompted to select the one you wish to use.
 
-   Now login a second time whilst sudo'ed as root. *This is to get around a problem later where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it makes installation easier if that one command runs as root.*
-
-   ```bash
-   TENANTID=<your AAD tenant id>
-
-   sudo az login -t $TENANTID
-   ```
-
 1. If you selected the wrong subscription, it can be set correctly as shown.
 
    ```bash
    az account set --subscription <subscription id>
    ```
+
+1. Set environment variables
+
+   ```bash
+      # Enter the name of your ACR below
+      SPOKERG=AKS-LZA-SPOKE
+      AKSCLUSTERNAME=$(az aks list -g $SPOKERG --query [0].name -o tsv)
+      ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
+   ```
+
+   Now login a second time whilst sudo'ed as root. *This is to get around a problem later where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it makes installation easier if that one command runs as root.*
+
 
 1. To control Kubernetes directly from the jumpbox, *kubectl* and the *kubelogin* commands must be installed.
    ```bash
@@ -216,13 +212,13 @@ virtual-worker-69576c848b-49g24     1/1     Running   0          107s
 Your ingress controller is accessible from within the virtual network but not from the internet. Get the IP address of your ingress controller.
 
 ```bash
-external_ip=$(kubectl get svc -n app-routing-system -o jsonpath='{.items[*].status.loadBalancer.ingress[*].ip}')
+INGRESS_IP=$(kubectl get svc -n app-routing-system -o jsonpath='{.items[*].status.loadBalancer.ingress[*].ip}')
 ```
 
 Use `curl` command to test that the application is running in the cluster and the ingress was configured properly
 
 ```bash
-curl $external_ip/front
+curl $INGRESS_IP/front
 ```
 
 You should see HTML code of the front end web applicatoin. If it was configured correctly, there will be no "nginx" in the HTML
@@ -230,12 +226,13 @@ You should see HTML code of the front end web applicatoin. If it was configured 
 ### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
 First we create a backend pool name, and create the backend pool.
 ```bash
-BACKENDPOOLNAME=aksnginxingress
-
-az network application-gateway address-pool create \
+BACKENDPOOLNAME=aksAppRoutingPool
+# change APPGW below to the correct app gateway name
+az network application-gateway address-pool update \
   --resource-group $SPOKERG \
-  --gateway-name APPGW \
-  --name $BACKENDPOOLNAME
+  --gateway-name APPGW \ 
+  --name $BACKENDPOOLNAME \
+  --servers $INGRESS_IP
 
 ```
 
@@ -247,6 +244,17 @@ az network application-gateway address-pool update \
   --name $BACKENDPOOLNAME \
   --servers $external_ip
 ```
+
+Crete HTTP Listeenr, HTTP settings and Routing rules.
+```bash
+az network application-gateway http-listener create \
+  --resource-group $SPOKERG \
+  --gateway-name APPGW \
+  --name myHttpListener \
+  --frontend-ip appGatewayFrontendIP \
+  --frontend-port 80
+```
+
 
 
 To get the public AppGw IP address for public access:

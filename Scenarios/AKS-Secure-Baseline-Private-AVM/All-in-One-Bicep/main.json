@@ -11,7 +11,7 @@
   "parameters": {
     "rgHubName": {
       "type": "string",
-      "defaultValue": "AKS-LZA-HUBB"
+      "defaultValue": "AKS-LZA-HUB"
     },
     "vnetHubName": {
       "type": "string",
@@ -240,7 +240,7 @@
     },
     "rgSpokeName": {
       "type": "string",
-      "defaultValue": "AKS-LZA-SPOKEE"
+      "defaultValue": "AKS-LZA-SPOKE"
     },
     "vnetSpokeName": {
       "type": "string",
@@ -342,14 +342,6 @@
     "privateDNSZoneSAName": {
       "type": "string",
       "defaultValue": "[format('privatelink.file.{0}', environment().suffixes.storage)]"
-    },
-    "acrName": {
-      "type": "string",
-      "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
-    },
-    "keyvaultName": {
-      "type": "string",
-      "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', uniqueString(subscription().id)))]"
     },
     "storageAccountName": {
       "type": "string",

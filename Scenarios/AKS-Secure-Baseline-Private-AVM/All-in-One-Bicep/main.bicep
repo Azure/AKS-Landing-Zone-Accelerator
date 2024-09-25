@@ -13,7 +13,7 @@ targetScope = 'subscription'
 /////////////////
 // 03-network-Hub
 /////////////////
-param rgHubName string = 'AKS-LZA-HUBB'
+param rgHubName string = 'AKS-LZA-HUB'
 param vnetHubName string = 'VNet-HUB'
 param hubVNETaddPrefixes array = ['10.0.0.0/16']
 param azfwName string = 'AZFW'
@@ -214,7 +214,7 @@ param availabilityZones array = ['1', '2', '3']
 // 04-Network-LZ
 /////////////////
 
-param rgSpokeName string = 'AKS-LZA-SPOKEE'
+param rgSpokeName string = 'AKS-LZA-SPOKE'
 param vnetSpokeName string = 'VNet-SPOKE'
 //param availabilityZones array = ['1', '2', '3']
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
@@ -250,9 +250,7 @@ param subnetName string = 'servicespe'
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
 param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
 param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.storage}'
-param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}'
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
-param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id))}'
+param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id, utcNow()))}'
 param storageAccountType string = 'Standard_GZRS'
 
 /////////////////
@@ -308,22 +306,22 @@ module networkHub '../Bicep/03-Network-Hub/main.bicep' = {
     rgName: rgHubName
     availabilityZones: availabilityZones
     vnetHubName: vnetHubName
-    hubVNETaddPrefixes: hubVNETaddPrefixes
+    // hubVNETaddPrefixes: hubVNETaddPrefixes
     azfwName: azfwName
     rtVMSubnetName: rtVMSubnetName
     fwapplicationRuleCollections: fwapplicationRuleCollections
     fwnetworkRuleCollections: fwnetworkRuleCollections
     fwnatRuleCollections: fwnatRuleCollections
-    defaultSubnetName: defaultSubnetName
-    defaultSubnetAddressPrefix: defaultSubnetAddressPrefix
-    azureFirewallSubnetName: azureFirewallSubnetName
-    azureFirewallSubnetAddressPrefix: azureFirewallSubnetAddressPrefix
-    azureFirewallManagementSubnetName: azureFirewallManagementSubnetName
-    azureFirewallManagementSubnetAddressPrefix: azureFirewallManagementSubnetAddressPrefix
-    azureBastionSubnetName: azureBastionSubnetName
-    azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
-    vmsubnetSubnetName: vmsubnetSubnetName
-    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
+    // defaultSubnetName: defaultSubnetName
+    // defaultSubnetAddressPrefix: defaultSubnetAddressPrefix
+    // azureFirewallSubnetName: azureFirewallSubnetName
+    // azureFirewallSubnetAddressPrefix: azureFirewallSubnetAddressPrefix
+    // azureFirewallManagementSubnetName: azureFirewallManagementSubnetName
+    // azureFirewallManagementSubnetAddressPrefix: azureFirewallManagementSubnetAddressPrefix
+    // azureBastionSubnetName: azureBastionSubnetName
+    // azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
+    // vmsubnetSubnetName: vmsubnetSubnetName
+    // vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
   }
 }
 
@@ -366,8 +364,6 @@ module aksSupporting '../Bicep/05-AKS-Supporting/main.bicep' = {
     privateDNSZoneACRName: privateDNSZoneACRName
     privateDNSZoneKVName: privateDNSZoneKVName
     privateDNSZoneSAName: privateDNSZoneSAName
-    acrName: acrName
-    keyvaultName: keyvaultName
     storageAccountName: storageAccountName
     storageAccountType: storageAccountType
   }
@@ -384,17 +380,15 @@ module aksCluster '../Bicep/06-AKS-Cluster/main.bicep' = {
     rgName: rgSpokeName
     vnetName: vnetSpokeName
     subnetName: aksSubnetName
-    appGatewayName: appGatewayName
     aksIdentityName: aksIdentityName
     //location: deployment().location
     enableAutoScaling: enableAutoScaling
     autoScalingProfile: autoScalingProfile
     aksadminaccessprincipalId: aksadminaccessprincipalId
     kubernetesVersion: kubernetesVersion
-    keyvaultName: keyvaultName
+    keyvaultName: aksSupporting.outputs.keyVaultName
     networkPlugin: networkPlugin
-    acrName: acrName
+    acrName: aksSupporting.outputs.acrName
     aksClusterName: aksClusterName
   }
-  dependsOn: [aksSupporting]
 }

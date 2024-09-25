@@ -3,15 +3,16 @@ targetScope = 'subscription'
 param rgName string
 param vnetName string
 param subnetName string
-param appGatewayName string
 param aksIdentityName string
 param location string = deployment().location
 param enableAutoScaling bool
 param autoScalingProfile object
 param aksadminaccessprincipalId string
 param kubernetesVersion string
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id))}'
-param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id))}'
+@description('The name of the keyVault you deployed in the previous step (check Azure portal if you need to).')
+param keyvaultName string 
+@description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
+param acrName string 
 param aksClusterName string
 
 
@@ -44,11 +45,6 @@ resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existi
   scope: resourceGroup(rg.name)
   name: '${vnetName}/${subnetName}'
 }
-
-// resource appGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing = {
-//   scope: resourceGroup(rg.name)
-//   name: appGatewayName
-// }
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   scope: resourceGroup(rg.name)
@@ -155,8 +151,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     webApplicationRoutingEnabled: true
     //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
     enableDnsZoneContributorRoleAssignment: true
-    ingressApplicationGatewayEnabled: false
-    // appGatewayResourceId: appGateway.id
+    httpApplicationRoutingEnabled: true
     enableKeyvaultSecretsProvider: true
     managedIdentities: {
       userAssignedResourcesIds: [

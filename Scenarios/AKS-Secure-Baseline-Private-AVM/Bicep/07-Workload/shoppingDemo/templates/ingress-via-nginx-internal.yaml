@@ -18,14 +18,14 @@ spec:
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: store-admin
+            name: store-front
             port:
               number: 80
         path: /admin(/|$)(.*)
         pathType: ImplementationSpecific
       - backend:
           service:
-            name: store-front
+            name: store-admin
             port:
               number: 80
         path: /

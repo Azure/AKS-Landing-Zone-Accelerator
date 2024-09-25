@@ -7,7 +7,7 @@ param appGwyAutoScale object
 var frontendPortName = 'HTTP-80'
 var frontendIPConfigurationName = 'appGatewayFrontendIP'
 var httplistenerName = 'httplistener'
-var backendAddressPoolName = 'backend-add-pool'
+var backendAddressPoolName = 'aksAppRoutingPool'
 var backendHttpSettingsCollectionName = 'backend-http-settings'
 param availabilityZones array
 
