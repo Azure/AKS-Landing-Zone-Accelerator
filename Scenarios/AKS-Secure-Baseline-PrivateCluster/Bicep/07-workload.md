@@ -83,7 +83,7 @@ The first major step to deploying the application is to connect to the jumpbox i
 
 ### Control the default NGINX ingress controller configuration (preview)
 
-As part of deploying our AKS environment, we enabled the [AKS app routing addon](https://learn.microsoft.com/en-us/azure/aks/app-routing). For better security, we will ensure that our applications, including the ingress controller are only available within the internal network of your orgnization. We will later expose our application to the internet using a web applicaion firewall enabled application gateway. Our first step is to ensure that our default settings for the nginx ingress controller managed by the AKS app routing addon ensures the ingress has only internal IP addresses. As of the time of writing, this is a preview feature that requires the use of aks-preview Azure CLI extension. If you do not have this installed, use the commands below to install it.
+As part of deploying our AKS environment, we enabled the [AKS app routing addon](https://learn.microsoft.com/en-us/azure/aks/app-routing). For better security, we will ensure that our applications, including the ingress controller are only available within the internal network of your organization. We will later expose our application to the internet using a web application firewall enabled application gateway. Our first step is to ensure that our default settings for the nginx ingress controller managed by the AKS app routing addon ensures the ingress has only internal IP addresses. As of the time of writing, this is a preview feature that requires the use of aks-preview Azure CLI extension. If you do not have this installed, use the commands below to install it.
 
 ```bash
 az extension add --name aks-preview

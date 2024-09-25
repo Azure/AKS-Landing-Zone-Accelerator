@@ -10,7 +10,7 @@ However if you need to deploy multiple clusters, manual deployment can become ra
 
 This button links to a single all-in-one template which is located in this same folder as the page you are reading.
 
-> At time of writing, the Azure Portal cannot directly work with Bicep files which have been linked with the **Deploy to Azure** button. Therefore after every change to the file, a developer must run `bicep build main.bicep --outfile main.json` to transpile this into a traditional ARM json template. It is this latter file which the Azure Portal downloads and deploys.
+> At time of writing, the Azure Portal cannot directly work with Bicep files which have been linked with the **Deploy to Azure** button. Therefore after every change to the file, a developer must run `az bicep build --file main.bicep --outfile main.json` to transpile this into a traditional ARM json template. It is this latter file which the Azure Portal downloads and deploys.
 
 ## Running the deployment
 
