@@ -1,6 +1,6 @@
 # Deploy a Basic Workload using the AKS-Store-Demo Application
 
-This application consists of a group of containerized microservices that can be easily deployed into an Azure Kubernetes Service (AKS) cluster. This is meant to show a realistic scenario using a polyglot architecture, event-driven design, and common open source back-end services (eg - RabbitMQ, MongoDB). The application also leverages OpenAI's GPT-3 models to generate product descriptions. You can find out more about the application at https://github.com/Azure-Samples/aks-store-demo
+This application consists of a group of containerized microservices that can be easily deployed into an Azure Kubernetes Service (AKS) cluster. This is meant to show a realistic scenario using a polyglot architecture, event-driven design, and common open source back-end services (eg - RabbitMQ, MongoDB). The application also leverages OpenAI's GPT-3 models to generate product descriptions. You can find out more about the application at https://github.com/Azure-Samples/aks-store-demo.
 
 As the infrastructure has been deployed in a private AKS cluster setup with private endpoints for the container registry and other components, you will need to perform the application container build and the publishing to the Container Registry from the Dev Jumpbox in the Hub VNET, connecting via the Bastion Host service.
 
@@ -31,6 +31,7 @@ The first major step to deploying the application is to connect to the jumpbox i
 
    sudo ./script.sh
    ```
+
    NOTE: You might need to hit Enter when it says "Restarting services..."
 
 1. Login to Azure and select your subscription
@@ -60,23 +61,28 @@ The first major step to deploying the application is to connect to the jumpbox i
 
    Now login a second time whilst sudo'ed as root. *This is to get around a problem later where an Azure Container Registry command needs access to AZ access tokens AND the Docker Daemon at the same time - it makes installation easier if that one command runs as root.*
 
-
 1. To control Kubernetes directly from the jumpbox, *kubectl* and the *kubelogin* commands must be installed.
+
    ```bash
    sudo snap install kubectl --classic
 
    sudo az aks install-cli
    ```
+
 1. Download from Azure the configuration file for connecting to AKS.
+
    ```bash
    az aks get-credentials --name $AKSCLUSTERNAME --resource-group $SPOKERG
    ```
+
 1. Test the connection by requesting a list of nodes in the cluster (you will be asked to login again so that you can obtain an AKS specific token).
+
    ```bash
    kubectl get nodes
    ```
 
 ### Control the default NGINX ingress controller configuration (preview)
+
 As part of deploying our AKS environment, we enabled the [AKS app routing addon](https://learn.microsoft.com/en-us/azure/aks/app-routing). For better security, we will ensure that our applications, including the ingress controller are only available within the internal network of your orgnization. We will later expose our application to the internet using a web applicaion firewall enabled application gateway. Our first step is to ensure that our default settings for the nginx ingress controller managed by the AKS app routing addon ensures the ingress has only internal IP addresses. As of the time of writing, this is a preview feature that requires the use of aks-preview Azure CLI extension. If you do not have this installed, use the commands below to install it.
 
 ```bash
@@ -138,10 +144,13 @@ sudo docker build . -t $ACRNAME.azurecr.io/ai-service:v1
 ```
 
 Now check all container images have built correctly:
+
 ```bash
 sudo docker images
 ```
+
 You should see output similar to
+
 ```bash
 REPOSITORY                                         TAG       IMAGE ID       CREATED          SIZE
 eslzacrguilfdnvzjuum.azurecr.io/virtual-worker     v1        0d6da98b7a1f   12 minutes ago   97MB
@@ -159,6 +168,7 @@ eslzacrguilfdnvzjuum.azurecr.io/ai-service         v1        fddf58277b93   29 m
 You must now login to the ACR to upload the new images.
 
 > Notice this is being run as root because the command needs access to the Docker daemon (this is why you had to login twice earlier - once as 'azureuser' and once as 'root').
+
 ```bash
 sudo az acr login -n $ACRNAME
 # Login Succeeded
@@ -216,11 +226,15 @@ helm install monkey-magic ./shoppingDemo --set containerRegistry=$ACRNAME.azurec
 # apply the ingress controller
 kubectl apply -f shoppingDemo/templates/ingress-via-nginx-internal.yaml
 ```
+
 After deployment, check the pods have created correctly:
+
 ```bash
 kubectl get pods
 ```
+
 A correct installation looks like this:
+
 ```bash
 NAME                                READY   STATUS    RESTARTS   AGE
 makeline-service-57c7b44d6b-mqc97   1/1     Running   0          107s
@@ -243,8 +257,8 @@ NAME               CLASS                                HOSTS   ADDRESS     PORT
 internal-ingress   webapprouting.kubernetes.azure.com   *       10.1.1.10   80      14s
 ```
 
-
 ### Testing the application internally
+
 Your ingress controller is accessible from within the virtual network but not from the internet. Get the IP address of your ingress controller.
 
 ```bash
@@ -254,14 +268,33 @@ INGRESS_IP=$(kubectl get svc -n app-routing-system -o jsonpath='{.items[*].statu
 Use `curl` command to test that the application is running in the cluster and the ingress was configured properly
 
 ```bash
-curl $INGRESS_IP/front
+curl $INGRESS_IP
 ```
 
-You should see HTML code of the front end web applicatoin. If it was configured correctly, there will be no "nginx" in the HTML
+```bash
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/js/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without JavaScript enabled. Please enable it to continue.
+```
+
+The ingress controller is also able to reach the store-admin service
+
+```bash
+curl $INGRESS_IP/admin
+```
+
+```bash
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico"><title>store-admin</title><script defer="defer" src="/js/chunk-vendors.ee0766ad.js"></script><script defer="defer" src="/js/app.3a737ea9.js"></script><link href="/css/app.3505fa4f.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-admin doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id="app"></div></body></html>
+```
+
+```bash
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"
+><link rel="icon" href="/favicon.ico"><title>store-front</title><script defer="defer" src="/js/chunk-vendors.1541257f.js"></script><script defer="defer" src="/js/app.1a424918.js"></script><link href="/css/app.0f9f08e7.css" rel="stylesheet"></head><body><noscript><strong>We're sorry but store-front doesn't work properly without JavaScript enabled. Please enable it to continue.
+```
+
+You should see HTML code of the front end web application. If it was configured correctly, there will be no "nginx" in the HTML
 
 ### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
 
-As part of our Bicep deployment code, we already created a backend pool, routing rule, HTTP rules, a PUBLIC frontend IP configuration and a HTTP Listener. This will allow us to expose our app externally with our WAF enabled App gateway. Run the application-gateway address-pool command to add the ingress IP address to the backend pool.
+As part of our Bicep deployment code, we already created a backend pool, routing rule, HTTP rules, a PUBLIC frontend IP configuration and a HTTP Listener for the App gateway. This will allow us to expose our app externally with our WAF enabled App gateway. Run the application-gateway address-pool command to add the ingress IP address to the backend pool.
 
 ```bash
 BACKENDPOOLNAME=aksAppRoutingPool
@@ -273,38 +306,26 @@ az network application-gateway address-pool update \
   --servers $INGRESS_IP
 ```
 
-Create HTTP Listener leveraging the already created Backend pool, http rules and Front end IP configuration.
-
-```bash
-az network application-gateway http-listener create \
-  --resource-group $SPOKERG \
-  --gateway-name APPGW \
-  --name myHttpListener \
-  --frontend-ip appGatewayFrontendIP \
-  --frontend-port 80
-```
-
-
-
 To get the public AppGw IP address for public access:
+
 ```bash
 az network public-ip show -g $SPOKERG -n APPGW-PIP --query ipAddress -o tsv
 
 # 74.241.209.184
 ```
-Go on your browser and try to access the application
 
-`<ip-address>/front`
+Go on your browser and enter the IP address to access your application.
 
 ## Optional - Private DNS Zone
+
 If you need a private DNS zone which is integrated with AKS and accessible from the jump box, the following commands will create the DNS zone, create a private link on the VNET pointing to the new zone and then update AKS.
 
-```
+```bash
 az network private-dns zone create --resource-group $SPOKERG --name private.contoso.com
 
 az network private-dns link vnet create --resource-group $SPOKERG --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
 
-$ZONEID=$(az network private-dns zone show --resource-group $SPOKERG --name private.contoso.com --query "id" --output tsv)
+ZONEID=$(az network private-dns zone show --resource-group $SPOKERG --name private.contoso.com --query "id" --output tsv)
 
-az aks approuting zone add --resource-group $SPOKERG --name $AKSCLUSTERNAME --ids=${$ZONEID} --attach-zones
+az aks approuting zone add --resource-group $SPOKERG --name $AKSCLUSTERNAME --ids=$ZONEID --attach-zones
 ```

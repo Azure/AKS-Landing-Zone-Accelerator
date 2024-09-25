@@ -4,6 +4,8 @@ metadata:
   name: internal-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    
 spec:
   ingressClassName: webapprouting.kubernetes.azure.com
   rules:
