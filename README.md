@@ -10,6 +10,12 @@ Below is a picture of what a golden state looks like, and open source software l
 
 The AKS Landing Zone Accelerator is only concerned with what gets deployed in the landing zone subscription highlighted by the red box in the picture above. It is assumed that an appropriate platform foundation is already setup which may or may not be the [official ESLZ](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) platform foundation. This means that policies and governance should already be in place or should be setup after this implementation and are not a part of the scope this reference implementation. The policies applied to management groups in the hierarchy above the subscription will trickle down to the AKS Landing Zone Accelerator landing zone subscription. Having a platform foundation is not mandatory, it just enhances it. The modularized approach used in this program allows the user to pick and choose whatever portion is useful to them. You don't have to use all the resources provided by this program.
 
+## AKS Landing Zone Accelerator Architecture Video
+
+A video explaining the architecture used for AKS Landing Zone is available here: https://www.youtube.com/watch?v=vwGo9tZPngU&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE
+
+<img width="1055" alt="image" src="https://user-images.githubusercontent.com/6548359/235442137-87b26450-ab06-48cf-89b0-2cf205276e15.png">
+
 ---
 
 ## Choosing a Deployment Model
