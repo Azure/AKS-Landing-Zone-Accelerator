@@ -1,72 +1,52 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "rgName": {
-      "value": "ESLZ-SPOKE"
-    },
-    "availabilityZones": {
-      "value": ["1", "2", "3"]
-    },
-    "clusterName": {
-      "value": "eslzakscluster"
-    },
-    "enableAutoScaling": {
-      "value": false
-    },
-    "autoScalingProfile": {
-      "value": {
-        "balance-similar-node-groups": "false",
-        "expander": "random",
-        "max-empty-bulk-delete": "10",
-        "max-graceful-termination-sec": "600",
-        "max-node-provision-time": "15m",
-        "max-total-unready-percentage": "45",
-        "new-pod-scale-up-delay": "0s",
-        "ok-total-unready-count": "3",
-        "scale-down-delay-after-add": "10m",
-        "scale-down-delay-after-delete": "10s",
-        "scale-down-delay-after-failure": "3m",
-        "scale-down-unneeded-time": "10m",
-        "scale-down-unready-time": "20m",
-        "scale-down-utilization-threshold": "0.5",
-        "scan-interval": "10s",
-        "skip-nodes-with-local-storage": "false",
-        "skip-nodes-with-system-pods": "true"
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "rgName": {
+        "value": "AKS-LZA-SPOKE"
+      },
+      "enableAutoScaling": {
+        "value": true
+      },
+      "autoScalingProfile": {
+        "value": {
+          "balanceSimilarNodeGroups": "false",
+          "expander": "random",
+          "maxEmptyBulkDelete": "10",
+          "maxGracefulTerminationSec": "600",
+          "maxNodeProvisionTime": "15m",
+          "maxTotalUnreadyPercentage": "45",
+          "newPodScaleUpDelay": "0s",
+          "okTotalUnreadyCount": "3",
+          "scaleDownDelayAfterAdd": "10m",
+          "scaleDownDelayAfterDelete": "10s",
+          "scaleDownDelayAfterFailure": "3m",
+          "scaleDownUnneededTime": "10m",
+          "scaleDownUnreadyTime": "20m",
+          "scaleDownUtilizationThreshold": "0.5",
+          "scanInterval": "10s",
+          "skipNodesWithLocalStorage": "false",
+          "skipNodesWithSystemPods": "true"
+        }
+      },
+      "vnetName": {
+        "value": "VNet-SPOKE"
+      },
+      "subnetName": {
+        "value": "AKS"
+      },
+      "appGatewayName": {
+        "value": "APPGW"
+      },
+      "aksIdentityName": {
+        "value": "aksIdentity"
+      },
+      "aksadminaccessprincipalId": {
+        "value": "b6723f14-bfbe-441c-99bb-55d4e5d971ad"
+      },
+      "aksClusterName": {
+        "value": "aksCluster"
       }
-    },
-    "kubernetesVersion": {
-      "value": "1.22.6"
-    },
-    "networkPlugin": {
-      "value": "azure"
-    },
-    "rtAKSName": {
-      "value": "AKS-RT"
-    },
-    "akslaWorkspaceName": {
-      "value": "eslzlaworkspace"
-    },
-    "vnetName": {
-      "value": "VNet-SPOKE"
-    },
-    "subnetName": {
-      "value": "AKS"
-    },
-    "appGatewayName": {
-      "value": "APPGW"
-    },
-    "rtAppGWSubnetName": {
-      "value": "AppGWSubnet-RT"
-    },
-    "aksuseraccessprincipalId": {
-      "value": "<service principal id for developers Microsoft Entra user group>"
-    },
-    "aksadminaccessprincipalId": {
-      "value": "<service principal id for admin Microsoft Entra user group>"
-    },
-    "aksIdentityName": {
-      "value": "aksIdentity"
     }
   }
-}
+  

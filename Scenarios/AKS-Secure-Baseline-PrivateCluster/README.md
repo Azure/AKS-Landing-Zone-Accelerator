@@ -49,6 +49,4 @@ A video explaining the architecture used for AKS Landing Zone is available here:
 ## Next
 Pick one of the IaC options below and follow the instructions to deploy the AKS reference implementation.
 
-:arrow_forward: [Terraform](./Terraform)
-
 :arrow_forward: [Bicep](./Bicep)
