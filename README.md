@@ -10,6 +10,12 @@ Below is a picture of what a golden state looks like, and open source software l
 
 The AKS Landing Zone Accelerator is only concerned with what gets deployed in the landing zone subscription highlighted by the red box in the picture above. It is assumed that an appropriate platform foundation is already setup which may or may not be the [official ESLZ](https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/) platform foundation. This means that policies and governance should already be in place or should be setup after this implementation and are not a part of the scope this reference implementation. The policies applied to management groups in the hierarchy above the subscription will trickle down to the AKS Landing Zone Accelerator landing zone subscription. Having a platform foundation is not mandatory, it just enhances it. The modularized approach used in this program allows the user to pick and choose whatever portion is useful to them. You don't have to use all the resources provided by this program.
 
+## AKS Landing Zone Accelerator Architecture Video
+
+A video explaining the architecture used for AKS Landing Zone is available here: https://www.youtube.com/watch?v=vwGo9tZPngU&list=PLpbcUe4chE79sB7Jg7B4z3HytqUUEwcNE
+
+<img width="1055" alt="image" src="https://user-images.githubusercontent.com/6548359/235442137-87b26450-ab06-48cf-89b0-2cf205276e15.png">
+
 ---
 
 ## Choosing a Deployment Model
@@ -19,7 +25,7 @@ The reference implementations are spread across two repositories that all build 
 1. In this repository, we have sample Bicep and Terraform scripts to get you started quickly on AKS using best practices. To Deploy our AKS Secure Baseline Scenario, Check out [AKS Secure Baseline](./Scenarios/AKS-Secure-Baseline-PrivateCluster/). Use [this repo](https://github.com/Azure/AKS-Landing-Zone-Accelerator/tree/main/Scenarios/AKS-Secure-Baseline-PrivateCluster) if you would like step by step guidance on how to deploy secure and well architected AKS clusters using our scenario based model and/or you are new to AKS or IaC. This model promotes a separation of duties, modularized IaC so you can pick and choose components you want to build with your cluster and has implementations in ARM, Terraform and Bicep. It is the best starting point for people new to Azure or AKS.
 1. The [AKS Construction Helper](https://github.com/Azure/Aks-Construction), a flexible templating approach using Bicep that enables multiple scenarios using a Web based tool. It provides tangible artifacts to **quickly** enable AKS deployments through CLI or in your CI/CD pipeline.
 
-:arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-Private-AVM/README.md)
+:arrow_forward: [AKS Secure Baseline in a Private Cluster](./Scenarios/AKS-Secure-Baseline-PrivateCluster)
 
 ▶️ [Running Azure ML workloads on a private AKS cluster](./Scenarios/AzureML-on-Private-AKS)
 

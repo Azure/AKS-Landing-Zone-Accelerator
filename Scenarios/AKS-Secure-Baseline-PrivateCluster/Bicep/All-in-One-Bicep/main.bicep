@@ -283,7 +283,7 @@ param autoScalingProfile object = {
   skipNodesWithLocalStorage: 'false'
   skipNodesWithSystemPods: 'true'
 }
-param aksadminaccessprincipalId string = ''
+param aksadminaccessprincipalId string
 param kubernetesVersion string = '1.30'
 param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
