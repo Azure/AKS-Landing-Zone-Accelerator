@@ -17,15 +17,13 @@ The first major step to deploying the application is to connect to the jumpbox i
 1. From the jumpbox command line, clone the *aks-landing-Zone-Accelerator* repository which contains some setup scripts needed shortly.
 
    ```bash
-   cd
-
    git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator/
    ```
 
 1. Run the setup script to apply the latest updates to the jumpbox and to install other required packages.
 
    ```bash
-   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+   cd AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/07-Workload
 
    chmod +x script.sh
 
@@ -120,7 +118,6 @@ Clone the sample application Git Repo to the Dev Jumpbox:
 1. The AKS Store Demo repo:
 
 ```bash
-cd
 git clone https://github.com/Azure-Samples/aks-store-demo
 ```
 
@@ -220,7 +217,7 @@ az aks update --name $AKSCLUSTERNAME  --resource-group $SPOKERG --attach-acr $AC
 Now deploy the application using the HELM chart. Make sure to update the value of the containerRegistry in the command below to your ACR name:
 
 ```bash
-cd $HOME/AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/07-Workload
+cd $HOME/AKS-Landing-Zone-Accelerator/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/07-Workload
 
 helm install monkey-magic ./shoppingDemo --set containerRegistry=$ACRNAME.azurecr.io
 # apply the ingress controller

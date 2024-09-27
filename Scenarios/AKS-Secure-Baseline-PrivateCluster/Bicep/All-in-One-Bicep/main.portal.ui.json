@@ -122,7 +122,7 @@
               "defaultValue": true,
               "toolTip": "Enable this if you don't already have a hub network. Best to already have a hub network using Azure Landing Zones. You will still have to provide the information about your existing hub network in this page and ensure the virtual network is preconfigued with the subnets in this page, a Bastion host and an Azure firewall.",
               "constraints": {
-                "required": true,
+                "required": false,
                 "regex": "",
                 "validationMessage": "",
                 "validations": []
