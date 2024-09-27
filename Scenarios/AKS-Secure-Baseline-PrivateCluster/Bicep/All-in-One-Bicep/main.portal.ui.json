@@ -115,6 +115,22 @@
           "label": "Hub network settings",
           "elements": [
             {
+              "name": "deployHub",
+              "type": "Microsoft.Common.CheckBox",
+              "label": "Deploy Hub",
+              "subLabel": "",
+              "defaultValue": true,
+              "toolTip": "Enable this if you don't already have a hub network. Best to already have a hub network using Azure Landing Zones. You will still have to provide the information about your existing hub network in this page and ensure the virtual network is preconfigued with the subnets in this page, a Bastion host and an Azure firewall.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
               "name": "vnetAddressPrefixes",
               "type": "Microsoft.Common.TextBox",
               "label": "Hub Virtual Network address space",
@@ -393,6 +409,110 @@
               },
               "infoMessages": [],
               "visible": true
+            },
+
+            {
+              "name": "spokeSubnetDefaultPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Spoke network default subnet address space",
+              "subLabel": "",
+              "defaultValue": "10.1.0.0/24",
+              "placeholder": "10.1.0.0/24",
+              "toolTip": "Address space for the default subnet within the spoke vnet.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "spokeSubnetAKSPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Spoke network AKS subnet address space",
+              "subLabel": "",
+              "defaultValue": "10.1.1.0/24",
+              "placeholder": "10.1.1.0/24",
+              "toolTip": "Address space for the subnet AKS will be deployed to within the spoke vnet.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "spokeSubnetAppGWPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Spoke network AGW subnet address space",
+              "subLabel": "",
+              "defaultValue": "10.1.2.0/27",
+              "placeholder": "10.1.2.0/27",
+              "toolTip": "Address space for the subnet App gateway will be deployed to within the spoke vnet.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "spokeSubnetVMPrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Spoke network Jumpbox subnet address space",
+              "subLabel": "",
+              "defaultValue": "10.1.3.0/24",
+              "placeholder": "10.1.3.0/24",
+              "toolTip": "Address space for the subnet Jumpbox will be deployed to within the spoke vnet.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+
+            {
+              "name": "spokeSubnetPLinkervicePrefix",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Spoke network PLink subnet address space",
+              "subLabel": "",
+              "defaultValue": "10.1.4.0/16",
+              "placeholder": "10.1.4.0/16",
+              "toolTip": "Address space for the private link services that will be deployed to within the spoke vnet.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
+              "name": "remotePeeringName",
+              "type": "Microsoft.Common.TextBox",
+              "label": "Hub to spoke network peering name",
+              "subLabel": "",
+              "defaultValue": "spoke-hub-peering",
+              "placeholder": "spoke-hub-peering",
+              "toolTip": "Name that will be used for the network peering between the hub and spoke network.",
+              "constraints": {
+                "required": false,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
             }
           ]
         },
@@ -431,7 +551,7 @@
                     "text": "The new cluster will be created with Azure Entra (AAD) integration and members of the given security group will have the ClusterAdmin role inside Kubernetes.",
                     "link": {
                       "label": "Create the required security group before running this deployment.",
-                      "uri": "https://github.com/Azure/AKS-Landing-Zone-Accelerator/blob/main/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/02-eid.md"
+                      "uri": "https://github.com/Azure/AKS-Landing-Zone-Accelerator/blob/main/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-eid.md"
                     }
                   }
                 }
@@ -468,6 +588,22 @@
                   }
                 }
               ]
+            },
+            {
+              "name": "enablePrivateCluster",
+              "type": "Microsoft.Common.CheckBox",
+              "label": "Make cluster private",
+              "subLabel": "",
+              "defaultValue": true,
+              "toolTip": "Check this box to make the cluster a private cluster.",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
             },
             {
               "name": "aksSubnetName",

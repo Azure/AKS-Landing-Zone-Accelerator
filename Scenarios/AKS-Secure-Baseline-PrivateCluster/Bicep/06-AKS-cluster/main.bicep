@@ -14,6 +14,7 @@ param keyvaultName string
 @description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
 param acrName string 
 param aksClusterName string
+param enablePrivateCluster bool = true
 
 
 @allowed([
@@ -36,7 +37,7 @@ resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-3
   name: aksIdentityName
 }
 
-resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (enablePrivateCluster) {
   name: privateDNSZoneAKSName
   scope: resourceGroup(rg.name)
 }
@@ -134,8 +135,8 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     serviceCidr: '192.168.100.0/24'
     networkPolicy: 'calico'
     podCidr: networkPlugin == 'kubenet' ? '172.17.0.0/16' : null
-    enablePrivateCluster: true
-    privateDNSZone: pvtdnsAKSZone.id
+    enablePrivateCluster: enablePrivateCluster
+    privateDNSZone: enablePrivateCluster ? pvtdnsAKSZone.id : null
     enablePrivateClusterPublicFQDN: false
     enableRBAC: true
     aadProfileAdminGroupObjectIDs: [
