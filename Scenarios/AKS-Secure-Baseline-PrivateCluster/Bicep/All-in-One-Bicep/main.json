@@ -5,10 +5,24 @@
     "_generator": {
       "name": "bicep",
       "version": "0.28.1.47646",
-      "templateHash": "7106384231315853249"
+      "templateHash": "5950662107880979924"
     }
   },
   "parameters": {
+    "deployHub": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Set this to true if you want to deploy the hub network and its resources"
+      }
+    },
+    "enablePrivateCluster": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Set this to true if you want your aks cluster to be private"
+      }
+    },
     "rgHubName": {
       "type": "string",
       "defaultValue": "AKS-LZA-HUB"
@@ -252,6 +266,30 @@
         "10.1.0.0/16"
       ]
     },
+    "spokeSubnetDefaultPrefix": {
+      "type": "string",
+      "defaultValue": "10.1.0.0/24"
+    },
+    "spokeSubnetAKSPrefix": {
+      "type": "string",
+      "defaultValue": "10.1.1.0/24"
+    },
+    "spokeSubnetAppGWPrefix": {
+      "type": "string",
+      "defaultValue": "10.1.2.0/27"
+    },
+    "spokeSubnetVMPrefix": {
+      "type": "string",
+      "defaultValue": "10.1.3.0/24"
+    },
+    "spokeSubnetPLinkervicePrefix": {
+      "type": "string",
+      "defaultValue": "10.1.4.0/24"
+    },
+    "remotePeeringName": {
+      "type": "string",
+      "defaultValue": "spoke-hub-peering"
+    },
     "rtAKSSubnetName": {
       "type": "string",
       "defaultValue": "AKS-RT"
@@ -386,8 +424,7 @@
       }
     },
     "aksadminaccessprincipalId": {
-      "type": "string",
-      "defaultValue": ""
+      "type": "string"
     },
     "kubernetesVersion": {
       "type": "string",
@@ -404,6 +441,7 @@
   },
   "resources": [
     {
+      "condition": "[parameters('deployHub')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "hubDeploy",
@@ -419,6 +457,9 @@
           },
           "availabilityZones": {
             "value": "[parameters('availabilityZones')]"
+          },
+          "spokeSubnetAKSPrefix": {
+            "value": "[parameters('spokeSubnetAKSPrefix')]"
           },
           "vnetHubName": {
             "value": "[parameters('vnetHubName')]"
@@ -479,7 +520,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.28.1.47646",
-              "templateHash": "842494715723055146"
+              "templateHash": "14622037900232296803"
             }
           },
           "parameters": {
@@ -497,12 +538,6 @@
             },
             "rtVMSubnetName": {
               "type": "string"
-            },
-            "fwapplicationRuleCollections": {
-              "type": "array"
-            },
-            "fwnetworkRuleCollections": {
-              "type": "array"
             },
             "fwnatRuleCollections": {
               "type": "array"
@@ -543,7 +578,225 @@
             },
             "vmsubnetSubnetAddressPrefix": {
               "type": "string"
+            },
+            "spokeSubnetAKSPrefix": {
+              "type": "string",
+              "defaultValue": "10.1.1.0/24",
+              "metadata": {
+                "description": "The prefix for the spoke subnet AKS"
+              }
+            },
+            "enableTelemetry": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Enable usage and telemetry feedback to Microsoft."
+              }
+            },
+            "fwapplicationRuleCollections": {
+              "type": "array",
+              "defaultValue": [
+                {
+                  "name": "Helper-tools",
+                  "properties": {
+                    "priority": 101,
+                    "action": {
+                      "type": "Allow"
+                    },
+                    "rules": [
+                      {
+                        "name": "Allow-ifconfig",
+                        "protocols": [
+                          {
+                            "port": 80,
+                            "protocolType": "Http"
+                          },
+                          {
+                            "port": 443,
+                            "protocolType": "Https"
+                          }
+                        ],
+                        "targetFqdns": [
+                          "ifconfig.co",
+                          "api.snapcraft.io",
+                          "jsonip.com",
+                          "kubernaut.io",
+                          "motd.ubuntu.com"
+                        ],
+                        "sourceAddresses": [
+                          "[parameters('spokeSubnetAKSPrefix')]"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "AKS-egress-application",
+                  "properties": {
+                    "priority": 102,
+                    "action": {
+                      "type": "Allow"
+                    },
+                    "rules": [
+                      {
+                        "name": "Egress",
+                        "protocols": [
+                          {
+                            "port": 443,
+                            "protocolType": "Https"
+                          }
+                        ],
+                        "targetFqdns": [
+                          "*.azmk8s.io",
+                          "aksrepos.azurecr.io",
+                          "*.blob.core.windows.net",
+                          "*.cdn.mscr.io",
+                          "*.opinsights.azure.com",
+                          "*.monitoring.azure.com"
+                        ],
+                        "sourceAddresses": [
+                          "10.1.1.0/24"
+                        ]
+                      },
+                      {
+                        "name": "Registries",
+                        "protocols": [
+                          {
+                            "port": 443,
+                            "protocolType": "Https"
+                          }
+                        ],
+                        "targetFqdns": [
+                          "*.azurecr.io",
+                          "*.gcr.io",
+                          "*.docker.io",
+                          "quay.io",
+                          "*.quay.io",
+                          "*.cloudfront.net",
+                          "production.cloudflare.docker.com"
+                        ],
+                        "sourceAddresses": [
+                          "[parameters('spokeSubnetAKSPrefix')]"
+                        ]
+                      },
+                      {
+                        "name": "Additional-Usefull-Address",
+                        "protocols": [
+                          {
+                            "port": 443,
+                            "protocolType": "Https"
+                          }
+                        ],
+                        "targetFqdns": [
+                          "grafana.net",
+                          "grafana.com",
+                          "stats.grafana.org",
+                          "github.com",
+                          "charts.bitnami.com",
+                          "raw.githubusercontent.com",
+                          "*.letsencrypt.org",
+                          "usage.projectcalico.org",
+                          "vortex.data.microsoft.com"
+                        ],
+                        "sourceAddresses": [
+                          "[parameters('spokeSubnetAKSPrefix')]"
+                        ]
+                      },
+                      {
+                        "name": "AKS-FQDN-TAG",
+                        "protocols": [
+                          {
+                            "port": 80,
+                            "protocolType": "Http"
+                          },
+                          {
+                            "port": 443,
+                            "protocolType": "Https"
+                          }
+                        ],
+                        "targetFqdns": [],
+                        "fqdnTags": [
+                          "AzureKubernetesService"
+                        ],
+                        "sourceAddresses": [
+                          "[parameters('spokeSubnetAKSPrefix')]"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "metadata": {
+                "description": "Returns the firewall application rule collections"
+              }
+            },
+            "fwnetworkRuleCollections": {
+              "type": "array",
+              "defaultValue": [
+                {
+                  "name": "AKS-egress",
+                  "properties": {
+                    "priority": 200,
+                    "action": {
+                      "type": "Allow"
+                    },
+                    "rules": [
+                      {
+                        "name": "NTP",
+                        "protocols": [
+                          "UDP"
+                        ],
+                        "sourceAddresses": [
+                          "[parameters('spokeSubnetAKSPrefix')]"
+                        ],
+                        "destinationAddresses": [
+                          "*"
+                        ],
+                        "destinationPorts": [
+                          "123"
+                        ]
+                      },
+                      {
+                        "name": "APITCP",
+                        "protocols": [
+                          "TCP"
+                        ],
+                        "sourceAddresses": [
+                          "[parameters('spokeSubnetAKSPrefix')]"
+                        ],
+                        "destinationAddresses": [
+                          "*"
+                        ],
+                        "destinationPorts": [
+                          "9000"
+                        ]
+                      },
+                      {
+                        "name": "APIUDP",
+                        "protocols": [
+                          "UDP"
+                        ],
+                        "sourceAddresses": [
+                          "[parameters('spokeSubnetAKSPrefix')]"
+                        ],
+                        "destinationAddresses": [
+                          "*"
+                        ],
+                        "destinationPorts": [
+                          "1194"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "metadata": {
+                "description": "Returns the firewall network rule collections"
+              }
             }
+          },
+          "variables": {
+            "telemetryId": "[format('0d807b2d-f7c3-4710-9a65-e88257df1ea0-{0}', parameters('location'))]"
           },
           "resources": [
             {
@@ -7356,6 +7609,64 @@
                 "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]",
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetHubName'))]"
               ]
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2022-09-01",
+              "name": "telemetry",
+              "resourceGroup": "[parameters('rgName')]",
+              "properties": {
+                "expressionEvaluationOptions": {
+                  "scope": "inner"
+                },
+                "mode": "Incremental",
+                "parameters": {
+                  "enableTelemetry": {
+                    "value": "[parameters('enableTelemetry')]"
+                  },
+                  "telemetryId": {
+                    "value": "[variables('telemetryId')]"
+                  }
+                },
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "metadata": {
+                    "_generator": {
+                      "name": "bicep",
+                      "version": "0.28.1.47646",
+                      "templateHash": "2475204222112158833"
+                    }
+                  },
+                  "parameters": {
+                    "enableTelemetry": {
+                      "type": "bool"
+                    },
+                    "telemetryId": {
+                      "type": "string"
+                    }
+                  },
+                  "resources": [
+                    {
+                      "condition": "[parameters('enableTelemetry')]",
+                      "type": "Microsoft.Resources/deployments",
+                      "apiVersion": "2021-04-01",
+                      "name": "[parameters('telemetryId')]",
+                      "properties": {
+                        "mode": "Incremental",
+                        "template": {
+                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+                          "contentVersion": "1.0.0.0",
+                          "resources": {}
+                        }
+                      }
+                    }
+                  ]
+                }
+              },
+              "dependsOn": [
+                "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]"
+              ]
             }
           ]
         }
@@ -7374,6 +7685,9 @@
         "parameters": {
           "rgName": {
             "value": "[parameters('rgSpokeName')]"
+          },
+          "enablePrivateCluster": {
+            "value": "[parameters('enablePrivateCluster')]"
           },
           "vnetSpokeName": {
             "value": "[parameters('vnetSpokeName')]"
@@ -7413,6 +7727,24 @@
           },
           "securityRules": {
             "value": "[parameters('securityRules')]"
+          },
+          "spokeSubnetDefaultPrefix": {
+            "value": "[parameters('spokeSubnetDefaultPrefix')]"
+          },
+          "spokeSubnetAKSPrefix": {
+            "value": "[parameters('spokeSubnetAKSPrefix')]"
+          },
+          "spokeSubnetAppGWPrefix": {
+            "value": "[parameters('spokeSubnetAppGWPrefix')]"
+          },
+          "spokeSubnetVMPrefix": {
+            "value": "[parameters('spokeSubnetVMPrefix')]"
+          },
+          "spokeSubnetPLinkervicePrefix": {
+            "value": "[parameters('spokeSubnetPLinkervicePrefix')]"
+          },
+          "remotePeeringName": {
+            "value": "[parameters('remotePeeringName')]"
           }
         },
         "template": {
@@ -7422,7 +7754,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.28.1.47646",
-              "templateHash": "12902392534524655418"
+              "templateHash": "1962386068872565768"
             }
           },
           "parameters": {
@@ -7459,6 +7791,10 @@
             "rtAppGWSubnetName": {
               "type": "string"
             },
+            "enablePrivateCluster": {
+              "type": "bool",
+              "defaultValue": true
+            },
             "location": {
               "type": "string",
               "defaultValue": "[deployment().location]"
@@ -7472,6 +7808,30 @@
             "securityRules": {
               "type": "array",
               "defaultValue": []
+            },
+            "spokeSubnetDefaultPrefix": {
+              "type": "string",
+              "defaultValue": "10.1.0.0/24"
+            },
+            "spokeSubnetAKSPrefix": {
+              "type": "string",
+              "defaultValue": "10.1.1.0/24"
+            },
+            "spokeSubnetAppGWPrefix": {
+              "type": "string",
+              "defaultValue": "10.1.2.0/27"
+            },
+            "spokeSubnetVMPrefix": {
+              "type": "string",
+              "defaultValue": "10.1.3.0/24"
+            },
+            "spokeSubnetPLinkervicePrefix": {
+              "type": "string",
+              "defaultValue": "10.1.4.0/24"
+            },
+            "remotePeeringName": {
+              "type": "string",
+              "defaultValue": "spoke-hub-peering"
             }
           },
           "variables": {
@@ -7965,24 +8325,24 @@
                     "value": [
                       {
                         "name": "default",
-                        "addressPrefix": "10.1.0.0/24"
+                        "addressPrefix": "[parameters('spokeSubnetDefaultPrefix')]"
                       },
                       {
                         "name": "AKS",
-                        "addressPrefix": "10.1.1.0/24",
+                        "addressPrefix": "[parameters('spokeSubnetAKSPrefix')]",
                         "routeTableResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('rtAKSSubnetName')), '2022-09-01').outputs.resourceId.value]"
                       },
                       {
                         "name": "AppGWSubnet",
-                        "addressPrefix": "10.1.2.0/27"
+                        "addressPrefix": "[parameters('spokeSubnetAppGWPrefix')]"
                       },
                       {
                         "name": "vmsubnet",
-                        "addressPrefix": "10.1.3.0/24"
+                        "addressPrefix": "[parameters('spokeSubnetVMPrefix')]"
                       },
                       {
                         "name": "servicespe",
-                        "addressPrefix": "10.1.4.0/24"
+                        "addressPrefix": "[parameters('spokeSubnetPLinkervicePrefix')]"
                       }
                     ]
                   },
@@ -7998,7 +8358,7 @@
                         "remotePeeringAllowForwardedTraffic": true,
                         "remotePeeringAllowVirtualNetworkAccess": true,
                         "remotePeeringEnabled": true,
-                        "remotePeeringName": "spoke-hub-peering",
+                        "remotePeeringName": "[parameters('remotePeeringName')]",
                         "remoteVirtualNetworkId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHUBRGName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]",
                         "useRemoteGateways": false
                       }
@@ -18574,6 +18934,7 @@
               ]
             },
             {
+              "condition": "[parameters('enablePrivateCluster')]",
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2022-09-01",
               "name": "privatednsAKSZone",
@@ -37534,6 +37895,9 @@
           "rgName": {
             "value": "[parameters('rgSpokeName')]"
           },
+          "enablePrivateCluster": {
+            "value": "[parameters('enablePrivateCluster')]"
+          },
           "vnetName": {
             "value": "[parameters('vnetSpokeName')]"
           },
@@ -37575,7 +37939,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.28.1.47646",
-              "templateHash": "14695252208240220213"
+              "templateHash": "1662336602186095921"
             }
           },
           "parameters": {
@@ -37621,6 +37985,10 @@
             },
             "aksClusterName": {
               "type": "string"
+            },
+            "enablePrivateCluster": {
+              "type": "bool",
+              "defaultValue": true
             },
             "networkPlugin": {
               "type": "string",
@@ -40153,11 +40521,9 @@
                   },
                   "podCidr": "[if(equals(parameters('networkPlugin'), 'kubenet'), createObject('value', '172.17.0.0/16'), createObject('value', null()))]",
                   "enablePrivateCluster": {
-                    "value": true
+                    "value": "[parameters('enablePrivateCluster')]"
                   },
-                  "privateDNSZone": {
-                    "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDNSZoneAKSName'))]"
-                  },
+                  "privateDNSZone": "[if(parameters('enablePrivateCluster'), createObject('value', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDNSZoneAKSName'))), createObject('value', null()))]",
                   "enablePrivateClusterPublicFQDN": {
                     "value": false
                   },

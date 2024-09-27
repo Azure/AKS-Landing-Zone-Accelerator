@@ -6,8 +6,6 @@ param vnetHubName string
 param hubVNETaddPrefixes array
 param azfwName string
 param rtVMSubnetName string
-param fwapplicationRuleCollections array
-param fwnetworkRuleCollections array
 param fwnatRuleCollections array
 param location string = deployment().location
 param availabilityZones array
@@ -21,6 +19,10 @@ param azureBastionSubnetName string
 param azureBastionSubnetAddressPrefix string
 param vmsubnetSubnetName string
 param vmsubnetSubnetAddressPrefix string
+
+@description('The prefix for the spoke subnet AKS')
+param spokeSubnetAKSPrefix string = '10.1.1.0/24'
+
 
 module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   name: rgName
@@ -164,6 +166,202 @@ module telemetry './telemetry.bicep' = {
   params: {
     enableTelemetry: enableTelemetry
     telemetryId: telemetryId
-    location: location
   }
 }
+
+
+// Defining firewal config here so that the spokeSubnetAKSPrefix can be passed dynamically
+// this way, if customer isnt using the default subnetprefix for AKS, they can configure the 
+// firewall settings to make it allow AKS deploy successfully by specifying their own subnet prefix
+@description('Returns the firewall application rule collections')
+param fwapplicationRuleCollections array = [
+  {
+    name: 'Helper-tools'
+    properties: {
+      priority: 101
+      action: {
+        type: 'Allow'
+      }
+      rules: [
+        {
+          name: 'Allow-ifconfig'
+          protocols: [
+            {
+              port: 80
+              protocolType: 'Http'
+            }
+            {
+              port: 443
+              protocolType: 'Https'
+            }
+          ]
+          targetFqdns: [
+            'ifconfig.co'
+            'api.snapcraft.io'
+            'jsonip.com'
+            'kubernaut.io'
+            'motd.ubuntu.com'
+          ]
+          sourceAddresses: [
+            spokeSubnetAKSPrefix
+          ]
+        }
+      ]
+    }
+  }
+  {
+    name: 'AKS-egress-application'
+    properties: {
+      priority: 102
+      action: {
+        type: 'Allow'
+      }
+      rules: [
+        {
+          name: 'Egress'
+          protocols: [
+            {
+              port: 443
+              protocolType: 'Https'
+            }
+          ]
+          targetFqdns: [
+            '*.azmk8s.io'
+            'aksrepos.azurecr.io'
+            '*.blob.core.windows.net'
+            '*.cdn.mscr.io'
+            '*.opinsights.azure.com'
+            '*.monitoring.azure.com'
+          ]
+          sourceAddresses: [
+            '10.1.1.0/24'
+          ]
+        }
+        {
+          name: 'Registries'
+          protocols: [
+            {
+              port: 443
+              protocolType: 'Https'
+            }
+          ]
+          targetFqdns: [
+            '*.azurecr.io'
+            '*.gcr.io'
+            '*.docker.io'
+            'quay.io'
+            '*.quay.io'
+            '*.cloudfront.net'
+            'production.cloudflare.docker.com'
+          ]
+          sourceAddresses: [
+            spokeSubnetAKSPrefix
+          ]
+        }
+        {
+          name: 'Additional-Usefull-Address'
+          protocols: [
+            {
+              port: 443
+              protocolType: 'Https'
+            }
+          ]
+          targetFqdns: [
+            'grafana.net'
+            'grafana.com'
+            'stats.grafana.org'
+            'github.com'
+            'charts.bitnami.com'
+            'raw.githubusercontent.com'
+            '*.letsencrypt.org'
+            'usage.projectcalico.org'
+            'vortex.data.microsoft.com'
+          ]
+          sourceAddresses: [
+            spokeSubnetAKSPrefix
+          ]
+        }
+        {
+          name: 'AKS-FQDN-TAG'
+          protocols: [
+            {
+              port: 80
+              protocolType: 'Http'
+            }
+            {
+              port: 443
+              protocolType: 'Https'
+            }
+          ]
+          targetFqdns: []
+          fqdnTags: [
+            'AzureKubernetesService'
+          ]
+          sourceAddresses: [
+            spokeSubnetAKSPrefix
+          ]
+        }
+      ]
+    }
+  }
+]
+
+@description('Returns the firewall network rule collections')
+param fwnetworkRuleCollections array = [
+  {
+    name: 'AKS-egress'
+    properties: {
+      priority: 200
+      action: {
+        type: 'Allow'
+      }
+      rules: [
+        {
+          name: 'NTP'
+          protocols: [
+            'UDP'
+          ]
+          sourceAddresses: [
+            spokeSubnetAKSPrefix
+          ]
+          destinationAddresses: [
+            '*'
+          ]
+          destinationPorts: [
+            '123'
+          ]
+        }
+        {
+          name: 'APITCP'
+          protocols: [
+            'TCP'
+          ]
+          sourceAddresses: [
+            spokeSubnetAKSPrefix
+          ]
+          destinationAddresses: [
+            '*'
+          ]
+          destinationPorts: [
+            '9000'
+          ]
+        }
+        {
+          name: 'APIUDP'
+          protocols: [
+            'UDP'
+          ]
+          sourceAddresses: [
+            spokeSubnetAKSPrefix
+          ]
+          destinationAddresses: [
+            '*'
+          ]
+          destinationPorts: [
+            '1194'
+          ]
+        }
+      ]
+    }
+  }
+]

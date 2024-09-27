@@ -11,11 +11,18 @@ param vnetHUBRGName string
 param nsgAKSName string
 param nsgAppGWName string
 param rtAppGWSubnetName string
+param enablePrivateCluster bool = true
 // param dnsServers array
 param location string = deployment().location
 param availabilityZones array
 param appGwyAutoScale object
 param securityRules array = []
+param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
+param spokeSubnetAKSPrefix string = '10.1.1.0/24'
+param spokeSubnetAppGWPrefix string = '10.1.2.0/27'
+param spokeSubnetVMPrefix string = '10.1.3.0/24'
+param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
+param remotePeeringName string = 'spoke-hub-peering'
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -48,24 +55,24 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
     subnets: [
       {
         name: 'default'
-        addressPrefix: '10.1.0.0/24'
+        addressPrefix: spokeSubnetDefaultPrefix
       }
       {
         name: 'AKS'
-        addressPrefix: '10.1.1.0/24'
+        addressPrefix: spokeSubnetAKSPrefix
         routeTableResourceId: routeTable.outputs.resourceId
       }
       {
         name: 'AppGWSubnet'
-        addressPrefix: '10.1.2.0/27'
+        addressPrefix: spokeSubnetAppGWPrefix
       }
       {
         name: 'vmsubnet'
-        addressPrefix: '10.1.3.0/24'
+        addressPrefix: spokeSubnetVMPrefix
       }
       {
         name: 'servicespe'
-        addressPrefix: '10.1.4.0/24'
+        addressPrefix: spokeSubnetPLinkervicePrefix
       }
     ]
     enableTelemetry: true
@@ -78,7 +85,7 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
         remotePeeringAllowForwardedTraffic: true
         remotePeeringAllowVirtualNetworkAccess: true
         remotePeeringEnabled: true
-        remotePeeringName: 'spoke-hub-peering'
+        remotePeeringName: remotePeeringName
         remoteVirtualNetworkId: vnethub.id
         useRemoteGateways: false
       }
@@ -256,7 +263,7 @@ module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
   }
 }
 
-module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
+module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.2.4' = if (enablePrivateCluster) {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'
   params: {

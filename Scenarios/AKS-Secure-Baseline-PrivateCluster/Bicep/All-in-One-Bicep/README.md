@@ -59,7 +59,7 @@ LOCATION=<Your azure region>
 ```
 
 ```bash
-az deployment sub create --location $LOCATION --template-file main.bicep --parameters @main.json --name aksLZAAllInOne --parameters aksadminaccessprincipalId <your Azure entra group principal id>
+az deployment sub create --location $LOCATION --template-file main.bicep --parameters @main.json --name aksLZAAllInOne --parameters aksadminaccessprincipalId=<your Azure entra group principal id>
 ```
 
 ### Step 3 - Deploy the application to AKS.

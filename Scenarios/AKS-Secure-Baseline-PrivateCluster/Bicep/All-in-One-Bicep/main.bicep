@@ -13,6 +13,12 @@ targetScope = 'subscription'
 /////////////////
 // 03-network-Hub
 /////////////////
+@description('Set this to true if you want to deploy the hub network and its resources')
+param deployHub bool = true
+
+@description('Set this to true if you want your aks cluster to be private')
+param enablePrivateCluster bool = true
+
 param rgHubName string = 'AKS-LZA-HUB'
 param vnetHubName string = 'VNet-HUB'
 param hubVNETaddPrefixes array = ['10.0.0.0/16']
@@ -218,6 +224,12 @@ param rgSpokeName string = 'AKS-LZA-SPOKE'
 param vnetSpokeName string = 'VNet-SPOKE'
 //param availabilityZones array = ['1', '2', '3']
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
+param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
+param spokeSubnetAKSPrefix string = '10.1.1.0/24'
+param spokeSubnetAppGWPrefix string = '10.1.2.0/27'
+param spokeSubnetVMPrefix string = '10.1.3.0/24'
+param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
+param remotePeeringName string = 'spoke-hub-peering'
 param rtAKSSubnetName string = 'AKS-RT'
 param firewallIP string = '10.0.1.4'
 //param vnetHubName string = 'VNet-HUB'
@@ -299,11 +311,12 @@ param aksClusterName string = 'aksCluster'
 // 03-network-Hub
 /////////////////
 
-module networkHub '../03-Network-Hub/main.bicep' = {
+module networkHub '../03-Network-Hub/main.bicep' = if (deployHub) {
   name: 'hubDeploy'
   params: {
     rgName: rgHubName
     availabilityZones: availabilityZones
+    spokeSubnetAKSPrefix: spokeSubnetAKSPrefix
     vnetHubName: vnetHubName
     azfwName: azfwName
     rtVMSubnetName: rtVMSubnetName
@@ -332,6 +345,7 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
   name: 'lzSpokeDeploy'
   params: {
     rgName: rgSpokeName
+    enablePrivateCluster: enablePrivateCluster
     vnetSpokeName: vnetSpokeName
     availabilityZones: availabilityZones
     spokeVNETaddPrefixes: spokeVNETaddPrefixes
@@ -346,8 +360,15 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
     //dnsServers: dnsServers
     appGwyAutoScale: appGwyAutoScale
     securityRules: securityRules
+    spokeSubnetDefaultPrefix: spokeSubnetDefaultPrefix
+    spokeSubnetAKSPrefix: spokeSubnetAKSPrefix
+    spokeSubnetAppGWPrefix: spokeSubnetAppGWPrefix
+    spokeSubnetVMPrefix:spokeSubnetVMPrefix
+    spokeSubnetPLinkervicePrefix: spokeSubnetPLinkervicePrefix
+    remotePeeringName: remotePeeringName
+
   }
-  dependsOn: [networkHub]
+  dependsOn: deployHub ? [networkHub] : []
 }
 
 /////////////////
@@ -377,6 +398,7 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
   name: 'aksCluster'
   params: {
     rgName: rgSpokeName
+    enablePrivateCluster: enablePrivateCluster
     vnetName: vnetSpokeName
     subnetName: aksSubnetName
     aksIdentityName: aksIdentityName
