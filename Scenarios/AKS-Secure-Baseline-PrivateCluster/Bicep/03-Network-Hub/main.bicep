@@ -170,7 +170,7 @@ module telemetry './telemetry.bicep' = {
 }
 
 
-// Defining firewal config here so that the spokeSubnetAKSPrefix can be passed dynamically
+// Defining firewall config here so that the spokeSubnetAKSPrefix can be passed dynamically
 // this way, if customer isnt using the default subnetprefix for AKS, they can configure the 
 // firewall settings to make it allow AKS deploy successfully by specifying their own subnet prefix
 @description('Returns the firewall application rule collections')
