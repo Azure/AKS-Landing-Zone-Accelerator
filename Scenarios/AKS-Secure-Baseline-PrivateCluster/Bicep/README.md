@@ -19,6 +19,7 @@ This section is organized using folders that match the steps outlined below. Mak
 ## Getting Started - Option 2: All in 1 Deployment
 
 With this option, you can use ur deploy to Azure Button to deploy the landing zone using the Azure Portal, or run the entire deployment using a single command. For more information check out the [All-in-One-Bicep](./All-in-One-Bicep/) folder. You can also rapidly deploy this using the Deploy to Azure Button below.
+
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fmain%2FScenarios%2FAKS-Secure-Baseline-PrivateCluster%2FBicep%2FAll-in-One-Bicep%2Fmain.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAKS-Landing-Zone-Accelerator%2Fmain%2FScenarios%2FAKS-Secure-Baseline-PrivateCluster%2FBicep%2FAll-in-One-Bicep%2Fmain.portal.ui.json)
 
 ## Getting Started - Option 3: Fully Automated Deploy using GitHub Actions
