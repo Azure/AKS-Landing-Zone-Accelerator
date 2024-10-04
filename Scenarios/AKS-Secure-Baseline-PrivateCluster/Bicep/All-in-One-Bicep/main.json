@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.30.23.60470",
-      "templateHash": "3419662636992204656"
+      "templateHash": "2060098085920409973"
     }
   },
   "parameters": {
@@ -365,6 +365,10 @@
       "type": "string",
       "defaultValue": "10.0.3.0/24"
     },
+    "linuxVirtualMachineVMSize": {
+      "type": "string",
+      "defaultValue": "Standard_DS2_v2"
+    },
     "subnetName": {
       "type": "string",
       "defaultValue": "servicespe"
@@ -438,7 +442,7 @@
       "type": "string",
       "defaultValue": "aksCluster"
     },
-    "vmSize": {
+    "aksVMSize": {
       "type": "string",
       "defaultValue": "Standard_D4d_v5"
     }
@@ -7749,6 +7753,9 @@
           },
           "remotePeeringName": {
             "value": "[parameters('remotePeeringName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('linuxVirtualMachineVMSize')]"
           }
         },
         "template": {
@@ -7758,7 +7765,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.30.23.60470",
-              "templateHash": "9558533891196009747"
+              "templateHash": "7704816282859867531"
             }
           },
           "parameters": {
@@ -7836,6 +7843,10 @@
             "remotePeeringName": {
               "type": "string",
               "defaultValue": "spoke-hub-peering"
+            },
+            "vmSize": {
+              "type": "string",
+              "defaultValue": "Standard_DS2_v2"
             }
           },
           "variables": {
@@ -22653,7 +22664,7 @@
                     "value": "Linux"
                   },
                   "vmSize": {
-                    "value": "Standard_DS2_v2"
+                    "value": "[parameters('vmSize')]"
                   },
                   "zone": {
                     "value": 0
@@ -37936,7 +37947,7 @@
             "value": "[parameters('aksClusterName')]"
           },
           "vmSize": {
-            "value": "[parameters('vmSize')]"
+            "value": "[parameters('aksVMSize')]"
           }
         },
         "template": {

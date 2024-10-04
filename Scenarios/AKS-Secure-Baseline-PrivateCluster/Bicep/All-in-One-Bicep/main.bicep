@@ -251,6 +251,7 @@ param azureBastionSubnetName string = 'AzureBastionSubnet'
 param azureBastionSubnetAddressPrefix string = '10.0.2.0/27'
 param vmsubnetSubnetName string = 'vmsubnet'
 param vmsubnetSubnetAddressPrefix string = '10.0.3.0/24'
+param linuxVirtualMachineVMSize string = 'Standard_DS2_v2'
 
 /////////////////
 // 05-AKS-Supporting
@@ -299,7 +300,7 @@ param aksadminaccessprincipalId string
 param kubernetesVersion string = '1.30'
 param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
-param vmSize string = 'Standard_D4d_v5'
+param aksVMSize string = 'Standard_D4d_v5'
 
 //////////////////////////////////
 //////////////////////////////////
@@ -367,6 +368,7 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
     spokeSubnetVMPrefix:spokeSubnetVMPrefix
     spokeSubnetPLinkervicePrefix: spokeSubnetPLinkervicePrefix
     remotePeeringName: remotePeeringName
+    vmSize: linuxVirtualMachineVMSize
 
   }
   dependsOn: deployHub ? [networkHub] : []
@@ -412,6 +414,6 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     networkPlugin: networkPlugin
     acrName: aksSupporting.outputs.acrName
     aksClusterName: aksClusterName
-    vmSize: vmSize
+    vmSize: aksVMSize
   }
 }
