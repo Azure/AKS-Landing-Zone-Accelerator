@@ -606,6 +606,22 @@
               "visible": true
             },
             {
+              "name": "vmSize",
+              "type": "Microsoft.Common.TextBox",
+              "label": "AKS VM Size",
+              "subLabel": "",
+              "defaultValue": "Standard_D4d_v5",
+              "toolTip": "VM size availability varies by region",
+              "constraints": {
+                "required": true,
+                "regex": "",
+                "validationMessage": "",
+                "validations": []
+              },
+              "infoMessages": [],
+              "visible": true
+            },
+            {
               "name": "aksSubnetName",
               "type": "Microsoft.Common.TextBox",
               "label": "AKS Subnet name",

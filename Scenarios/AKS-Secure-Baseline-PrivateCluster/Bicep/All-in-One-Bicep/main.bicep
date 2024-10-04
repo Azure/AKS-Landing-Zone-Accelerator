@@ -299,6 +299,7 @@ param aksadminaccessprincipalId string
 param kubernetesVersion string = '1.30'
 param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
+param vmSize string = 'Standard_D4d_v5'
 
 //////////////////////////////////
 //////////////////////////////////
@@ -411,5 +412,6 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     networkPlugin: networkPlugin
     acrName: aksSupporting.outputs.acrName
     aksClusterName: aksClusterName
+    vmSize: vmSize
   }
 }
