@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.28.1.47646",
-      "templateHash": "5950662107880979924"
+      "version": "0.30.23.60470",
+      "templateHash": "3419662636992204656"
     }
   },
   "parameters": {
@@ -437,6 +437,10 @@
     "aksClusterName": {
       "type": "string",
       "defaultValue": "aksCluster"
+    },
+    "vmSize": {
+      "type": "string",
+      "defaultValue": "Standard_D4d_v5"
     }
   },
   "resources": [
@@ -519,8 +523,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.28.1.47646",
-              "templateHash": "14622037900232296803"
+              "version": "0.30.23.60470",
+              "templateHash": "4940105280913712153"
             }
           },
           "parameters": {
@@ -7634,8 +7638,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.28.1.47646",
-                      "templateHash": "2475204222112158833"
+                      "version": "0.30.23.60470",
+                      "templateHash": "3968621880291748711"
                     }
                   },
                   "parameters": {
@@ -7753,8 +7757,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.28.1.47646",
-              "templateHash": "1962386068872565768"
+              "version": "0.30.23.60470",
+              "templateHash": "9558533891196009747"
             }
           },
           "parameters": {
@@ -22010,8 +22014,8 @@
                   "metadata": {
                     "_generator": {
                       "name": "bicep",
-                      "version": "0.28.1.47646",
-                      "templateHash": "10032112452026088344"
+                      "version": "0.30.23.60470",
+                      "templateHash": "16081152647582805778"
                     }
                   },
                   "parameters": {
@@ -28076,8 +28080,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.28.1.47646",
-              "templateHash": "18380292763349642779"
+              "version": "0.30.23.60470",
+              "templateHash": "17393039019645740941"
             }
           },
           "parameters": {
@@ -37930,6 +37934,9 @@
           },
           "aksClusterName": {
             "value": "[parameters('aksClusterName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('vmSize')]"
           }
         },
         "template": {
@@ -37938,8 +37945,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.28.1.47646",
-              "templateHash": "1662336602186095921"
+              "version": "0.30.23.60470",
+              "templateHash": "1266465176582274116"
             }
           },
           "parameters": {
@@ -37989,6 +37996,10 @@
             "enablePrivateCluster": {
               "type": "bool",
               "defaultValue": true
+            },
+            "vmSize": {
+              "type": "string",
+              "defaultValue": "Standard_D4d_v5"
             },
             "networkPlugin": {
               "type": "string",
@@ -40484,7 +40495,7 @@
                         "osType": "Linux",
                         "serviceCidr": "",
                         "type": "VirtualMachineScaleSets",
-                        "vmSize": "Standard_D4d_v5",
+                        "vmSize": "[parameters('vmSize')]",
                         "vnetSubnetID": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/virtualNetworks/subnets', split(format('{0}/{1}', parameters('vnetName'), parameters('subnetName')), '/')[0], split(format('{0}/{1}', parameters('vnetName'), parameters('subnetName')), '/')[1])]"
                       }
                     ]
