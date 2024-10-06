@@ -9,15 +9,15 @@ data "azurerm_firewall" "firewall" {
 
 }
 
-# This ensures we have unique CAF compliant names for our resources.
+# rg ensures we have unique CAF compliant names for our resources.
 module "naming" {
   source  = "Azure/naming/azurerm"
   version = "~> 0.3"
   suffix  = ["lz"]
 }
 
-# This is required for resource modules
-resource "azurerm_resource_group" "this" {
+# rg is required for resource modules
+resource "azurerm_resource_group" "rg" {
   location = var.location
   name     = var.rgLzName
 }
@@ -25,10 +25,10 @@ resource "azurerm_resource_group" "this" {
 module "avm-res-network-routetable" {
   source              = "Azure/avm-res-network-routetable/azurerm"
   version             = "0.2.0"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = azurerm_resource_group.rg.name
   name                = var.rtName
-  location            = azurerm_resource_group.this.location
-  depends_on          = [azurerm_resource_group.this]
+  location            = azurerm_resource_group.rg.location
+  depends_on          = [azurerm_resource_group.rg]
 
   routes = {
     route1 = {
@@ -82,25 +82,25 @@ module "avm-nsg-default" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
   version             = "0.2.0"
   name                = var.nsgDefaultName
-  resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
 }
 
 module "avm-nsg-appgw" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
   version             = "0.2.0"
   name                = var.nsgAppGWName
-  resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
   security_rules      = local.appgw_nsg_rules
 }
 
 module "avm-res-network-virtualnetwork" {
   source              = "Azure/avm-res-network-virtualnetwork/azurerm"
   version             = "0.2.4"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = azurerm_resource_group.rg.name
   address_space       = [var.spokeVNETaddPrefixes]
-  location            = azurerm_resource_group.this.location
+  location            = azurerm_resource_group.rg.location
   name                = var.vnetLzName
   dns_servers = {
     dns_servers = [data.azurerm_firewall.firewall.ip_configuration[0].private_ip_address]
@@ -212,6 +212,7 @@ locals {
     akv               = "privatelink.vaultcore.azure.net",
     acr               = "privatelink.azurecr.io",
     aks               = "azmk8s.io"
+    contoso           = "contoso.com"
     AzureUSGovernment = ".cx.aks.containerservice.azure.us"
     AzureChinaCloud   = ".cx.prod.service.azk8s.cn"
     AzureGermanCloud  = "" //TODO: what is the correct value here?
@@ -221,7 +222,7 @@ locals {
 module "avm-res-network-privatednszone-aks" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
   version             = "0.1.2"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = azurerm_resource_group.rg.name
   domain_name         = "privatelink.${var.location}.${local.domain_name.aks}"
   virtual_network_links = {
     vnetlink = {
@@ -234,7 +235,7 @@ module "avm-res-network-privatednszone-aks" {
 module "avm-res-network-privatednszone-akv" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
   version             = "0.1.2"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.akv
   virtual_network_links = {
     vnetlink = {
@@ -248,7 +249,7 @@ module "avm-res-network-privatednszone-akv" {
 module "avm-res-network-privatednszone-acr" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
   version             = "0.1.2"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.acr
   virtual_network_links = {
     vnetlink = {
@@ -258,12 +259,25 @@ module "avm-res-network-privatednszone-acr" {
   } }
 }
 
+module "avm-res-network-privatednszone-contoso" {
+  source              = "Azure/avm-res-network-privatednszone/azurerm"
+  version             = "0.1.2"
+  resource_group_name = azurerm_resource_group.rg.name
+  domain_name         = local.domain_name.contoso
+  virtual_network_links = {
+    vnetlink = {
+      vnetlinkname     = "vlink-contoso"
+      vnetid           = data.azurerm_virtual_network.vnethub.id
+      autoregistration = false
+  } }
+}
+
 module "avm-res-network-applicationgateway" {
   source              = "Azure/avm-res-network-applicationgateway/azurerm"
   version             = "0.1.1"
-  resource_group_name = azurerm_resource_group.this.name
+  resource_group_name = azurerm_resource_group.rg.name
   name                = "appgw"
-  location            = azurerm_resource_group.this.location
+  location            = azurerm_resource_group.rg.location
   public_ip_name      = "pip-appgw"
   vnet_name           = module.avm-res-network-virtualnetwork.resource.name
   subnet_name_backend = module.avm-res-network-virtualnetwork-appgw-subnet.resource.name

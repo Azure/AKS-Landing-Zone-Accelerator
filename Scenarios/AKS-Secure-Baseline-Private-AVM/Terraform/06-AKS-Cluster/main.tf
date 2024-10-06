@@ -1,8 +1,9 @@
 locals {
   domain_name = {
-    akv = "privatelink.vaultcore.azure.net",
-    acr = "privatelink.azurecr.io",
-    aks = "azmk8s.io"
+    akv     = "privatelink.vaultcore.azure.net",
+    acr     = "privatelink.azurecr.io",
+    aks     = "azmk8s.io"
+    contoso = "contoso.com"
 
   }
 }
@@ -29,8 +30,17 @@ data "azurerm_private_dns_zone" "dnszone-aks" {
   resource_group_name = var.rgLzName
 }
 
-data "azurerm_container_registry" "csr" {
-  name                = module.naming.container_registry.name_unique
+data "azurerm_private_dns_zone" "dnszonme-contoso" {
+  name                = local.domain_name.contoso
+  resource_group_name = var.rgLzName
+}
+data "azurerm_container_registry" "acr" {
+  name                = var.acrName
+  resource_group_name = var.rgLzName
+}
+
+data "azurerm_key_vault" "akv" {
+  name                = var.akvName
   resource_group_name = var.rgLzName
 }
 
@@ -89,6 +99,10 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   automatic_channel_upgrade         = "patch"
   role_based_access_control_enabled = true
   http_application_routing_enabled  = true
+
+  web_app_routing {
+    dns_zone_ids = [data.azurerm_private_dns_zone.dnszonme-contoso.id]
+  }
 
 
   azure_active_directory_role_based_access_control {
@@ -169,7 +183,14 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
 resource "azurerm_role_assignment" "role-assignment-acr" {
   principal_id                     = module.avm-res-managedidentity-userassignedidentity.principal_id
   role_definition_name             = "AcrPull"
-  scope                            = data.azurerm_container_registry.csr.id
+  scope                            = data.azurerm_container_registry.acr.id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "role-assignment-akv" {
+  principal_id                     = module.avm-res-managedidentity-userassignedidentity.principal_id
+  role_definition_name             = "Key Vault Secrets User"
+  scope                            = data.azurerm_key_vault.akv.id
   skip_service_principal_aad_check = true
 }
 

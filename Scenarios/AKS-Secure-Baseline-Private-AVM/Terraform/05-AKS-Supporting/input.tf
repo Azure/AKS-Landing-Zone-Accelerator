@@ -17,8 +17,13 @@ variable "vnetHubName" {
   default = "vnet-hub"
 }
 
-variable "rtName" {
+variable "acrName" {
   type    = string
-  default = "rt-lz-table"
+  default = "acrlzti5y"
+}
+
+variable "akvName" {
+  type    = string
+  default = "akvlzti5y"
 
 }

@@ -29,3 +29,14 @@ variable "admin-group-object-ids" {
   default = "d1553d93-3b9f-4d52-a28b-e4a4a27c114c"
 
 }
+
+variable "acrName" {
+  type    = string
+  default = "acrlzti5y"
+}
+
+variable "akvName" {
+  type    = string
+  default = "akvlzti5y"
+
+}

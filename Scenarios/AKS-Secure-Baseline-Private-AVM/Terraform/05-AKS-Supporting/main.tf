@@ -43,7 +43,7 @@ module "naming" {
 module "avm-res-containerregistry-registry" {
   source                        = "Azure/avm-res-containerregistry-registry/azurerm"
   version                       = "0.3.1"
-  name                          = module.naming.container_registry.name_unique
+  name                          = var.acrName
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
   public_network_access_enabled = false
@@ -58,7 +58,7 @@ module "avm-res-containerregistry-registry" {
 module "avm-res-keyvault-vault" {
   source                        = "Azure/avm-res-keyvault-vault/azurerm"
   version                       = "0.9.1"
-  name                          = module.naming.key_vault.name_unique
+  name                          = var.akvName
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
   tenant_id                     = data.azurerm_client_config.tenant.tenant_id
