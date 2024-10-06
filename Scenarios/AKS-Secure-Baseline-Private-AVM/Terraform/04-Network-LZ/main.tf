@@ -1,11 +1,3 @@
-locals {
-  AzureCloud        = ".azmk8s.io"
-  AzureUSGovernment = ".cx.aks.containerservice.azure.us"
-  AzureChinaCloud   = ".cx.prod.service.azk8s.cn"
-  AzureGermanCloud  = "" //TODO: what is the correct value here?
-}
-
-
 data "azurerm_virtual_network" "vnethub" {
   name                = var.vnetHubName
   resource_group_name = var.rgHubName
@@ -26,7 +18,7 @@ module "naming" {
 
 # This is required for resource modules
 resource "azurerm_resource_group" "this" {
-  location = "eastus" ##module.regions.regions[random_integer.region_index.result].name
+  location = var.location
   name     = var.rgLzName
 }
 
@@ -36,6 +28,7 @@ module "avm-res-network-routetable" {
   resource_group_name = azurerm_resource_group.this.name
   name                = var.rtName
   location            = azurerm_resource_group.this.location
+  depends_on          = [azurerm_resource_group.this]
 
   routes = {
     route1 = {
@@ -71,6 +64,17 @@ locals {
       source_address_prefix      = "GatewayManager"
       source_port_range          = "*"
     }
+    "rule03" = {
+      name                       = "Allow80InBound"
+      access                     = "Allow"
+      destination_address_prefix = "*"
+      destination_port_ranges    = ["80"]
+      direction                  = "Inbound"
+      priority                   = 300
+      protocol                   = "Tcp"
+      source_address_prefix      = "*"
+      source_port_range          = "*"
+    }
   }
 }
 
@@ -97,7 +101,10 @@ module "avm-res-network-virtualnetwork" {
   resource_group_name = azurerm_resource_group.this.name
   address_space       = [var.spokeVNETaddPrefixes]
   location            = azurerm_resource_group.this.location
-  name                = var.vnetHubName
+  name                = var.vnetLzName
+  dns_servers = {
+    dns_servers = [data.azurerm_firewall.firewall.ip_configuration[0].private_ip_address]
+  }
 
   subnets = {
     default = {
@@ -107,22 +114,75 @@ module "avm-res-network-virtualnetwork" {
         id = module.avm-nsg-default.resource.id
       }
     }
-    AKS = {
-      name             = "snet-aks"
-      address_prefixes = [var.snetAksAddr]
-      route_table = {
-        id = module.avm-res-network-routetable.resource.id
-      }
-
-    }
-    AppGWSubnet = {
-      name             = "snet-appgw"
-      address_prefixes = [var.snetAppGWAddr]
-      network_security_group = {
-        id = module.avm-nsg-appgw.resource.id
-      }
-    }
   }
+}
+module "avm-res-network-virtualnetwork-aks-subnet" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "0.4.0"
+  name    = "snet-aks"
+  virtual_network = {
+    resource_id = module.avm-res-network-virtualnetwork.resource.id
+  }
+  address_prefixes = [var.snetAksAddr]
+  route_table = {
+    id = module.avm-res-network-routetable.resource.id
+  }
+  network_security_group = {
+    id = module.avm-nsg-default.resource.id
+  }
+
+  depends_on = [module.avm-res-network-virtualnetwork.resource]
+}
+
+module "avm-res-network-virtualnetwork-appgw-subnet" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "0.4.0"
+  name    = "snet-appgw"
+  virtual_network = {
+    resource_id = module.avm-res-network-virtualnetwork.resource.id
+  }
+  address_prefixes = [var.snetAppGWAddr]
+  network_security_group = {
+    id = module.avm-nsg-appgw.resource.id
+  }
+
+  depends_on = [module.avm-res-network-virtualnetwork.resource]
+}
+
+module "avm-res-network-virtualnetwork-vm-subnet" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "0.4.0"
+  name    = "snet-vm"
+  virtual_network = {
+    resource_id = module.avm-res-network-virtualnetwork.resource.id
+  }
+  address_prefixes = [var.snetVMAddr]
+  route_table = {
+    id = module.avm-res-network-routetable.resource.id
+  }
+  network_security_group = {
+    id = module.avm-nsg-default.resource.id
+  }
+
+  depends_on = [module.avm-res-network-virtualnetwork.resource]
+}
+
+module "avm-res-network-virtualnetwork-spe-subnet" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
+  version = "0.4.0"
+  name    = "snet-spe"
+  virtual_network = {
+    resource_id = module.avm-res-network-virtualnetwork.resource.id
+  }
+  address_prefixes = [var.snetServicePeAddr]
+  route_table = {
+    id = module.avm-res-network-routetable.resource.id
+  }
+  network_security_group = {
+    id = module.avm-nsg-default.resource.id
+  }
+
+  depends_on = [module.avm-res-network-virtualnetwork.resource]
 }
 
 module "avm-res-network-virtualnetwork_peering" {
@@ -145,4 +205,131 @@ module "avm-res-network-virtualnetwork_peering" {
   reverse_allow_gateway_transit        = false
   reverse_allow_virtual_network_access = true
   reverse_use_remote_gateways          = false
+}
+
+locals {
+  domain_name = {
+    akv               = "privatelink.vaultcore.azure.net",
+    acr               = "privatelink.azurecr.io",
+    aks               = "azmk8s.io"
+    AzureUSGovernment = ".cx.aks.containerservice.azure.us"
+    AzureChinaCloud   = ".cx.prod.service.azk8s.cn"
+    AzureGermanCloud  = "" //TODO: what is the correct value here?
+  }
+}
+
+module "avm-res-network-privatednszone-aks" {
+  source              = "Azure/avm-res-network-privatednszone/azurerm"
+  version             = "0.1.2"
+  resource_group_name = azurerm_resource_group.this.name
+  domain_name         = "privatelink.${var.location}.${local.domain_name.aks}"
+  virtual_network_links = {
+    vnetlink = {
+      vnetlinkname     = "vlink-ak"
+      vnetid           = data.azurerm_virtual_network.vnethub.id
+      autoregistration = false
+  } }
+}
+
+module "avm-res-network-privatednszone-akv" {
+  source              = "Azure/avm-res-network-privatednszone/azurerm"
+  version             = "0.1.2"
+  resource_group_name = azurerm_resource_group.this.name
+  domain_name         = local.domain_name.akv
+  virtual_network_links = {
+    vnetlink = {
+      vnetlinkname     = "vlink-akv"
+      vnetid           = data.azurerm_virtual_network.vnethub.id
+      autoregistration = false
+  } }
+
+}
+
+module "avm-res-network-privatednszone-acr" {
+  source              = "Azure/avm-res-network-privatednszone/azurerm"
+  version             = "0.1.2"
+  resource_group_name = azurerm_resource_group.this.name
+  domain_name         = local.domain_name.acr
+  virtual_network_links = {
+    vnetlink = {
+      vnetlinkname     = "vlink-acr"
+      vnetid           = data.azurerm_virtual_network.vnethub.id
+      autoregistration = false
+  } }
+}
+
+module "avm-res-network-applicationgateway" {
+  source              = "Azure/avm-res-network-applicationgateway/azurerm"
+  version             = "0.1.1"
+  resource_group_name = azurerm_resource_group.this.name
+  name                = "appgw"
+  location            = azurerm_resource_group.this.location
+  public_ip_name      = "pip-appgw"
+  vnet_name           = module.avm-res-network-virtualnetwork.resource.name
+  subnet_name_backend = module.avm-res-network-virtualnetwork-appgw-subnet.resource.name
+  sku = {
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
+    capacity = 0
+  }
+
+  autoscale_configuration = {
+    min_capacity = 1
+    max_capacity = 2
+  }
+
+  frontend_ports = {
+    frontend-port-80 = {
+      name = "frontend-port-80"
+      port = 80
+    }
+  }
+
+  backend_address_pools = {
+    appGatewayBackendPool = {
+      name         = "appGatewayBackendPool"
+      ip_addresses = ["100.64.2.6", "100.64.2.5"]
+      #fqdns        = ["example1.com", "example2.com"]
+    }
+  }
+
+  backend_http_settings = {
+
+    appGatewayBackendHttpSettings = {
+      name                  = "appGatewayBackendHttpSettings"
+      cookie_based_affinity = "Disabled"
+      path                  = "/"
+      enable_https          = false
+      request_timeout       = 30
+      connection_draining = {
+        enable_connection_draining = true
+        drain_timeout_sec          = 300
+
+      }
+    }
+
+  }
+  http_listeners = {
+    appGatewayHttpListener = {
+      name               = "appGatewayHttpListener"
+      host_name          = null
+      frontend_port_name = "frontend-port-80"
+    }
+
+  }
+  request_routing_rules = {
+    routing-rule-1 = {
+      name                       = "rule-1"
+      rule_type                  = "Basic"
+      http_listener_name         = "appGatewayHttpListener"
+      backend_address_pool_name  = "appGatewayBackendPool"
+      backend_http_settings_name = "appGatewayBackendHttpSettings"
+      priority                   = 100
+    }
+
+  }
+  zones = ["1", "2", "3"]
+
+  depends_on = [module.avm-res-network-virtualnetwork-appgw-subnet.resource]
+
 }
