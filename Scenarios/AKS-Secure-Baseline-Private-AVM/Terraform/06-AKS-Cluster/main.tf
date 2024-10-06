@@ -30,7 +30,7 @@ data "azurerm_private_dns_zone" "dnszone-aks" {
 }
 
 data "azurerm_container_registry" "csr" {
-  name                = "lzacr1342435"
+  name                = module.naming.container_registry.name_unique
   resource_group_name = var.rgLzName
 }
 

@@ -43,7 +43,7 @@ module "naming" {
 module "avm-res-containerregistry-registry" {
   source                        = "Azure/avm-res-containerregistry-registry/azurerm"
   version                       = "0.3.1"
-  name                          = "lzacr1342435"
+  name                          = module.naming.container_registry.name_unique
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
   public_network_access_enabled = false
