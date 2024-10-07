@@ -113,6 +113,9 @@ module "avm-res-network-virtualnetwork" {
       network_security_group = {
         id = module.avm-nsg-default.resource.id
       }
+      route_table = {
+        id = module.avm-res-network-routetable.resource.id
+      }
     }
   }
 }
