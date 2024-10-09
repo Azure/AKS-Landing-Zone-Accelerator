@@ -245,7 +245,3 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic-aks" {
   }
 }
 
-output "web_app_routing_identity_debug" {
-  value = azurerm_kubernetes_cluster.aks-cluster
-}
-
