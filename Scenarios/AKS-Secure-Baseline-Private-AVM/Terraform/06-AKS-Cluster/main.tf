@@ -30,7 +30,7 @@ data "azurerm_private_dns_zone" "dnszone-aks" {
   resource_group_name = var.rgLzName
 }
 
-data "azurerm_private_dns_zone" "dnszonme-contoso" {
+data "azurerm_private_dns_zone" "dnszone-contoso" {
   name                = local.domain_name.contoso
   resource_group_name = var.rgLzName
 }
@@ -101,17 +101,12 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   http_application_routing_enabled  = true
 
   web_app_routing {
-    dns_zone_ids = [data.azurerm_private_dns_zone.dnszonme-contoso.id]
+    dns_zone_ids = [data.azurerm_private_dns_zone.dnszone-contoso.id]
   }
-
-
   azure_active_directory_role_based_access_control {
     managed                = true
     admin_group_object_ids = [var.admin-group-object-ids]
   }
-
-
-
 
   default_node_pool {
     name                         = "default"
@@ -151,7 +146,6 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     network_plugin_mode = "overlay"
     load_balancer_sku   = "standard"
   }
-
   oms_agent {
     log_analytics_workspace_id = module.avm-res-operationalinsights-workspace.resource.id
   }
@@ -181,16 +175,23 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
 }
 
 resource "azurerm_role_assignment" "role-assignment-acr" {
-  principal_id                     = module.avm-res-managedidentity-userassignedidentity.principal_id
+  principal_id                     = azurerm_kubernetes_cluster.aks-cluster.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
   scope                            = data.azurerm_container_registry.acr.id
   skip_service_principal_aad_check = true
 }
 
 resource "azurerm_role_assignment" "role-assignment-akv" {
-  principal_id                     = module.avm-res-managedidentity-userassignedidentity.principal_id
+  principal_id                     = azurerm_kubernetes_cluster.aks-cluster.key_vault_secrets_provider[0].secret_identity[0].object_id
   role_definition_name             = "Key Vault Secrets User"
   scope                            = data.azurerm_key_vault.akv.id
+  skip_service_principal_aad_check = true
+}
+
+resource "azurerm_role_assignment" "role-assignment-private-dns" {
+  principal_id                     = azurerm_kubernetes_cluster.aks-cluster.web_app_routing[0].web_app_routing_identity[0].object_id
+  role_definition_name             = "Private DNS Zone Contributor"
+  scope                            = data.azurerm_private_dns_zone.dnszone-contoso.id
   skip_service_principal_aad_check = true
 }
 
@@ -243,3 +244,8 @@ resource "azurerm_monitor_diagnostic_setting" "diagnostic-aks" {
     category = "AllMetrics"
   }
 }
+
+output "web_app_routing_identity_debug" {
+  value = azurerm_kubernetes_cluster.aks-cluster
+}
+
