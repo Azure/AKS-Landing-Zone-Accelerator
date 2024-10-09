@@ -15,6 +15,7 @@ param keyvaultName string
 param acrName string 
 param aksClusterName string
 param enablePrivateCluster bool = true
+param vmSize string = 'Standard_D4d_v5'
 
 
 @allowed([
@@ -106,7 +107,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
         osType: 'Linux'
         serviceCidr: ''
         type: 'VirtualMachineScaleSets'
-        vmSize: 'Standard_D4d_v5'
+        vmSize: vmSize
         vnetSubnetID: aksSubnet.id
       }
     ]
