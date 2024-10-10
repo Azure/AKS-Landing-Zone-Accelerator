@@ -155,8 +155,8 @@ module "rule_collection_group" {
       rule = [{
         name                  = "OutboundToInternet"
         description           = "Allow traffic outbound to the Internet"
-        destination_addresses = ["0.0.0.0/0"]
-        destination_ports     = ["443"]
+        destination_addresses = ["*"]
+        destination_ports     = ["443", "80"]
         source_addresses      = ["*"]
         protocols             = ["TCP"]
         },
