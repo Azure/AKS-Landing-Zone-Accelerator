@@ -47,6 +47,8 @@ module "avm-res-containerregistry-registry" {
   location                      = data.azurerm_resource_group.rg.location
   resource_group_name           = data.azurerm_resource_group.rg.name
   public_network_access_enabled = false
+  network_rule_bypass_option    = "AzureServices"
+
   private_endpoints = {
     primary = {
       private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.dnszone-acr.id]
