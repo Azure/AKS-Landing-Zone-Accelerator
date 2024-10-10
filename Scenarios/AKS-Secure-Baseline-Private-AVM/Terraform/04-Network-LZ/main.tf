@@ -215,7 +215,7 @@ locals {
     akv               = "privatelink.vaultcore.azure.net",
     acr               = "privatelink.azurecr.io",
     aks               = "azmk8s.io"
-    contoso           = "contoso.com"
+    contoso           = "private.contoso.com"
     AzureUSGovernment = ".cx.aks.containerservice.azure.us"
     AzureChinaCloud   = ".cx.prod.service.azk8s.cn"
     AzureGermanCloud  = "" //TODO: what is the correct value here?
@@ -304,9 +304,9 @@ module "avm-res-network-applicationgateway" {
 
   backend_address_pools = {
     appGatewayBackendPool = {
-      name         = "appGatewayBackendPool"
-      ip_addresses = ["100.64.2.6", "100.64.2.5"]
-      #fqdns        = ["example1.com", "example2.com"]
+      name = "appGatewayBackendPool"
+      # ip_addresses = ["10.0.1.6"]
+      fqdns = ["store.${local.domain_name.contoso}"]
     }
   }
 
