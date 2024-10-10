@@ -302,22 +302,36 @@ module "avm-res-network-applicationgateway" {
     }
   }
 
+  probe_configurations = {
+    appGatewayProbe = {
+      name                = "appGatewayProbe"
+      protocol            = "Http"
+      path                = "/healthz"
+      host                = local.domain_name.contoso
+      interval            = 30
+      timeout             = 30
+      unhealthy_threshold = 3
+    }
+  }
+
   backend_address_pools = {
     appGatewayBackendPool = {
       name = "appGatewayBackendPool"
       # ip_addresses = ["10.0.1.6"]
-      fqdns = ["store.${local.domain_name.contoso}"]
+      fqdns = [local.domain_name.contoso]
     }
   }
 
   backend_http_settings = {
 
     appGatewayBackendHttpSettings = {
-      name                  = "appGatewayBackendHttpSettings"
-      cookie_based_affinity = "Disabled"
-      path                  = "/"
-      enable_https          = false
-      request_timeout       = 30
+      name                                = "appGatewayBackendHttpSettings"
+      cookie_based_affinity               = "Disabled"
+      path                                = "/"
+      enable_https                        = false
+      request_timeout                     = 30
+      pick_host_name_from_backend_address = true
+      probe_name                          = "appGatewayProbe"
       connection_draining = {
         enable_connection_draining = true
         drain_timeout_sec          = 300
