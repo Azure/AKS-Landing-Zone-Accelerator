@@ -3,7 +3,7 @@ locals {
     akv     = "privatelink.vaultcore.azure.net",
     acr     = "privatelink.azurecr.io",
     aks     = "azmk8s.io"
-    contoso = "contoso.com"
+    contoso = "private.contoso.com"
 
   }
 }
