@@ -332,11 +332,3 @@ module "avm-res-network-routetable" {
   }
   depends_on = [azurerm_resource_group.rg]
 }
-
-locals {
-  create_private_dns_zone = true
-  private_dns_zones = [
-    "privatelink.vaultcore.azure.net"
-
-  ]
-}
