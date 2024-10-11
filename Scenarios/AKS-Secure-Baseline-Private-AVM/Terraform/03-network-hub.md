@@ -19,7 +19,6 @@ The following will be created:
 * Hub VNET
 * Azure Firewall
 * Azure Bastion Host
-* Virtual Machine
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-Private-AVM/Terraform/" folder
 
