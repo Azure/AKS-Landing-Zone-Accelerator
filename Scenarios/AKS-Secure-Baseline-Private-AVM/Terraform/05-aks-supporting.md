@@ -8,10 +8,10 @@ The following will be created:
 * Related DNS settings for private endpoints
 * A managed identity
 
-Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-supporting" folder
+Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/" folder
 
 ```bash
-cd ../05-AKS-supporting
+cd ./05-AKS-supporting
 ```
 
 Review "input.tf" and update the variable values as required. Once the files are updated, deploy using terraform cli.
