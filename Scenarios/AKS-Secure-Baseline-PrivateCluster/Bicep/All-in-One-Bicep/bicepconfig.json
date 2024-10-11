@@ -1,0 +1,20 @@
+{
+    "experimentalFeaturesEnabled": {
+        "extensibility": false
+    },
+    "analyzers": {
+        "core": {
+            "verbose": false,
+            "enabled": true,
+            "rules": {
+                "no-hardcoded-env-urls": {
+                    "level": "warning",
+                    "excludedhosts": [
+                        "schema.management.azure.com",
+                        "core.windows.net"
+                    ]
+                }
+            }
+        }
+    }
+}

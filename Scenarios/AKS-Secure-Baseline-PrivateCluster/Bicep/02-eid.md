@@ -4,7 +4,7 @@ This is the starting point for the instructions on deploying the [AKS Baseline p
 
 ## Steps
 
-1. Latest [Azure CLI installed](https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) (must be at least 2.37), or you can perform this from Azure Cloud Shell by clicking below.
+1. Latest [Azure CLI installed](https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest) (must be at least 2.59), or you can perform this from Azure Cloud Shell by clicking below.
 1. An Azure subscription.
 
    The subscription used in this deployment cannot be a [free account](https://azure.microsoft.com/free); it must be a standard EA, pay-as-you-go, or Visual Studio benefit subscription. This is because the resources deployed here are beyond the quotas of free subscriptions.
@@ -29,10 +29,10 @@ Before creating the Microsoft Entra ID integrated cluster, groups must be create
 
 Depending on the needs of your organization, you may have a choice of existing groups to use or a new groups may need to be created for each cluster deployment.  
 
-Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-EID" folder
+Navigate to "/AKS-Secure-Baseline-Private-AVM/Bicep/02-EID" folder
 
 ```azurecli
-cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/02-EID
+cd ./Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/02-EID
 ```
 
 Use the Azure CLI or Azure PowerShell to create the Microsoft Entra groups. Replace the Microsoft Entra group names below with the name of the Microsoft Entra groups you want to create, such as AKS_ES_dev, AKS_ES_ops. There should be no space in the names.

@@ -1,23 +1,28 @@
 targetScope = 'subscription'
 
-// Parameters
 param rgName string
 param vnetSpokeName string
 param spokeVNETaddPrefixes array
-param spokeSubnets array
 param rtAKSSubnetName string
 param firewallIP string
 param vnetHubName string
 param appGatewayName string
-param appGatewaySubnetName string
 param vnetHUBRGName string
 param nsgAKSName string
 param nsgAppGWName string
 param rtAppGWSubnetName string
-param dhcpOptions object
+param enablePrivateCluster bool = true
+// param dnsServers array
 param location string = deployment().location
 param availabilityZones array
 param appGwyAutoScale object
+param securityRules array = []
+param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
+param spokeSubnetAKSPrefix string = '10.1.1.0/24'
+param spokeSubnetAppGWPrefix string = '10.1.2.0/27'
+param spokeSubnetVMPrefix string = '10.1.3.0/24'
+param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
+param remotePeeringName string = 'spoke-hub-peering'
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -26,202 +31,268 @@ var privateDNSZoneAKSSuffixes = {
   AzureGermanCloud: '' //TODO: what is the correct value here?
 }
 
-module rg 'modules/resource-group/rg.bicep' = {
-  name: rgName
-  params: {
-    rgName: rgName
-    location: location
-  }
-}
-
-module vnetspoke 'modules/vnet/vnet.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: vnetSpokeName
-  params: {
-    location: location
-    vnetAddressSpace: {
-      addressPrefixes: spokeVNETaddPrefixes
-    }
-    vnetName: vnetSpokeName
-    subnets: spokeSubnets
-    dhcpOptions: dhcpOptions
-  }
-  dependsOn: [
-    rg
-  ]
-}
-
-module nsgakssubnet 'modules/vnet/nsg.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: nsgAKSName
-  params: {
-    location: location
-    nsgName: nsgAKSName
-  }
-}
-
-module routetable 'modules/vnet/routetable.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: rtAKSSubnetName
-  params: {
-    location: location
-    rtName: rtAKSSubnetName
-  }
-}
-
-module routetableroutes 'modules/vnet/routetableroutes.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aks-to-internet'
-  params: {
-    routetableName: rtAKSSubnetName
-    routeName: 'AKS-to-internet'
-    properties: {
-      nextHopType: 'VirtualAppliance'
-      nextHopIpAddress: firewallIP
-      addressPrefix: '0.0.0.0/0'
-    }
-  }
-  dependsOn: [
-    routetable
-  ]
-}
-
 resource vnethub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   scope: resourceGroup(vnetHUBRGName)
   name: vnetHubName
 }
 
-module vnetpeeringhub 'modules/vnet/vnetpeering.bicep' = {
-  scope: resourceGroup(vnetHUBRGName)
-  name: 'vnetpeeringhub'
+module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
+  name: rgName
   params: {
-    peeringName: 'HUB-to-Spoke'
-    vnetName: vnethub.name
-    properties: {
-      allowVirtualNetworkAccess: true
-      allowForwardedTraffic: true
-      remoteVirtualNetwork: {
-        id: vnetspoke.outputs.vnetId
-      }
-    }
+    name: rgName
+    location: location
+    enableTelemetry: true
   }
-  dependsOn: [
-    vnethub
-    vnetspoke
-  ]
 }
 
-module vnetpeeringspoke 'modules/vnet/vnetpeering.bicep' = {
+module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
   scope: resourceGroup(rg.name)
-  name: 'vnetpeeringspoke'
+  name: vnetSpokeName
   params: {
-    peeringName: 'Spoke-to-HUB'
-    vnetName: vnetspoke.outputs.vnetName
-    properties: {
-      allowVirtualNetworkAccess: true
-      allowForwardedTraffic: true
-      remoteVirtualNetwork: {
-        id: vnethub.id
+    addressPrefixes: spokeVNETaddPrefixes
+    name: vnetSpokeName
+    location: location
+    subnets: [
+      {
+        name: 'default'
+        addressPrefix: spokeSubnetDefaultPrefix
       }
-    }
+      {
+        name: 'AKS'
+        addressPrefix: spokeSubnetAKSPrefix
+        routeTableResourceId: routeTable.outputs.resourceId
+      }
+      {
+        name: 'AppGWSubnet'
+        addressPrefix: spokeSubnetAppGWPrefix
+      }
+      {
+        name: 'vmsubnet'
+        addressPrefix: spokeSubnetVMPrefix
+      }
+      {
+        name: 'servicespe'
+        addressPrefix: spokeSubnetPLinkervicePrefix
+      }
+    ]
+    enableTelemetry: true
+    // dnsServers: dnsServers
+    peerings: [
+      {
+        allowForwardedTraffic: true
+        allowGatewayTransit: false
+        allowVirtualNetworkAccess: true
+        remotePeeringAllowForwardedTraffic: true
+        remotePeeringAllowVirtualNetworkAccess: true
+        remotePeeringEnabled: true
+        remotePeeringName: remotePeeringName
+        remoteVirtualNetworkId: vnethub.id
+        useRemoteGateways: false
+      }
+    ]
   }
   dependsOn: [
-    vnethub
-    vnetspoke
+    routeTable
+    appGwyRouteTable
   ]
 }
 
-module privatednsACRZone 'modules/vnet/privatednszone.bicep' = {
+module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.1.3' = {
+  scope: resourceGroup(rg.name)
+  name: nsgAKSName
+  params: {
+    name: nsgAKSName
+    location: location
+    securityRules: securityRules
+    enableTelemetry: true
+  }
+}
+
+module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-group:0.1.3' = {
+  scope: resourceGroup(rg.name)
+  name: nsgAppGWName
+  params: {
+    name: nsgAppGWName
+    location: location
+    securityRules: [
+      {
+        name: 'Allow443InBound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '443'
+          direction: 'Inbound'
+          priority: 102
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowControlPlaneV1SKU'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '65503-65534'
+          direction: 'Inbound'
+          priority: 110
+          protocol: '*'
+          sourceAddressPrefix: 'GatewayManager'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowControlPlaneV2SKU'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '65200-65535'
+          direction: 'Inbound'
+          priority: 111
+          protocol: '*'
+          sourceAddressPrefix: 'GatewayManager'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowHealthProbes'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '*'
+          direction: 'Inbound'
+          priority: 120
+          protocol: '*'
+          sourceAddressPrefix: 'AzureLoadBalancer'
+          sourcePortRange: '*'
+        }
+      }
+    ]
+    enableTelemetry: true
+  }
+}
+
+module routeTable 'br/public:avm/res/network/route-table:0.2.2' = {
+  scope: resourceGroup(rg.name)
+  name: rtAKSSubnetName
+  params: {
+    name: rtAKSSubnetName
+    location: location
+    routes: [
+      {
+        name: 'vm-to-internet'
+        properties: {
+          addressPrefix: '0.0.0.0/0'
+          nextHopIpAddress: firewallIP
+          nextHopType: 'VirtualAppliance'
+        }
+      }
+    ]
+    enableTelemetry: true
+  }
+}
+
+module appGwyRouteTable 'br/public:avm/res/network/route-table:0.2.2' = {
+  scope: resourceGroup(rg.name)
+  name: rtAppGWSubnetName
+  params: {
+    name: rtAppGWSubnetName
+    location: location
+    routes: [
+      {
+        name: 'vm-to-internet'
+        properties: {
+          addressPrefix: '0.0.0.0/0'
+          nextHopIpAddress: firewallIP
+          nextHopType: 'VirtualAppliance'
+        }
+      }
+    ]
+    enableTelemetry: true
+  }
+}
+
+module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsACRZone'
   params: {
-    privateDNSZoneName: 'privatelink${environment().suffixes.acrLoginServer}'
+    name: 'privatelink${environment().suffixes.acrLoginServer}'
+    location: 'global'
+    virtualNetworkLinks: [
+      {
+        virtualNetworkResourceId: vnethub.id
+      }
+      {
+        virtualNetworkResourceId: vnetspoke.outputs.resourceId
+      }
+    ]
+    enableTelemetry: true
   }
 }
 
-module privateDNSLinkACR 'modules/vnet/privatednslink.bicep' = {
+module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
   scope: resourceGroup(rg.name)
-  name: 'privateDNSLinkACR'
+  name: 'privatednsKVZone'
   params: {
-    privateDnsZoneName: privatednsACRZone.outputs.privateDNSZoneName
-    vnetId: vnethub.id
+    name: 'privatelink.vaultcore.azure.net'
+    location: 'global'
+    virtualNetworkLinks: [
+      {
+        virtualNetworkResourceId: vnethub.id
+      }
+      {
+        virtualNetworkResourceId: vnetspoke.outputs.resourceId
+      }
+    ]
+    enableTelemetry: true
   }
 }
 
-module privatednsVaultZone 'modules/vnet/privatednszone.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'privatednsVaultZone'
-  params: {
-    privateDNSZoneName: 'privatelink.vaultcore.azure.net'
-  }
-}
-
-module privateDNSLinkVault 'modules/vnet/privatednslink.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'privateDNSLinkVault'
-  params: {
-    privateDnsZoneName: privatednsVaultZone.outputs.privateDNSZoneName
-    vnetId: vnethub.id
-  }
-}
-
-module privatednsSAZone 'modules/vnet/privatednszone.bicep' = {
+module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsSAZone'
   params: {
-    privateDNSZoneName: 'privatelink.file.${environment().suffixes.storage}'
+    name: 'privatelink.file.${environment().suffixes.storage}'
+    location: 'global'
+    virtualNetworkLinks: [
+      {
+        virtualNetworkResourceId: vnethub.id
+      }
+    ]
+    enableTelemetry: true
   }
 }
 
-module privateDNSLinkSA 'modules/vnet/privatednslink.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'privateDNSLinkSA'
-  params: {
-    privateDnsZoneName: privatednsSAZone.outputs.privateDNSZoneName
-    vnetId: vnethub.id
-  }
-}
-
-module privatednsAKSZone 'modules/vnet/privatednszone.bicep' = {
+module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.2.4' = if (enablePrivateCluster) {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'
   params: {
-    privateDNSZoneName: 'privatelink.${toLower(location)}${privateDNSZoneAKSSuffixes[environment().name]}'
+    name: 'privatelink.${toLower(location)}${privateDNSZoneAKSSuffixes[environment().name]}'
+    location: 'global'
+    virtualNetworkLinks: [
+      {
+        virtualNetworkResourceId: vnethub.id
+      }
+    ]
+    enableTelemetry: true
   }
 }
 
-module privateDNSLinkAKS 'modules/vnet/privatednslink.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'privateDNSLinkAKS'
-  params: {
-    privateDnsZoneName: privatednsAKSZone.outputs.privateDNSZoneName
-    vnetId: vnethub.id
-  }
-}
-
-module publicipappgw 'modules/vnet/publicip.bicep' = {
+module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   scope: resourceGroup(rg.name)
   name: 'APPGW-PIP'
   params: {
-    availabilityZones: availabilityZones
+    name: 'APPGW-PIP'
     location: location
-    publicipName: 'APPGW-PIP'
-    publicipproperties: {
-      publicIPAllocationMethod: 'Static'
-    }
-    publicipsku: {
-      name: 'Standard'
-      tier: 'Regional'
-    }
+    zones: availabilityZones
+    publicIPAllocationMethod: 'Static'
+    skuName: 'Standard'
+    skuTier: 'Regional'
+    enableTelemetry: true
   }
 }
 
-resource appgwSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
-  scope: resourceGroup(rg.name)
-  name: '${vnetSpokeName}/${appGatewaySubnetName}'
-}
-
-module appgw 'modules/vnet/appgw.bicep' = {
+module appgw 'appgw.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'appgw'
   params: {
@@ -229,79 +300,61 @@ module appgw 'modules/vnet/appgw.bicep' = {
     availabilityZones: availabilityZones
     location: location
     appgwname: appGatewayName
-    appgwpip: publicipappgw.outputs.publicipId
-    subnetid: appgwSubnet.id
+    appgwpip: publicIpAppGwy.outputs.resourceId
+    subnetid: vnetspoke.outputs.subnetResourceIds[2]
+    // rgName: rgName
   }
 }
 
-module nsgappgwsubnet 'modules/vnet/nsg.bicep' = {
+module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
   scope: resourceGroup(rg.name)
-  name: nsgAppGWName
+  name: 'aksIdentity'
   params: {
+    name: 'aksIdentity'
     location: location
-    nsgName: nsgAppGWName
-    securityRules: [
+  }
+}
+
+module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
+  scope: resourceGroup(rg.name)
+  name: 'virtualMachineDeployment'
+  params: {
+    // Required parameters
+    adminUsername: 'azureuser'
+    imageReference: {
+      offer: '0001-com-ubuntu-server-jammy'
+      publisher: 'Canonical'
+      sku: '22_04-lts-gen2'
+      version: 'latest'
+    }
+    name: 'jumpbox'
+    nicConfigurations: [
       {
-        name: 'Allow443InBound'
-        properties: {
-          priority: 102
-          sourceAddressPrefix: '*'
-          protocol: 'Tcp'
-          destinationPortRange: '443'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-        }
-      }
-      {
-        name: 'AllowControlPlaneV1SKU'
-        properties: {
-          priority: 110
-          sourceAddressPrefix: 'GatewayManager'
-          protocol: '*'
-          destinationPortRange: '65503-65534'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-        }
-      }
-      {
-        name: 'AllowControlPlaneV2SKU'
-        properties: {
-          priority: 111
-          sourceAddressPrefix: 'GatewayManager'
-          protocol: '*'
-          destinationPortRange: '65200-65535'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-        }
-      }
-      {
-        name: 'AllowHealthProbes'
-        properties: {
-          priority: 120
-          sourceAddressPrefix: 'AzureLoadBalancer'
-          protocol: '*'
-          destinationPortRange: '*'
-          access: 'Allow'
-          direction: 'Inbound'
-          sourcePortRange: '*'
-          destinationAddressPrefix: '*'
-        }
+        ipConfigurations: [
+          {
+            name: 'ipconfig01'
+            pipConfiguration: {
+              name: 'pip-01'
+            }
+            subnetResourceId: vnetspoke.outputs.subnetResourceIds[3]
+          }
+        ]
+        nicSuffix: '-nic-01'
       }
     ]
-  }
-}
-
-module appgwroutetable 'modules/vnet/routetable.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: rtAppGWSubnetName
-  params: {
+    osDisk: {
+      caching: 'ReadWrite'
+      diskSizeGB: 128
+      managedDisk: {
+        storageAccountType: 'Premium_LRS'
+      }
+    }
+    osType: 'Linux'
+    vmSize: 'Standard_DS2_v2'
+    zone: 0
+    // Non-required parameters
+    disablePasswordAuthentication: false
+    adminPassword: 'Password123'
     location: location
-    rtName: rtAppGWSubnetName
   }
 }

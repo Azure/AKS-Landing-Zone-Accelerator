@@ -1,35 +1,27 @@
 targetScope = 'subscription'
 
 param rgName string
-param clusterName string
-param akslaWorkspaceName string
 param vnetName string
 param subnetName string
-param appGatewayName string
-param rtAppGWSubnetName string
-param aksuseraccessprincipalId string
-param aksadminaccessprincipalId string
 param aksIdentityName string
-param kubernetesVersion string
-param rtAKSName string
 param location string = deployment().location
-param availabilityZones array
 param enableAutoScaling bool
 param autoScalingProfile object
+param aksadminaccessprincipalId string
+param kubernetesVersion string
+@description('The name of the keyVault you deployed in the previous step (check Azure portal if you need to).')
+param keyvaultName string 
+@description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
+param acrName string 
+param aksClusterName string
+param enablePrivateCluster bool = true
+
 
 @allowed([
   'azure'
   'kubenet'
 ])
-param networkPlugin string = 'azure'
-
-var akskubenetpodcidr = '172.17.0.0/24'
-var ipdelimiters = [
-  '.'
-  '/'
-]
-param acrName string //User to provide each time
-param keyvaultName string //user to provide each time
+param networkPlugin string
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -40,48 +32,14 @@ var privateDNSZoneAKSSuffixes = {
 
 var privateDNSZoneAKSName = 'privatelink.${toLower(location)}${privateDNSZoneAKSSuffixes[environment().name]}'
 
-module rg 'modules/resource-group/rg.bicep' = {
-  name: rgName
-  params: {
-    rgName: rgName
-    location: location
-  }
-}
-
 resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
-  scope: resourceGroup(rg.name)
+  scope: resourceGroup(rgName)
   name: aksIdentityName
 }
 
-module aksPodIdentityRole 'modules/Identity/role.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksPodIdentityRole'
-  params: {
-    principalId: aksIdentity.properties.principalId
-    roleGuid: 'f1a07417-d97a-45cb-824c-7a7467783830' //Managed Identity Operator
-  }
-}
-
-resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (enablePrivateCluster) {
   name: privateDNSZoneAKSName
   scope: resourceGroup(rg.name)
-}
-
-module aksPolicy 'modules/policy/policy.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksPolicy'
-  params: {
-    location: location
-  }
-}
-
-module akslaworkspace 'modules/laworkspace/la.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'akslaworkspace'
-  params: {
-    location: location
-    workspaceName: akslaWorkspaceName
-  }
 }
 
 resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
@@ -89,181 +47,143 @@ resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existi
   name: '${vnetName}/${subnetName}'
 }
 
-resource appGateway 'Microsoft.Network/applicationGateways@2021-02-01' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   scope: resourceGroup(rg.name)
-  name: appGatewayName
+  name: keyvaultName
 }
 
-module aksCluster 'modules/aks/privateaks.bicep' = {
+resource ACR 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
   scope: resourceGroup(rg.name)
-  name: 'aksCluster'
+  name: acrName
+}
+
+module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
+  name: rgName
   params: {
-    autoScalingProfile: autoScalingProfile
-    enableAutoScaling: enableAutoScaling
-    availabilityZones: availabilityZones
+    name: rgName
     location: location
-    aadGroupdIds: [
+    enableTelemetry: true
+    roleAssignments: [
+      {
+        principalId: aksIdentity.properties.principalId
+        roleDefinitionIdOrName: 'f1a07417-d97a-45cb-824c-7a7467783830'
+      }
+      {
+        principalId: aksIdentity.properties.principalId
+        roleDefinitionIdOrName: 'b24988ac-6180-42a0-ab88-20f7382dd24c'
+      }
+    ]
+  }
+}
+
+module workspace 'br/public:avm/res/operational-insights/workspace:0.3.4' = {
+  scope: resourceGroup(rg.name)
+  name: 'akslaworkspace'
+  params: {
+    name: 'akslaworkspace'
+    location: location
+  }
+}
+
+module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2' = {
+  scope: resourceGroup(rg.name)
+  name: aksClusterName
+  params: {
+    name: aksClusterName
+    primaryAgentPoolProfile: [
+      {
+        availabilityZones: [
+          '3'
+        ]
+        count: 3
+        enableAutoScaling: true
+        maxCount: 3
+        maxPods: 30
+        minCount: 1
+        mode: 'System'
+        name: 'defaultpool'
+        osDiskSizeGB: 30
+        osType: 'Linux'
+        serviceCidr: ''
+        type: 'VirtualMachineScaleSets'
+        vmSize: 'Standard_D4d_v5'
+        vnetSubnetID: aksSubnet.id
+      }
+    ]
+    autoScalerProfileBalanceSimilarNodeGroups: enableAutoScaling ? autoScalingProfile.balanceSimilarNodeGroups : null
+    autoScalerProfileExpander: enableAutoScaling ? autoScalingProfile.expander : null
+    autoScalerProfileMaxEmptyBulkDelete: enableAutoScaling ? autoScalingProfile.maxEmptyBulkDelete : null
+    autoScalerProfileMaxGracefulTerminationSec: enableAutoScaling ? autoScalingProfile.maxGracefulTerminationSec : null
+    autoScalerProfileMaxNodeProvisionTime: enableAutoScaling ? autoScalingProfile.maxNodeProvisionTime : null
+    autoScalerProfileMaxTotalUnreadyPercentage: enableAutoScaling ? autoScalingProfile.maxTotalUnreadyPercentage : null
+    autoScalerProfileNewPodScaleUpDelay: enableAutoScaling ? autoScalingProfile.newPodScaleUpDelay : null
+    autoScalerProfileOkTotalUnreadyCount: enableAutoScaling ? autoScalingProfile.okTotalUnreadyCount : null
+    autoScalerProfileScaleDownDelayAfterAdd: enableAutoScaling ? autoScalingProfile.scaleDownDelayAfterAdd : null
+    autoScalerProfileScaleDownDelayAfterDelete: enableAutoScaling ? autoScalingProfile.scaleDownDelayAfterDelete : null
+    autoScalerProfileScaleDownDelayAfterFailure: enableAutoScaling
+      ? autoScalingProfile.scaleDownDelayAfterFailure
+      : null
+    autoScalerProfileScaleDownUnneededTime: enableAutoScaling ? autoScalingProfile.scaleDownUnneededTime : null
+    autoScalerProfileScaleDownUnreadyTime: enableAutoScaling ? autoScalingProfile.scaleDownUnreadyTime : null
+    autoScalerProfileScanInterval: enableAutoScaling ? autoScalingProfile.scanInterval : null
+    autoScalerProfileSkipNodesWithLocalStorage: enableAutoScaling ? autoScalingProfile.skipNodesWithLocalStorage : null
+    autoScalerProfileSkipNodesWithSystemPods: enableAutoScaling ? autoScalingProfile.skipNodesWithSystemPods : null
+    autoScalerProfileUtilizationThreshold: enableAutoScaling ? autoScalingProfile.scaleDownUtilizationThreshold : null
+    networkPlugin: networkPlugin == 'azure' ? 'azure' : 'kubenet'
+    outboundType: 'loadBalancer'
+    dnsServiceIP: '192.168.100.10'
+    serviceCidr: '192.168.100.0/24'
+    networkPolicy: 'calico'
+    podCidr: networkPlugin == 'kubenet' ? '172.17.0.0/16' : null
+    enablePrivateCluster: enablePrivateCluster
+    privateDNSZone: enablePrivateCluster ? pvtdnsAKSZone.id : null
+    enablePrivateClusterPublicFQDN: false
+    enableRBAC: true
+    aadProfileAdminGroupObjectIDs: [
       aksadminaccessprincipalId
     ]
-    clusterName: clusterName
     kubernetesVersion: kubernetesVersion
-    networkPlugin: networkPlugin
-    logworkspaceid: akslaworkspace.outputs.laworkspaceId
-    privateDNSZoneId: pvtdnsAKSZone.id
-    subnetId: aksSubnet.id
-    identity: {
-      '${aksIdentity.id}': {}
-    }
-    appGatewayResourceId: appGateway.id
-  }
-  dependsOn: [
-    aksPvtDNSContrib
-    aksPvtNetworkContrib
-    aksPodIdentityRole
-    aksRouteTableRole
-    aksPolicy
-  ]
-}
-
-module aksRouteTableRole 'modules/Identity/rtrole.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksRouteTableRole'
-  params: {
-    principalId: aksIdentity.properties.principalId
-    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
-    rtName: rtAKSName
-  }
-}
-
-module acraksaccess 'modules/Identity/acrrole.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'acraksaccess'
-  params: {
-    principalId: aksCluster.outputs.kubeletIdentity
-    roleGuid: '7f951dda-4ed3-4680-a7ca-43fe172d538d' //AcrPull
-    acrName: acrName
-  }
-}
-
-module aksPvtNetworkContrib 'modules/Identity/networkcontributorrole.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksPvtNetworkContrib'
-  params: {
-    principalId: aksIdentity.properties.principalId
-    roleGuid: '4d97b98b-1d4f-4787-a291-c67834d212e7' //Network Contributor
-    vnetName: vnetName
-  }
-}
-
-module aksPvtDNSContrib 'modules/Identity/pvtdnscontribrole.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksPvtDNSContrib'
-  params: {
-    principalId: aksIdentity.properties.principalId
-    roleGuid: 'b12aa53e-6015-4669-85d0-8515ebb3ae7f' //Private DNS Zone Contributor
-    pvtdnsAKSZoneName: privateDNSZoneAKSName
-  }
-}
-
-module vmContributeRole 'modules/Identity/role.bicep' = {
-  scope: resourceGroup('${clusterName}-aksInfraRG')
-  name: 'vmContributeRole'
-  params: {
-    principalId: aksIdentity.properties.principalId
-    roleGuid: '9980e02c-c2be-4d73-94e8-173b1dc7cf3c' //Virtual Machine Contributor
-  }
-  dependsOn: [
-    aksCluster
-  ]
-}
-
-module aksuseraccess 'modules/Identity/role.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksuseraccess'
-  params: {
-    principalId: aksuseraccessprincipalId
-    roleGuid: '4abbcc35-e782-43d8-92c5-2d3f1bd2253f' //Azure Kubernetes Service Cluster User Role
-  }
-}
-
-module aksadminaccess 'modules/Identity/role.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'aksadminaccess'
-  params: {
-    principalId: aksadminaccessprincipalId
-    roleGuid: '0ab0b1a8-8aac-4efd-b8c2-3ee1fb270be8' //Azure Kubernetes Service Cluster Admin Role
-  }
-}
-
-module appGatewayContributerRole 'modules/Identity/appgtwyingressroles.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'appGatewayContributerRole'
-  params: {
-    principalId: aksCluster.outputs.ingressIdentity
-    roleGuid: 'b24988ac-6180-42a0-ab88-20f7382dd24c' //Contributor
-    applicationGatewayName: appGateway.name
-  }
-}
-
-module appGatewayReaderRole 'modules/Identity/role.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'appGatewayReaderRole'
-  params: {
-    principalId: aksCluster.outputs.ingressIdentity
-    roleGuid: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' //Reader
-  }
-}
-
-module keyvaultAccessPolicy 'modules/keyvault/keyvault.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'akskeyvaultaddonaccesspolicy'
-  params: {
-    keyvaultManagedIdentityObjectId: aksCluster.outputs.keyvaultaddonIdentity
-    vaultName: keyvaultName
-    aksuseraccessprincipalId: aksuseraccessprincipalId
-  }
-}
-
-resource rtAppGW 'Microsoft.Network/routeTables@2021-02-01' existing = {
-  scope: resourceGroup(rgName)
-  name: rtAppGWSubnetName
-}
-
-module appgwroutetableroutes 'modules/vnet/routetableroutes.bicep' = [for i in range(0, 3): if (networkPlugin == 'kubenet') {
-  scope: resourceGroup(rg.name)
-  name: 'aks-vmss-appgw-pod-node-${i}'
-  params: {
-    routetableName: rtAppGW.name
-    routeName: 'aks-vmss-appgw-pod-node-${i}'
-    properties: {
-      nextHopType: 'VirtualAppliance'
-      nextHopIpAddress: '${split(aksSubnet.properties.addressPrefix, ipdelimiters)[0]}.${split(aksSubnet.properties.addressPrefix, ipdelimiters)[1]}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[2])}.${int(split(aksSubnet.properties.addressPrefix, ipdelimiters)[3]) + i + 4}'
-      addressPrefix: '${split(akskubenetpodcidr, ipdelimiters)[0]}.${split(akskubenetpodcidr, ipdelimiters)[1]}.${int(split(akskubenetpodcidr, ipdelimiters)[2]) + i}.${split(akskubenetpodcidr, ipdelimiters)[3]}/${split(akskubenetpodcidr, ipdelimiters)[4]}'
+    aadProfileEnableAzureRBAC: true
+    aadProfileManaged: true
+    aadProfileTenantId: subscription().tenantId
+    omsAgentEnabled: true
+    monitoringWorkspaceId: workspace.outputs.resourceId
+    azurePolicyEnabled: true
+    webApplicationRoutingEnabled: true
+    //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
+    enableDnsZoneContributorRoleAssignment: true
+    httpApplicationRoutingEnabled: true
+    enableKeyvaultSecretsProvider: true
+    managedIdentities: {
+      userAssignedResourcesIds: [
+        aksIdentity.id
+      ]
     }
   }
-}]
+}
 
-//  Telemetry Deployment
-module telemetry 'modules/telemetry/telemetry.bicep' = {
-  name: 'telemetry'
+module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = {
+  scope: resourceGroup(rg.name)
+  name: 'keyvault-aks-identity'
   params: {
-    enableTelemetry: true
-    location: location
+    principalId: managedCluster.outputs.keyvaultIdentityClientId
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
+    resourceId: keyVault.id
+    roleDefinitionId: '00482a5a-887f-4fb3-b363-3b7fe8e74483'
+    principalType: 'ServicePrincipal'
   }
 }
 
-// @description('Enable usage and telemetry feedback to Microsoft.')
-// param enableTelemetry bool = true
-// var telemetryId = 'a4c036ff-1c94-4378-862a-8e090a88da82-${location}'
-// resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
-//   name: telemetryId
-//   location: location
-//   properties: {
-//     mode: 'Incremental'
-//     template: {
-//       '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#'
-//       contentVersion: '1.0.0.0'
-//       resources: {}
-//     }
-//   }
-// }
+module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = {
+  scope: resourceGroup(rg.name)
+  name: 'acr-aks-identity'
+  params: {
+    principalId: managedCluster.outputs.kubeletidentityObjectId
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
+    resourceId: ACR.id
+    roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+

@@ -3,16 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "rgName": {
-      "value": "ESLZ-SPOKE"
-    },
-    "keyVaultPrivateEndpointName": {
-      "value": "keyvault-pvt-ep"
-    },
-    "acrPrivateEndpointName": {
-      "value": "acr-pvt-ep"
-    },
-    "saPrivateEndpointName": {
-      "value": "sa-pvt-ep"
+      "value": "AKS-LZA-SPOKE"
     },
     "vnetName": {
       "value": "VNet-SPOKE"

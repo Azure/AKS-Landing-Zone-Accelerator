@@ -1,0 +1,30 @@
+cd ai-service
+sudo docker build . -t $ACRNAME.azurecr.io/ai-service:v1
+
+cd ..
+cd makeline-service
+sudo docker build . -t $ACRNAME.azurecr.io/makeline-service:v1
+
+cd ..
+cd order-service
+sudo docker build . -t $ACRNAME.azurecr.io/order-service:v1
+
+cd ..
+cd product-service
+sudo docker build . -t $ACRNAME.azurecr.io/product-service:v1
+
+cd ..
+cd store-admin
+sudo docker build . -t $ACRNAME.azurecr.io/store-admin:v1
+
+cd ..
+cd store-front
+sudo docker build . -t $ACRNAME.azurecr.io/store-front:v1
+
+cd ..
+cd virtual-customer
+sudo docker build . -t $ACRNAME.azurecr.io/virtual-customer:v1
+
+cd ..
+cd virtual-worker
+sudo docker build . -t $ACRNAME.azurecr.io/virtual-worker:v1
