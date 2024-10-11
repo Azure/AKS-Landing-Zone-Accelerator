@@ -24,9 +24,9 @@ variable "vnetHubName" {
   default = "vnet-hub"
 }
 
-variable "admin-group-object-ids" {
+variable "adminGroupObjectIds" {
   type    = string
-  default = "d1553d93-3b9f-4d52-a28b-e4a4a27c114c"
+  default = " "
 
 }
 
