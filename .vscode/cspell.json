@@ -107,7 +107,7 @@
         "xattr",
         "smartbrain"
     ],
-    "ignoreWords": ["ACCOUNTNAME","OIDCISSUERURL","UNIQUESTRING", "outfile"],
+    "ignoreWords": ["ACCOUNTNAME","OIDCISSUERURL","UNIQUESTRING", "outfile","contoso"],
     "import": [],
     "enableFiletypes": [
         "!css",
