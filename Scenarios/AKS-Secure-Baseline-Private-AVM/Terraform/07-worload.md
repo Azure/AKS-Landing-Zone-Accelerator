@@ -256,7 +256,7 @@ internal-ingress   webapprouting.kubernetes.azure.com private.contoso.com       
 
 ### Testing the application internally
 
-Your ingress controller is accessible from within the virtual network but not from the internet. Private DNS Zone has been configured with hostname private.contoso.com.
+Your ingress controller is accessible from within the virtual network but not from the internet. Private DNS Zone has been configured with hostname `private.contoso.com`.
 
 Use `curl` command to test that the application is running in the cluster and the ingress was configured properly
 
