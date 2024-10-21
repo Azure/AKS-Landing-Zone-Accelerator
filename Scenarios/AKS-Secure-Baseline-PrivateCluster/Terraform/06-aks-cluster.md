@@ -7,7 +7,7 @@ The following will be created:
 * ACR Access to the AKS Cluster
 * Updates to KeyVault access policy with AKS keyvault addon
 
-Navigate to "/Scenarios/AKS-Secure-Baseline-Private-AVM/Terraform/" folder
+Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/" folder
 
 ```bash
 cd ./06-AKS-cluster

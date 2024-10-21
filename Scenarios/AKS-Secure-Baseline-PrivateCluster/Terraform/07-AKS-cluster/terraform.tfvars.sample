@@ -1,7 +1,0 @@
-access_key = "XXXXXX"
-state_sa_name = <storage account name>
-container_name = "akscs"
-prefix = "escs"
-private_dns_zone_name = "privatelink.XXXXXXXXX.azmk8s.io" // change "XXXXXXXXX" the region to match where your aks cluster is deployed.
-network_plugin = "azure" //other option is kubenet
-#pod_cidr = "172.17.0.0/16" uncomment if using kubenet

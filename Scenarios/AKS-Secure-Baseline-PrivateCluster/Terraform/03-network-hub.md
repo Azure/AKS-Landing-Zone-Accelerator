@@ -10,7 +10,7 @@ If you haven't yet, clone the repo and cd to the appropriate folder
 
 ```bash
 git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
-cd ./Scenarios/AKS-Secure-Baseline-Private-AVM/Terraform/02-EID
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/02-EID
 ```
 
 The following will be created:
@@ -20,7 +20,7 @@ The following will be created:
 * Azure Firewall
 * Azure Bastion Host
 
-Navigate to "/Scenarios/AKS-Secure-Baseline-Private-AVM/Terraform/" folder
+Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/" folder
 
 ```bash
 cd ./03-Network-Hub
