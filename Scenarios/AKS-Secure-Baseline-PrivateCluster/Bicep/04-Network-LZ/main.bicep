@@ -23,6 +23,7 @@ param spokeSubnetAppGWPrefix string = '10.1.2.0/27'
 param spokeSubnetVMPrefix string = '10.1.3.0/24'
 param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
 param remotePeeringName string = 'spoke-hub-peering'
+param vmSize string = 'Standard_DS2_v2'
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -350,7 +351,7 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
       }
     }
     osType: 'Linux'
-    vmSize: 'Standard_DS2_v2'
+    vmSize: vmSize
     zone: 0
     // Non-required parameters
     disablePasswordAuthentication: false
