@@ -46,6 +46,7 @@ env:
 jobs:
   deploy_infrastructure:
     runs-on: ubuntu-latest
+    environment: production
     name: 'Deploy Infrastructure'
     steps:
         
