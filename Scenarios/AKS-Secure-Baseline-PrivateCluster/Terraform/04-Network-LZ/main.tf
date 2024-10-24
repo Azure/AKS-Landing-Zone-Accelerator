@@ -95,7 +95,7 @@ module "avm-nsg-appgw" {
   security_rules      = local.appgw_nsg_rules
 }
 
-module "avm-res-network-virtualnetwork" {
+module "avm-res-network-vnet" {
   source              = "Azure/avm-res-network-virtualnetwork/azurerm"
   version             = "0.2.4"
   resource_group_name = azurerm_resource_group.rg.name
@@ -119,7 +119,7 @@ module "avm-res-network-virtualnetwork" {
     }
   }
 }
-module "avm-res-network-virtualnetwork-aks-subnet" {
+module "avm-res-network-vnet-aks-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-aks"
@@ -134,10 +134,10 @@ module "avm-res-network-virtualnetwork-aks-subnet" {
     id = module.avm-nsg-default.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
-module "avm-res-network-virtualnetwork-appgw-subnet" {
+module "avm-res-network-vnet-appgw-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-appgw"
@@ -152,7 +152,7 @@ module "avm-res-network-virtualnetwork-appgw-subnet" {
   depends_on = [module.avm-res-network-virtualnetwork.resource]
 }
 
-module "avm-res-network-virtualnetwork-vm-subnet" {
+module "avm-res-network-vnet-vm-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-vm"
@@ -170,7 +170,7 @@ module "avm-res-network-virtualnetwork-vm-subnet" {
   depends_on = [module.avm-res-network-virtualnetwork.resource]
 }
 
-module "avm-res-network-virtualnetwork-spe-subnet" {
+module "avm-res-network-vnet-spe-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-spe"
@@ -283,7 +283,7 @@ module "avm-res-network-applicationgateway" {
   location            = azurerm_resource_group.rg.location
   public_ip_name      = "pip-appgw"
   vnet_name           = module.avm-res-network-virtualnetwork.resource.name
-  subnet_name_backend = module.avm-res-network-virtualnetwork-appgw-subnet.resource.name
+  subnet_name_backend = module.avm-res-network-vnet-appgw-subnet.resource.name
   sku = {
     name     = "Standard_v2"
     tier     = "Standard_v2"
@@ -361,5 +361,5 @@ module "avm-res-network-applicationgateway" {
   }
   zones = ["1", "2", "3"]
 
-  depends_on = [module.avm-res-network-virtualnetwork-appgw-subnet.resource]
+  depends_on = [module.avm-res-network-vnet-appgw-subnet.resource]
 }
