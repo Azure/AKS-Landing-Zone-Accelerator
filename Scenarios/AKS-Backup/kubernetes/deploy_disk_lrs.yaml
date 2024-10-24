@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-lrs
+spec:
+  selector:
+    matchLabels:
+      app: nginx-lrs
+  template:
+    metadata:
+      labels:
+        app: nginx-lrs
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        command:
+        - "/bin/sh"
+        - "-c"
+        - while true; do echo $(date) >> /mnt/azuredisk/outfile; sleep 60; done
+        volumeMounts:
+          - name: azuredisk-lrs
+            mountPath: "/mnt/azuredisk"
+      volumes:
+        - name: azuredisk-lrs
+          persistentVolumeClaim:
+            claimName: azure-managed-disk-lrs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: azure-managed-disk-lrs
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: managed-csi
+  resources:
+    requests:
+      storage: 5Gi
