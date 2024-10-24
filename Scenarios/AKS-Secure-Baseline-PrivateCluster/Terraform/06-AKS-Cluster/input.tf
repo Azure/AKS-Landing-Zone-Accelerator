@@ -11,7 +11,6 @@ variable "rgHubName" {
 variable "location" {
   type    = string
   default = "eastus"
-
 }
 
 variable "vnetLzName" {
@@ -27,7 +26,6 @@ variable "vnetHubName" {
 variable "adminGroupObjectIds" {
   type    = string
   default = " "
-
 }
 
 variable "acrName" {
@@ -38,5 +36,4 @@ variable "acrName" {
 variable "akvName" {
   type    = string
   default = "akvlzti5y"
-
 }
