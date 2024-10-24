@@ -124,7 +124,7 @@ module "avm-res-network-vnet-aks-subnet" {
   version = "0.4.0"
   name    = "snet-aks"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetAksAddr]
   route_table = {
@@ -142,14 +142,14 @@ module "avm-res-network-vnet-appgw-subnet" {
   version = "0.4.0"
   name    = "snet-appgw"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetAppGWAddr]
   network_security_group = {
     id = module.avm-nsg-appgw.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
 module "avm-res-network-vnet-vm-subnet" {
@@ -157,7 +157,7 @@ module "avm-res-network-vnet-vm-subnet" {
   version = "0.4.0"
   name    = "snet-vm"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetVMAddr]
   route_table = {
@@ -167,7 +167,7 @@ module "avm-res-network-vnet-vm-subnet" {
     id = module.avm-nsg-default.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
 module "avm-res-network-vnet-spe-subnet" {
@@ -175,7 +175,7 @@ module "avm-res-network-vnet-spe-subnet" {
   version = "0.4.0"
   name    = "snet-spe"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetServicePeAddr]
   route_table = {
@@ -185,14 +185,14 @@ module "avm-res-network-vnet-spe-subnet" {
     id = module.avm-nsg-default.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
 module "avm-res-network-vnet-peering" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
   version = "0.2.4"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   remote_virtual_network = {
     resource_id = data.azurerm_virtual_network.vnethub.id
@@ -282,7 +282,7 @@ module "avm-res-network-appgateway" {
   name                = "appgw"
   location            = azurerm_resource_group.rg.location
   public_ip_name      = "pip-appgw"
-  vnet_name           = module.avm-res-network-virtualnetwork.resource.name
+  vnet_name           = module.avm-res-network-vnet.resource.name
   subnet_name_backend = module.avm-res-network-vnet-appgw-subnet.resource.name
   sku = {
     name     = "Standard_v2"
