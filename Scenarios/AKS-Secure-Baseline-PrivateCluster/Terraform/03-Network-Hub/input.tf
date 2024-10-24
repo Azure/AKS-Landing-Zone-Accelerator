@@ -1,3 +1,8 @@
+variable "location" {
+  type    = string
+  default = "eastus"
+}
+
 variable "rgHubName" {
   type    = string
   default = "AksTerra-AVM-Hub-RG"

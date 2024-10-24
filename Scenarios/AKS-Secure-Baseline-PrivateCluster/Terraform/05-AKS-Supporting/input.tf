@@ -19,11 +19,11 @@ variable "vnetHubName" {
 
 variable "acrName" {
   type    = string
-  default = "acrlzti5y"
+  default = "acrlzti5y24"
 }
 
 variable "akvName" {
   type    = string
-  default = "akvlzti5y"
+  default = "akvlzti5y24"
 
 }

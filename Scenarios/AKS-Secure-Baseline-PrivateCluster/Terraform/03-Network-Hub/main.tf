@@ -7,7 +7,7 @@ module "naming" {
 
 # rg is required for resource modules
 resource "azurerm_resource_group" "rg" {
-  location = "eastus" ##module.regions.regions[random_integer.region_index.result].name
+  location = var.location
   name     = var.rgHubName
 }
 

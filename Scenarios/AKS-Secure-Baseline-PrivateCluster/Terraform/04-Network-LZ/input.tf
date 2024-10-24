@@ -1,12 +1,11 @@
-variable "rgLzName" {
-  type    = string
-  default = "AksTerra-AVM-LZ-RG"
-}
-
 variable "location" {
   type    = string
   default = "eastus"
+}
 
+variable "rgLzName" {
+  type    = string
+  default = "AksTerra-AVM-LZ-RG"
 }
 
 variable "rgHubName" {
