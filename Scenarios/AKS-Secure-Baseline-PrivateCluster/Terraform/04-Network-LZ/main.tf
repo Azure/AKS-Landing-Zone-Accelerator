@@ -275,7 +275,7 @@ module "avm-res-network-privatednszone-contoso" {
   } }
 }
 
-module "avm-res-network-appgateway" {
+module "avm-res-network-appgw" {
   source              = "Azure/avm-res-network-applicationgateway/azurerm"
   version             = "0.1.1"
   resource_group_name = azurerm_resource_group.rg.name

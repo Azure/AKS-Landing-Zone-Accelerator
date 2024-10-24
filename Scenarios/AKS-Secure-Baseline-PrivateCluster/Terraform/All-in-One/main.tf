@@ -22,7 +22,7 @@ module "networkLZ" {
   location             = var.location
   rgLzName             = var.rgLzName
   rgHubName            = var.rgHubName
-  vnetHubName          = var.vnetHubName
+  vnetHubName          = module.networkHub.vnetHubName # var.vnetHubName
   vnetLzName           = var.vnetLzName
   rtName               = var.rtName
   nsgDefaultName       = var.nsgDefaultName
