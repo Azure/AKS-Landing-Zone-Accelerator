@@ -188,7 +188,7 @@ module "avm-res-network-vnet-spe-subnet" {
   depends_on = [module.avm-res-network-virtualnetwork.resource]
 }
 
-module "avm-res-network-virtualnetwork_peering" {
+module "avm-res-network-vnet-peering" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
   version = "0.2.4"
   virtual_network = {
@@ -275,7 +275,7 @@ module "avm-res-network-privatednszone-contoso" {
   } }
 }
 
-module "avm-res-network-applicationgateway" {
+module "avm-res-network-appgateway" {
   source              = "Azure/avm-res-network-applicationgateway/azurerm"
   version             = "0.1.1"
   resource_group_name = azurerm_resource_group.rg.name
