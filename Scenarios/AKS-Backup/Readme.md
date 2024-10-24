@@ -4,12 +4,6 @@
 
 This architectural pattern describes how to configure a backup for an AKS cluster.
 
-## 1. Deploying the origin AKS cluster
-
-There are two options, creating a new AKS cluster or using an existing one. If you are using an existing AKS cluster, you can skip this step.
-
-The first step is to deploy the AKS landing zone. Follow the instructions in the [AKS Secure Baseline Private Cluster](../AKS-Secure-Baseline-PrivateCluster) scenario.
-
 ## Deploying the resources using Terraform
 
 To deploy the Terraform configuration files, run the following commands:
