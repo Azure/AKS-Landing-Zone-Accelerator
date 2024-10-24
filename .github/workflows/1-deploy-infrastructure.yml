@@ -98,7 +98,7 @@ jobs:
           azcliversion: latest
           inlineScript: |
 
-            cd $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub/modules/VM
+            cd $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub/
             find . -type f -exec sed -i 's/_OWNER_/${{ env.OWNER }}/g' {} +
             find . -type f -exec sed -i 's/_REPO_/${{ env.REPO }}/g' {} +
            
