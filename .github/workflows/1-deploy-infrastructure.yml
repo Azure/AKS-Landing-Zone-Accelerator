@@ -64,7 +64,9 @@ jobs:
         with:
           azcliversion: latest
           inlineScript: |
-          
+
+            echo "Ali, you are here!"
+            az account show
             az group delete -n ${{ env.HUB_RESOURCE_GROUP }} -y
             az group delete -n ${{ env.SPOKE_RESOURCE_GROUP }} -y
             az deployment sub delete -n ESLZ-HUB-AKS
