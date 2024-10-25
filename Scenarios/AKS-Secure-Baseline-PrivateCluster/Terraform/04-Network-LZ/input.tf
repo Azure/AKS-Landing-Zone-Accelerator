@@ -23,12 +23,12 @@ variable "vnetLzName" {
   default = "vnet-lz"
 }
 
-variable "rtName" {
+variable "rtLzName" {
   type    = string
   default = "rt-lz-table"
 }
 
-variable "nsgDefaultName" {
+variable "nsgLzDefaultName" {
   type    = string
   default = "nsg-default"
 }

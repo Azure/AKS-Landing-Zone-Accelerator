@@ -13,7 +13,12 @@ variable "rgLzName" {
   default = "AksTerra-AVM-LZ-RG"
 }
 
-variable "nsgDefaultName" {
+variable "nsgHubDefaultName" {
+  type    = string
+  default = "nsg-default"
+}
+
+variable "nsgLzDefaultName" {
   type    = string
   default = "nsg-default"
 }
@@ -67,7 +72,12 @@ variable "availabilityZones" {
   default = ["1", "2", "3"]
 }
 
-variable "rtName" {
+variable "rtHubName" {
+  type    = string
+  default = "rt-hub-table"
+}
+
+variable "rtLzName" {
   type    = string
   default = "rt-hub-table"
 }

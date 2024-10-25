@@ -3,7 +3,7 @@ module "networkHub" {
 
   location           = var.location
   rgHubName          = var.rgHubName
-  nsgDefaultName     = var.nsgDefaultName
+  nsgHubDefaultName  = var.nsgHubDefaultName
   nsgVMName          = var.nsgVMName
   hubVNETaddPrefixes = var.hubVNETaddPrefixes
   snetDefaultAddr    = var.snetDefaultAddr
@@ -13,7 +13,7 @@ module "networkHub" {
   routeAddr          = var.routeAddr
   vnetHubName        = var.vnetHubName
   availabilityZones  = var.availabilityZones
-  rtName             = var.rtName
+  rtHubName          = var.rtHubName
 }
 
 module "networkLZ" {
@@ -21,11 +21,11 @@ module "networkLZ" {
 
   location             = var.location
   rgLzName             = var.rgLzName
-  rgHubName            = var.rgHubName
+  rgHubName            = module.networkHub.rgHubName   # var.rgHubName
   vnetHubName          = module.networkHub.vnetHubName # var.vnetHubName
   vnetLzName           = var.vnetLzName
-  rtName               = var.rtName
-  nsgDefaultName       = var.nsgDefaultName
+  rtLzName             = var.rtLzName
+  nsgLzDefaultName     = var.nsgLzDefaultName
   nsgAppGWName         = var.nsgAppGWName
   spokeVNETaddPrefixes = var.spokeVNETaddPrefixes
   snetDefaultAddr      = var.snetDefaultAddr

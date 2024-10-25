@@ -8,7 +8,7 @@ variable "rgHubName" {
   default = "AksTerra-AVM-Hub-RG"
 }
 
-variable "nsgDefaultName" {
+variable "nsgHubDefaultName" {
   type    = string
   default = "nsg-default"
 }
@@ -57,7 +57,7 @@ variable "availabilityZones" {
   default = ["1", "2", "3"]
 }
 
-variable "rtName" {
+variable "rtHubName" {
   type    = string
   default = "rt-hub-table"
 }
