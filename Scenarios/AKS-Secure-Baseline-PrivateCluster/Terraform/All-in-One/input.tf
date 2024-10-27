@@ -8,7 +8,17 @@ variable "rgHubName" {
   default = "AksTerra-AVM-Hub-RG"
 }
 
+variable "rgLzName" {
+  type    = string
+  default = "AksTerra-AVM-LZ-RG"
+}
+
 variable "nsgHubDefaultName" {
+  type    = string
+  default = "nsg-default"
+}
+
+variable "nsgLzDefaultName" {
   type    = string
   default = "nsg-default"
 }
@@ -52,6 +62,11 @@ variable "vnetHubName" {
   default = "vnet-hub"
 }
 
+variable "vnetLzName" {
+  type    = string
+  default = "vnet-lz"
+}
+
 variable "availabilityZones" {
   type    = list(string)
   default = ["1", "2", "3"]
@@ -60,4 +75,39 @@ variable "availabilityZones" {
 variable "rtHubName" {
   type    = string
   default = "rt-hub-table"
+}
+
+variable "rtLzName" {
+  type    = string
+  default = "rt-hub-table"
+}
+
+variable "nsgAppGWName" {
+  type    = string
+  default = "nsg-appgw"
+}
+
+variable "spokeVNETaddPrefixes" {
+  type    = string
+  default = "10.1.0.0/16"
+}
+
+variable "snetAksAddr" {
+  type    = string
+  default = "10.1.1.0/26"
+}
+
+variable "snetAppGWAddr" {
+  type    = string
+  default = "10.1.2.0/27"
+}
+
+variable "acrName" {
+  type    = string
+  default = "acrlzti5y24"
+}
+
+variable "akvName" {
+  type    = string
+  default = "akvlzti5y24"
 }

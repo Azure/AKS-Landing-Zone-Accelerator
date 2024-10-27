@@ -3,33 +3,41 @@ locals {
     akv = "privatelink.vaultcore.azure.net",
     acr = "privatelink.azurecr.io",
     aks = "azurek8s.io"
-
   }
+  
+  speSubnetId = var.deployingAllInOne == true ? var.speSubnetId : data.azurerm_subnet.snet-spe.0.id
+  privateDnsZoneAkvId = var.deployingAllInOne == true ? var.privateDnsZoneAkvId : data.azurerm_private_dns_zone.dnszone-akv.0.id
+  privateDnsZoneAcrId = var.deployingAllInOne == true ? var.privateDnsZoneAcrId : data.azurerm_private_dns_zone.dnszone-acr.0.id
 }
 
 data "azurerm_client_config" "tenant" {}
 
-data "azurerm_resource_group" "rg" {
-  name = var.rgLzName
-}
+# data "azurerm_resource_group" "rg" {
+#   count = var.deployingAllInOne == true ? 0 : 1
+#   name  = var.rgLzName
+# }
 
-data "azurerm_virtual_network" "vnet-lz" {
-  name                = var.vnetLzName
-  resource_group_name = var.rgLzName
-}
+# data "azurerm_virtual_network" "vnet-lz" {
+#   count               = var.deployingAllInOne == true ? 0 : 1
+#   name                = var.vnetLzName
+#   resource_group_name = var.rgLzName
+# }
 
 data "azurerm_subnet" "snet-spe" {
+  count                = var.deployingAllInOne == true ? 0 : 1
   name                 = "snet-spe"
   virtual_network_name = var.vnetLzName
   resource_group_name  = var.rgLzName
 }
 
 data "azurerm_private_dns_zone" "dnszone-acr" {
+  count               = var.deployingAllInOne == true ? 0 : 1
   name                = local.domain_name.acr
   resource_group_name = var.rgLzName
 }
 
 data "azurerm_private_dns_zone" "dnszone-akv" {
+  count               = var.deployingAllInOne == true ? 0 : 1
   name                = local.domain_name.akv
   resource_group_name = var.rgLzName
 }
@@ -44,15 +52,15 @@ module "avm-res-containerregistry-registry" {
   source                        = "Azure/avm-res-containerregistry-registry/azurerm"
   version                       = "0.3.1"
   name                          = var.acrName
-  location                      = data.azurerm_resource_group.rg.location
-  resource_group_name           = data.azurerm_resource_group.rg.name
+  location                      = var.location # data.azurerm_resource_group.rg.location
+  resource_group_name           = var.rgLzName # data.azurerm_resource_group.rg.name
   public_network_access_enabled = false
   network_rule_bypass_option    = "AzureServices"
 
   private_endpoints = {
     primary = {
-      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.dnszone-acr.id]
-      subnet_resource_id            = data.azurerm_subnet.snet-spe.id
+      private_dns_zone_resource_ids = [local.privateDnsZoneAcrId] # [data.azurerm_private_dns_zone.dnszone-acr.id]
+      subnet_resource_id            = local.speSubnetId # data.azurerm_subnet.snet-spe.id
     }
   }
 }
@@ -61,14 +69,14 @@ module "avm-res-keyvault-vault" {
   source                        = "Azure/avm-res-keyvault-vault/azurerm"
   version                       = "0.9.1"
   name                          = var.akvName
-  location                      = data.azurerm_resource_group.rg.location
-  resource_group_name           = data.azurerm_resource_group.rg.name
+  location                      = var.location # data.azurerm_resource_group.rg.location
+  resource_group_name           = var.rgLzName # data.azurerm_resource_group.rg.name
   tenant_id                     = data.azurerm_client_config.tenant.tenant_id
   public_network_access_enabled = false
   private_endpoints = {
     primary = {
-      private_dns_zone_resource_ids = [data.azurerm_private_dns_zone.dnszone-akv.id]
-      subnet_resource_id            = data.azurerm_subnet.snet-spe.id
+      private_dns_zone_resource_ids = [local.privateDnsZoneAkvId] # [data.azurerm_private_dns_zone.dnszone-akv.id]
+      subnet_resource_id            = local.speSubnetId # data.azurerm_subnet.snet-spe.id
     }
   }
 }
