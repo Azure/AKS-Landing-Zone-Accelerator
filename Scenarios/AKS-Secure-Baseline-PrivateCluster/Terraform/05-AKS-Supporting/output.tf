@@ -3,7 +3,8 @@ output "acrName" {
 }
 
 output "akvName" {
-  value = module.avm-res-keyvault-vault.resource.name
+  value = element(split("/", module.avm-res-keyvault-vault.resource_id), 8) 
+#   value = module.avm-res-keyvault-vault.resource.name
 }
 
 output "acrId" {
