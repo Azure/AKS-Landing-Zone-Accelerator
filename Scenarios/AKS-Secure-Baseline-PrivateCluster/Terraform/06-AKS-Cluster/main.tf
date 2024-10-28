@@ -132,7 +132,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     enable_auto_scaling          = true
     max_pods                     = 110
     only_critical_addons_enabled = true
-    vnet_subnet_id               = local.snetAksId # data.azurerm_subnet.snet-aks.id
+    vnet_subnet_id               = local.snetAksId
 
     zones = ["1", "2", "3"]
   }
@@ -180,28 +180,28 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   enable_auto_scaling   = true
   max_pods              = 250
   mode                  = "User"
-  vnet_subnet_id        = local.snetAksId # data.azurerm_subnet.snet-aks.id
+  vnet_subnet_id        = local.snetAksId
   zones                 = ["1", "2", "3"]
 }
 
 resource "azurerm_role_assignment" "role-assignment-acr" {
   principal_id                     = azurerm_kubernetes_cluster.aks-cluster.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
-  scope                            = local.acrId # data.azurerm_container_registry.acr.id
+  scope                            = local.acrId
   skip_service_principal_aad_check = true
 }
 
 resource "azurerm_role_assignment" "role-assignment-akv" {
   principal_id                     = azurerm_kubernetes_cluster.aks-cluster.key_vault_secrets_provider[0].secret_identity[0].object_id
   role_definition_name             = "Key Vault Secrets User"
-  scope                            = local.akvId # data.azurerm_key_vault.akv.id
+  scope                            = local.akvId
   skip_service_principal_aad_check = true
 }
 
 resource "azurerm_role_assignment" "role-assignment-private-dns" {
   principal_id                     = azurerm_kubernetes_cluster.aks-cluster.web_app_routing[0].web_app_routing_identity[0].object_id
   role_definition_name             = "Private DNS Zone Contributor"
-  scope                            = local.dnszoneContosoId # data.azurerm_private_dns_zone.dnszone-contoso.id
+  scope                            = local.dnszoneContosoId
   skip_service_principal_aad_check = true
 }
 
