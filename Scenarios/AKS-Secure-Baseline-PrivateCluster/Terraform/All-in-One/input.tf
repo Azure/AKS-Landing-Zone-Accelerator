@@ -32,7 +32,7 @@ variable "hubVNETaddPrefixes" {
   default = "10.0.0.0/16"
 }
 
-variable "snetDefaultAddr" {
+variable "snetHubDefaultAddr" {
   type    = string
   default = "10.0.0.0/24"
 }
@@ -90,6 +90,11 @@ variable "nsgAppGWName" {
 variable "spokeVNETaddPrefixes" {
   type    = string
   default = "10.1.0.0/16"
+}
+
+variable "snetSpokeDefaultAddr" {
+  type    = string
+  default = "10.1.0.0/24"
 }
 
 variable "snetAksAddr" {

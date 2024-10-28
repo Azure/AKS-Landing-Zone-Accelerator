@@ -6,7 +6,7 @@ module "networkHub" {
   nsgHubDefaultName  = var.nsgHubDefaultName
   nsgVMName          = var.nsgVMName
   hubVNETaddPrefixes = var.hubVNETaddPrefixes
-  snetDefaultAddr    = var.snetDefaultAddr
+  snetDefaultAddr    = var.snetHubDefaultAddr
   snetFirewallAddr   = var.snetFirewallAddr
   snetBastionAddr    = var.snetBastionAddr
   snetVMAddr         = var.snetVMAddr
@@ -16,31 +16,48 @@ module "networkHub" {
   rtHubName          = var.rtHubName
 }
 
-# module "networkLZ" {
-#   source = "../04-Network-LZ/"
+module "networkLZ" {
+  source = "../04-Network-LZ/"
 
-#   location             = var.location
-#   rgLzName             = var.rgLzName
-#   rgHubName            = module.networkHub.rgHubName   # var.rgHubName
-#   vnetHubName          = module.networkHub.vnetHubName # var.vnetHubName
-#   vnetLzName           = var.vnetLzName
-#   rtLzName             = var.rtLzName
-#   nsgLzDefaultName     = var.nsgLzDefaultName
-#   nsgAppGWName         = var.nsgAppGWName
-#   spokeVNETaddPrefixes = var.spokeVNETaddPrefixes
-#   snetDefaultAddr      = var.snetDefaultAddr
-#   snetAksAddr          = var.snetAksAddr
-#   snetAppGWAddr        = var.snetAppGWAddr
+  location             = var.location
+  rgLzName             = var.rgLzName
+  rgHubName            = module.networkHub.rgHubName   # var.rgHubName
+  vnetHubName          = module.networkHub.vnetHubName # var.vnetHubName
+  vnetLzName           = var.vnetLzName
+  rtLzName             = var.rtLzName
+  nsgLzDefaultName     = var.nsgLzDefaultName
+  nsgAppGWName         = var.nsgAppGWName
+  spokeVNETaddPrefixes = var.spokeVNETaddPrefixes
+  snetDefaultAddr      = var.snetSpokeDefaultAddr
+  snetAksAddr          = var.snetAksAddr
+  snetAppGWAddr        = var.snetAppGWAddr
 
-#   deployingAllInOne = true
-#   vnetHubId         = module.networkHub.vnetHubId
-#   firewallPrivateIp = module.networkHub.firewallPrivateIp
+  deployingAllInOne = true
+  vnetHubId         = module.networkHub.vnetHubId
+  firewallPrivateIp = module.networkHub.firewallPrivateIp
 
-#   # depends_on = [module.networkHub]
-# }
+  # depends_on = [module.networkHub]
+}
 
-# module "aksSupporting" {
-#   source = "../05-AKS-Supporting/"
+module "aksSupporting" {
+  source = "../05-AKS-Supporting/"
+
+  location    = var.location
+  rgLzName    = var.rgLzName
+  vnetLzName  = var.vnetLzName
+  rgHubName   = var.rgHubName
+  vnetHubName = var.vnetHubName
+  acrName     = var.acrName
+  akvName     = var.akvName
+
+  deployingAllInOne   = true
+  speSubnetId         = module.networkLZ.speSubnetId
+  privateDnsZoneAkvId = module.networkLZ.privateDnsZoneAkvId
+  privateDnsZoneAcrId = module.networkLZ.privateDnsZoneAcrId
+}
+
+# module "aksCluster" {
+#   source = "../06-AKS-Cluster/"
 
 #   location    = var.location
 #   rgLzName    = var.rgLzName
@@ -49,9 +66,5 @@ module "networkHub" {
 #   vnetHubName = var.vnetHubName
 #   acrName     = var.acrName
 #   akvName     = var.akvName
-
-#   deployingAllInOne   = true
-#   speSubnetId         = module.networkLZ.speSubnetId
-#   privateDnsZoneAkvId = module.networkLZ.privateDnsZoneAkvId
-#   privateDnsZoneAcrId = module.networkLZ.privateDnsZoneAcrId
+#   adminGroupObjectIds = ""
 # }
