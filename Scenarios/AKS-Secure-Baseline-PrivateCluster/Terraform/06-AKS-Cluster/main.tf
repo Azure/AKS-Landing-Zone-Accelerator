@@ -163,6 +163,10 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   depends_on = [
     azurerm_role_assignment.role-assignment-dnszone,
   ]
+
+  lifecycle {
+    ignore_changes = [ default_node_pool.upgrade_settings ]
+  }
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {

@@ -2,25 +2,15 @@ locals {
   vnetHubId         = var.deployingAllInOne == true ? var.vnetHubId : data.azurerm_virtual_network.vnethub.0.id
   firewallPrivateIp = var.deployingAllInOne == true ? var.firewallPrivateIp : data.azurerm_firewall.firewall.0.ip_configuration.0.private_ip_address
 }
-# locals {
-#   vnetHubId         = var.vnetHubId != "" ? var.vnetHubId : data.azurerm_virtual_network.vnethub.0.id
-#   firewallPrivateIp = var.firewallPrivateIp != "" ? var.firewallPrivateIp : data.azurerm_firewall.firewall.0.ip_configuration.0.private_ip_address
-# }
-# locals {
-#   vnetHubId = "/subscriptions/${data.azurerm_subscription.current.subscription_id}/resourceGroups/${var.rgHubName}/providers/Microsoft.Network/virtualNetworks/${var.vnetHubName}"
-# }
-# data "azurerm_subscription" "current" {}
 
 data "azurerm_virtual_network" "vnethub" {
   count               = var.deployingAllInOne == true ? 0 : 1
-  # count               = var.vnetHubId == "" ? 1 : 0
   name                = var.vnetHubName
   resource_group_name = var.rgHubName
 }
 
 data "azurerm_firewall" "firewall" {
   count               = var.deployingAllInOne == true ? 0 : 1
-  # count               = var.firewallPrivateIp == "" ? 1 : 0
   name                = "azureFirewall"
   resource_group_name = var.rgHubName
 }
@@ -211,7 +201,7 @@ module "avm-res-network-vnet-peering" {
     resource_id = module.avm-res-network-vnet.resource.id
   }
   remote_virtual_network = {
-    resource_id = local.vnetHubId # data.azurerm_virtual_network.vnethub.id
+    resource_id = local.vnetHubId
   }
   name                                 = "local-to-remote"
   allow_forwarded_traffic              = true
@@ -246,7 +236,7 @@ module "avm-res-network-privatednszone-aks" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-ak"
-      vnetid           = local.vnetHubId # data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 }
@@ -259,7 +249,7 @@ module "avm-res-network-privatednszone-akv" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-akv"
-      vnetid           = local.vnetHubId # data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 
@@ -273,7 +263,7 @@ module "avm-res-network-privatednszone-acr" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-acr"
-      vnetid           = local.vnetHubId # data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 }
@@ -286,7 +276,7 @@ module "avm-res-network-privatednszone-contoso" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-contoso"
-      vnetid           = local.vnetHubId # data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 }
