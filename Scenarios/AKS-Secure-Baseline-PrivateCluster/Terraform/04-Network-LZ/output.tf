@@ -31,5 +31,5 @@ output "rgLzName" {
 }
 
 output "vnetLzName" {
-  value = module.avm-res-network-vnet.vnet.name 
+  value = module.avm-res-network-vnet.resource.name 
 }
