@@ -66,7 +66,6 @@ module "aksCluster" {
   akvName             = module.aksSupporting.akvName  # var.akvName
   adminGroupObjectIds = var.adminGroupObjectIds
 
-
   deployingAllInOne = true
   vnetLzId          = module.networkLZ.vnetLzId
   snetAksId         = module.networkLZ.snetAksId
