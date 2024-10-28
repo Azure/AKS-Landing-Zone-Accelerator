@@ -35,18 +35,16 @@ module "networkLZ" {
   deployingAllInOne = true
   vnetHubId         = module.networkHub.vnetHubId
   firewallPrivateIp = module.networkHub.firewallPrivateIp
-
-  # depends_on = [module.networkHub]
 }
 
 module "aksSupporting" {
   source = "../05-AKS-Supporting/"
 
   location    = var.location
-  rgLzName    = var.rgLzName
-  vnetLzName  = var.vnetLzName
-  rgHubName   = var.rgHubName
-  vnetHubName = var.vnetHubName
+  rgLzName    = module.networkLZ.rgLzName     # var.rgLzName
+  vnetLzName  = module.networkLZ.vnetLzName   # var.vnetLzName
+  rgHubName   = module.networkHub.rgHubName   # var.rgHubName
+  vnetHubName = module.networkHub.vnetHubName # var.vnetHubName
   acrName     = var.acrName
   akvName     = var.akvName
 
@@ -60,12 +58,12 @@ module "aksCluster" {
   source = "../06-AKS-Cluster/"
 
   location            = var.location
-  rgLzName            = var.rgLzName
-  vnetLzName          = var.vnetLzName
-  rgHubName           = var.rgHubName
-  vnetHubName         = var.vnetHubName
-  acrName             = var.acrName
-  akvName             = var.akvName
+  rgLzName            = module.networkLZ.rgLzName     # var.rgLzName
+  vnetLzName          = module.networkLZ.vnetLzName   # var.vnetLzName
+  rgHubName           = module.networkHub.rgHubName   # var.rgHubName
+  vnetHubName         = module.networkHub.vnetHubName # var.vnetHubName
+  acrName             = module.aksSupporting.acrName  # var.acrName
+  akvName             = module.aksSupporting.akvName  # var.akvName
   adminGroupObjectIds = var.adminGroupObjectIds
 
 

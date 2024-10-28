@@ -25,3 +25,11 @@ output "dnszoneAksId" {
 output "dnszoneContosoId" {
   value = module.avm-res-network-privatednszone-contoso.resource_id
 }
+
+output "rgLzName" {
+  value = azurerm_resource_group.rg.name 
+}
+
+output "vnetLzName" {
+  value = module.avm-res-network-vnet.vnet.name 
+}
