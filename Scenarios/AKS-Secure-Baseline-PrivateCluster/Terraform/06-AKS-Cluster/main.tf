@@ -117,7 +117,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
   }
   azure_active_directory_role_based_access_control {
-    # managed                = true
+    managed                = true
     azure_rbac_enabled     = true
     admin_group_object_ids = [var.adminGroupObjectIds]
   }
@@ -134,11 +134,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     only_critical_addons_enabled = true
     vnet_subnet_id               = local.snetAksId # data.azurerm_subnet.snet-aks.id
 
-    zones = [
-      "1",
-      "2",
-      "3",
-    ]
+    zones = ["1", "2", "3"]
   }
   auto_scaler_profile {
     balance_similar_node_groups = true
@@ -181,11 +177,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   max_pods              = 250
   mode                  = "User"
   vnet_subnet_id        = local.snetAksId # data.azurerm_subnet.snet-aks.id
-  zones = [
-    "1",
-    "2",
-    "3",
-  ]
+  zones                 = ["1", "2", "3"]
 }
 
 resource "azurerm_role_assignment" "role-assignment-acr" {
