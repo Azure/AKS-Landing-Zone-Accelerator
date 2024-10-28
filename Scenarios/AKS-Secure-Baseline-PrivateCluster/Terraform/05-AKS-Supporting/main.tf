@@ -4,10 +4,10 @@ locals {
     acr = "privatelink.azurecr.io",
     aks = "azurek8s.io"
   }
-  
-  speSubnetId = var.deployingAllInOne == true ? var.speSubnetId : data.azurerm_subnet.snet-spe.0.id
-  privateDnsZoneAkvId = var.deployingAllInOne == true ? var.privateDnsZoneAkvId : data.azurerm_private_dns_zone.dnszone-akv.0.id
-  privateDnsZoneAcrId = var.deployingAllInOne == true ? var.privateDnsZoneAcrId : data.azurerm_private_dns_zone.dnszone-acr.0.id
+
+  speSubnetId  = var.deployingAllInOne == true ? var.speSubnetId : data.azurerm_subnet.snet-spe.0.id
+  dnszoneAkvId = var.deployingAllInOne == true ? var.dnszoneAkvId : data.azurerm_private_dns_zone.dnszone-akv.0.id
+  dnszoneAcrId = var.deployingAllInOne == true ? var.dnszoneAcrId : data.azurerm_private_dns_zone.dnszone-acr.0.id
 }
 
 data "azurerm_client_config" "tenant" {}
@@ -59,8 +59,8 @@ module "avm-res-containerregistry-registry" {
 
   private_endpoints = {
     primary = {
-      private_dns_zone_resource_ids = [local.privateDnsZoneAcrId] # [data.azurerm_private_dns_zone.dnszone-acr.id]
-      subnet_resource_id            = local.speSubnetId # data.azurerm_subnet.snet-spe.id
+      private_dns_zone_resource_ids = [local.dnszoneAcrId] # [data.azurerm_private_dns_zone.dnszone-acr.id]
+      subnet_resource_id            = local.speSubnetId    # data.azurerm_subnet.snet-spe.id
     }
   }
 }
@@ -75,8 +75,8 @@ module "avm-res-keyvault-vault" {
   public_network_access_enabled = false
   private_endpoints = {
     primary = {
-      private_dns_zone_resource_ids = [local.privateDnsZoneAkvId] # [data.azurerm_private_dns_zone.dnszone-akv.id]
-      subnet_resource_id            = local.speSubnetId # data.azurerm_subnet.snet-spe.id
+      private_dns_zone_resource_ids = [local.dnszoneAkvId] # [data.azurerm_private_dns_zone.dnszone-akv.id]
+      subnet_resource_id            = local.speSubnetId    # data.azurerm_subnet.snet-spe.id
     }
   }
 }

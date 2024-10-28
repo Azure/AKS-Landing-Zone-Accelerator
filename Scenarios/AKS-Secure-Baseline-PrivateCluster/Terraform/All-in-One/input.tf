@@ -116,3 +116,8 @@ variable "akvName" {
   type    = string
   default = "akvlzti5y24"
 }
+
+variable "adminGroupObjectIds" {
+  type    = string
+  default = ""
+}

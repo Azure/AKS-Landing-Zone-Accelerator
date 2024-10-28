@@ -50,21 +50,30 @@ module "aksSupporting" {
   acrName     = var.acrName
   akvName     = var.akvName
 
-  deployingAllInOne   = true
-  speSubnetId         = module.networkLZ.speSubnetId
-  privateDnsZoneAkvId = module.networkLZ.privateDnsZoneAkvId
-  privateDnsZoneAcrId = module.networkLZ.privateDnsZoneAcrId
+  deployingAllInOne = true
+  speSubnetId       = module.networkLZ.speSubnetId
+  dnszoneAkvId      = module.networkLZ.dnszoneAkvId
+  dnszoneAcrId      = module.networkLZ.dnszoneAcrId
 }
 
-# module "aksCluster" {
-#   source = "../06-AKS-Cluster/"
+module "aksCluster" {
+  source = "../06-AKS-Cluster/"
 
-#   location    = var.location
-#   rgLzName    = var.rgLzName
-#   vnetLzName  = var.vnetLzName
-#   rgHubName   = var.rgHubName
-#   vnetHubName = var.vnetHubName
-#   acrName     = var.acrName
-#   akvName     = var.akvName
-#   adminGroupObjectIds = ""
-# }
+  location            = var.location
+  rgLzName            = var.rgLzName
+  vnetLzName          = var.vnetLzName
+  rgHubName           = var.rgHubName
+  vnetHubName         = var.vnetHubName
+  acrName             = var.acrName
+  akvName             = var.akvName
+  adminGroupObjectIds = var.adminGroupObjectIds
+
+
+  deployingAllInOne = true
+  vnetLzId          = module.networkLZ.vnetLzId
+  snetAksId         = module.networkLZ.snetAksId
+  dnszoneAksId      = module.networkLZ.dnszoneAksId
+  dnszoneContosoId  = module.networkLZ.dnszoneContosoId
+  acrId             = module.aksSupporting.acrId
+  akvId             = module.aksSupporting.akvId
+}

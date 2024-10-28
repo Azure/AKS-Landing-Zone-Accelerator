@@ -43,12 +43,12 @@ variable "speSubnetId" {
   default = ""
 }
 
-variable "privateDnsZoneAkvId" {
+variable "dnszoneAkvId" {
   type = string
   default = ""
 }
 
-variable "privateDnsZoneAcrId" {
+variable "dnszoneAcrId" {
   type = string
   default = ""
 }
