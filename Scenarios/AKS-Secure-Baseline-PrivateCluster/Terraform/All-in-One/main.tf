@@ -21,8 +21,8 @@ module "networkLZ" {
 
   location             = var.location
   rgLzName             = var.rgLzName
-  rgHubName            = module.networkHub.rgHubName   # var.rgHubName
-  vnetHubName          = module.networkHub.vnetHubName # var.vnetHubName
+  rgHubName            = module.networkHub.rgHubName
+  vnetHubName          = module.networkHub.vnetHubName
   vnetLzName           = var.vnetLzName
   rtLzName             = var.rtLzName
   nsgLzDefaultName     = var.nsgLzDefaultName
@@ -41,10 +41,10 @@ module "aksSupporting" {
   source = "../05-AKS-Supporting/"
 
   location    = var.location
-  rgLzName    = module.networkLZ.rgLzName     # var.rgLzName
-  vnetLzName  = module.networkLZ.vnetLzName   # var.vnetLzName
-  rgHubName   = module.networkHub.rgHubName   # var.rgHubName
-  vnetHubName = module.networkHub.vnetHubName # var.vnetHubName
+  rgLzName    = module.networkLZ.rgLzName
+  vnetLzName  = module.networkLZ.vnetLzName
+  rgHubName   = module.networkHub.rgHubName
+  vnetHubName = module.networkHub.vnetHubName
   acrName     = var.acrName
   akvName     = var.akvName
 
@@ -58,12 +58,12 @@ module "aksCluster" {
   source = "../06-AKS-Cluster/"
 
   location            = var.location
-  rgLzName            = module.networkLZ.rgLzName     # var.rgLzName
-  vnetLzName          = module.networkLZ.vnetLzName   # var.vnetLzName
-  rgHubName           = module.networkHub.rgHubName   # var.rgHubName
-  vnetHubName         = module.networkHub.vnetHubName # var.vnetHubName
-  acrName             = module.aksSupporting.acrName  # var.acrName
-  akvName             = module.aksSupporting.akvName  # var.akvName
+  rgLzName            = module.networkLZ.rgLzName
+  vnetLzName          = module.networkLZ.vnetLzName
+  rgHubName           = module.networkHub.rgHubName
+  vnetHubName         = module.networkHub.vnetHubName
+  acrName             = module.aksSupporting.acrName
+  akvName             = module.aksSupporting.akvName
   adminGroupObjectIds = var.adminGroupObjectIds
 
   deployingAllInOne = true
@@ -73,4 +73,26 @@ module "aksCluster" {
   dnszoneContosoId  = module.networkLZ.dnszoneContosoId
   acrId             = module.aksSupporting.acrId
   akvId             = module.aksSupporting.akvId
+}
+
+module "aksBackup" {
+  source = "../AKS-Backup/"
+
+  location            = var.location
+  rgLzName            = module.networkLZ.rgLzName
+  vnetLzName          = module.networkLZ.vnetLzName
+  rgHubName           = module.networkHub.rgHubName
+  vnetHubName         = module.networkHub.vnetHubName
+  acrName             = module.aksSupporting.acrName
+  akvName             = module.aksSupporting.akvName
+  adminGroupObjectIds = var.adminGroupObjectIds
+
+  deployingAllInOne = true
+  vnetLzId          = module.networkLZ.vnetLzId
+  snetAksId         = module.networkLZ.snetAksId
+  dnszoneAksId      = module.networkLZ.dnszoneAksId
+  dnszoneContosoId  = module.networkLZ.dnszoneContosoId
+  acrId             = module.aksSupporting.acrId
+  akvId             = module.aksSupporting.akvId
+  aksClusterId      = module.aksCluster.aksClusterId
 }
