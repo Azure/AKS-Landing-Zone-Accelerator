@@ -75,6 +75,7 @@ jobs:
         ls
         pwd
         ls Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/All-in-One
+        terraform -version
     #   run: cd '/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/All-in-One'
       
     # login to Azure using spn
