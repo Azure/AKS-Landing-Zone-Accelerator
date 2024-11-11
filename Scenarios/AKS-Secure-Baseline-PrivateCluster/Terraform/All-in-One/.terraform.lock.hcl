@@ -43,7 +43,7 @@ provider "registry.terraform.io/azure/modtm" {
 
 provider "registry.terraform.io/hashicorp/azurerm" {
   version     = "3.117.0"
-  constraints = ">= 3.6.0, >= 3.71.0, ~> 3.71, ~> 3.74, ~> 3.105, >= 3.114.0, < 4.0.0, < 5.0.0"
+  constraints = ">= 3.6.0, >= 3.71.0, ~> 3.71, ~> 3.74, >= 3.114.0, < 4.0.0, < 5.0.0"
   hashes = [
     "h1:h4lGsuXDO9QRtFWrJrCWU355FDnlzX8CqKdTtZsgoBI=",
     "zh:2e25f47492366821a786762369f0e0921cc9452d64bfd5075f6fdfcf1a9c6d70",
