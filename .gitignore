@@ -61,7 +61,7 @@ override.tf.json
 *tfplan.json
 **/tfplan.json
 # *tfplan
-**/tfplan
+# **/tfplan
 
 **/.terraform
 **/*.tfstate
