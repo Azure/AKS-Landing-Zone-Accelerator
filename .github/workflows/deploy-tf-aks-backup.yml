@@ -70,8 +70,11 @@ jobs:
       with:
         ref: tf-aks-backup
 
-    # - name: cd folder
-    #   run: ls
+    - name: cd folder
+      run: |
+        ls
+        pwd
+        ls \Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform
     #   run: cd '/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/All-in-One'
       
     # login to Azure using spn
