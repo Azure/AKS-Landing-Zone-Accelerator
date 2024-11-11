@@ -82,7 +82,7 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: terraform -chdir='.\Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\All-in-One\' init
+      run: terraform -chdir='\Scenarios\AKS-Secure-Baseline-PrivateCluster\Terraform\All-in-One\' init
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
