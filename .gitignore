@@ -49,7 +49,7 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 *.tfvars
-# *.hcl
+*.hcl
 *.vs
 
 !.vscode/cspell.json #workspace spelling should be source controlled
@@ -70,7 +70,7 @@ override.tf.json
 **/terraform.tfstate.d
 **/terraform.tfstate.backup
 **/.terraform.tfstate.lock.info
-# **/*.lock.hcl
+**/*.lock.hcl
 
 .infracost/*
 **/.infracost/*
