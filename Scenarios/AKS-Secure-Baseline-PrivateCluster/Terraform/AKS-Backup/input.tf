@@ -44,33 +44,32 @@ variable "deployingAllInOne" {
 }
 
 variable "vnetLzId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "snetAksId" {
-  type = string
+  type    = string
   default = ""
 }
 
-
 variable "dnszoneAksId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "dnszoneContosoId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "acrId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "akvId" {
-  type = string
+  type    = string
   default = ""
 }
 
@@ -83,11 +82,11 @@ variable "location2" {
 }
 
 variable "aksClusterId" {
-  type = string
+  type    = string
   default = ""
 }
 
 variable "aksClusterIdentityPrincipalId" {
-  type = string
+  type    = string
   default = ""
 }
