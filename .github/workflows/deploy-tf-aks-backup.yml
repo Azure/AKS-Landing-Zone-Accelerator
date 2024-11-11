@@ -70,19 +70,21 @@ jobs:
       with:
         ref: tf-aks-backup
 
-    - name: cd folder
+    - name: run command
       run: |
-        ls
-        pwd
-        ls Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/All-in-One
         terraform -version
-    #   run: cd '/Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/All-in-One'
-      
+
     # login to Azure using spn
     - name: Login via Azure CLI
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    # Setup Terraform CLI
+    - name: Install Terraform CLI
+      uses: hashicorp/setup-terraform@v2.0.3
+      with:
+        terraform_version: 1.9.8
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
