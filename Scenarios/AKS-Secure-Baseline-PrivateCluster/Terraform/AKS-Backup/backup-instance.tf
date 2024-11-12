@@ -2,7 +2,7 @@ resource "azurerm_data_protection_backup_instance_kubernetes_cluster" "backup_in
   name                         = "backup-instance-aks"
   location                     = azurerm_resource_group.rg-backup.location
   vault_id                     = azurerm_data_protection_backup_vault.backup-vault.id
-  kubernetes_cluster_id        = var.aksClusterId
+  kubernetes_cluster_id        = data.azurerm_kubernetes_cluster.aks-1.id # var.aksClusterId
   snapshot_resource_group_name = azurerm_resource_group.rg-backup.name
   backup_policy_id             = azurerm_data_protection_backup_policy_kubernetes_cluster.backup_policy_aks.id
 

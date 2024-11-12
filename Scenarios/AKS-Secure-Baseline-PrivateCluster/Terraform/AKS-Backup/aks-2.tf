@@ -8,6 +8,7 @@ resource "azurerm_kubernetes_cluster" "aks-2" {
   network_profile {
     network_plugin      = "azure"
     network_plugin_mode = "overlay"
+    # subnet_id           = azurerm_subnet.snet-aks-2.id
   }
 
   default_node_pool {
@@ -29,10 +30,12 @@ resource "azurerm_kubernetes_cluster" "aks-2" {
   }
 }
 
+
+
 resource "azurerm_role_assignment" "cluster_2_msi_contributor_on_snap_rg" {
   scope                = azurerm_resource_group.rg-backup.id
   role_definition_name = "Contributor"
-  principal_id         = azurerm_kubernetes_cluster.aks-2.identity[0].principal_id
+  principal_id         = azurerm_kubernetes_cluster.aks-2.identity.0.principal_id
 }
 
 resource "azurerm_kubernetes_cluster_extension" "extension-2" {
