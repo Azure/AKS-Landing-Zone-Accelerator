@@ -1,6 +1,6 @@
 resource "azurerm_kubernetes_cluster_extension" "extension-1" {
   name              = "backup-extension"
-  cluster_id        = data.azurerm_kubernetes_cluster.aks-1.id # var.aksClusterId
+  cluster_id        = data.azurerm_kubernetes_cluster.aks-1.id
   extension_type    = "Microsoft.DataProtection.Kubernetes"
   release_train     = "stable"
   release_namespace = "dataprotection-microsoft"
