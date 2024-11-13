@@ -37,3 +37,39 @@ variable "akvName" {
   type    = string
   default = "akvlzti5y"
 }
+
+variable "deployingAllInOne" {
+  type    = bool
+  default = false
+}
+
+variable "vnetLzId" {
+  type = string
+  default = ""
+}
+
+variable "snetAksId" {
+  type = string
+  default = ""
+}
+
+
+variable "dnszoneAksId" {
+  type = string
+  default = ""
+}
+
+variable "dnszoneContosoId" {
+  type = string
+  default = ""
+}
+
+variable "acrId" {
+  type = string
+  default = ""
+}
+
+variable "akvId" {
+  type = string
+  default = ""
+}

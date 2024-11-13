@@ -10,7 +10,7 @@ If you haven't yet, clone the repo and cd to the appropriate folder
 
 ```bash
 git clone https://github.com/Azure/AKS-Landing-Zone-Accelerator
-cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/02-EID
+cd ./Scenarios/AKS-Secure-Baseline-PrivateCluster/Terraform/03-network-hub.md
 ```
 
 The following will be created:

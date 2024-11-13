@@ -1,12 +1,18 @@
+locals {
+  vnetHubId         = var.deployingAllInOne == true ? var.vnetHubId : data.azurerm_virtual_network.vnethub.0.id
+  firewallPrivateIp = var.deployingAllInOne == true ? var.firewallPrivateIp : data.azurerm_firewall.firewall.0.ip_configuration.0.private_ip_address
+}
+
 data "azurerm_virtual_network" "vnethub" {
+  count               = var.deployingAllInOne == true ? 0 : 1
   name                = var.vnetHubName
   resource_group_name = var.rgHubName
 }
 
 data "azurerm_firewall" "firewall" {
+  count               = var.deployingAllInOne == true ? 0 : 1
   name                = "azureFirewall"
   resource_group_name = var.rgHubName
-
 }
 
 # rg ensures we have unique CAF compliant names for our resources.
@@ -26,7 +32,7 @@ module "avm-res-network-routetable" {
   source              = "Azure/avm-res-network-routetable/azurerm"
   version             = "0.2.0"
   resource_group_name = azurerm_resource_group.rg.name
-  name                = var.rtName
+  name                = var.rtLzName
   location            = azurerm_resource_group.rg.location
   depends_on          = [azurerm_resource_group.rg]
 
@@ -35,7 +41,7 @@ module "avm-res-network-routetable" {
       name                   = "aks-to-internet"
       address_prefix         = var.routeAddr
       next_hop_type          = "VirtualAppliance"
-      next_hop_in_ip_address = data.azurerm_firewall.firewall.ip_configuration[0].private_ip_address
+      next_hop_in_ip_address = local.firewallPrivateIp
     }
   }
 }
@@ -81,7 +87,7 @@ locals {
 module "avm-nsg-default" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
   version             = "0.2.0"
-  name                = var.nsgDefaultName
+  name                = var.nsgLzDefaultName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
 }
@@ -95,7 +101,7 @@ module "avm-nsg-appgw" {
   security_rules      = local.appgw_nsg_rules
 }
 
-module "avm-res-network-virtualnetwork" {
+module "avm-res-network-vnet" {
   source              = "Azure/avm-res-network-virtualnetwork/azurerm"
   version             = "0.2.4"
   resource_group_name = azurerm_resource_group.rg.name
@@ -103,7 +109,7 @@ module "avm-res-network-virtualnetwork" {
   location            = azurerm_resource_group.rg.location
   name                = var.vnetLzName
   dns_servers = {
-    dns_servers = [data.azurerm_firewall.firewall.ip_configuration[0].private_ip_address]
+    dns_servers = [local.firewallPrivateIp]
   }
 
   subnets = {
@@ -119,12 +125,12 @@ module "avm-res-network-virtualnetwork" {
     }
   }
 }
-module "avm-res-network-virtualnetwork-aks-subnet" {
+module "avm-res-network-vnet-aks-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-aks"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetAksAddr]
   route_table = {
@@ -134,30 +140,30 @@ module "avm-res-network-virtualnetwork-aks-subnet" {
     id = module.avm-nsg-default.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
-module "avm-res-network-virtualnetwork-appgw-subnet" {
+module "avm-res-network-vnet-appgw-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-appgw"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetAppGWAddr]
   network_security_group = {
     id = module.avm-nsg-appgw.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
-module "avm-res-network-virtualnetwork-vm-subnet" {
+module "avm-res-network-vnet-vm-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-vm"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetVMAddr]
   route_table = {
@@ -167,15 +173,15 @@ module "avm-res-network-virtualnetwork-vm-subnet" {
     id = module.avm-nsg-default.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
-module "avm-res-network-virtualnetwork-spe-subnet" {
+module "avm-res-network-vnet-spe-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
   version = "0.4.0"
   name    = "snet-spe"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   address_prefixes = [var.snetServicePeAddr]
   route_table = {
@@ -185,17 +191,17 @@ module "avm-res-network-virtualnetwork-spe-subnet" {
     id = module.avm-nsg-default.resource.id
   }
 
-  depends_on = [module.avm-res-network-virtualnetwork.resource]
+  depends_on = [module.avm-res-network-vnet.resource]
 }
 
-module "avm-res-network-virtualnetwork_peering" {
+module "avm-res-network-vnet-peering" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
   version = "0.2.4"
   virtual_network = {
-    resource_id = module.avm-res-network-virtualnetwork.resource.id
+    resource_id = module.avm-res-network-vnet.resource.id
   }
   remote_virtual_network = {
-    resource_id = data.azurerm_virtual_network.vnethub.id
+    resource_id = local.vnetHubId
   }
   name                                 = "local-to-remote"
   allow_forwarded_traffic              = true
@@ -230,7 +236,7 @@ module "avm-res-network-privatednszone-aks" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-ak"
-      vnetid           = data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 }
@@ -243,7 +249,7 @@ module "avm-res-network-privatednszone-akv" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-akv"
-      vnetid           = data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 
@@ -257,7 +263,7 @@ module "avm-res-network-privatednszone-acr" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-acr"
-      vnetid           = data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 }
@@ -270,20 +276,20 @@ module "avm-res-network-privatednszone-contoso" {
   virtual_network_links = {
     vnetlink = {
       vnetlinkname     = "vlink-contoso"
-      vnetid           = data.azurerm_virtual_network.vnethub.id
+      vnetid           = local.vnetHubId
       autoregistration = false
   } }
 }
 
-module "avm-res-network-applicationgateway" {
+module "avm-res-network-appgw" {
   source              = "Azure/avm-res-network-applicationgateway/azurerm"
   version             = "0.1.1"
   resource_group_name = azurerm_resource_group.rg.name
   name                = "appgw"
   location            = azurerm_resource_group.rg.location
   public_ip_name      = "pip-appgw"
-  vnet_name           = module.avm-res-network-virtualnetwork.resource.name
-  subnet_name_backend = module.avm-res-network-virtualnetwork-appgw-subnet.resource.name
+  vnet_name           = module.avm-res-network-vnet.resource.name
+  subnet_name_backend = module.avm-res-network-vnet-appgw-subnet.resource.name
   sku = {
     name     = "Standard_v2"
     tier     = "Standard_v2"
@@ -361,5 +367,5 @@ module "avm-res-network-applicationgateway" {
   }
   zones = ["1", "2", "3"]
 
-  depends_on = [module.avm-res-network-virtualnetwork-appgw-subnet.resource]
+  depends_on = [module.avm-res-network-vnet-appgw-subnet.resource]
 }
