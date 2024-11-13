@@ -24,5 +24,6 @@ kubectl apply -f ./kubernetes/deploy_disk_zrs_sc.yaml
 ```
 
 5. Trigger the backup of the AKS cluster on the azure portal through Vault backup.
+> You might need to click on the 'fix errors' button to resolve the backup misconfigurations.
 6. Watch for the resources created in the backup resource group (disk snapshots and blobs in the backup storage account).
 7. Trigger the restore operation to the new AKS cluster using the backup created in the previous step.
