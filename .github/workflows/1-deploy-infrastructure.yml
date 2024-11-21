@@ -104,7 +104,7 @@ jobs:
            
       - name: Create ESLZ Hub
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-HUB-AKS
           scope: subscription
@@ -137,7 +137,7 @@ jobs:
             
       - name: Create Jumpbox VM
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' && env.VM_PW != '' }}
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-HUB-VM
           template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/deploy-vm.bicep
@@ -150,7 +150,7 @@ jobs:
             
       - name: Create GitHub Runner VM
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' && env.VM_PW != '' && env.VM_PW != '' &&  env.GH_TOKEN != '' }}
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-HUB-RUNNER
           template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/deploy-runner.bicep
@@ -181,7 +181,7 @@ jobs:
 
       - name: Create User Defined Route
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-AKS-HUB-UDR
           template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/updateUDR.bicep
@@ -193,7 +193,7 @@ jobs:
           failOnStdErr: false
 
       - name: Create Spoke
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-SPOKE-AKS
           template: ${{ env.BICEP_ROOT_PATH }}04-Network-LZ/main.bicep
@@ -205,7 +205,7 @@ jobs:
           failOnStdErr: false            
             
       - name: Create AKS Supporting Resources in Spoke
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-SPOKE-AKS-SUPPORTING
           template: ${{ env.BICEP_ROOT_PATH }}05-AKS-supporting/main.bicep
@@ -262,7 +262,7 @@ jobs:
              az network vnet subnet update --vnet-name ${{ env.SPOKE_VNET_NAME }} --name ${{ env.APP_GW_SUBNET }} --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --route-table ${{ env.APP_GW_ROUTE_TABLE }} --network-security-group ${{ env.APP_GW_NSG }}
 
       - name: Deploy AKS in Spoke
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-AKS-CLUSTER
           template: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/main.bicep
