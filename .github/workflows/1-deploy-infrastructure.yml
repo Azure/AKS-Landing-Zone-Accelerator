@@ -104,14 +104,16 @@ jobs:
            
       - name: Create ESLZ Hub
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
-        uses: azure/arm-deploy@v2
+        uses: azure/bicep-deploy@v1
         with:
-          deploymentName: ESLZ-HUB-AKS
+					type: deployment
+          name: ESLZ-HUB-AKS
+					operation: create
           scope: subscription
-          region: ${{ env.DEPLOYMENT_LOCATION }}
-          subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: ${{ env.HUB_RESOURCE_GROUP }}
-          template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/main.bicep
+          location: ${{ env.DEPLOYMENT_LOCATION }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          resource-group-name: ${{ env.HUB_RESOURCE_GROUP }}
+          template-file: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/main.bicep
           parameters: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/parameters-main.json
           failOnStdErr: false
 
