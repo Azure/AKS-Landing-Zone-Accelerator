@@ -106,7 +106,7 @@ jobs:
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
         uses: azure/arm-deploy@v2
         with:
-	        deploymentName: ESLZ-HUB-AKS
+          deploymentName: ESLZ-HUB-AKS
           scope: subscription
           region: ${{ env.DEPLOYMENT_LOCATION }}
           subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
