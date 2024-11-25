@@ -12,7 +12,6 @@ param nsgAKSName string
 param nsgAppGWName string
 param rtAppGWSubnetName string
 param enablePrivateCluster bool = true
-// param dnsServers array
 param location string = deployment().location
 param availabilityZones array
 param appGwyAutoScale object
@@ -77,7 +76,6 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
       }
     ]
     enableTelemetry: true
-    // dnsServers: dnsServers
     peerings: [
       {
         allowForwardedTraffic: true
