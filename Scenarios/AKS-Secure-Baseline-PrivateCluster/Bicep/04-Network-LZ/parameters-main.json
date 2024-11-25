@@ -49,11 +49,6 @@
     },
     "nsgAppGWName": {
       "value": "APPGW-NSG"
-    },
-    "dnsServers": {
-      "value": [
-        "10.0.1.4"
-      ]
     }
   }
 }
