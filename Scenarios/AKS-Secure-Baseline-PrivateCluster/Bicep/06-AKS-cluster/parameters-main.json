@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
       "rgName": {
-        "value": "AKS-LZA-SPOKE"
+        "value": "ESLZ-SPOKE-AKS"
       },
       "enableAutoScaling": {
         "value": true
