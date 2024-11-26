@@ -168,7 +168,7 @@ module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.
   name: 'keyvault-aks-identity'
   params: {
     principalId: managedCluster.outputs.keyvaultIdentityClientId
-    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/ESLZ-SPOKE-AKS/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
     resourceId: keyVault.id
     roleDefinitionId: '00482a5a-887f-4fb3-b363-3b7fe8e74483'
     principalType: 'ServicePrincipal'
@@ -180,7 +180,7 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
   name: 'acr-aks-identity'
   params: {
     principalId: managedCluster.outputs.kubeletidentityObjectId
-    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/ESLZ-SPOKE-AKS/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
     resourceId: ACR.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
     principalType: 'ServicePrincipal'
