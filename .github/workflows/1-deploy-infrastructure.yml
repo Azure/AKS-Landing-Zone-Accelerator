@@ -179,19 +179,6 @@ jobs:
             # STORAGE_ACCOUNT_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)
             echo 'STORAGE_ACCOUNT_NAME=s'$(uuidgen) | sed 's/-//g' | cut -c 1-45 >> $GITHUB_ENV
 
-#      - name: Create User Defined Route
-#        if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
-#        uses: azure/arm-deploy@v2
-#        with:
-#          deploymentName: ESLZ-AKS-HUB-UDR
-#          template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/updateUDR.bicep
-#          parameters: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/parameters-updateUDR.json
-#          scope: subscription
-#          region: ${{ env.DEPLOYMENT_LOCATION }}
-#          subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
-#          resourceGroupName: ${{ env.HUB_RESOURCE_GROUP }}
-#          failOnStdErr: false
-
       - name: Create Spoke
         uses: azure/arm-deploy@v2
         with:
