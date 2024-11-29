@@ -69,11 +69,11 @@ jobs:
 
             az group delete -n ${{ env.HUB_RESOURCE_GROUP }} -y
             az group delete -n ${{ env.SPOKE_RESOURCE_GROUP }} -y
-            az deployment sub delete -n ESLZ-HUB-AKS
+            az deployment sub delete -n ESLZ-HUB
             az deployment sub delete -n ESLZ-AKS-HUB-UDR
             az deployment sub delete -n ESLZ-HUB-VM
             az deployment sub delete -n ESLZ-HUB-RUNNER
-            az deployment sub delete -n ESLZ-SPOKE-AKS
+            az deployment sub delete -n ESLZ-SPOKE
             az deployment sub delete -n ESLZ-SPOKE-AKS-SUPPORTING
             az deployment sub delete -n ESLZ-SPOKE-AKS-UDRNSG
             az deployment sub delete -n ESLZ-AKS-CLUSTER
@@ -106,7 +106,7 @@ jobs:
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: ESLZ-HUB-AKS
+          deploymentName: ESLZ-HUB
           scope: subscription
           region: ${{ env.DEPLOYMENT_LOCATION }}
           subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
@@ -182,7 +182,7 @@ jobs:
       - name: Create Spoke
         uses: azure/arm-deploy@v2
         with:
-          deploymentName: ESLZ-SPOKE-AKS
+          deploymentName: ESLZ-SPOKE
           template: ${{ env.BICEP_ROOT_PATH }}04-Network-LZ/main.bicep
           parameters: ${{ env.BICEP_ROOT_PATH }}04-Network-LZ/parameters-main.json
           scope: subscription
