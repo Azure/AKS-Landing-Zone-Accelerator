@@ -42,7 +42,7 @@
       "value": "AppGWSubnet-RT"
     },
     "vnetHUBRGName": {
-      "value": "AKS-LZA-HUB"
+      "value": "ESLZ-HUB-RG"
     },
     "nsgAKSName": {
       "value": "AKS-NSG"
