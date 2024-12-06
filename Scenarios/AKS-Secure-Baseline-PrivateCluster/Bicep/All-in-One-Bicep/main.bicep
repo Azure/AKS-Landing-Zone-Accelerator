@@ -19,7 +19,7 @@ param deployHub bool = true
 @description('Set this to true if you want your aks cluster to be private')
 param enablePrivateCluster bool = true
 
-param rgHubName string = 'AKS-LZA-HUB'
+param rgHubName string = 'ESLZ-HUB-RG'
 param vnetHubName string = 'VNet-HUB'
 param hubVNETaddPrefixes array = ['10.0.0.0/16']
 param azfwName string = 'AZFW'
