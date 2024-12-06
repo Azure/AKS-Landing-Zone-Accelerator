@@ -24,7 +24,7 @@ param vmsubnetSubnetAddressPrefix string
 param spokeSubnetAKSPrefix string = '10.1.1.0/24'
 
 
-module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
+module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
   name: rgName
   params: {
     name: rgName
