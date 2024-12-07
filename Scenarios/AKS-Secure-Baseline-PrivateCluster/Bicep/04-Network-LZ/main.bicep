@@ -36,7 +36,7 @@ resource vnethub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   name: vnetHubName
 }
 
-module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
+module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
   name: rgName
   params: {
     name: rgName
@@ -45,7 +45,7 @@ module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   }
 }
 
-module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
+module vnetspoke 'br/public:avm/res/network/virtual-network:0.5.1' = {
   scope: resourceGroup(rg.name)
   name: vnetSpokeName
   params: {
@@ -96,7 +96,7 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.1.1' = {
   ]
 }
 
-module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.1.3' = {
+module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.5.0' = {
   scope: resourceGroup(rg.name)
   name: nsgAKSName
   params: {
@@ -107,7 +107,7 @@ module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group
   }
 }
 
-module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-group:0.1.3' = {
+module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-group:0.5.0' = {
   scope: resourceGroup(rg.name)
   name: nsgAppGWName
   params: {
@@ -171,7 +171,7 @@ module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-gr
   }
 }
 
-module routeTable 'br/public:avm/res/network/route-table:0.2.2' = {
+module routeTable 'br/public:avm/res/network/route-table:0.4.0' = {
   scope: resourceGroup(rg.name)
   name: rtAKSSubnetName
   params: {
@@ -191,7 +191,7 @@ module routeTable 'br/public:avm/res/network/route-table:0.2.2' = {
   }
 }
 
-module appGwyRouteTable 'br/public:avm/res/network/route-table:0.2.2' = {
+module appGwyRouteTable 'br/public:avm/res/network/route-table:0.4.0' = {
   scope: resourceGroup(rg.name)
   name: rtAppGWSubnetName
   params: {
@@ -211,7 +211,7 @@ module appGwyRouteTable 'br/public:avm/res/network/route-table:0.2.2' = {
   }
 }
 
-module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
+module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsACRZone'
   params: {
@@ -229,7 +229,7 @@ module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
   }
 }
 
-module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
+module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsKVZone'
   params: {
@@ -247,7 +247,7 @@ module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
   }
 }
 
-module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
+module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsSAZone'
   params: {
@@ -262,7 +262,7 @@ module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.2.4' = {
   }
 }
 
-module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.2.4' = if (enablePrivateCluster) {
+module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.6.0' = if (enablePrivateCluster) {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'
   params: {
@@ -277,7 +277,7 @@ module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.2.4' = if
   }
 }
 
-module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.3.1' = {
+module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.7.0' = {
   scope: resourceGroup(rg.name)
   name: 'APPGW-PIP'
   params: {
@@ -305,7 +305,7 @@ module appgw 'appgw.bicep' = {
   }
 }
 
-module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
+module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.4.0' = {
   scope: resourceGroup(rg.name)
   name: 'aksIdentity'
   params: {
@@ -314,7 +314,7 @@ module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-id
   }
 }
 
-module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
+module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.10.1' = {
   scope: resourceGroup(rg.name)
   name: 'virtualMachineDeployment'
   params: {
