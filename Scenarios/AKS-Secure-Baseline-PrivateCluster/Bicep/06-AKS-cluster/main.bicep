@@ -91,7 +91,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1
   name: aksClusterName
   params: {
     name: aksClusterName
-    primaryAgentPoolProfile: [
+    primaryAgentPoolProfiles: [
       {
         availabilityZones: [
           '3'
