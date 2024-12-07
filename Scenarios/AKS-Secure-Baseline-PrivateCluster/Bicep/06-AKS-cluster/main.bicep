@@ -77,7 +77,7 @@ module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   }
 }
 
-module workspace 'br/public:avm/res/operational-insights/workspace:0.3.4' = {
+module workspace 'br/public:avm/res/operational-insights/workspace:0.9.0' = {
   scope: resourceGroup(rg.name)
   name: 'akslaworkspace'
   params: {
@@ -86,7 +86,7 @@ module workspace 'br/public:avm/res/operational-insights/workspace:0.3.4' = {
   }
 }
 
-module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2' = {
+module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1' = {
   scope: resourceGroup(rg.name)
   name: aksClusterName
   params: {
