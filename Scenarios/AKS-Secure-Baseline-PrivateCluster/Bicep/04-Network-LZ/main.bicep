@@ -203,8 +203,10 @@ module appGwyRouteTable 'br/public:avm/res/network/route-table:0.4.0' = {
         name: 'vm-to-internet'
         properties: {
           addressPrefix: '0.0.0.0/0'
-          nextHopIpAddress: firewallIP
-          nextHopType: 'VirtualAppliance'
+          //nextHopIpAddress: firewallIP
+          //nextHopType: 'VirtualAppliance'
+         // to fix ERROR: (ApplicationGatewaySubnetUserDefinedRouteNotAllowed) Route Table /subscriptions/***/resourceGroups/ESLZ-SPOKE-RG/providers/Microsoft.Network/routeTables/AppGWSubnet-RT is associated to subnet /subscriptions/***/resourceGroups/ESLZ-SPOKE-RG/providers/Microsoft.Network/virtualNetworks/VNet-SPOKE/subnets/AppGWSubnet, which contains V2 SKU Application Gateway /subscriptions/***/resourceGroups/ESLZ-SPOKE-RG/providers/Microsoft.Network/applicationGateways/APPGW. Route /subscriptions/***/resourceGroups/ESLZ-SPOKE-RG/providers/Microsoft.Network/routeTables/AppGWSubnet-RT/routes/vm-to-internet in the route table has AddressPrefix '0.0.0.0/0'. For routes associated to subnet containing Application Gateway V2, please ensure '0.0.0.0/0' uses NextHopType as 'Internet'.
+          nextHopType: 'Internet'
         }
       }
     ]
