@@ -33,7 +33,7 @@ module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
   }
 }
 
-module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
+module virtualNetwork 'br/public:avm/res/network/virtual-network:0.5.1' = {
   scope: resourceGroup(rg.name)
   name: vnetHubName
   params: {
@@ -66,7 +66,7 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
   }
 }
 
-module publicIpFW 'br/public:avm/res/network/public-ip-address:0.3.1' = {
+module publicIpFW 'br/public:avm/res/network/public-ip-address:0.7.0' = {
   scope: resourceGroup(rg.name)
   name: 'AZFW-PIP'
   params: {
@@ -80,7 +80,7 @@ module publicIpFW 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   }
 }
 
-module publicIpFWMgmt 'br/public:avm/res/network/public-ip-address:0.3.1' = {
+module publicIpFWMgmt 'br/public:avm/res/network/public-ip-address:0.7.0' = {
   scope: resourceGroup(rg.name)
   name: 'AZFW-Management-PIP'
   params: {
@@ -94,7 +94,7 @@ module publicIpFWMgmt 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   }
 }
 
-module publicipbastion 'br/public:avm/res/network/public-ip-address:0.3.1' = {
+module publicipbastion 'br/public:avm/res/network/public-ip-address:0.7.0' = {
   scope: resourceGroup(rg.name)
   name: 'publicipbastion'
   params: {
@@ -108,7 +108,7 @@ module publicipbastion 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   }
 }
 
-module bastionHost 'br/public:avm/res/network/bastion-host:0.1.1' = {
+module bastionHost 'br/public:avm/res/network/bastion-host:0.5.0' = {
   scope: resourceGroup(rg.name)
   name: 'bastion'
   params: {
@@ -120,7 +120,7 @@ module bastionHost 'br/public:avm/res/network/bastion-host:0.1.1' = {
   }
 }
 
-module routeTable 'br/public:avm/res/network/route-table:0.2.2' = {
+module routeTable 'br/public:avm/res/network/route-table:0.4.0' = {
   scope: resourceGroup(rg.name)
   name: rtVMSubnetName
   params: {
@@ -140,7 +140,7 @@ module routeTable 'br/public:avm/res/network/route-table:0.2.2' = {
 }
 
 
-module azureFirewall 'br/public:avm/res/network/azure-firewall:0.1.1' = {
+module azureFirewall 'br/public:avm/res/network/azure-firewall:0.5.1' = {
   scope: resourceGroup(rg.name)
   name: azfwName
   params: {
