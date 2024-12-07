@@ -212,7 +212,7 @@ jobs:
             RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID="$(az resource list -n ${{ env.RUNNER_VM_NAME }} --query [*].identity.principalId --out tsv)"
             echo 'RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID='$RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID >> $GITHUB_ENV
           
-            AKS_VERSION='1.26'
+            AKS_VERSION='1.30'
             echo 'AKS_VERSION='$AKS_VERSION >> $GITHUB_ENV 
 
       - name: Azure Log out
