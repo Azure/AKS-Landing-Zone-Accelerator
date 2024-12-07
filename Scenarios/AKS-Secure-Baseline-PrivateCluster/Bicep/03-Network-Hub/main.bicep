@@ -113,7 +113,7 @@ module bastionHost 'br/public:avm/res/network/bastion-host:0.5.0' = {
   name: 'bastion'
   params: {
     name: 'bastion'
-    vNetId: virtualNetwork.outputs.resourceId
+    virtualNetworkResourceId: virtualNetwork.outputs.resourceId
     bastionSubnetPublicIpResourceId: publicipbastion.outputs.resourceId
     location: location
     enableTelemetry: true
