@@ -78,6 +78,7 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.5.1' = {
     enableTelemetry: true
     peerings: [
       {
+        remoteVirtualNetworkResourceId: remoteVirtualNetworkResourceId
         allowForwardedTraffic: true
         allowGatewayTransit: false
         allowVirtualNetworkAccess: true
