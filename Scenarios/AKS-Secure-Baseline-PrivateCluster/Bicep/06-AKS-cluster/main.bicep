@@ -148,7 +148,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1
     aadProfileManaged: true
     aadProfileTenantId: subscription().tenantId
     omsAgentEnabled: true
-    monitoringWorkspaceId: workspace.outputs.resourceId
+    monitoringWorkspaceResourceId: workspace.outputs.resourceId
     azurePolicyEnabled: true
     webApplicationRoutingEnabled: true
     //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
