@@ -94,7 +94,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1
     primaryAgentPoolProfiles: [
       {
         availabilityZones: [
-          '3'
+          3
         ]
         count: 3
         enableAutoScaling: true
