@@ -253,7 +253,9 @@ jobs:
         with:
           deploymentName: ESLZ-AKS-CLUSTER
           template: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/main.bicep
-          parameters: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/parameters-main.json aksClusterName=${{ env.CLUSTER_NAME }} acrName=${{ env.ACR_NAME }} keyvaultName=${{ env.KEYVAULT_NAME }} kubernetesVersion=${{ env.AKS_VERSION }} networkPlugin=azure aksadminaccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} aksadminaccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} akslaWorkspaceName=${{ env.LOG_ANALYTICS_WORKSPACE_NAME }}
+          //parameters: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/parameters-main.json aksClusterName=${{ env.CLUSTER_NAME }} acrName=${{ env.ACR_NAME }} keyvaultName=${{ env.KEYVAULT_NAME }} kubernetesVersion=${{ env.AKS_VERSION }} networkPlugin=azure aksuseraccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} aksadminaccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} akslaWorkspaceName=${{ env.LOG_ANALYTICS_WORKSPACE_NAME }}          
+          //remove aksuseraccessprincipalId parameter. Because of the Error: ERROR: unrecognized template parameter 'aksuseraccessprincipalId'.
+          parameters: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/parameters-main.json aksClusterName=${{ env.CLUSTER_NAME }} acrName=${{ env.ACR_NAME }} keyvaultName=${{ env.KEYVAULT_NAME }} kubernetesVersion=${{ env.AKS_VERSION }} networkPlugin=azure  aksadminaccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} akslaWorkspaceName=${{ env.LOG_ANALYTICS_WORKSPACE_NAME }}
           scope: subscription
           region: ${{ env.DEPLOYMENT_LOCATION }}
           subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
