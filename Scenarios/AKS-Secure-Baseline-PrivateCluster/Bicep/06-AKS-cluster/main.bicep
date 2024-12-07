@@ -179,7 +179,7 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
   scope: resourceGroup(rg.name)
   name: 'acr-aks-identity'
   params: {
-    principalId: managedCluster.outputs.kubeletidentityObjectId
+    principalId: managedCluster.outputs.kubeletIdentityObjectId
     //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/ESLZ-SPOKE-AKS/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
     resourceId: ACR.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
