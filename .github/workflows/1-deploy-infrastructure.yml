@@ -19,7 +19,7 @@ env:
   MANAGED_RESOURCE_GROUP: eslzakscluster-aksInfraRG
   FIREWALL_NAME: AZFW
   CLUSTER_NAME: eslzakscluster
-  LOG_ANALYTICS_WORKSPACE_NAME: eslzlaworkspace
+  LOG_ANALYTICS_WORKSPACE_NAME: akslaworkspace
   vmSize: Standard_D4d_v5
   RUNNER_VM_NAME: runner
   SPOKE_VNET_NAME: VNet-SPOKE
