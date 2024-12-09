@@ -7,6 +7,7 @@ param aksIdentityName string
 param location string = deployment().location
 param enableAutoScaling bool
 param autoScalingProfile object
+param aksuseraccessprincipalId string
 param aksadminaccessprincipalId string
 param kubernetesVersion string
 @description('The name of the keyVault you deployed in the previous step (check Azure portal if you need to).')
