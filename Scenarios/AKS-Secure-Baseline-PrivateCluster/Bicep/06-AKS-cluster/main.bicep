@@ -14,6 +14,7 @@ param keyvaultName string
 @description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
 param acrName string 
 param aksClusterName string
+param akslaWorkspaceName string
 param enablePrivateCluster bool = true
 param vmSize string = 'Standard_D4d_v5'
 
