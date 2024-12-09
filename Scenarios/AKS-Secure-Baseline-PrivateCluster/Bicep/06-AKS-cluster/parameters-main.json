@@ -10,7 +10,7 @@
       },
       "autoScalingProfile": {
         "value": {
-          "balanceSimilarNodeGroups": "false",
+          "balanceSimilarNodeGroups": false,
           "expander": "random",
           "maxEmptyBulkDelete": "10",
           "maxGracefulTerminationSec": 600,
