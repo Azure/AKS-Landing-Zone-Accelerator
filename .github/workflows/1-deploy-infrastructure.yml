@@ -33,7 +33,7 @@ env:
   SPOKE_SUBNET_NAME: servicespe
   AKS_SUBNET_CIDR: 10.1.1.0/24
   APP_GATEWAY_PIP_NAME: APPGW-PIP
-  PRIVATE_DNS_NAME: constoso.internal
+  PRIVATE_DNS_NAME: contoso.internal
 
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
