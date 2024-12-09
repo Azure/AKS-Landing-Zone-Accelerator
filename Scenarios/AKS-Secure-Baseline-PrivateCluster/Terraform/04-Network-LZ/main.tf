@@ -362,5 +362,4 @@ module "avm-res-network-applicationgateway" {
   zones = ["1", "2", "3"]
 
   depends_on = [module.avm-res-network-virtualnetwork-appgw-subnet.resource]
-
 }
