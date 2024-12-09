@@ -35,9 +35,6 @@
       "subnetName": {
         "value": "AKS"
       },
-      "appGatewayName": {
-        "value": "APPGW"
-      },
       "aksIdentityName": {
         "value": "aksIdentity"
       },
