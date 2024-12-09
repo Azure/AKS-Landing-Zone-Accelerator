@@ -41,9 +41,6 @@
       "aksIdentityName": {
         "value": "aksIdentity"
       },
-      "aksadminaccessprincipalId": {
-        "value": "<your Microsoft Entra Group ID>"
-      },
       "aksClusterName": {
         "value": "aksCluster"
       }
