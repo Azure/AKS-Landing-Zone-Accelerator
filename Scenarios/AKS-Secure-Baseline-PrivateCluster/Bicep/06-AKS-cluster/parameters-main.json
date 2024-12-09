@@ -12,12 +12,12 @@
         "value": {
           "balanceSimilarNodeGroups": false,
           "expander": "random",
-          "maxEmptyBulkDelete": "10",
+          "maxEmptyBulkDelete": 10,
           "maxGracefulTerminationSec": 600,
           "maxNodeProvisionTime": "15m",
-          "maxTotalUnreadyPercentage": "45",
+          "maxTotalUnreadyPercentage": 45,
           "newPodScaleUpDelay": "0s",
-          "okTotalUnreadyCount": "3",
+          "okTotalUnreadyCount": 3,
           "scaleDownDelayAfterAdd": "10m",
           "scaleDownDelayAfterDelete": "10s",
           "scaleDownDelayAfterFailure": "3m",
@@ -25,8 +25,8 @@
           "scaleDownUnreadyTime": "20m",
           "scaleDownUtilizationThreshold": "0.5",
           "scanInterval": "10s",
-          "skipNodesWithLocalStorage": "false",
-          "skipNodesWithSystemPods": "true"
+          "skipNodesWithLocalStorage": false,
+          "skipNodesWithSystemPods": true
         }
       },
       "vnetName": {
