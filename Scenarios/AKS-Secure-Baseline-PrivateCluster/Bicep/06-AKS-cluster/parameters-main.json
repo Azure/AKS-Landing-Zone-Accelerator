@@ -13,7 +13,7 @@
           "balanceSimilarNodeGroups": "false",
           "expander": "random",
           "maxEmptyBulkDelete": "10",
-          "maxGracefulTerminationSec": "600",
+          "maxGracefulTerminationSec": 600,
           "maxNodeProvisionTime": "15m",
           "maxTotalUnreadyPercentage": "45",
           "newPodScaleUpDelay": "0s",
