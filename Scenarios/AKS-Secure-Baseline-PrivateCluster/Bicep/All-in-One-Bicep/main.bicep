@@ -19,7 +19,7 @@ param deployHub bool = true
 @description('Set this to true if you want your aks cluster to be private')
 param enablePrivateCluster bool = true
 
-param rgHubName string = 'AKS-LZA-HUB'
+param rgHubName string = 'ESLZ-HUB-RG'
 param vnetHubName string = 'VNet-HUB'
 param hubVNETaddPrefixes array = ['10.0.0.0/16']
 param azfwName string = 'AZFW'
@@ -220,7 +220,7 @@ param availabilityZones array = ['1', '2', '3']
 // 04-Network-LZ
 /////////////////
 
-param rgSpokeName string = 'AKS-LZA-SPOKE'
+param rgSpokeName string = 'ESLZ-SPOKE-RG'
 param vnetSpokeName string = 'VNet-SPOKE'
 //param availabilityZones array = ['1', '2', '3']
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
@@ -257,7 +257,7 @@ param linuxVirtualMachineVMSize string = 'Standard_DS2_v2'
 // 05-AKS-Supporting
 /////////////////
 
-//param rgSpokeName string = 'AKS-LZA-SPOKE'
+//param rgSpokeName string = 'ESLZ-SPOKE-AKS'
 //param vnetSpokeName string = 'VNet-SPOKE'
 param subnetName string = 'servicespe'
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
@@ -270,7 +270,7 @@ param storageAccountType string = 'Standard_GZRS'
 // 06-AKS-Cluster
 /////////////////
 
-//param rgSpokeName string = 'AKS-LZA-SPOKE'
+//param rgSpokeName string = 'ESLZ-SPOKE-AKS'
 //param vnetSpokeName string = 'VNet-SPOKE'
 param aksSubnetName string = 'AKS'
 //param appGatewayName string = 'APPGW'
