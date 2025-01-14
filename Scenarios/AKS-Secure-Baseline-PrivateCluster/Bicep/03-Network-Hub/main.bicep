@@ -60,7 +60,7 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
       {
         name: azureBastionSubnetName
         addressPrefix: azureBastionSubnetAddressPrefix
-        networkSecurityGroupResourceId: networkSecurityGroupBastion.outputs.resourceId
+        networkSecurityGroupResourceId: networkSecurityGroupBastion.outputs.resourceId 
       }
       {
         name: vmsubnetSubnetName
@@ -217,10 +217,39 @@ module networkSecurityGroupBastion 'br/public:avm/res/network/network-security-g
           sourcePortRange: '*'
         }
       }
+      // {
+      //   name: 'DenySSHInternetInbound'
+      //   properties: {
+      //     access: 'Deny'
+      //     destinationAddressPrefix: '*'
+      //     destinationPortRange: '22'
+      //     direction: 'Inbound'
+      //     priority: 130
+      //     protocol: '*'
+      //     sourceAddressPrefix: 'Internet'
+      //     sourcePortRange: '*'
+      //   }
+      // }
+      // {
+      //   name: 'DenyRDPInternetInbound'
+      //   properties: {
+      //     access: 'Deny'
+      //     destinationAddressPrefix: '*'
+      //     destinationPortRange: '3389'
+      //     direction: 'Inbound'
+      //     priority: 130
+      //     protocol: '*'
+      //     sourceAddressPrefix: 'Internet'
+      //     sourcePortRange: '*'
+      //   }
+      // }  
     ]
     enableTelemetry: true
   }
 }
+
+// output resourceId string = resourceId('Microsoft.Network/networkSecurityGroups', networkSecurityGroupBastion.name)
+
 
 module publicIpFW 'br/public:avm/res/network/public-ip-address:0.3.1' = {
   scope: resourceGroup(rg.name)
