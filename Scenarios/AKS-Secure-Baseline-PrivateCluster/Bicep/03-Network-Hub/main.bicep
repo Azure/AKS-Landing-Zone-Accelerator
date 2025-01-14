@@ -19,6 +19,7 @@ param azureBastionSubnetName string
 param azureBastionSubnetAddressPrefix string
 param vmsubnetSubnetName string
 param vmsubnetSubnetAddressPrefix string
+param nsgBastionName string
 
 @description('The prefix for the spoke subnet AKS')
 param spokeSubnetAKSPrefix string = '10.1.1.0/24'
@@ -36,6 +37,9 @@ module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
 module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
   scope: resourceGroup(rg.name)
   name: vnetHubName
+  dependsOn: [
+    networkSecurityGroupBastion
+  ]
   params: {
     addressPrefixes: hubVNETaddPrefixes
     name: vnetHubName
@@ -56,10 +60,162 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.1' = {
       {
         name: azureBastionSubnetName
         addressPrefix: azureBastionSubnetAddressPrefix
+        networkSecurityGroupResourceId: networkSecurityGroupBastion.outputs.resourceId
       }
       {
         name: vmsubnetSubnetName
         addressPrefix: vmsubnetSubnetAddressPrefix
+      }
+    ]
+    enableTelemetry: true
+  }
+}
+
+module networkSecurityGroupBastion 'br/public:avm/res/network/network-security-group:0.1.3' = {
+  scope: resourceGroup(rg.name)
+  name: nsgBastionName
+  params: {
+    name: nsgBastionName
+    location: location
+    securityRules: [
+      {
+        name: 'AllowHttpsInbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '443'
+          direction: 'Inbound'
+          priority: 120
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'Internet'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowRdpInbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '3389'
+          direction: 'Inbound'
+          priority: 121
+          protocol: 'Tcp'
+          sourceAddressPrefix: '178.85.26.64'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowSshInbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '22'
+          direction: 'Inbound'
+          priority: 122
+          protocol: 'Tcp'
+          sourceAddressPrefix: '178.85.26.64'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowGatewayManagerInbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '443'
+          direction: 'Inbound'
+          priority: 130
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'GatewayManager'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowAzureLoadBalancerInbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '443'
+          direction: 'Inbound'
+          priority: 140
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'AzureLoadBalancer'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowBastionHostCommunication'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: 'VirtualNetwork'
+          destinationPortRanges: [
+            8080
+            5701
+          ]
+          direction: 'Inbound'
+          priority: 150
+          protocol: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowSshRdpOutbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: 'VirtualNetwork'
+          destinationPortRanges: [
+            22
+            3389
+          ]
+          direction: 'Outbound'
+          priority: 100
+          protocol: '*'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowAzureCloudOutbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: 'AzureCloud'
+          destinationPortRange: '443'
+          direction: 'Outbound'
+          priority: 110
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowBastionCommunication'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: 'VirtualNetwork'
+          destinationPortRanges: [
+            8080
+            5701
+          ]
+          direction: 'Outbound'
+          priority: 120
+          protocol: '*'
+          sourceAddressPrefix: 'VirtualNetwork'
+          sourcePortRange: '*'
+        }
+      }
+      {
+        name: 'AllowHttpOutbound'
+        properties: {
+          access: 'Allow'
+          destinationAddressPrefix: 'Internet'
+          destinationPortRange: '80'
+          direction: 'Outbound'
+          priority: 130
+          protocol: '*'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
       }
     ]
     enableTelemetry: true
@@ -301,6 +457,23 @@ param fwapplicationRuleCollections array = [
             spokeSubnetAKSPrefix
           ]
         }
+        // {
+        //   name: 'Deny-MgmtPorts-Internet'
+        //   protocols: [
+        //     {
+        //       port: 22
+        //       protocolType: 'Udp'
+        //     }
+        //     {
+        //       port: 3389
+        //       protocolType: 'Tcp'
+        //     }
+        //   ]
+        //   targetFqdns: [
+        //     '*'
+        //   ]
+        //   sourceAddresses: ['Internet']
+        // }
       ]
     }
   }
