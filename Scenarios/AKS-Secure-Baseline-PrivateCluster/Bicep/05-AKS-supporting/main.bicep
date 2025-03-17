@@ -12,6 +12,12 @@ param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subs
 param storageAccountType string
 param location string = deployment().location
 
+// Parameters used for multi-region deployment
+param multiRegionSharedRgName string = ''
+param isSecondaryRegionDeployment bool = false
+//
+
+
 resource servicesSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
   scope: resourceGroup(rg.name)
   name: '${vnetName}/${subnetName}'
@@ -41,8 +47,8 @@ module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   }
 }
 
-module registry 'br/public:avm/res/container-registry/registry:0.1.1' = {
-  scope: resourceGroup(rg.name)
+module registry 'br/public:avm/res/container-registry/registry:0.1.1' =  if(!isSecondaryRegionDeployment) {
+  scope: resourceGroup(multiRegionSharedRgName != '' ? multiRegionSharedRgName : rg.name)
   name: acrName
   params: {
     name: acrName
@@ -60,6 +66,7 @@ module registry 'br/public:avm/res/container-registry/registry:0.1.1' = {
     ]
   }
 }
+
 
 module vault 'br/public:avm/res/key-vault/vault:0.4.0' = {
   scope: resourceGroup(rg.name)
@@ -107,5 +114,5 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.8.2' = {
   }
 }
 
-output acrName string = registry.outputs.name
+output acrName string =  registry.?outputs.?name 
 output keyVaultName string = vault.outputs.name

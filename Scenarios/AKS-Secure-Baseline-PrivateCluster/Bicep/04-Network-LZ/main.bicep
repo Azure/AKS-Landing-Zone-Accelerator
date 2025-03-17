@@ -316,7 +316,7 @@ module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-id
   }
 }
 
-module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
+module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.12.0' = {
   scope: resourceGroup(rg.name)
   name: 'virtualMachineDeployment'
   params: {
@@ -329,6 +329,10 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
       version: 'latest'
     }
     name: 'jumpbox'
+    managedIdentities:{systemAssigned: true}
+    extensionAadJoinConfig: {
+      enabled: true
+    }
     nicConfigurations: [
       {
         ipConfigurations: [
@@ -359,3 +363,5 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
     location: location
   }
 }
+
+output vmSystemAssignedMIPrincipalId string = virtualMachine.outputs.systemAssignedMIPrincipalId

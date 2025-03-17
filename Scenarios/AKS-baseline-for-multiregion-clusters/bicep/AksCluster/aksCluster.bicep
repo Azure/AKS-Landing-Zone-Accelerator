@@ -2,13 +2,17 @@
 // Global Parameters
 /////////////////
 targetScope = 'subscription'
-//param location string = deployment().location
 
 //////////////////////////////////
 //////////////////////////////////
 // PARAMETERS
 //////////////////////////////////
 //////////////////////////////////
+
+param location string
+param isMultiRegionDeployment bool = true
+param multiRegionSharedRgName string
+param isSecondaryRegionDeployment bool = false
 
 /////////////////
 // 03-network-Hub
@@ -19,7 +23,7 @@ param deployHub bool = true
 @description('Set this to true if you want your aks cluster to be private')
 param enablePrivateCluster bool = true
 
-param rgHubName string = 'AKS-LZA-HUB-${deployment().location}'
+param rgHubName string = 'AKS-LZA-HUB-${toUpper(location)}'
 param vnetHubName string = 'VNet-HUB'
 param hubVNETaddPrefixes array = ['10.0.0.0/16']
 param azfwName string = 'AZFW'
@@ -220,7 +224,7 @@ param availabilityZones array = ['1', '2', '3']
 // 04-Network-LZ
 /////////////////
 
-param rgSpokeName string = 'AKS-LZA-SPOKE-${deployment().location}'
+param rgSpokeName string = 'AKS-LZA-SPOKE-${toUpper(location)}'
 param vnetSpokeName string = 'VNet-SPOKE'
 //param availabilityZones array = ['1', '2', '3']
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
@@ -275,7 +279,6 @@ param storageAccountType string = 'Standard_GZRS'
 param aksSubnetName string = 'AKS'
 //param appGatewayName string = 'APPGW'
 param aksIdentityName string = 'aksIdentity'
-//param location: deployment().location
 param enableAutoScaling bool = true
 param autoScalingProfile object = {
   balanceSimilarNodeGroups: 'false'
@@ -300,7 +303,7 @@ param aksadminaccessprincipalId string
 param kubernetesVersion string = '1.30'
 param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
-param aksVMSize string = 'Standard_D4pds_v5'
+param aksVMSize string = 'Standard_DS2_v2'
 
 //////////////////////////////////
 //////////////////////////////////
@@ -315,6 +318,7 @@ param aksVMSize string = 'Standard_D4pds_v5'
 
 module networkHub '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub/main.bicep' = if (deployHub) {
   name: 'hubDeploy1'
+  scope: subscription()
   params: {
     rgName: rgHubName
     availabilityZones: availabilityZones
@@ -335,7 +339,7 @@ module networkHub '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-
     azureBastionSubnetName: azureBastionSubnetName
     azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
     vmsubnetSubnetName: vmsubnetSubnetName
-    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
+    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix
   }
 }
 
@@ -345,6 +349,7 @@ module networkHub '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-
 
 module networkSpoke '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/04-Network-LZ/main.bicep' = {
   name: 'lzSpokeDeploy1'
+  scope: subscription()
   params: {
     rgName: rgSpokeName
     enablePrivateCluster: enablePrivateCluster
@@ -380,6 +385,7 @@ module networkSpoke '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/04-Networ
 
 module aksSupporting '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-Supporting/main.bicep' = {
   name: 'aksSupporting1'
+  scope: subscription()
   params: {
     rgName: rgSpokeName
     vnetName: vnetSpokeName
@@ -389,6 +395,8 @@ module aksSupporting '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-S
     privateDNSZoneSAName: privateDNSZoneSAName
     storageAccountName: storageAccountName
     storageAccountType: storageAccountType
+    multiRegionSharedRgName: multiRegionSharedRgName
+    isSecondaryRegionDeployment: isSecondaryRegionDeployment
   }
   dependsOn: [networkSpoke]
 }
@@ -399,13 +407,14 @@ module aksSupporting '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-S
 
 module aksCluster '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/06-AKS-Cluster/main.bicep' = {
   name: 'aksCluster'
+  scope: subscription()
   params: {
     rgName: rgSpokeName
     enablePrivateCluster: enablePrivateCluster
     vnetName: vnetSpokeName
     subnetName: aksSubnetName
     aksIdentityName: aksIdentityName
-    location: deployment().location
+    location: location
     enableAutoScaling: enableAutoScaling
     autoScalingProfile: autoScalingProfile
     aksadminaccessprincipalId: aksadminaccessprincipalId
@@ -415,5 +424,13 @@ module aksCluster '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/06-AKS-Clus
     acrName: aksSupporting.outputs.acrName
     aksClusterName: aksClusterName
     vmSize: aksVMSize
+    isMultiRegionDeployment: isMultiRegionDeployment
   }
 }
+
+
+output acrName string = aksSupporting.outputs.acrName
+output keyVaultName string = aksSupporting.outputs.keyVaultName
+output aksClusterName string = aksClusterName
+output rgSpokeName string = rgSpokeName
+output vmSystemAssignedMIPrincipalId string = networkSpoke.outputs.vmSystemAssignedMIPrincipalId

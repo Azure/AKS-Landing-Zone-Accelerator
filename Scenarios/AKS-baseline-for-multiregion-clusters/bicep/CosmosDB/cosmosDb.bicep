@@ -3,6 +3,14 @@ param location string
 param cosmosDbAccountName string
 param virtualNetworkName string
 param subnetName string
+param rgSpokeName string = 'AKS-LZA-SPOKE-${location}'
+
+
+resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' existing = {  
+  scope: subscription()
+  name: rgSpokeName
+}
+
 
 // Cosmos DB Account
 resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {

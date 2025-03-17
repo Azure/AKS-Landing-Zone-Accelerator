@@ -16,6 +16,7 @@ param acrName string
 param aksClusterName string
 param enablePrivateCluster bool = true
 param vmSize string = 'Standard_D4d_v5'
+param isMultiRegionDeployment bool = false
 
 
 @allowed([
@@ -53,7 +54,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   name: keyvaultName
 }
 
-resource ACR 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
+resource ACR 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = if (!isMultiRegionDeployment) {
   scope: resourceGroup(rg.name)
   name: acrName
 }
@@ -163,7 +164,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
   }
 }
 
-module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = {
+module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' =  if (!isMultiRegionDeployment) {
   scope: resourceGroup(rg.name)
   name: 'keyvault-aks-identity'
   params: {
@@ -175,7 +176,7 @@ module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.
   }
 }
 
-module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = {
+module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = if (!isMultiRegionDeployment) {
   scope: resourceGroup(rg.name)
   name: 'acr-aks-identity'
   params: {
