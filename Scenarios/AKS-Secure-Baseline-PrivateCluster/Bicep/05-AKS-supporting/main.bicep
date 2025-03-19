@@ -114,5 +114,6 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.8.2' = {
   }
 }
 
-output acrName string =  registry.?outputs.?name 
+//output acrName string =  registry.?outputs.?name 
+output acrName string =  acrName 
 output keyVaultName string = vault.outputs.name

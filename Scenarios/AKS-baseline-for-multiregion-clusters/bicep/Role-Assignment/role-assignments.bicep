@@ -23,7 +23,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-09-01' exis
 }
 
 module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.1' = {
-  scope: resourceGroup(multiRegionSharedRgName)
+  scope: resourceGroup(spokeResourceGroupName)
   name: 'keyvault-aks-identity'
   params: {
     principalId: aksCluster.properties.identityProfile.kubeletidentity.objectId

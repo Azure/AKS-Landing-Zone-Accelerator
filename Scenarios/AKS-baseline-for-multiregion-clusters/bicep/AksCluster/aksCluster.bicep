@@ -255,7 +255,7 @@ param azureBastionSubnetName string = 'AzureBastionSubnet'
 param azureBastionSubnetAddressPrefix string = '10.0.2.0/27'
 param vmsubnetSubnetName string = 'vmsubnet'
 param vmsubnetSubnetAddressPrefix string = '10.0.3.0/24'
-param linuxVirtualMachineVMSize string = 'Standard_DS2_v2'
+param linuxVirtualMachineVMSize string = 'Standard_D2ds_v4' //'Standard_DS2_v2'
 
 /////////////////
 // 05-AKS-Supporting
@@ -303,7 +303,7 @@ param aksadminaccessprincipalId string
 param kubernetesVersion string = '1.30'
 param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
-param aksVMSize string = 'Standard_DS2_v2'
+param aksVMSize string = 'Standard_D2ds_v4' //'Standard_DS2_v2'
 
 //////////////////////////////////
 //////////////////////////////////
@@ -317,7 +317,7 @@ param aksVMSize string = 'Standard_DS2_v2'
 /////////////////
 
 module networkHub '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub/main.bicep' = if (deployHub) {
-  name: 'hubDeploy1'
+  name: 'HUBDEPLOY-${toUpper(location)}'
   scope: subscription()
   params: {
     rgName: rgHubName
@@ -348,7 +348,7 @@ module networkHub '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-
 /////////////////
 
 module networkSpoke '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/04-Network-LZ/main.bicep' = {
-  name: 'lzSpokeDeploy1'
+  name: 'LZASPOKEDEPLOY-${toUpper(location)}'
   scope: subscription()
   params: {
     rgName: rgSpokeName
@@ -384,7 +384,7 @@ module networkSpoke '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/04-Networ
 /////////////////
 
 module aksSupporting '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-Supporting/main.bicep' = {
-  name: 'aksSupporting1'
+  name: 'AKSSUPPORTING-${toUpper(location)}'
   scope: subscription()
   params: {
     rgName: rgSpokeName
@@ -406,7 +406,7 @@ module aksSupporting '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-S
 /////////////////
 
 module aksCluster '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/06-AKS-Cluster/main.bicep' = {
-  name: 'aksCluster'
+  name: 'AksLZACluster-${toUpper(location)}'
   scope: subscription()
   params: {
     rgName: rgSpokeName
