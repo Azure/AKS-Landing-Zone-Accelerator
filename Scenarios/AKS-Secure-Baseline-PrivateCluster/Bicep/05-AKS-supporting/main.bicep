@@ -67,7 +67,6 @@ module registry 'br/public:avm/res/container-registry/registry:0.1.1' =  if(!isS
   }
 }
 
-
 module vault 'br/public:avm/res/key-vault/vault:0.4.0' = {
   scope: resourceGroup(rg.name)
   name: keyvaultName
@@ -93,6 +92,22 @@ module vault 'br/public:avm/res/key-vault/vault:0.4.0' = {
   }
 }
 
+module privateEndpoint 'br/public:avm/res/network/private-endpoint:0.10.1' = if(isSecondaryRegionDeployment) {
+  scope: resourceGroup(multiRegionSharedRgName)
+  name: 'acrprivateEndpoint'
+  params: {
+    name: 'acrprivateEndpoint'
+    subnetResourceId: servicesSubnet.id
+    privateDnsZoneGroup: {
+      privateDnsZoneGroupConfigs:[
+        {
+          privateDnsZoneResourceId: privateDNSZoneACR.id
+        }
+      ]
+    }
+  }
+}
+
 module storageAccount 'br/public:avm/res/storage/storage-account:0.8.2' = {
   scope: resourceGroup(rg.name)
   name: storageAccountName
@@ -114,6 +129,6 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.8.2' = {
   }
 }
 
-//output acrName string =  registry.?outputs.?name 
+
 output acrName string =  acrName 
 output keyVaultName string = vault.outputs.name
