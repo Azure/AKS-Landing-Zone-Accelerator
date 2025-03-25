@@ -57,8 +57,6 @@ jobs:
             # Install Kured
             az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "helm repo add kubereboot https://kubereboot.github.io/charts/ && helm repo update && kubectl create namespace kured && helm install kured kubereboot/kured --namespace kured"
             
-            # Install Kubecost
-            az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl create namespace kubecost && helm repo add kubecost https://kubecost.github.io/cost-analyzer/ && helm install kubecost kubecost/cost-analyzer --namespace kubecost --set kubecostToken=YWxnaWJib25AbWljcm9zb2Z0LmNvbQ==xm343yadf98"
 
             # Install Open Service Mesh
             az aks enable-addons --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --addons open-service-mesh 
