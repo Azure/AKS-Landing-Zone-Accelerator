@@ -40,6 +40,7 @@ module aksClusterModule '../AksCLuster/aksCluster.bicep' =  {
     isMultiRegionDeployment: isMultiRegionDeployment
     isSecondaryRegionDeployment: isSecondaryRegionDeployment
     multiRegionSharedRgName: multiRegionSharedRgName
+    primaryACRName: primaryACRName
   }
 }
 

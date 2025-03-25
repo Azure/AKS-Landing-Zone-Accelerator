@@ -13,6 +13,8 @@ param location string
 param isMultiRegionDeployment bool = true
 param multiRegionSharedRgName string
 param isSecondaryRegionDeployment bool = false
+param primaryACRName string = ''
+
 
 /////////////////
 // 03-network-Hub
@@ -270,6 +272,7 @@ param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.s
 param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id, utcNow()))}'
 param storageAccountType string = 'Standard_GZRS'
 
+
 /////////////////
 // 06-AKS-Cluster
 /////////////////
@@ -397,6 +400,7 @@ module aksSupporting '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-S
     storageAccountType: storageAccountType
     multiRegionSharedRgName: multiRegionSharedRgName
     isSecondaryRegionDeployment: isSecondaryRegionDeployment
+    existingAcrName: primaryACRName
   }
   dependsOn: [networkSpoke]
 }

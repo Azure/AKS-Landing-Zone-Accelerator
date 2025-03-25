@@ -15,6 +15,7 @@ param location string = deployment().location
 // Parameters used for multi-region deployment
 param multiRegionSharedRgName string = ''
 param isSecondaryRegionDeployment bool = false
+param existingAcrName string = ''
 //
 
 
@@ -67,6 +68,11 @@ module registry 'br/public:avm/res/container-registry/registry:0.1.1' =  if(!isS
   }
 }
 
+resource existingRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' existing = if(isSecondaryRegionDeployment) {
+  scope: resourceGroup(multiRegionSharedRgName)
+  name: existingAcrName
+}
+
 module vault 'br/public:avm/res/key-vault/vault:0.4.0' = {
   scope: resourceGroup(rg.name)
   name: keyvaultName
@@ -94,9 +100,13 @@ module vault 'br/public:avm/res/key-vault/vault:0.4.0' = {
 
 module privateEndpoint 'br/public:avm/res/network/private-endpoint:0.10.1' = if(isSecondaryRegionDeployment) {
   scope: resourceGroup(multiRegionSharedRgName)
+  dependsOn: [
+    existingRegistry
+  ]
   name: 'acrprivateEndpoint'
   params: {
     name: 'acrprivateEndpoint'
+    location: location
     subnetResourceId: servicesSubnet.id
     privateDnsZoneGroup: {
       privateDnsZoneGroupConfigs:[
@@ -105,6 +115,17 @@ module privateEndpoint 'br/public:avm/res/network/private-endpoint:0.10.1' = if(
         }
       ]
     }
+    privateLinkServiceConnections: [
+      {
+        name: 'acrprivateEndpointPC'
+        properties: {
+          groupIds: [
+            'registry'
+          ]
+          privateLinkServiceId: existingRegistry.id
+        }
+      }
+    ]
   }
 }
 
