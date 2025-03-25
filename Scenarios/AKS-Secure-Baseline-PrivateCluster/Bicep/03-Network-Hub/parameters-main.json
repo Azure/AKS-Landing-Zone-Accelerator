@@ -3,13 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "rgName": {
-      "value": "AKS-LZA-HUB"
+      "value": "ESLZ-HUB-RG"
     },
     "availabilityZones": {
       "value": [
-        "1",
-        "2",
-        "3"
+        1,
+        2,
+        3
       ]
     },
     "hubVNETaddPrefixes": {
@@ -42,16 +42,16 @@
     "azureFirewallSubnetAddressPrefix": {
       "value": "10.0.1.0/26"
     },
-    "AzureFirewallManagementSubnetName": {
+    "azureFirewallManagementSubnetName": {
       "value": "AzureFirewallManagementSubnet"
     },
-    "AzureFirewallManagementSubnetAddressPrefix": {
+    "azureFirewallManagementSubnetAddressPrefix": {
       "value": "10.0.4.0/26"
     },
-    "AzureBastionSubnetName": {
+    "azureBastionSubnetName": {
       "value": "AzureBastionSubnet"
     },
-    "AzureBastionSubnetAddressPrefix": {
+    "azureBastionSubnetAddressPrefix": {
       "value": "10.0.2.0/27"
     },
     "vmsubnetSubnetName": {

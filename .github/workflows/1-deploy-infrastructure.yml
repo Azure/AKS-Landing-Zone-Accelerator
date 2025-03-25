@@ -14,12 +14,12 @@ on:
 env:
   BICEP_ROOT_PATH: Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/
   DEPLOYMENT_LOCATION: westus2
-  HUB_RESOURCE_GROUP: ESLZ-HUB
-  SPOKE_RESOURCE_GROUP: ESLZ-SPOKE
+  HUB_RESOURCE_GROUP: ESLZ-HUB-RG
+  SPOKE_RESOURCE_GROUP: ESLZ-SPOKE-RG
   MANAGED_RESOURCE_GROUP: eslzakscluster-aksInfraRG
   FIREWALL_NAME: AZFW
   CLUSTER_NAME: eslzakscluster
-  LOG_ANALYTICS_WORKSPACE_NAME: eslzlaworkspace
+  LOG_ANALYTICS_WORKSPACE_NAME: akslaworkspace
   vmSize: Standard_D4d_v5
   RUNNER_VM_NAME: runner
   SPOKE_VNET_NAME: VNet-SPOKE
@@ -33,7 +33,7 @@ env:
   SPOKE_SUBNET_NAME: servicespe
   AKS_SUBNET_CIDR: 10.1.1.0/24
   APP_GATEWAY_PIP_NAME: APPGW-PIP
-  PRIVATE_DNS_NAME: constoso.internal
+  PRIVATE_DNS_NAME: contoso.internal
 
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -46,11 +46,12 @@ env:
 jobs:
   deploy_infrastructure:
     runs-on: ubuntu-latest
+    environment: production
     name: 'Deploy Infrastructure'
     steps:
         
       - name: Azure Login
-        uses: Azure/login@v1
+        uses: Azure/login@v2
         if: ${{ env.AZURE_CLIENT_ID != '' && env.AZURE_TENANT_ID != '' && env.AZURE_SUBSCRIPTION_ID != ''}}
         with:
           client-id: ${{ env.AZURE_CLIENT_ID }}
@@ -58,20 +59,21 @@ jobs:
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: Remove previous resources
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         if: ${{ inputs.DELETE_EXISTING_RESOURCES }}
         continue-on-error: true
         with:
           azcliversion: latest
           inlineScript: |
-          
+
+
             az group delete -n ${{ env.HUB_RESOURCE_GROUP }} -y
             az group delete -n ${{ env.SPOKE_RESOURCE_GROUP }} -y
-            az deployment sub delete -n ESLZ-HUB-AKS
+            az deployment sub delete -n ESLZ-HUB
             az deployment sub delete -n ESLZ-AKS-HUB-UDR
             az deployment sub delete -n ESLZ-HUB-VM
             az deployment sub delete -n ESLZ-HUB-RUNNER
-            az deployment sub delete -n ESLZ-SPOKE-AKS
+            az deployment sub delete -n ESLZ-SPOKE
             az deployment sub delete -n ESLZ-SPOKE-AKS-SUPPORTING
             az deployment sub delete -n ESLZ-SPOKE-AKS-UDRNSG
             az deployment sub delete -n ESLZ-AKS-CLUSTER
@@ -91,20 +93,20 @@ jobs:
         uses: actions/checkout@main
 
       - name: Update Variables in IaC Templates
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
 
-            cd $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub/modules/VM
+            cd $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-Hub/
             find . -type f -exec sed -i 's/_OWNER_/${{ env.OWNER }}/g' {} +
             find . -type f -exec sed -i 's/_REPO_/${{ env.REPO }}/g' {} +
            
       - name: Create ESLZ Hub
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
-          deploymentName: ESLZ-HUB-AKS
+          deploymentName: ESLZ-HUB
           scope: subscription
           region: ${{ env.DEPLOYMENT_LOCATION }}
           subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
@@ -114,7 +116,7 @@ jobs:
           failOnStdErr: false
 
       - name: Get CIDR of VM Subnet
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -123,7 +125,7 @@ jobs:
             echo 'VM_SUBNET_CIDR='$VM_SUBNET_CIDR >> $GITHUB_ENV
 
       - name: Update Firewall to allow VMs out
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -135,7 +137,7 @@ jobs:
             
       - name: Create Jumpbox VM
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' && env.VM_PW != '' }}
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-HUB-VM
           template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/deploy-vm.bicep
@@ -148,7 +150,7 @@ jobs:
             
       - name: Create GitHub Runner VM
         if: ${{ env.AZURE_SUBSCRIPTION_ID != '' && env.VM_PW != '' && env.VM_PW != '' &&  env.GH_TOKEN != '' }}
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-HUB-RUNNER
           template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/deploy-runner.bicep
@@ -177,23 +179,10 @@ jobs:
             # STORAGE_ACCOUNT_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 24 | head -n 1)
             echo 'STORAGE_ACCOUNT_NAME=s'$(uuidgen) | sed 's/-//g' | cut -c 1-45 >> $GITHUB_ENV
 
-      - name: Create User Defined Route
-        if: ${{ env.AZURE_SUBSCRIPTION_ID != '' }}
-        uses: azure/arm-deploy@v1
-        with:
-          deploymentName: ESLZ-AKS-HUB-UDR
-          template: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/updateUDR.bicep
-          parameters: ${{ env.BICEP_ROOT_PATH }}03-Network-Hub/parameters-updateUDR.json
-          scope: subscription
-          region: ${{ env.DEPLOYMENT_LOCATION }}
-          subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: ${{ env.HUB_RESOURCE_GROUP }}
-          failOnStdErr: false
-
       - name: Create Spoke
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
-          deploymentName: ESLZ-SPOKE-AKS
+          deploymentName: ESLZ-SPOKE
           template: ${{ env.BICEP_ROOT_PATH }}04-Network-LZ/main.bicep
           parameters: ${{ env.BICEP_ROOT_PATH }}04-Network-LZ/parameters-main.json
           scope: subscription
@@ -203,7 +192,7 @@ jobs:
           failOnStdErr: false            
             
       - name: Create AKS Supporting Resources in Spoke
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-SPOKE-AKS-SUPPORTING
           template: ${{ env.BICEP_ROOT_PATH }}05-AKS-supporting/main.bicep
@@ -215,7 +204,7 @@ jobs:
           failOnStdErr: false            
 
       - name: Set Environment Variables
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -223,19 +212,19 @@ jobs:
             RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID="$(az resource list -n ${{ env.RUNNER_VM_NAME }} --query [*].identity.principalId --out tsv)"
             echo 'RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID='$RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID >> $GITHUB_ENV
           
-            AKS_VERSION='1.26'
+            AKS_VERSION='1.30'
             echo 'AKS_VERSION='$AKS_VERSION >> $GITHUB_ENV 
 
       - name: Azure Log out
         if: ${{ env.AZURE_CLIENT_ID != '' && env.AZURE_TENANT_ID != '' && env.AZURE_SUBSCRIPTION_ID != ''}}
-        uses: azure/CLI@v1
+        uses: azure/cli@v2
         with:
           inlineScript: |
           
             az logout
 
       - name: Azure Login
-        uses: Azure/login@v1
+        uses: Azure/login@v2
         if: ${{ env.AZURE_CLIENT_ID != '' && env.AZURE_TENANT_ID != '' && env.AZURE_SUBSCRIPTION_ID != ''}}
         with:
           client-id: ${{ env.AZURE_CLIENT_ID }}
@@ -243,7 +232,7 @@ jobs:
           subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
 
       - name: Configure AKS Subnet
-        uses: azure/CLI@v1
+        uses: azure/cli@v2
         with:
           inlineScript: |
 
@@ -260,11 +249,12 @@ jobs:
              az network vnet subnet update --vnet-name ${{ env.SPOKE_VNET_NAME }} --name ${{ env.APP_GW_SUBNET }} --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --route-table ${{ env.APP_GW_ROUTE_TABLE }} --network-security-group ${{ env.APP_GW_NSG }}
 
       - name: Deploy AKS in Spoke
-        uses: azure/arm-deploy@v1
+        uses: azure/arm-deploy@v2
         with:
           deploymentName: ESLZ-AKS-CLUSTER
           template: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/main.bicep
-          parameters: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/parameters-main.json clusterName=${{ env.CLUSTER_NAME }} acrName=${{ env.ACR_NAME }} keyvaultName=${{ env.KEYVAULT_NAME }} kubernetesVersion=${{ env.AKS_VERSION }} networkPlugin=azure aksuseraccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} aksadminaccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} akslaWorkspaceName=${{ env.LOG_ANALYTICS_WORKSPACE_NAME }}
+          parameters: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/parameters-main.json aksClusterName=${{ env.CLUSTER_NAME }} acrName=${{ env.ACR_NAME }} keyvaultName=${{ env.KEYVAULT_NAME }} kubernetesVersion=${{ env.AKS_VERSION }} networkPlugin=azure  akslaWorkspaceName=${{ env.LOG_ANALYTICS_WORKSPACE_NAME }}          
+          # parameters: ${{ env.BICEP_ROOT_PATH }}06-AKS-cluster/parameters-main.json aksClusterName=${{ env.CLUSTER_NAME }} acrName=${{ env.ACR_NAME }} keyvaultName=${{ env.KEYVAULT_NAME }} kubernetesVersion=${{ env.AKS_VERSION }} networkPlugin=azure aksuseraccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} aksadminaccessprincipalId=${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} akslaWorkspaceName=${{ env.LOG_ANALYTICS_WORKSPACE_NAME }}
           scope: subscription
           region: ${{ env.DEPLOYMENT_LOCATION }}
           subscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
@@ -272,7 +262,7 @@ jobs:
           failOnStdErr: false            
 
       - name: Set AKS Environment Variables
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -293,7 +283,7 @@ jobs:
             echo 'SUBNET_ID='$SUBNET_ID >> $GITHUB_ENV
             
       - name: Enable AKS Auto-Upgrade
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -301,7 +291,7 @@ jobs:
             az aks update --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --auto-upgrade-channel stable
       
       - name: Assign Permissions to GitHub Runner VM's Managed identity
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         if: ${{ env.AKS_ID != '' && env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID != '' && env.AZURE_SUBSCRIPTION_ID != '' }}
         with:
           azcliversion: latest
@@ -320,7 +310,7 @@ jobs:
             az keyvault set-policy --name ${{ env.KEYVAULT_NAME }} --object-id ${{ env.RUNNER_MANAGED_IDENTITY_PRINCIPAL_ID }} --secret-permissions set --resource-group ${{ env.SPOKE_RESOURCE_GROUP }}
 
       - name: Create Custom DNS
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -332,7 +322,7 @@ jobs:
             az network private-dns link vnet create --resource-group ${{ env.HUB_RESOURCE_GROUP }} --name ${{ env.PRIVATE_DNS_NAME }}-link-hub --zone ${{ env.PRIVATE_DNS_NAME }} --virtual-network ${{ env.HUB_VNET_NAME }} --registration-enabled true
             
       - name: Update Firewall to allow AKS out
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -344,7 +334,7 @@ jobs:
             az network firewall application-rule create --collection-name 'aks-egress' --name 'Allow-HTTPS' --target-fqdns '*' --firewall-name ${{ env.FIREWALL_NAME }} --protocols Https=443 --resource-group ${{ env.HUB_RESOURCE_GROUP }} --source-addresses '${{ env.AKS_SUBNET_CIDR }}'  --priority 350 --action Allow
             
       - name: Cap Log Analytics Workspace Ingress to save $
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -352,7 +342,7 @@ jobs:
             az monitor log-analytics workspace update --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --workspace-name ${{ env.LOG_ANALYTICS_WORKSPACE_NAME }} --quota 5
 
       - name: Enable Auto-Scaler on Default Node Pool to save $
-        uses: Azure/CLI@v1
+        uses: azure/cli@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -360,7 +350,7 @@ jobs:
             az aks nodepool update --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name defaultpool --cluster-name ${{ env.CLUSTER_NAME }} --enable-cluster-autoscaler --min-count 2 --max-count 5
 
       - name: Log out
-        uses: azure/CLI@v1
+        uses: azure/cli@v2
         with:
           inlineScript: |
           
