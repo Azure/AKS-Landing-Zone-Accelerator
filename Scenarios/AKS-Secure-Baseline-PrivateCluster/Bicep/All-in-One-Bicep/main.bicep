@@ -215,7 +215,7 @@ param fwnetworkRuleCollections array = [
 ]
 param fwnatRuleCollections array = []
 param availabilityZones array = ['1', '2', '3']
-
+param nsgBastionName string = 'BASTION-NSG'
 /////////////////
 // 04-Network-LZ
 /////////////////
@@ -336,6 +336,7 @@ module networkHub '../03-Network-Hub/main.bicep' = if (deployHub) {
     azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
     vmsubnetSubnetName: vmsubnetSubnetName
     vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
+    nsgBastionName: nsgBastionName
   }
 }
 
