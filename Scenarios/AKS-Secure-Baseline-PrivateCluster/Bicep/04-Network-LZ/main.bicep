@@ -61,10 +61,12 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.5.1' = {
         name: 'AKS'
         addressPrefix: spokeSubnetAKSPrefix
         routeTableResourceId: routeTable.outputs.resourceId
+        networkSecurityGroupResourceId: networkSecurityGroupAKS.outputs.resourceId
       }
       {
         name: 'AppGWSubnet'
         addressPrefix: spokeSubnetAppGWPrefix
+        networkSecurityGroupResourceId: networkSecurityGroupAppGwy.outputs.resourceId
       }
       {
         name: 'vmsubnet'
