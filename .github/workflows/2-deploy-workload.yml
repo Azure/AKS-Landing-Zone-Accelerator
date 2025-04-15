@@ -30,7 +30,7 @@ jobs:
     steps:
 
       - name: Install K8s Extension
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         continue-on-error: true
         with:
           azcliversion: latest
@@ -40,7 +40,7 @@ jobs:
             az extension update --name k8s-extension
 
       - name: Install Common Services onto AKS
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -70,7 +70,7 @@ jobs:
             echo 'MongoDB_Password='$(uuidgen) >> $GITHUB_ENV
 
       - name: Find ACR Name
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -80,7 +80,7 @@ jobs:
             echo 'ACR_NAME='$ACR_NAME >> $GITHUB_ENV
 
       - name: Create Agent Pool
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -89,7 +89,7 @@ jobs:
             az acr agentpool create --registry ${{ env.ACR_NAME }} --name ${{ env.AGENT_POOL_NAME }} --tier ${{ env.AGENT_POOL_TIER }} --count ${{ env.AGENT_POOL_COUNT }} --subnet-id $subnetId
 
       - name: Find KeyVault Name
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -98,7 +98,7 @@ jobs:
             echo 'KEYVAULT_NAME='$KEYVAULT_NAME >> $GITHUB_ENV
 
       - name: Get the clientId of the azure-keyvault-secrets-provider User Assigned Managed Identity
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -107,7 +107,7 @@ jobs:
             echo 'azureKeyvaultSecretsProviderUserAssignedManagedIdentityClientId='$azureKeyvaultSecretsProviderUserAssignedManagedIdentityClientId >> $GITHUB_ENV
             
       - name: Store MongoDb Connection String in KeyVault
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -115,7 +115,7 @@ jobs:
             az keyvault secret set --name mongodburi --vault-name ${{ env.KEYVAULT_NAME }} --value "mongodb://${{ env.MONGO_DB_USER }}:${{ env.MongoDB_Password }}@ratings-mongodb.ratingsapp:27017/ratingsdb"
 
       - name: Build and Push web app using the ACR and agent pool
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -123,7 +123,7 @@ jobs:
             az acr build --no-logs --agent-pool ${{ env.AGENT_POOL_NAME }} --image ratings-web:v1 --registry ${{ env.ACR_NAME }} --file Dockerfile https://github.com/MicrosoftDocs/mslearn-aks-workshop-ratings-web.git#master
 
       - name: Build and Push api app to ACR using agent pool
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -131,7 +131,7 @@ jobs:
             az acr build --no-logs --agent-pool ${{ env.AGENT_POOL_NAME }} --image ratings-api:v1 --registry ${{ env.ACR_NAME }} --file Dockerfile https://github.com/ivegamsft/mslearn-aks-workshop-ratings-api.git#master
 
       - name: Delete Agent Pool to save $
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -153,7 +153,7 @@ jobs:
           find . -type f -exec sed -i 's/<your e-mail here>/${{ env.EMAIL }}/g' {} +
 
       - name: Deploy NGINX
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -162,7 +162,7 @@ jobs:
             az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.service.annotations.'service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path=/healthz' -f internal-ingress.yaml" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/internal-ingress.yaml
 
       - name: Deploy Web and API App & Expose Internally
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -184,7 +184,7 @@ jobs:
             echo 'Random_DNS=z'$(uuidgen) | sed 's/-//g' >> $GITHUB_ENV
 
       - name: Update DNS of our Application Gateway Public IP
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -202,7 +202,7 @@ jobs:
           find . -type f -exec sed -i 's/<your e-mail here>/${{ env.EMAIL }}/g' {} +
 
       - name: Deploy Certificate Issuer and Public Ingress using Application Gateway
-        uses: Azure/CLI@v1
+        uses: Azure/CLI@v2
         with:
           azcliversion: latest
           inlineScript: |
@@ -211,7 +211,7 @@ jobs:
             az aks command invoke --resource-group ${{ env.SPOKE_RESOURCE_GROUP }} --name ${{ env.CLUSTER_NAME }} --command "kubectl apply -f 5-https-ratings-web-ingress.yaml -n ratingsapp" --file $GITHUB_WORKSPACE/Scenarios/AKS-Secure-Baseline-PrivateCluster/Apps/RatingsApp/5-https-ratings-web-ingress.yaml
 
       - name: Log out
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
           inlineScript: |
           
