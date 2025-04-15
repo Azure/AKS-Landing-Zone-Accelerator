@@ -41347,7 +41347,7 @@
                   "name": {
                     "value": "[parameters('aksClusterName')]"
                   },
-                  "primaryAgentPoolProfile": {
+                  "primaryAgentPoolProfiles": {
                     "value": [
                       {
                         "availabilityZones": [
@@ -42391,7 +42391,7 @@
                         "description": "Optional. Private DNS Zone configuration. Set to 'system' and AKS will create a private DNS zone in the node resource group. Set to '' to disable private DNS Zone creation and use public DNS. Supply the resource ID here of an existing Private DNS zone to use an existing zone."
                       }
                     },
-                    "primaryAgentPoolProfile": {
+                    "primaryAgentPoolProfiles": {
                       "type": "array",
                       "metadata": {
                         "description": "Required. Properties of the primary agent pool."
@@ -42964,7 +42964,7 @@
                         "diskEncryptionSetID": "[parameters('diskEncryptionSetResourceId')]",
                         "kubernetesVersion": "[parameters('kubernetesVersion')]",
                         "dnsPrefix": "[parameters('dnsPrefix')]",
-                        "agentPoolProfiles": "[parameters('primaryAgentPoolProfile')]",
+                        "agentPoolProfiles": "[parameters('primaryAgentPoolProfiles')]",
                         "linuxProfile": "[if(not(empty(parameters('sshPublicKey'))), createObject('adminUsername', parameters('adminUsername'), 'ssh', createObject('publicKeys', createArray(createObject('keyData', coalesce(parameters('sshPublicKey'), ''))))), null())]",
                         "servicePrincipalProfile": "[parameters('aksServicePrincipalProfile')]",
                         "ingressProfile": {
