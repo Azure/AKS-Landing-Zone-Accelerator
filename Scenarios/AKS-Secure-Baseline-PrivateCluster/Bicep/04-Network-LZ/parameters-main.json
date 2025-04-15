@@ -3,13 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "rgName": {
-      "value": "AKS-LZA-SPOKE"
+      "value": "ESLZ-SPOKE-RG"
     },
     "availabilityZones": {
       "value": [
-        "1",
-        "2",
-        "3"
+        1,
+        2,
+        3
       ]
     },
     "vnetSpokeName": {
@@ -42,18 +42,13 @@
       "value": "AppGWSubnet-RT"
     },
     "vnetHUBRGName": {
-      "value": "AKS-LZA-HUB"
+      "value": "ESLZ-HUB-RG"
     },
     "nsgAKSName": {
       "value": "AKS-NSG"
     },
     "nsgAppGWName": {
       "value": "APPGW-NSG"
-    },
-    "dnsServers": {
-      "value": [
-        "10.0.1.4"
-      ]
     }
   }
 }
