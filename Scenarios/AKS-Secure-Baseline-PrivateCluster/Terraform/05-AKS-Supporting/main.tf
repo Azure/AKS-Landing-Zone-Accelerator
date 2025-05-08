@@ -50,7 +50,7 @@ module "naming" {
 
 module "avm-res-containerregistry-registry" {
   source                        = "Azure/avm-res-containerregistry-registry/azurerm"
-  version                       = "0.3.1"
+  version                       = "0.4.0"
   name                          = var.acrName
   location                      = var.location
   resource_group_name           = var.rgLzName

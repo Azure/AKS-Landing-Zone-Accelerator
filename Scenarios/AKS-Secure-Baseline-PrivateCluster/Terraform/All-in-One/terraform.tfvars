@@ -1,6 +1,6 @@
 location            = "swedencentral"
 rgHubName           = "rg-hub-swc-dev"
 rgLzName            = "rg-spoke-swc-dev"
-akvName             = "akvlzti5y35"
+akvName             = "akvlzti5y26"
 adminGroupObjectIds = "d4689112-e04e-44f5-8fbd-4af32803607e"
-# acrName             = "acrlzti5y33"
+acrName             = "acrlzti5y26"
