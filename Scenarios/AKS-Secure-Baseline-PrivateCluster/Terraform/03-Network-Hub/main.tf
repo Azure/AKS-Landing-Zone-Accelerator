@@ -40,7 +40,7 @@ locals {
 
 module "avm-nsg-default" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  version             = "0.4.0"
   name                = var.nsgHubDefaultName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -48,7 +48,7 @@ module "avm-nsg-default" {
 
 module "avm-nsg-vm" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  version             = "0.4.0"
   name                = var.nsgVMName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -58,7 +58,7 @@ module "avm-nsg-vm" {
 
 module "avm-res-network-virtualnetwork" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.2.4"
+  version = "0.8.1"
   # insert the 3 required variables here
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = [var.hubVNETaddPrefixes]
@@ -99,7 +99,7 @@ module "avm-res-network-virtualnetwork" {
 
 module "publicIpFW" {
   source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.1.2"
+  version             = "0.2.0"
   resource_group_name = azurerm_resource_group.rg.name
   name                = "pip-azfw"
   location            = azurerm_resource_group.rg.location
@@ -110,7 +110,7 @@ module "publicIpFW" {
 
 module "publicIpFWMgmt" {
   source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.1.2"
+  version             = "0.2.0"
   resource_group_name = azurerm_resource_group.rg.name
   name                = "pip-azfw-management"
   location            = azurerm_resource_group.rg.location
@@ -121,7 +121,7 @@ module "publicIpFWMgmt" {
 
 module "publicIpBastion" {
   source              = "Azure/avm-res-network-publicipaddress/azurerm"
-  version             = "0.1.2"
+  version             = "0.2.0"
   resource_group_name = azurerm_resource_group.rg.name
   name                = "pip-bastion"
   location            = azurerm_resource_group.rg.location
@@ -275,7 +275,7 @@ module "rule_collection_group" {
 
 module "avm-res-network-azurefirewall" {
   source              = "Azure/avm-res-network-azurefirewall/azurerm"
-  version             = "0.2.0"
+  version             = "0.3.0"
   resource_group_name = azurerm_resource_group.rg.name
   name                = "azureFirewall"
   location            = azurerm_resource_group.rg.location
@@ -316,7 +316,7 @@ module "azure_bastion" {
 
 module "avm-res-network-routetable" {
   source              = "Azure/avm-res-network-routetable/azurerm"
-  version             = "0.2.0"
+  version             = "0.4.1"
   resource_group_name = azurerm_resource_group.rg.name
   name                = var.rtHubName
   location            = azurerm_resource_group.rg.location
