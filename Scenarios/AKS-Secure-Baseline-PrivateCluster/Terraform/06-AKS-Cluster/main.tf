@@ -111,7 +111,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   workload_identity_enabled         = true
   automatic_upgrade_channel        = "patch"
   role_based_access_control_enabled = true
-  http_application_routing_enabled  = true
+  #http_application_routing_enabled  = true
 
   web_app_routing {
     dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
