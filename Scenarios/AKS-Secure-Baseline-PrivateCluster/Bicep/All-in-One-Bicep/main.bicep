@@ -409,7 +409,6 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     //location: deployment().location
     enableAutoScaling: enableAutoScaling
     autoScalingProfile: autoScalingProfile
-    aksadminaccessprincipalId: aksadminaccessprincipalId
     kubernetesVersion: kubernetesVersion
     keyvaultName: aksSupporting.outputs.keyVaultName
     networkPlugin: networkPlugin

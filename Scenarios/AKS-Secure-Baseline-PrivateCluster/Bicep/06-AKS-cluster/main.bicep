@@ -15,7 +15,6 @@ param keyvaultName string
 @description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
 param acrName string 
 param aksClusterName string
-param akslaWorkspaceName string
 param enablePrivateCluster bool = true
 param vmSize string = 'Standard_D4d_v5'
 param isMultiRegionDeployment bool = false
@@ -89,7 +88,7 @@ module workspace 'br/public:avm/res/operational-insights/workspace:0.9.0' = {
   }
 }
 
-module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1' = {
+module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.9.0' = {
   scope: resourceGroup(rg.name)
   name: aksClusterName
   params: {
@@ -108,10 +107,9 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1
         name: 'defaultpool'
         osDiskSizeGB: 30
         osType: 'Linux'
-        serviceCidr: ''
         type: 'VirtualMachineScaleSets'
         vmSize: vmSize
-        vnetSubnetID: aksSubnet.id
+        vnetSubnetResourceId: aksSubnet.id
       }
     ]
     autoScalerProfileBalanceSimilarNodeGroups: enableAutoScaling ? autoScalingProfile.balanceSimilarNodeGroups : null
@@ -147,19 +145,20 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1
     //  aksadminaccessprincipalId
     //]
     kubernetesVersion: kubernetesVersion
-    aadProfileEnableAzureRBAC: true
-    aadProfileManaged: true
-    aadProfileTenantId: subscription().tenantId
+    aadProfile: {
+      aadProfileEnableAzureRBAC: true
+      aadProfileManaged: true
+      aadProfileTenantId: subscription().tenantId
+    }
     omsAgentEnabled: true
     monitoringWorkspaceResourceId: workspace.outputs.resourceId
     azurePolicyEnabled: true
     webApplicationRoutingEnabled: true
     //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
     enableDnsZoneContributorRoleAssignment: true
-    httpApplicationRoutingEnabled: true
     enableKeyvaultSecretsProvider: true
     managedIdentities: {
-      userAssignedResourcesIds: [
+      userAssignedResourceIds: [
         aksIdentity.id
       ]
     }

@@ -220,7 +220,8 @@ param fwnetworkRuleCollections array = [
   }
 ]
 param fwnatRuleCollections array = []
-param availabilityZones array = ['1', '2', '3']
+param availabilityZones array = [1,2,3]
+param nsgBastionName string = 'BASTION-NSG'
 
 /////////////////
 // 04-Network-LZ
@@ -284,14 +285,14 @@ param aksSubnetName string = 'AKS'
 param aksIdentityName string = 'aksIdentity'
 param enableAutoScaling bool = true
 param autoScalingProfile object = {
-  balanceSimilarNodeGroups: 'false'
+  balanceSimilarNodeGroups: false
   expander: 'random'
-  maxEmptyBulkDelete: '10'
-  maxGracefulTerminationSec: '600'
+  maxEmptyBulkDelete: 10
+  maxGracefulTerminationSec: 600
   maxNodeProvisionTime: '15m'
-  maxTotalUnreadyPercentage: '45'
+  maxTotalUnreadyPercentage: 45
   newPodScaleUpDelay: '0s'
-  okTotalUnreadyCount: '3'
+  okTotalUnreadyCount: 3
   scaleDownDelayAfterAdd: '10m'
   scaleDownDelayAfterDelete: '10s'
   scaleDownDelayAfterFailure: '3m'
@@ -299,10 +300,9 @@ param autoScalingProfile object = {
   scaleDownUnreadyTime: '20m'
   scaleDownUtilizationThreshold: '0.5'
   scanInterval: '10s'
-  skipNodesWithLocalStorage: 'false'
-  skipNodesWithSystemPods: 'true'
+  skipNodesWithLocalStorage: false
+  skipNodesWithSystemPods: true
 }
-param aksadminaccessprincipalId string
 param kubernetesVersion string = '1.30'
 param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
@@ -343,6 +343,7 @@ module networkHub '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/03-Network-
     azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
     vmsubnetSubnetName: vmsubnetSubnetName
     vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix
+    nsgBastionName:nsgBastionName
   }
 }
 
@@ -421,7 +422,6 @@ module aksCluster '../../../AKS-Secure-Baseline-PrivateCluster/Bicep/06-AKS-Clus
     location: location
     enableAutoScaling: enableAutoScaling
     autoScalingProfile: autoScalingProfile
-    aksadminaccessprincipalId: aksadminaccessprincipalId
     kubernetesVersion: kubernetesVersion
     keyvaultName: aksSupporting.outputs.keyVaultName
     networkPlugin: networkPlugin

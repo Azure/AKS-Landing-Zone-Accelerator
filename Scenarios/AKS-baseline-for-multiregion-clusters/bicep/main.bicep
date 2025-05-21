@@ -38,7 +38,6 @@ module aksClusterModule './AksCLuster/aksCluster.bicep' =  {
   params: {
     location: deployment().location
     aksClusterName: aksClusterName
-    aksadminaccessprincipalId:aksadminaccessprincipalId
     isMultiRegionDeployment: isMultiRegionDeployment
     isSecondaryRegionDeployment: isSecondaryRegionDeployment
     multiRegionSharedRgName: multiRegionSharedRgName
