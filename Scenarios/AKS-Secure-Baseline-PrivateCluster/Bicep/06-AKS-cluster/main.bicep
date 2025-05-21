@@ -7,13 +7,15 @@ param aksIdentityName string
 param location string = deployment().location
 param enableAutoScaling bool
 param autoScalingProfile object
-param aksadminaccessprincipalId string
+//param aksuseraccessprincipalId string
+//param aksadminaccessprincipalId string
 param kubernetesVersion string
 @description('The name of the keyVault you deployed in the previous step (check Azure portal if you need to).')
 param keyvaultName string 
 @description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
 param acrName string 
 param aksClusterName string
+param akslaWorkspaceName string
 param enablePrivateCluster bool = true
 param vmSize string = 'Standard_D4d_v5'
 param isMultiRegionDeployment bool = false
@@ -34,7 +36,7 @@ var privateDNSZoneAKSSuffixes = {
 
 var privateDNSZoneAKSName = 'privatelink.${toLower(location)}${privateDNSZoneAKSSuffixes[environment().name]}'
 
-resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' existing = {
+resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   scope: resourceGroup(rgName)
   name: aksIdentityName
 }
@@ -78,7 +80,7 @@ module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   }
 }
 
-module workspace 'br/public:avm/res/operational-insights/workspace:0.3.4' = {
+module workspace 'br/public:avm/res/operational-insights/workspace:0.9.0' = {
   scope: resourceGroup(rg.name)
   name: 'akslaworkspace'
   params: {
@@ -87,15 +89,15 @@ module workspace 'br/public:avm/res/operational-insights/workspace:0.3.4' = {
   }
 }
 
-module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2' = {
+module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1' = {
   scope: resourceGroup(rg.name)
   name: aksClusterName
   params: {
     name: aksClusterName
-    primaryAgentPoolProfile: [
+    primaryAgentPoolProfiles: [
       {
         availabilityZones: [
-          '3'
+          3
         ]
         count: 3
         enableAutoScaling: true
@@ -141,15 +143,15 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.2
     privateDNSZone: enablePrivateCluster ? pvtdnsAKSZone.id : null
     enablePrivateClusterPublicFQDN: false
     enableRBAC: true
-    aadProfileAdminGroupObjectIDs: [
-      aksadminaccessprincipalId
-    ]
+    //aadProfileAdminGroupObjectIDs: [
+    //  aksadminaccessprincipalId
+    //]
     kubernetesVersion: kubernetesVersion
     aadProfileEnableAzureRBAC: true
     aadProfileManaged: true
     aadProfileTenantId: subscription().tenantId
     omsAgentEnabled: true
-    monitoringWorkspaceId: workspace.outputs.resourceId
+    monitoringWorkspaceResourceId: workspace.outputs.resourceId
     azurePolicyEnabled: true
     webApplicationRoutingEnabled: true
     //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
@@ -169,7 +171,7 @@ module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.
   name: 'keyvault-aks-identity'
   params: {
     principalId: managedCluster.outputs.keyvaultIdentityClientId
-    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/ESLZ-SPOKE-AKS/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
     resourceId: keyVault.id
     roleDefinitionId: '00482a5a-887f-4fb3-b363-3b7fe8e74483'
     principalType: 'ServicePrincipal'
@@ -180,8 +182,8 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
   scope: resourceGroup(rg.name)
   name: 'acr-aks-identity'
   params: {
-    principalId: managedCluster.outputs.kubeletidentityObjectId
-    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/AKS-LZA-SPOKE/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
+    principalId: managedCluster.outputs.kubeletIdentityObjectId
+    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/ESLZ-SPOKE-AKS/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
     resourceId: ACR.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
     principalType: 'ServicePrincipal'

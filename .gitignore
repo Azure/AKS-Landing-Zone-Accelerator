@@ -48,20 +48,20 @@ override.tf.json
 
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
-*.tfvars
+# *.tfvars
 *.hcl
 *.vs
 
 !.vscode/cspell.json #workspace spelling should be source controlled
 
 # Ignore any .tfvars files that are generated automatically for each Terraform run
-**/*.tfvars
+# **/*.tfvars
 **/*.tfvars.json
 
 *tfplan.json
 **/tfplan.json
-*tfplan
-**/tfplan
+# *tfplan
+# **/tfplan
 
 **/.terraform
 **/*.tfstate
@@ -75,4 +75,3 @@ override.tf.json
 .infracost/*
 **/.infracost/*
 **/k8s-Copy/*
-.fake

@@ -39,7 +39,7 @@ resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2020-06-01' existi
   name: privateDNSZoneACRName
 }
 
-module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
+module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
   name: rgName
   params: {
     name: rgName
@@ -48,7 +48,8 @@ module rg 'br/public:avm/res/resources/resource-group:0.2.3' = {
   }
 }
 
-module registry 'br/public:avm/res/container-registry/registry:0.1.1' =  if(!isSecondaryRegionDeployment) {
+
+module registry 'br/public:avm/res/container-registry/registry:0.6.0' =  if(!isSecondaryRegionDeployment) {
   scope: resourceGroup(multiRegionSharedRgName != '' ? multiRegionSharedRgName : rg.name)
   name: acrName
   params: {
@@ -73,7 +74,8 @@ resource existingRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-pre
   name: existingAcrName
 }
 
-module vault 'br/public:avm/res/key-vault/vault:0.4.0' = {
+
+module vault 'br/public:avm/res/key-vault/vault:0.11.0' = {
   scope: resourceGroup(rg.name)
   name: keyvaultName
   params: {
@@ -129,7 +131,9 @@ module privateEndpoint 'br/public:avm/res/network/private-endpoint:0.10.1' = if(
   }
 }
 
-module storageAccount 'br/public:avm/res/storage/storage-account:0.8.2' = {
+
+module storageAccount 'br/public:avm/res/storage/storage-account:0.14.3' = {
+
   scope: resourceGroup(rg.name)
   name: storageAccountName
   params: {
