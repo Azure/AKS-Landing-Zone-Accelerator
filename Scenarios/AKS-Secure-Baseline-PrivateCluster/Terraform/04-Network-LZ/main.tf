@@ -30,7 +30,7 @@ resource "azurerm_resource_group" "rg" {
 
 module "avm-res-network-routetable" {
   source              = "Azure/avm-res-network-routetable/azurerm"
-  version             = "0.2.0"
+  version             = "0.4.1"
   resource_group_name = azurerm_resource_group.rg.name
   name                = var.rtLzName
   location            = azurerm_resource_group.rg.location
@@ -86,7 +86,7 @@ locals {
 
 module "avm-nsg-default" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  version             = "0.4.0"
   name                = var.nsgLzDefaultName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -94,7 +94,7 @@ module "avm-nsg-default" {
 
 module "avm-nsg-appgw" {
   source              = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version             = "0.2.0"
+  version             = "0.4.0"
   name                = var.nsgAppGWName
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
@@ -103,7 +103,7 @@ module "avm-nsg-appgw" {
 
 module "avm-res-network-vnet" {
   source              = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version             = "0.2.4"
+  version             = "0.8.1"
   resource_group_name = azurerm_resource_group.rg.name
   address_space       = [var.spokeVNETaddPrefixes]
   location            = azurerm_resource_group.rg.location
@@ -127,7 +127,7 @@ module "avm-res-network-vnet" {
 }
 module "avm-res-network-vnet-aks-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
-  version = "0.4.0"
+  version = "0.8.1"
   name    = "snet-aks"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
@@ -145,7 +145,7 @@ module "avm-res-network-vnet-aks-subnet" {
 
 module "avm-res-network-vnet-appgw-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
-  version = "0.4.0"
+  version = "0.8.1"
   name    = "snet-appgw"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
@@ -160,7 +160,7 @@ module "avm-res-network-vnet-appgw-subnet" {
 
 module "avm-res-network-vnet-vm-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
-  version = "0.4.0"
+  version = "0.8.1"
   name    = "snet-vm"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
@@ -178,7 +178,7 @@ module "avm-res-network-vnet-vm-subnet" {
 
 module "avm-res-network-vnet-spe-subnet" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/subnet"
-  version = "0.4.0"
+  version = "0.8.1"
   name    = "snet-spe"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
@@ -196,7 +196,7 @@ module "avm-res-network-vnet-spe-subnet" {
 
 module "avm-res-network-vnet-peering" {
   source  = "Azure/avm-res-network-virtualnetwork/azurerm//modules/peering"
-  version = "0.2.4"
+  version = "0.8.1"
   virtual_network = {
     resource_id = module.avm-res-network-vnet.resource.id
   }
@@ -230,7 +230,7 @@ locals {
 
 module "avm-res-network-privatednszone-aks" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  version             = "0.2.2"
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = "privatelink.${var.location}.${local.domain_name.aks}"
   virtual_network_links = {
@@ -243,7 +243,7 @@ module "avm-res-network-privatednszone-aks" {
 
 module "avm-res-network-privatednszone-akv" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  version             = "0.2.2"
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.akv
   virtual_network_links = {
@@ -257,7 +257,7 @@ module "avm-res-network-privatednszone-akv" {
 
 module "avm-res-network-privatednszone-acr" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  version             = "0.2.2"
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.acr
   virtual_network_links = {
@@ -270,7 +270,7 @@ module "avm-res-network-privatednszone-acr" {
 
 module "avm-res-network-privatednszone-contoso" {
   source              = "Azure/avm-res-network-privatednszone/azurerm"
-  version             = "0.1.2"
+  version             = "0.2.2"
   resource_group_name = azurerm_resource_group.rg.name
   domain_name         = local.domain_name.contoso
   virtual_network_links = {

@@ -109,15 +109,14 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
   oidc_issuer_enabled               = true
   sku_tier                          = "Standard"
   workload_identity_enabled         = true
-  automatic_channel_upgrade         = "patch"
+  automatic_upgrade_channel        = "patch"
   role_based_access_control_enabled = true
-  http_application_routing_enabled  = true
+  #http_application_routing_enabled  = true
 
   web_app_routing {
     dns_zone_ids = [local.dnszoneContosoId] # data.azurerm_private_dns_zone.dnszone-contoso.id]
   }
   azure_active_directory_role_based_access_control {
-    managed                = true
     azure_rbac_enabled     = true
     admin_group_object_ids = [var.adminGroupObjectIds]
   }
@@ -129,7 +128,7 @@ resource "azurerm_kubernetes_cluster" "aks-cluster" {
     os_sku                       = "Ubuntu"
     min_count                    = 1
     max_count                    = 3
-    enable_auto_scaling          = true
+    auto_scaling_enabled         = true
     max_pods                     = 110
     only_critical_addons_enabled = true
     vnet_subnet_id               = local.snetAksId
@@ -177,7 +176,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "nodepool" {
   os_sku                = "Ubuntu"
   min_count             = 1
   max_count             = 3
-  enable_auto_scaling   = true
+  auto_scaling_enabled  = true
   max_pods              = 250
   mode                  = "User"
   vnet_subnet_id        = local.snetAksId
