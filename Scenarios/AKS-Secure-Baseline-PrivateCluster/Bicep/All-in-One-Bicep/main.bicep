@@ -2,7 +2,6 @@
 // Global Parameters
 /////////////////
 targetScope = 'subscription'
-// param location string = deployment().location
 
 //////////////////////////////////
 //////////////////////////////////
@@ -214,7 +213,7 @@ param fwnetworkRuleCollections array = [
   }
 ]
 param fwnatRuleCollections array = []
-param availabilityZones array = ['1', '2', '3']
+param availabilityZones array = [1, 2, 3]
 param nsgBastionName string = 'BASTION-NSG'
 /////////////////
 // 04-Network-LZ
@@ -222,7 +221,6 @@ param nsgBastionName string = 'BASTION-NSG'
 
 param rgSpokeName string = 'ESLZ-SPOKE-RG'
 param vnetSpokeName string = 'VNet-SPOKE'
-//param availabilityZones array = ['1', '2', '3']
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
 param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
 param spokeSubnetAKSPrefix string = '10.1.1.0/24'
@@ -232,13 +230,10 @@ param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
 param remotePeeringName string = 'spoke-hub-peering'
 param rtAKSSubnetName string = 'AKS-RT'
 param firewallIP string = '10.0.1.4'
-//param vnetHubName string = 'VNet-HUB'
 param appGatewayName string = 'APPGW'
-//param vnetHUBRGName string = 'AKS-LZA-HUB'
 param nsgAKSName string = 'AKS-NSG'
 param nsgAppGWName string = 'APPGW-NSG'
 param rtAppGWSubnetName string = 'AppGWSubnet-RT'
-//param dnsServers array = []
 param appGwyAutoScale object = { maxCapacity: 2, minCapacity: 1 }
 param securityRules array = []
 param defaultSubnetName string = 'default'
@@ -257,8 +252,7 @@ param linuxVirtualMachineVMSize string = 'Standard_DS2_v2'
 // 05-AKS-Supporting
 /////////////////
 
-//param rgSpokeName string = 'ESLZ-SPOKE-AKS'
-//param vnetSpokeName string = 'VNet-SPOKE'
+
 param subnetName string = 'servicespe'
 param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
 param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
@@ -270,22 +264,19 @@ param storageAccountType string = 'Standard_GZRS'
 // 06-AKS-Cluster
 /////////////////
 
-//param rgSpokeName string = 'ESLZ-SPOKE-AKS'
-//param vnetSpokeName string = 'VNet-SPOKE'
+
 param aksSubnetName string = 'AKS'
-//param appGatewayName string = 'APPGW'
 param aksIdentityName string = 'aksIdentity'
-//param location: deployment().location
 param enableAutoScaling bool = true
 param autoScalingProfile object = {
-  balanceSimilarNodeGroups: 'false'
+  balanceSimilarNodeGroups: false
   expander: 'random'
-  maxEmptyBulkDelete: '10'
-  maxGracefulTerminationSec: '600'
+  maxEmptyBulkDelete: 10
+  maxGracefulTerminationSec: 600
   maxNodeProvisionTime: '15m'
-  maxTotalUnreadyPercentage: '45'
+  maxTotalUnreadyPercentage: 45
   newPodScaleUpDelay: '0s'
-  okTotalUnreadyCount: '3'
+  okTotalUnreadyCount: 3
   scaleDownDelayAfterAdd: '10m'
   scaleDownDelayAfterDelete: '10s'
   scaleDownDelayAfterFailure: '3m'
@@ -293,8 +284,8 @@ param autoScalingProfile object = {
   scaleDownUnreadyTime: '20m'
   scaleDownUtilizationThreshold: '0.5'
   scanInterval: '10s'
-  skipNodesWithLocalStorage: 'false'
-  skipNodesWithSystemPods: 'true'
+  skipNodesWithLocalStorage: false
+  skipNodesWithSystemPods: true
 }
 param aksadminaccessprincipalId string
 param kubernetesVersion string = '1.30'
@@ -360,7 +351,6 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
     nsgAKSName: nsgAKSName
     nsgAppGWName: nsgAppGWName
     rtAppGWSubnetName: rtAppGWSubnetName
-    //dnsServers: dnsServers
     appGwyAutoScale: appGwyAutoScale
     securityRules: securityRules
     spokeSubnetDefaultPrefix: spokeSubnetDefaultPrefix
@@ -406,7 +396,6 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     vnetName: vnetSpokeName
     subnetName: aksSubnetName
     aksIdentityName: aksIdentityName
-    //location: deployment().location
     enableAutoScaling: enableAutoScaling
     autoScalingProfile: autoScalingProfile
     aksadminaccessprincipalId: aksadminaccessprincipalId

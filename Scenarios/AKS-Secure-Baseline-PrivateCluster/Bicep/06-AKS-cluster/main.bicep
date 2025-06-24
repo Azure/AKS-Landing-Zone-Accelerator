@@ -7,15 +7,13 @@ param aksIdentityName string
 param location string = deployment().location
 param enableAutoScaling bool
 param autoScalingProfile object
-//param aksuseraccessprincipalId string
-//param aksadminaccessprincipalId string
+param aksadminaccessprincipalId string
 param kubernetesVersion string
 @description('The name of the keyVault you deployed in the previous step (check Azure portal if you need to).')
 param keyvaultName string 
 @description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
 param acrName string 
 param aksClusterName string
-param akslaWorkspaceName string
 param enablePrivateCluster bool = true
 param vmSize string = 'Standard_D4d_v5'
 
@@ -88,7 +86,7 @@ module workspace 'br/public:avm/res/operational-insights/workspace:0.9.0' = {
   }
 }
 
-module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1' = {
+module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.9.0' = {
   scope: resourceGroup(rg.name)
   name: aksClusterName
   params: {
@@ -107,10 +105,9 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1
         name: 'defaultpool'
         osDiskSizeGB: 30
         osType: 'Linux'
-        serviceCidr: ''
         type: 'VirtualMachineScaleSets'
         vmSize: vmSize
-        vnetSubnetID: aksSubnet.id
+        vnetSubnetResourceId: aksSubnet.id
       }
     ]
     autoScalerProfileBalanceSimilarNodeGroups: enableAutoScaling ? autoScalingProfile.balanceSimilarNodeGroups : null
@@ -142,23 +139,27 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.5.1
     privateDNSZone: enablePrivateCluster ? pvtdnsAKSZone.id : null
     enablePrivateClusterPublicFQDN: false
     enableRBAC: true
-    //aadProfileAdminGroupObjectIDs: [
-    //  aksadminaccessprincipalId
-    //]
-    kubernetesVersion: kubernetesVersion
-    aadProfileEnableAzureRBAC: true
+    aadProfile:{
+       aadProfileEnableAzureRBAC: true
     aadProfileManaged: true
     aadProfileTenantId: subscription().tenantId
+    aadProfileAdminGroupObjectIDs: [
+     aksadminaccessprincipalId
+    ]
+
+    }
+    
+    kubernetesVersion: kubernetesVersion
+   
     omsAgentEnabled: true
     monitoringWorkspaceResourceId: workspace.outputs.resourceId
     azurePolicyEnabled: true
     webApplicationRoutingEnabled: true
-    //dnsZoneResourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/dns/providers/Microsoft.Network/dnszones/leachlabs6.co.uk'
     enableDnsZoneContributorRoleAssignment: true
-    httpApplicationRoutingEnabled: true
+    httpApplicationRoutingEnabled: false
     enableKeyvaultSecretsProvider: true
     managedIdentities: {
-      userAssignedResourcesIds: [
+      userAssignedResourceIds: [
         aksIdentity.id
       ]
     }
@@ -170,7 +171,6 @@ module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.
   name: 'keyvault-aks-identity'
   params: {
     principalId: managedCluster.outputs.keyvaultIdentityClientId
-    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/ESLZ-SPOKE-AKS/providers/Microsoft.KeyVault/vaults/eslz-kv-ydxy57gvxwipy'
     resourceId: keyVault.id
     roleDefinitionId: '00482a5a-887f-4fb3-b363-3b7fe8e74483'
     principalType: 'ServicePrincipal'
@@ -182,7 +182,6 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
   name: 'acr-aks-identity'
   params: {
     principalId: managedCluster.outputs.kubeletIdentityObjectId
-    //resourceId: '/subscriptions/029e4694-af3a-4d10-a193-e1cead6586a9/resourceGroups/ESLZ-SPOKE-AKS/providers/Microsoft.ContainerRegistry/registries/eslzacrydxy57gvxwipy'
     resourceId: ACR.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
     principalType: 'ServicePrincipal'
