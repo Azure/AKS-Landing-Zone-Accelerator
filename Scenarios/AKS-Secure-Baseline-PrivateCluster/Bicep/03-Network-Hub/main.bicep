@@ -217,38 +217,12 @@ module networkSecurityGroupBastion 'br/public:avm/res/network/network-security-g
           sourcePortRange: '*'
         }
       }
-      // {
-      //   name: 'DenySSHInternetInbound'
-      //   properties: {
-      //     access: 'Deny'
-      //     destinationAddressPrefix: '*'
-      //     destinationPortRange: '22'
-      //     direction: 'Inbound'
-      //     priority: 130
-      //     protocol: '*'
-      //     sourceAddressPrefix: 'Internet'
-      //     sourcePortRange: '*'
-      //   }
-      // }
-      // {
-      //   name: 'DenyRDPInternetInbound'
-      //   properties: {
-      //     access: 'Deny'
-      //     destinationAddressPrefix: '*'
-      //     destinationPortRange: '3389'
-      //     direction: 'Inbound'
-      //     priority: 130
-      //     protocol: '*'
-      //     sourceAddressPrefix: 'Internet'
-      //     sourcePortRange: '*'
-      //   }
-      // }  
+  
     ]
     enableTelemetry: true
   }
 }
 
-// output resourceId string = resourceId('Microsoft.Network/networkSecurityGroups', networkSecurityGroupBastion.name)
 
 module publicIpFW 'br/public:avm/res/network/public-ip-address:0.7.0' = {
   scope: resourceGroup(rg.name)
@@ -485,23 +459,7 @@ param fwapplicationRuleCollections array = [
             spokeSubnetAKSPrefix
           ]
         }
-        // {
-        //   name: 'Deny-MgmtPorts-Internet'
-        //   protocols: [
-        //     {
-        //       port: 22
-        //       protocolType: 'Udp'
-        //     }
-        //     {
-        //       port: 3389
-        //       protocolType: 'Tcp'
-        //     }
-        //   ]
-        //   targetFqdns: [
-        //     '*'
-        //   ]
-        //   sourceAddresses: ['Internet']
-        // }
+       
       ]
     }
   }
