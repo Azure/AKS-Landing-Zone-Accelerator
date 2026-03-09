@@ -13,7 +13,7 @@ param vnetaddressprefixes array
 param vnetname string
 
   // Create resource group for the AKS Cluster nodes and associated resources.
-module resourceGroup 'br/public:avm/res/resources/resource-group:0.2.3' = {
+module resourceGroup 'br/public:avm/res/resources/resource-group:0.4.3' = {
   name: resourceGroupName
   params: {
     name: resourceGroupName

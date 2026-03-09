@@ -5,21 +5,31 @@ param location string = deployment().location
 param aksAdminsGroupId string
 param AKSvnetSubnetID string
 
-module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7' = {
+module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.0' = {
   name: 'managedClusterDeployment1'
   scope: resourceGroup(rgName)
   params: {
     // Required parameters
     name: 'aksclusterregion1'
-    aadProfileAdminGroupObjectIDs: [
-      aksAdminsGroupId
-    ]
+    skuName: 'Base'
+    skuTier: 'Standard'
+    aadProfile: {
+      enableAzureRBAC: true
+      managed: true
+      adminGroupObjectIDs: [
+        aksAdminsGroupId
+      ]
+    }
     publicNetworkAccess: 'Enabled'
     networkDataplane: 'azure'
     networkPlugin: 'azure'
-    enableWorkloadIdentity: true
     enableOidcIssuerProfile: true
-    primaryAgentPoolProfile: [
+    securityProfile: {
+      workloadIdentity: {
+        enabled: true
+      }
+    }
+    primaryAgentPoolProfiles: [
       {
         count: 1
         enableAutoScaling: true
@@ -28,15 +38,12 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7
         osType: 'Linux'
         mode: 'System'
         name: 'systempool'
-        vmSize: 'Standard_DS2_v2' 
-        vnetSubnetID: AKSvnetSubnetID 
-        webApplicationRoutingEnabled: true
-        networkDataplanne: 'azure'
-        networkPlugin: 'azure'
-        networkPluginMode: 'overlay'
-        omsAgentEnabled: true
+        vmSize: 'Standard_DS2_v2'
+        vnetSubnetResourceId: AKSvnetSubnetID
       }
     ]
+    webApplicationRoutingEnabled: true
+    omsAgentEnabled: true
     location: location
     managedIdentities: {
       systemAssigned: true
@@ -44,5 +51,5 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.1.7
   }
 }
 
-output firstoidcIssuerUrl string = managedCluster.outputs.oidcIssuerUrl
+output firstoidcIssuerUrl string = managedCluster.outputs.?oidcIssuerUrl ?? ''
 output firstAKSCluseterName string = managedCluster.outputs.name

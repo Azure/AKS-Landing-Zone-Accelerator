@@ -32,7 +32,7 @@ resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2020-06-01' existi
   name: privateDNSZoneACRName
 }
 
-module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
+module rg 'br/public:avm/res/resources/resource-group:0.4.3' = {
   name: rgName
   params: {
     name: rgName
@@ -41,7 +41,7 @@ module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
   }
 }
 
-module registry 'br/public:avm/res/container-registry/registry:0.6.0' = {
+module registry 'br/public:avm/res/container-registry/registry:0.11.0' = {
   scope: resourceGroup(rg.name)
   name: acrName
   params: {
@@ -52,16 +52,20 @@ module registry 'br/public:avm/res/container-registry/registry:0.6.0' = {
     acrSku: 'Premium'
     privateEndpoints: [
       {
-        privateDnsZoneResourceIds: [
-          privateDNSZoneACR.id
-        ]
+        privateDnsZoneGroup: {
+          privateDnsZoneGroupConfigs: [
+            {
+              privateDnsZoneResourceId: privateDNSZoneACR.id
+            }
+          ]
+        }
         subnetResourceId: servicesSubnet.id
       }
     ]
   }
 }
 
-module vault 'br/public:avm/res/key-vault/vault:0.11.0' = {
+module vault 'br/public:avm/res/key-vault/vault:0.13.3' = {
   scope: resourceGroup(rg.name)
   name: keyvaultName
   params: {
@@ -77,16 +81,20 @@ module vault 'br/public:avm/res/key-vault/vault:0.11.0' = {
     }
     privateEndpoints: [
       {
-        privateDnsZoneResourceIds: [
-          privateDNSZoneKV.id
-        ]
+        privateDnsZoneGroup: {
+          privateDnsZoneGroupConfigs: [
+            {
+              privateDnsZoneResourceId: privateDNSZoneKV.id
+            }
+          ]
+        }
         subnetResourceId: servicesSubnet.id
       }
     ]
   }
 }
 
-module storageAccount 'br/public:avm/res/storage/storage-account:0.14.3' = {
+module storageAccount 'br/public:avm/res/storage/storage-account:0.32.0' = {
   scope: resourceGroup(rg.name)
   name: storageAccountName
   params: {
@@ -97,9 +105,13 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.14.3' = {
     kind: 'StorageV2'
     privateEndpoints: [
       {
-        privateDnsZoneResourceIds: [
-          privateDNSZoneSA.id
-        ]
+        privateDnsZoneGroup: {
+          privateDnsZoneGroupConfigs: [
+            {
+              privateDnsZoneResourceId: privateDNSZoneSA.id
+            }
+          ]
+        }
         service: 'file'
         subnetResourceId: servicesSubnet.id
       }

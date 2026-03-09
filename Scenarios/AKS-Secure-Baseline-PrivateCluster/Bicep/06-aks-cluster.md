@@ -39,12 +39,12 @@ az provider register --namespace Microsoft.ContainerService
 
 There are a few additional Azure Providers and features that needs to be registered as well. Follow the same steps above for the following providers and features:
 
-- Microsoft.ContainerService
-- EnablePodIdentityPreview
-- AKS-AzureKeyVaultSecretsProvider
-- Microsoft.OperationsManagement
-- Microsoft.OperationalInsights
-- EncryptionAtHost
+* Microsoft.ContainerService
+* EnablePodIdentityPreview
+* AKS-AzureKeyVaultSecretsProvider
+* Microsoft.OperationsManagement
+* Microsoft.OperationalInsights
+* EncryptionAtHost
 
 Here is a list with all required providers or features to be registered:
 
@@ -59,15 +59,38 @@ az feature register --namespace Microsoft.Compute --name EncryptionAtHost
 
 > :warning: Don't move ahead to the next steps until all providers are registered.
 
-There are two groups you need to change in parameters-main.json: 
-    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId. 
-    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
+There are two groups you need to change in parameters-main.json:
+
+* Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId.
+* Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
 
 ## AKS Networking Choices
 
-You can choose which AKS network plugin you want to use when deploying the cluster: Azure CNI or Kubenet. To learn more about both options, you can refer to the [Azure CNI VS Kubenet](#Azure-CNI-VS-Kubenet) section at the bottom of this page.
+You can choose which AKS network plugin you want to use when deploying the cluster: Azure CNI or Kubenet. To learn more about both options, you can refer to the [Azure CNI VS Kubenet](#azure-cni-vs-kubenet) section at the bottom of this page.
 
 **Please note: If you are new to Kubernetes, we recommend for you to choose Azure CNI Networking to avoid the extra complexity of routing.**
+
+## AKS SKU: Standard vs Automatic
+
+You can choose between two AKS cluster SKUs:
+
+* **Base (Standard)** — The traditional AKS experience with full manual control over node pools, scaling, and configuration. You manage node pools, autoscaler settings, and cluster upgrades explicitly.
+
+* **Automatic** — An opinionated, fully-managed AKS cluster that automates node provisioning (Node Auto Provisioning), scaling (KEDA + VPA), security defaults, and upgrade policies. Best for teams that want a production-ready cluster with minimal operational overhead.
+
+### Key trade-offs
+
+| Aspect | Base (Standard) | Automatic |
+| -------- | ---------------- | ----------- |
+| **Node management** | Manual node pools with configurable autoscaler | Automatic node provisioning (NAP) |
+| **Scaling** | Cluster autoscaler only | KEDA + VPA + NAP |
+| **Identity** | User-assigned managed identity | System-assigned managed identity |
+| **Upgrades** | Manual or configurable auto-upgrade | Auto-upgrade with maintenance windows |
+| **Outbound type** | Load Balancer (configurable) | Managed NAT Gateway |
+| **Node resource group** | Unrestricted (default) | ReadOnly |
+| **Network plugin** | Azure CNI or Kubenet | Azure CNI (managed) |
+
+To deploy with AKS Automatic, set `aksSkuName=Automatic` in your deployment command.
 
 ## Deploy the cluster
 
@@ -84,15 +107,21 @@ The Kubernetes community releases minor versions roughly every three months. AKS
 az aks get-versions -l $REGION
 ```
 
-# [CLI](#tab/CLI)
+## [CLI](#tab/CLI)
 
-### Reference: Follow the below steps if you are going with the Azure CNI Networking option
+## Reference: Follow the below steps if you are going with the Azure CNI Networking option
 
+```bash
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p kubernetesVersion=1.30 -p networkPlugin=azure
 ```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p kubernetesVersion=1.29.2 -p networkPlugin=azure
+
+## Reference: Follow the below steps if you are going with AKS Automatic mode
+
+```bash
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p kubernetesVersion=1.30 -p networkPlugin=azure -p aksSkuName=Automatic
 ```
 
-### Reference: Follow the below steps if you are going with the Kubenet option
+## Reference: Follow the below steps if you are going with the Kubenet option
 
 Step 1:
 
@@ -102,7 +131,7 @@ Step 2: (Optional - *if you don't do this, you'll have to manually update the ro
 
 [Using AKS kubenet egress control with AGIC](https://github.com/Welasco/AKS-AGIC-UDR-AutoUpdate)
 
-```
+```bash
 az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.29.2 -p networkPlugin=kubenet
 ```
 

@@ -687,6 +687,29 @@
               },
               "infoMessages": [],
               "visible": true
+            },
+            {
+              "name": "aksSkuName",
+              "type": "Microsoft.Common.DropDown",
+              "label": "AKS Cluster SKU",
+              "subLabel": "",
+              "defaultValue": "Base (Standard)",
+              "toolTip": "Select 'Automatic' for AKS Automatic mode with opinionated, fully-managed node provisioning, scaling, and security. Select 'Base' for standard AKS with manual control.",
+              "constraints": {
+                "required": true,
+                "allowedValues": [
+                  {
+                    "label": "Base (Standard)",
+                    "value": "Base"
+                  },
+                  {
+                    "label": "Automatic",
+                    "description": "Fully-managed AKS with auto node provisioning, KEDA, VPA, and opinionated defaults.",
+                    "value": "Automatic"
+                  }
+                ]
+              },
+              "visible": true
             }
           ]
         }
@@ -715,13 +738,13 @@
 
         "vnetSpokeName": "[steps('spokenetwork').vnetSpokeName]",
         "spokeVNETaddPrefixes": "[steps('spokenetwork').spokeVNETaddPrefixes]",
-        
 
         "aksadminaccessprincipalId": "[steps('aksclustersettings').aksadminaccessprincipalId]",
         "aksSubnetName": "[steps('aksclustersettings').aksSubnetName]",
         "aksIdentityName": "[steps('aksclustersettings').aksIdentityName]",
         "kubernetesVersion": "[steps('aksclustersettings').kubernetesVersion]",
-        "aksClusterName": "[steps('aksclustersettings').aksclustername]"
+        "aksClusterName": "[steps('aksclustersettings').aksclustername]",
+        "aksSkuName": "[steps('aksclustersettings').aksSkuName]"
       },
       "kind": "Subscription",
       "location": "[steps('basics').resourceScope.location.name]",

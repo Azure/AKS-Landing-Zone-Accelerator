@@ -293,6 +293,13 @@ param networkPlugin string = 'azure'
 param aksClusterName string = 'aksCluster'
 param aksVMSize string = 'Standard_D4d_v5'
 
+@description('Optional. The AKS cluster SKU name. Set to "Automatic" for AKS Automatic mode, or "Base" for standard mode.')
+@allowed([
+  'Base'
+  'Automatic'
+])
+param aksSkuName string = 'Base'
+
 //////////////////////////////////
 //////////////////////////////////
 // MODULES
@@ -326,7 +333,7 @@ module networkHub '../03-Network-Hub/main.bicep' = if (deployHub) {
     azureBastionSubnetName: azureBastionSubnetName
     azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
     vmsubnetSubnetName: vmsubnetSubnetName
-    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
+    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix
     nsgBastionName: nsgBastionName
   }
 }
@@ -405,5 +412,6 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     acrName: aksSupporting.outputs.acrName
     aksClusterName: aksClusterName
     vmSize: aksVMSize
+    aksSkuName: aksSkuName
   }
 }

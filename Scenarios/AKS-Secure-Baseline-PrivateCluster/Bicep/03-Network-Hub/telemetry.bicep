@@ -1,6 +1,6 @@
 param enableTelemetry bool
-param telemetryId string 
-resource telemetrydeployment 'Microsoft.Resources/deployments@2021-04-01' = if (enableTelemetry) {
+param telemetryId string
+resource telemetrydeployment 'Microsoft.Resources/deployments@2025-04-01' = if (enableTelemetry) {
   name: telemetryId
   properties: {
     mode: 'Incremental'

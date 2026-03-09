@@ -9,7 +9,7 @@ param rgName string
 
 
 // Main VNet with single subnet
-module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.6' = {
+module virtualNetwork 'br/public:avm/res/network/virtual-network:0.7.2' = {
   name: 'virtualNetworkDeployment'
   scope: resourceGroup(rgName)
   params: {
@@ -21,7 +21,7 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.1.6' = {
 }
 
 // CosmosDB without private endpoint on VNet
-module databaseAccount 'br/public:avm/res/document-db/database-account:0.5.1' = {
+module databaseAccount 'br/public:avm/res/document-db/database-account:0.19.0' = {
   scope: resourceGroup(rgName)
   dependsOn: [virtualNetwork]
   name: 'databaseAccountDeployment'

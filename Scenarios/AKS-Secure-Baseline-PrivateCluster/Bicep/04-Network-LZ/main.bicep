@@ -36,7 +36,7 @@ resource vnethub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   name: vnetHubName
 }
 
-module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
+module rg 'br/public:avm/res/resources/resource-group:0.4.3' = {
   name: rgName
   params: {
     name: rgName
@@ -45,7 +45,7 @@ module rg 'br/public:avm/res/resources/resource-group:0.4.0' = {
   }
 }
 
-module vnetspoke 'br/public:avm/res/network/virtual-network:0.5.1' = {
+module vnetspoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
   scope: resourceGroup(rg.name)
   name: vnetSpokeName
   params: {
@@ -97,7 +97,7 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.5.1' = {
   ]
 }
 
-module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.5.0' = {
+module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.5.2' = {
   scope: resourceGroup(rg.name)
   name: nsgAKSName
   params: {
@@ -108,7 +108,7 @@ module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group
   }
 }
 
-module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-group:0.5.0' = {
+module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-group:0.5.2' = {
   scope: resourceGroup(rg.name)
   name: nsgAppGWName
   params: {
@@ -172,7 +172,7 @@ module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-gr
   }
 }
 
-module routeTable 'br/public:avm/res/network/route-table:0.4.0' = {
+module routeTable 'br/public:avm/res/network/route-table:0.5.0' = {
   scope: resourceGroup(rg.name)
   name: rtAKSSubnetName
   params: {
@@ -192,7 +192,7 @@ module routeTable 'br/public:avm/res/network/route-table:0.4.0' = {
   }
 }
 
-module appGwyRouteTable 'br/public:avm/res/network/route-table:0.4.0' = {
+module appGwyRouteTable 'br/public:avm/res/network/route-table:0.5.0' = {
   scope: resourceGroup(rg.name)
   name: rtAppGWSubnetName
   params: {
@@ -211,7 +211,7 @@ module appGwyRouteTable 'br/public:avm/res/network/route-table:0.4.0' = {
   }
 }
 
-module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
+module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsACRZone'
   params: {
@@ -229,7 +229,7 @@ module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
   }
 }
 
-module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
+module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsKVZone'
   params: {
@@ -247,7 +247,7 @@ module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
   }
 }
 
-module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
+module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsSAZone'
   params: {
@@ -262,7 +262,7 @@ module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.6.0' = {
   }
 }
 
-module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.6.0' = if (enablePrivateCluster) {
+module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.8.1' = if (enablePrivateCluster) {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'
   params: {
@@ -277,13 +277,13 @@ module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.6.0' = if
   }
 }
 
-module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.7.0' = {
+module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.12.0' = {
   scope: resourceGroup(rg.name)
   name: 'APPGW-PIP'
   params: {
     name: 'APPGW-PIP'
     location: location
-    zones: availabilityZones
+    availabilityZones: availabilityZones
     publicIPAllocationMethod: 'Static'
     skuName: 'Standard'
     skuTier: 'Regional'
@@ -291,20 +291,98 @@ module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.7.0' = {
   }
 }
 
-module appgw 'appgw.bicep' = {
+module appgw 'br/public:avm/res/network/application-gateway:0.9.0' = {
   scope: resourceGroup(rg.name)
   name: 'appgw'
   params: {
-    appGwyAutoScale: appGwyAutoScale
-    availabilityZones: availabilityZones
+    name: appGatewayName
     location: location
-    appgwname: appGatewayName
-    appgwpip: publicIpAppGwy.outputs.resourceId
-    subnetid: vnetspoke.outputs.subnetResourceIds[2]
+    sku: 'Standard_v2'
+    autoscaleMinCapacity: appGwyAutoScale.minCapacity
+    autoscaleMaxCapacity: appGwyAutoScale.maxCapacity
+    availabilityZones: availabilityZones
+    gatewayIPConfigurations: [
+      {
+        name: 'appgw-ip-configuration'
+        properties: {
+          subnet: {
+            id: vnetspoke.outputs.subnetResourceIds[2]
+          }
+        }
+      }
+    ]
+    frontendIPConfigurations: [
+      {
+        name: 'appGatewayFrontendIP'
+        properties: {
+          publicIPAddress: {
+            id: publicIpAppGwy.outputs.resourceId
+          }
+        }
+      }
+    ]
+    frontendPorts: [
+      {
+        name: 'HTTP-80'
+        properties: {
+          port: 80
+        }
+      }
+    ]
+    backendAddressPools: [
+      {
+        name: 'aksAppRoutingPool'
+      }
+    ]
+    backendHttpSettingsCollection: [
+      {
+        name: 'backend-http-settings'
+        properties: {
+          cookieBasedAffinity: 'Disabled'
+          path: '/'
+          port: 80
+          protocol: 'Http'
+          requestTimeout: 60
+        }
+      }
+    ]
+    httpListeners: [
+      {
+        name: 'httplistener'
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName, 'appGatewayFrontendIP')
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName, 'HTTP-80')
+          }
+          protocol: 'Http'
+        }
+      }
+    ]
+    requestRoutingRules: [
+      {
+        name: 'rule1'
+        properties: {
+          ruleType: 'Basic'
+          priority: 100
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName, 'httplistener')
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName, 'aksAppRoutingPool')
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName, 'backend-http-settings')
+          }
+        }
+      }
+    ]
+    enableTelemetry: true
   }
 }
 
-module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.4.0' = {
+module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.5.0' = {
   scope: resourceGroup(rg.name)
   name: 'aksIdentity'
   params: {
@@ -313,7 +391,7 @@ module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-id
   }
 }
 
-module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.10.1' = {
+module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.21.0' = {
   scope: resourceGroup(rg.name)
   name: 'virtualMachineDeployment'
   params: {
@@ -349,7 +427,7 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.10.1' = {
     }
     osType: 'Linux'
     vmSize: vmSize
-    zone: 0
+    availabilityZone: 1
     // Non-required parameters
     disablePasswordAuthentication: false
     adminPassword: 'Password123'

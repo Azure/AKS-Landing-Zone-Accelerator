@@ -5,7 +5,7 @@ param location string = deployment().location
 param workloadIdentityName string
 
 
-module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.2.1' = {
+module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.5.0' = {
   name: 'userAssignedIdentityDeployment'
   scope: resourceGroup(rgName)
   params: {
