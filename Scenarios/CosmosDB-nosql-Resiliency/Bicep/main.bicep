@@ -56,12 +56,20 @@ output acrName string = aksSupporting.outputs.acrName
 
 param aksAdminsGroupId string
 
+@description('Optional. The AKS cluster SKU name. Set to "Automatic" for AKS Automatic mode, or "Base" for standard mode.')
+@allowed([
+  'Base'
+  'Automatic'
+])
+param aksSkuName string = 'Base'
+
 module aksCluster '03-AKSCluster-Region1/main.bicep' = {
   name: 'aksCluster${UniqueString}'
   params: {
     aksAdminsGroupId:aksAdminsGroupId
     AKSvnetSubnetID: vnetDatabase.outputs.AKSSubnetResourceId
     rgName: resourceGroup.name
+    aksSkuName: aksSkuName
   }
 }
 output firstoidcIssuerUrl string = aksCluster.outputs.firstoidcIssuerUrl
@@ -69,7 +77,7 @@ output firstAKSCluseterName string = aksCluster.outputs.firstAKSCluseterName
 
 
 /// deploy the AKS cluster for region 2
-param secondLocation string 
+param secondLocation string
 param secondSubnet array
 param secondvnetaddressprefixes array
 param secondVnetName string
@@ -84,6 +92,7 @@ module aksClusterRegion2 '04-AKSCluster-Region2/main.bicep' = {
     secondSubnet: secondSubnet
     secondvnetaddressprefixes: secondvnetaddressprefixes
     secondVnetName: secondVnetName
+    aksSkuName: aksSkuName
   }
 }
 output secondoidcIssuerUrl string = aksClusterRegion2.outputs.secondoidcIssuerUrl

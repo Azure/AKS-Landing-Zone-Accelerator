@@ -1,6 +1,6 @@
 targetScope = 'resourceGroup'
 
-resource ESAKSAssignment 'Microsoft.Authorization/policyAssignments@2021-06-01' = {
+resource ESAKSAssignment 'Microsoft.Authorization/policyAssignments@2025-11-01' = {
   name: 'EnterpriseScale AKS'
   location: resourceGroup().location
   properties: {

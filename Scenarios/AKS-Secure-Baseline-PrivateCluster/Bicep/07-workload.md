@@ -111,6 +111,103 @@ Now that you have enabled the preview feature, run the command below to update t
 az aks approuting update --resource-group $SPOKERG --name $AKSCLUSTERNAME --nginx Internal
 ```
 
+## Set Up Workload Identity and Key Vault CSI Driver Integration
+
+Before deploying your workload, set up Workload Identity so that pods can fetch secrets directly from Key Vault at runtime — with no base64-encoded Kubernetes Secrets.
+
+### How it works
+
+```text
+Pod → K8s ServiceAccount (annotated with Azure client ID)
+  → OIDC token exchange via Federated Identity Credential
+  → Azure Managed Identity authenticates to Key Vault
+  → CSI Driver mounts secrets as files in the pod
+```
+
+### Step 1: Deploy the Workload Identity Infrastructure
+
+This creates a user-assigned managed identity with a federated credential that trusts the AKS OIDC issuer, and grants it "Key Vault Secrets User" on your Key Vault.
+
+```bash
+cd ../07-Workload
+
+# Get the OIDC issuer URL from the AKS cluster
+OIDC_ISSUER_URL=$(az aks show --name $AKSCLUSTERNAME --resource-group $SPOKERG --query "oidcIssuerProfile.issuerUrl" -o tsv)
+
+# Get the Key Vault name
+KEYVAULT_NAME=$(az keyvault list -g $SPOKERG --query [0].name -o tsv)
+
+# Deploy workload identity infrastructure
+az deployment sub create \
+  -n "ESLZ-WORKLOAD-IDENTITY" \
+  -l $REGION \
+  -f workload-identity.bicep \
+  -p rgName=$SPOKERG \
+  -p oidcIssuerUrl=$OIDC_ISSUER_URL \
+  -p keyvaultName=$KEYVAULT_NAME
+
+# Get the workload identity client ID from the deployment output
+WORKLOAD_IDENTITY_CLIENT_ID=$(az deployment sub show \
+  -n "ESLZ-WORKLOAD-IDENTITY" \
+  --query "properties.outputs.workloadIdentityClientId.value" -o tsv)
+
+echo "Workload Identity Client ID: $WORKLOAD_IDENTITY_CLIENT_ID"
+```
+
+### Step 2: Create a test secret in Key Vault
+
+```bash
+az keyvault secret set --vault-name $KEYVAULT_NAME --name "my-secret" --value "Hello-from-KeyVault"
+az keyvault secret set --vault-name $KEYVAULT_NAME --name "my-connection-string" --value "Server=myserver;Database=mydb;"
+```
+
+### Step 3: Deploy the Kubernetes manifests
+
+Update the placeholders in the manifests and apply them:
+
+```bash
+TENANT_ID=$(az account show --query tenantId -o tsv)
+
+# Update ServiceAccount with the workload identity client ID
+sed -i "s/<WORKLOAD_IDENTITY_CLIENT_ID>/$WORKLOAD_IDENTITY_CLIENT_ID/g" manifests/service-account.yaml
+
+# Update SecretProviderClass with Key Vault details
+sed -i "s/<WORKLOAD_IDENTITY_CLIENT_ID>/$WORKLOAD_IDENTITY_CLIENT_ID/g" manifests/secret-provider-class.yaml
+sed -i "s/<KEYVAULT_NAME>/$KEYVAULT_NAME/g" manifests/secret-provider-class.yaml
+sed -i "s/<TENANT_ID>/$TENANT_ID/g" manifests/secret-provider-class.yaml
+
+# Apply manifests
+kubectl apply -f manifests/service-account.yaml
+kubectl apply -f manifests/secret-provider-class.yaml
+kubectl apply -f manifests/sample-workload.yaml
+```
+
+### Step 4: Verify secrets are mounted
+
+```bash
+# Wait for the pod to be ready
+kubectl wait --for=condition=Ready pod/sample-workload --timeout=120s
+
+# Check the pod logs to see mounted secrets
+kubectl logs sample-workload
+
+# Verify the secret files are mounted
+kubectl exec sample-workload -- ls /mnt/secrets-store/
+
+# Confirm no base64-encoded K8s Secrets were created
+kubectl get secrets -n default | grep -v "default-token"
+```
+
+The pod should show the secrets mounted from Key Vault as files under `/mnt/secrets-store/`. No Kubernetes Secrets (with base64-encoded data) are created — all secret data is fetched at runtime from Key Vault using the CSI driver and Workload Identity.
+
+### Clean up the sample workload
+
+```bash
+kubectl delete -f manifests/sample-workload.yaml
+```
+
+> **Note**: Leave the ServiceAccount and SecretProviderClass in place — your real workloads will use them.
+
 ## Build Container Images
 
 Clone the sample application Git Repo to the Dev Jumpbox:

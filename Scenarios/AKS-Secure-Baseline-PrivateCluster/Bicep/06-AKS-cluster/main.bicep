@@ -270,8 +270,8 @@ module kvAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.
   name: 'keyvault-aks-identity'
   params: {
     principalId: isAutomatic
-      ? (managedClusterAutomatic.outputs.keyvaultIdentityClientId ?? '')
-      : (managedCluster.outputs.keyvaultIdentityClientId ?? '')
+      ? (managedClusterAutomatic.?outputs.?keyvaultIdentityClientId ?? '')
+      : (managedCluster.?outputs.?keyvaultIdentityClientId ?? '')
     resourceId: keyVault.id
     roleDefinitionId: '00482a5a-887f-4fb3-b363-3b7fe8e74483'
     principalType: 'ServicePrincipal'
@@ -283,8 +283,8 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
   name: 'acr-aks-identity'
   params: {
     principalId: isAutomatic
-      ? (managedClusterAutomatic.outputs.kubeletIdentityObjectId ?? '')
-      : (managedCluster.outputs.kubeletIdentityObjectId ?? '')
+      ? (managedClusterAutomatic.?outputs.?kubeletIdentityObjectId ?? '')
+      : (managedCluster.?outputs.?kubeletIdentityObjectId ?? '')
     resourceId: ACR.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
     principalType: 'ServicePrincipal'

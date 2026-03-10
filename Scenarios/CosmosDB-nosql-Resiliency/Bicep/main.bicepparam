@@ -38,3 +38,5 @@ param secondSubnet = [
 param aksAdminsGroupId = '<REPLACE_WITH_ENTRA_ID_GROUP_OBJECT_ID>'
 
 param secondLocation = '<REPLACE_WITH_SECOND_REGION>'
+
+param aksSkuName = 'Base'
