@@ -1,0 +1,125 @@
+# Sample namespace with Istio sidecar injection enabled
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sample-app
+  labels:
+    istio.io/rev: asm-1-27
+---
+# Sample backend service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: sample-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: mcr.microsoft.com/azuredocs/aks-helloworld:v1
+          ports:
+            - containerPort: 80
+          env:
+            - name: TITLE
+              value: "Backend Service (mTLS secured)"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: sample-app
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 80
+      targetPort: 80
+---
+# Sample frontend service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: sample-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: mcr.microsoft.com/azuredocs/aks-helloworld:v1
+          ports:
+            - containerPort: 80
+          env:
+            - name: TITLE
+              value: "Frontend Service (mTLS secured)"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: sample-app
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 80
+      targetPort: 80
+---
+# VirtualService to route traffic from the gateway to the frontend
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: frontend-vs
+  namespace: sample-app
+spec:
+  hosts:
+    - "app.mesh.internal"
+  gateways:
+    - istio-ingress/istio-internal-gateway
+  http:
+    - route:
+        - destination:
+            host: frontend
+            port:
+              number: 80
+---
+# DestinationRule enforcing mTLS for backend
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: backend-mtls
+  namespace: sample-app
+spec:
+  host: backend
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
