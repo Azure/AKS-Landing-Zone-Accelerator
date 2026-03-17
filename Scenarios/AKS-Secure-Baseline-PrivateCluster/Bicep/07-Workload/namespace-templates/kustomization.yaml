@@ -1,0 +1,9 @@
+# Kustomization file for the namespace building block.
+# Flux will reconcile all resources listed here in order.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - rbac.yaml
+  - network-policy.yaml
+  - gateway.yaml
