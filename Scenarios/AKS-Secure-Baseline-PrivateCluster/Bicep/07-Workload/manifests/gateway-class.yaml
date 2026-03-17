@@ -1,0 +1,10 @@
+# GatewayClass for Application Gateway for Containers (AGC)
+# The ALB Controller installed via AKS add-on creates this GatewayClass automatically.
+# This manifest is provided for reference — if the GatewayClass already exists,
+# you do not need to apply it.
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: azure-alb-external
+spec:
+  controllerName: alb.networking.azure.io/alb-controller

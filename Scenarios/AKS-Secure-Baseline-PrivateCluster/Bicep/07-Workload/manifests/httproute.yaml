@@ -1,0 +1,26 @@
+# HTTPRoute for the AKS Store Demo application
+# Routes traffic from the AGC Gateway to the store-front and store-admin services.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: store-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: agc-gateway
+      namespace: default
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /admin
+      backendRefs:
+        - name: store-admin
+          port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: store-front
+          port: 80

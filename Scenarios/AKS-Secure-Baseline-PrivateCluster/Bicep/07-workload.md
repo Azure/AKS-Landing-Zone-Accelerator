@@ -381,29 +381,45 @@ curl $INGRESS_IP/admin
 
 You should see HTML code of the front end web application. If it was configured correctly, there will be no "nginx" in the HTML
 
-### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
+### Expose the application externally via Application Gateway for Containers (AGC) + Gateway API
 
-As part of our Bicep deployment code, we already created a backend pool, routing rule, HTTP rules, a PUBLIC frontend IP configuration and a HTTP Listener for the App gateway. This will allow us to expose our app externally with our WAF enabled App gateway. Run the application-gateway address-pool command to add the ingress IP address to the backend pool.
+The legacy AGIC addon has been replaced with [Application Gateway for Containers](https://learn.microsoft.com/azure/application-gateway/for-containers/overview) using the Kubernetes Gateway API. The AGC traffic controller was deployed in step 04-Network-LZ.
 
-```bash
-BACKENDPOOLNAME=aksAppRoutingPool
-# change APPGW below to the correct app gateway name
-az network application-gateway address-pool update \
-  --resource-group $SPOKERG \
-  --gateway-name APPGW \
-  --name $BACKENDPOOLNAME \
-  --servers $INGRESS_IP
-```
-
-To get the public AppGw IP address for public access:
+Get the AGC resource ID from the Azure CLI:
 
 ```bash
-az network public-ip show -g $SPOKERG -n APPGW-PIP --query ipAddress -o tsv
-
-# 74.241.209.184
+AGC_RESOURCE_ID=$(az network alb show --resource-group $SPOKERG --name alb-controller --query id -o tsv)
 ```
 
-Go on your browser and enter the IP address to access your application.
+Update the Gateway manifest with your AGC resource ID and apply the Gateway API resources:
+
+```bash
+sed -i "s|<AGC_RESOURCE_ID>|$AGC_RESOURCE_ID|g" manifests/gateway.yaml
+
+kubectl apply -f manifests/gateway-class.yaml
+kubectl apply -f manifests/gateway.yaml
+kubectl apply -f manifests/httproute.yaml
+```
+
+Verify the Gateway is programmed:
+
+```bash
+kubectl get gateway agc-gateway
+```
+
+Once the Gateway shows `Programmed=True`, get the AGC frontend IP:
+
+```bash
+AGC_IP=$(kubectl get gateway agc-gateway -o jsonpath='{.status.addresses[0].value}')
+echo "AGC Frontend: $AGC_IP"
+```
+
+Test external access:
+
+```bash
+curl http://$AGC_IP
+curl http://$AGC_IP/admin
+```
 
 ## Optional - Private DNS Zone
 

@@ -224,17 +224,14 @@ param vnetSpokeName string = 'VNet-SPOKE'
 param spokeVNETaddPrefixes array = ['10.1.0.0/16']
 param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
 param spokeSubnetAKSPrefix string = '10.1.1.0/24'
-param spokeSubnetAppGWPrefix string = '10.1.2.0/27'
+param spokeSubnetAGCPrefix string = '10.1.2.0/24'
 param spokeSubnetVMPrefix string = '10.1.3.0/24'
 param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
 param remotePeeringName string = 'spoke-hub-peering'
 param rtAKSSubnetName string = 'AKS-RT'
 param firewallIP string = '10.0.1.4'
-param appGatewayName string = 'APPGW'
+param agcName string = 'alb-controller'
 param nsgAKSName string = 'AKS-NSG'
-param nsgAppGWName string = 'APPGW-NSG'
-param rtAppGWSubnetName string = 'AppGWSubnet-RT'
-param appGwyAutoScale object = { maxCapacity: 2, minCapacity: 1 }
 param securityRules array = []
 param defaultSubnetName string = 'default'
 param defaultSubnetAddressPrefix string = '10.0.0.0/24'
@@ -348,21 +345,17 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
     rgName: rgSpokeName
     enablePrivateCluster: enablePrivateCluster
     vnetSpokeName: vnetSpokeName
-    availabilityZones: availabilityZones
     spokeVNETaddPrefixes: spokeVNETaddPrefixes
     rtAKSSubnetName: rtAKSSubnetName
     firewallIP: firewallIP
     vnetHubName: vnetHubName
-    appGatewayName: appGatewayName
+    agcName: agcName
     vnetHUBRGName: rgHubName
     nsgAKSName: nsgAKSName
-    nsgAppGWName: nsgAppGWName
-    rtAppGWSubnetName: rtAppGWSubnetName
-    appGwyAutoScale: appGwyAutoScale
     securityRules: securityRules
     spokeSubnetDefaultPrefix: spokeSubnetDefaultPrefix
     spokeSubnetAKSPrefix: spokeSubnetAKSPrefix
-    spokeSubnetAppGWPrefix: spokeSubnetAppGWPrefix
+    spokeSubnetAGCPrefix: spokeSubnetAGCPrefix
     spokeSubnetVMPrefix:spokeSubnetVMPrefix
     spokeSubnetPLinkervicePrefix: spokeSubnetPLinkervicePrefix
     remotePeeringName: remotePeeringName

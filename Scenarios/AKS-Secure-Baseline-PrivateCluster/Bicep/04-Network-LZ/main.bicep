@@ -6,19 +6,15 @@ param spokeVNETaddPrefixes array
 param rtAKSSubnetName string
 param firewallIP string
 param vnetHubName string
-param appGatewayName string
+param agcName string
 param vnetHUBRGName string
 param nsgAKSName string
-param nsgAppGWName string
-param rtAppGWSubnetName string
 param enablePrivateCluster bool = true
 param location string = deployment().location
-param availabilityZones array
-param appGwyAutoScale object
 param securityRules array = []
 param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
 param spokeSubnetAKSPrefix string = '10.1.1.0/24'
-param spokeSubnetAppGWPrefix string = '10.1.2.0/27'
+param spokeSubnetAGCPrefix string = '10.1.2.0/24'
 param spokeSubnetVMPrefix string = '10.1.3.0/24'
 param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
 param remotePeeringName string = 'spoke-hub-peering'
@@ -64,9 +60,9 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
         networkSecurityGroupResourceId: networkSecurityGroupAKS.outputs.resourceId
       }
       {
-        name: 'AppGWSubnet'
-        addressPrefix: spokeSubnetAppGWPrefix
-        networkSecurityGroupResourceId: networkSecurityGroupAppGwy.outputs.resourceId
+        name: 'AGCSubnet'
+        addressPrefix: spokeSubnetAGCPrefix
+        delegation: 'Microsoft.ServiceNetworking/trafficControllers'
       }
       {
         name: 'vmsubnet'
@@ -92,9 +88,7 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
       }
     ]
   }
-  dependsOn: [
-    appGwyRouteTable
-  ]
+  dependsOn: []
 }
 
 module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.5.2' = {
@@ -108,69 +102,7 @@ module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group
   }
 }
 
-module networkSecurityGroupAppGwy 'br/public:avm/res/network/network-security-group:0.5.2' = {
-  scope: resourceGroup(rg.name)
-  name: nsgAppGWName
-  params: {
-    name: nsgAppGWName
-    location: location
-    securityRules: [
-      {
-        name: 'Allow443InBound'
-        properties: {
-          access: 'Allow'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '443'
-          direction: 'Inbound'
-          priority: 102
-          protocol: 'Tcp'
-          sourceAddressPrefix: '*'
-          sourcePortRange: '*'
-        }
-      }
-      {
-        name: 'AllowControlPlaneV1SKU'
-        properties: {
-          access: 'Allow'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '65503-65534'
-          direction: 'Inbound'
-          priority: 110
-          protocol: '*'
-          sourceAddressPrefix: 'GatewayManager'
-          sourcePortRange: '*'
-        }
-      }
-      {
-        name: 'AllowControlPlaneV2SKU'
-        properties: {
-          access: 'Allow'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '65200-65535'
-          direction: 'Inbound'
-          priority: 111
-          protocol: '*'
-          sourceAddressPrefix: 'GatewayManager'
-          sourcePortRange: '*'
-        }
-      }
-      {
-        name: 'AllowHealthProbes'
-        properties: {
-          access: 'Allow'
-          destinationAddressPrefix: '*'
-          destinationPortRange: '*'
-          direction: 'Inbound'
-          priority: 120
-          protocol: '*'
-          sourceAddressPrefix: 'AzureLoadBalancer'
-          sourcePortRange: '*'
-        }
-      }
-    ]
-    enableTelemetry: true
-  }
-}
+
 
 module routeTable 'br/public:avm/res/network/route-table:0.5.0' = {
   scope: resourceGroup(rg.name)
@@ -185,25 +117,6 @@ module routeTable 'br/public:avm/res/network/route-table:0.5.0' = {
           addressPrefix: '0.0.0.0/0'
           nextHopIpAddress: firewallIP
           nextHopType: 'VirtualAppliance'
-        }
-      }
-    ]
-    enableTelemetry: true
-  }
-}
-
-module appGwyRouteTable 'br/public:avm/res/network/route-table:0.5.0' = {
-  scope: resourceGroup(rg.name)
-  name: rtAppGWSubnetName
-  params: {
-    name: rtAppGWSubnetName
-    location: location
-    routes: [
-      {
-        name: 'vm-to-internet'
-        properties: {
-          addressPrefix: '0.0.0.0/0'
-          nextHopType: 'Internet'
         }
       }
     ]
@@ -277,108 +190,17 @@ module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.8.1' = if
   }
 }
 
-module publicIpAppGwy 'br/public:avm/res/network/public-ip-address:0.12.0' = {
+// ===================== //
+// Application Gateway   //
+// for Containers (AGC)  //
+// ===================== //
+module agc 'agc.bicep' = {
   scope: resourceGroup(rg.name)
-  name: 'APPGW-PIP'
+  name: 'agcDeployment'
   params: {
-    name: 'APPGW-PIP'
+    agcName: agcName
     location: location
-    availabilityZones: availabilityZones
-    publicIPAllocationMethod: 'Static'
-    skuName: 'Standard'
-    skuTier: 'Regional'
-    enableTelemetry: true
-  }
-}
-
-module appgw 'br/public:avm/res/network/application-gateway:0.9.0' = {
-  scope: resourceGroup(rg.name)
-  name: 'appgw'
-  params: {
-    name: appGatewayName
-    location: location
-    sku: 'Standard_v2'
-    autoscaleMinCapacity: appGwyAutoScale.minCapacity
-    autoscaleMaxCapacity: appGwyAutoScale.maxCapacity
-    availabilityZones: availabilityZones
-    gatewayIPConfigurations: [
-      {
-        name: 'appgw-ip-configuration'
-        properties: {
-          subnet: {
-            id: vnetspoke.outputs.subnetResourceIds[2]
-          }
-        }
-      }
-    ]
-    frontendIPConfigurations: [
-      {
-        name: 'appGatewayFrontendIP'
-        properties: {
-          publicIPAddress: {
-            id: publicIpAppGwy.outputs.resourceId
-          }
-        }
-      }
-    ]
-    frontendPorts: [
-      {
-        name: 'HTTP-80'
-        properties: {
-          port: 80
-        }
-      }
-    ]
-    backendAddressPools: [
-      {
-        name: 'aksAppRoutingPool'
-      }
-    ]
-    backendHttpSettingsCollection: [
-      {
-        name: 'backend-http-settings'
-        properties: {
-          cookieBasedAffinity: 'Disabled'
-          path: '/'
-          port: 80
-          protocol: 'Http'
-          requestTimeout: 60
-        }
-      }
-    ]
-    httpListeners: [
-      {
-        name: 'httplistener'
-        properties: {
-          frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', appGatewayName, 'appGatewayFrontendIP')
-          }
-          frontendPort: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', appGatewayName, 'HTTP-80')
-          }
-          protocol: 'Http'
-        }
-      }
-    ]
-    requestRoutingRules: [
-      {
-        name: 'rule1'
-        properties: {
-          ruleType: 'Basic'
-          priority: 100
-          httpListener: {
-            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', appGatewayName, 'httplistener')
-          }
-          backendAddressPool: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', appGatewayName, 'aksAppRoutingPool')
-          }
-          backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', appGatewayName, 'backend-http-settings')
-          }
-        }
-      }
-    ]
-    enableTelemetry: true
+    agcSubnetId: vnetspoke.outputs.subnetResourceIds[2] // AGCSubnet
   }
 }
 

@@ -19,8 +19,7 @@ For this scenario, we have various IaC technology that you can choose from depen
 * AKS Private Cluster
 * Azure Virtual Networks (hub-spoke)
   * Azure Firewall managed egress
-* Azure Application Gateway (WAF)
-* Application Gateway Ingress Controller
+* [Application Gateway for Containers](https://learn.microsoft.com/azure/application-gateway/for-containers/overview) with Gateway API
 * AKS-managed Internal Load Balancer
 * Azure CNI
 * Azure Keyvault
