@@ -28,13 +28,13 @@ For this scenario, we have various IaC technology that you can choose from depen
 * Azure Bastion
 * Azure Monitor for containers
 * Azure firewall
-* MongoDB 
+* MongoDB
 * Helm
 * [Secret store CSI driver](https://learn.microsoft.com/azure/aks/csi-secrets-store-driver)
 * [Azure RBAC for Kubernetes Authorization](https://learn.microsoft.com/azure/aks/manage-azure-rbac)
-* [Microsoft Entra pod-managed identities](https://learn.microsoft.com/azure/aks/use-azure-ad-pod-identity)
+* [Microsoft Entra Workload Identity](https://learn.microsoft.com/azure/aks/workload-identity-overview)
 
-## A future workload for this scenario will include the following 
+## A future workload for this scenario will include the following
 * Horizontal Pod Autoscaling
 * Cluster Autoscaling
 * Readiness/Liveness Probes
