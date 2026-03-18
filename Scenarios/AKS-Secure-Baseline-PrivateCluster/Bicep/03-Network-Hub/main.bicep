@@ -1,24 +1,61 @@
 targetScope = 'subscription'
 
 // Parameters
+@description('The name of the resource group for the hub network.')
 param rgName string
+
+@description('The name of the hub virtual network.')
 param vnetHubName string
+
+@description('The address prefixes for the hub virtual network.')
 param hubVNETaddPrefixes array
+
+@description('The name of the Azure Firewall.')
 param azfwName string
+
+@description('The name of the route table for the VM subnet.')
 param rtVMSubnetName string
+
+@description('NAT rule collections for Azure Firewall.')
 param fwnatRuleCollections array
+
+@description('The Azure region for all resources.')
 param location string = deployment().location
+
+@description('The availability zones to deploy resources into.')
 param availabilityZones array
+
+@description('The name of the default subnet in the hub VNet.')
 param defaultSubnetName string
+
+@description('The address prefix for the default subnet.')
 param defaultSubnetAddressPrefix string
+
+@description('The name of the Azure Firewall subnet.')
 param azureFirewallSubnetName string
+
+@description('The address prefix for the Azure Firewall subnet.')
 param azureFirewallSubnetAddressPrefix string
+
+@description('The name of the Azure Firewall management subnet.')
 param azureFirewallManagementSubnetName string
+
+@description('The address prefix for the Azure Firewall management subnet.')
 param azureFirewallManagementSubnetAddressPrefix string
+
+@description('The name of the Azure Bastion subnet.')
 param azureBastionSubnetName string
+
+@description('The address prefix for the Azure Bastion subnet.')
 param azureBastionSubnetAddressPrefix string
+
+@description('The name of the VM subnet.')
 param vmsubnetSubnetName string
+
+@description('The address prefix for the VM subnet.')
 param vmsubnetSubnetAddressPrefix string
+
+@description('The name of the NSG for the Bastion subnet.')
 param nsgBastionName string
 
 @description('The prefix for the spoke subnet AKS')

@@ -1,24 +1,65 @@
 targetScope = 'subscription'
 
+@description('The name of the resource group for the spoke network.')
 param rgName string
+
+@description('The name of the spoke virtual network.')
 param vnetSpokeName string
+
+@description('The address prefixes for the spoke virtual network.')
 param spokeVNETaddPrefixes array
+
+@description('The name of the route table for the AKS subnet.')
 param rtAKSSubnetName string
+
+@description('The private IP address of the Azure Firewall in the hub network.')
 param firewallIP string
+
+@description('The name of the hub virtual network for peering.')
 param vnetHubName string
+
+@description('The name of the Application Gateway for Containers traffic controller.')
 param agcName string
+
+@description('The name of the resource group containing the hub VNet.')
 param vnetHUBRGName string
+
+@description('The name of the NSG for the AKS subnet.')
 param nsgAKSName string
+
+@description('Enable AKS private cluster with private DNS zone.')
 param enablePrivateCluster bool = true
+
+@description('The Azure region for all resources.')
 param location string = deployment().location
+
+@description('Additional security rules for the AKS NSG.')
 param securityRules array = []
+
+@description('The address prefix for the default subnet.')
 param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
+
+@description('The address prefix for the AKS subnet.')
 param spokeSubnetAKSPrefix string = '10.1.1.0/24'
+
+@description('The address prefix for the AGC delegated subnet.')
 param spokeSubnetAGCPrefix string = '10.1.2.0/24'
+
+@description('The address prefix for the VM subnet.')
 param spokeSubnetVMPrefix string = '10.1.3.0/24'
+
+@description('The address prefix for the private link services subnet.')
 param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
+
+@description('The name of the peering from spoke to hub VNet.')
 param remotePeeringName string = 'spoke-hub-peering'
+
+@description('The VM size for the jumpbox virtual machine.')
 param vmSize string = 'Standard_DS2_v2'
+
+@secure()
+@description('The admin password for the jumpbox VM.')
+param jumpboxAdminPassword string
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -252,7 +293,7 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.21.0' = {
     availabilityZone: 1
     // Non-required parameters
     disablePasswordAuthentication: false
-    adminPassword: 'Password123'
+    adminPassword: jumpboxAdminPassword
     location: location
   }
 }
