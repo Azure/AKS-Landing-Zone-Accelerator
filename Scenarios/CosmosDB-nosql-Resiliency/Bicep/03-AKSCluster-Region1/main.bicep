@@ -1,8 +1,15 @@
 targetScope = 'subscription'
 
+@description('The name of the resource group for the AKS cluster.')
 param rgName string
+
+@description('The Azure region for all resources.')
 param location string = deployment().location
+
+@description('The object ID of the Entra ID group for AKS cluster admins.')
 param aksAdminsGroupId string
+
+@description('The resource ID of the VNet subnet for AKS worker nodes.')
 param AKSvnetSubnetID string
 
 @description('Optional. The AKS cluster SKU name. Set to "Automatic" for AKS Automatic mode, or "Base" for standard mode.')

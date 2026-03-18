@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.41.2.15936",
-      "templateHash": "2241455850604140910"
+      "templateHash": "16440581561758286781"
     }
   },
   "parameters": {
@@ -25,25 +25,40 @@
     },
     "rgHubName": {
       "type": "string",
-      "defaultValue": "rg-hub"
+      "defaultValue": "rg-hub",
+      "metadata": {
+        "description": "The name of the resource group for the hub network."
+      }
     },
     "vnetHubName": {
       "type": "string",
-      "defaultValue": "vnet-hub"
+      "defaultValue": "vnet-hub",
+      "metadata": {
+        "description": "The name of the hub virtual network."
+      }
     },
     "hubVnetAddPrefixes": {
       "type": "array",
       "defaultValue": [
         "10.0.0.0/16"
-      ]
+      ],
+      "metadata": {
+        "description": "The address prefixes for the hub virtual network."
+      }
     },
     "azfwName": {
       "type": "string",
-      "defaultValue": "afw-hub"
+      "defaultValue": "afw-hub",
+      "metadata": {
+        "description": "The name of the Azure Firewall."
+      }
     },
     "rtVmSubnetName": {
       "type": "string",
-      "defaultValue": "rt-vm-subnet"
+      "defaultValue": "rt-vm-subnet",
+      "metadata": {
+        "description": "The name of the route table for the VM subnet."
+      }
     },
     "fwApplicationRuleCollections": {
       "type": "array",
@@ -177,7 +192,10 @@
             ]
           }
         }
-      ]
+      ],
+      "metadata": {
+        "description": "Application rule collections for Azure Firewall."
+      }
     },
     "fwNetworkRuleCollections": {
       "type": "array",
@@ -238,11 +256,17 @@
             ]
           }
         }
-      ]
+      ],
+      "metadata": {
+        "description": "Network rule collections for Azure Firewall."
+      }
     },
     "fwNatRuleCollections": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [],
+      "metadata": {
+        "description": "NAT rule collections for Azure Firewall."
+      }
     },
     "availabilityZones": {
       "type": "array",
@@ -250,113 +274,194 @@
         1,
         2,
         3
-      ]
+      ],
+      "metadata": {
+        "description": "The availability zones to deploy resources into."
+      }
     },
     "nsgBastionName": {
       "type": "string",
-      "defaultValue": "nsg-bastion"
+      "defaultValue": "nsg-bastion",
+      "metadata": {
+        "description": "The name of the NSG for the Bastion subnet."
+      }
     },
     "rgSpokeName": {
       "type": "string",
-      "defaultValue": "rg-spoke"
+      "defaultValue": "rg-spoke",
+      "metadata": {
+        "description": "The name of the resource group for the spoke network."
+      }
     },
     "vnetSpokeName": {
       "type": "string",
-      "defaultValue": "vnet-spoke"
+      "defaultValue": "vnet-spoke",
+      "metadata": {
+        "description": "The name of the spoke virtual network."
+      }
     },
     "spokeVnetAddPrefixes": {
       "type": "array",
       "defaultValue": [
         "10.1.0.0/16"
-      ]
+      ],
+      "metadata": {
+        "description": "The address prefixes for the spoke virtual network."
+      }
     },
     "spokeSubnetDefaultPrefix": {
       "type": "string",
-      "defaultValue": "10.1.0.0/24"
+      "defaultValue": "10.1.0.0/24",
+      "metadata": {
+        "description": "The address prefix for the default subnet in the spoke VNet."
+      }
     },
     "spokeSubnetAksPrefix": {
       "type": "string",
-      "defaultValue": "10.1.1.0/24"
+      "defaultValue": "10.1.1.0/24",
+      "metadata": {
+        "description": "The address prefix for the AKS subnet."
+      }
     },
     "spokeSubnetAgcPrefix": {
       "type": "string",
-      "defaultValue": "10.1.2.0/24"
+      "defaultValue": "10.1.2.0/24",
+      "metadata": {
+        "description": "The address prefix for the AGC delegated subnet."
+      }
     },
     "spokeSubnetVmPrefix": {
       "type": "string",
-      "defaultValue": "10.1.3.0/24"
+      "defaultValue": "10.1.3.0/24",
+      "metadata": {
+        "description": "The address prefix for the VM subnet in the spoke VNet."
+      }
     },
     "spokeSubnetPLinkervicePrefix": {
       "type": "string",
-      "defaultValue": "10.1.4.0/24"
+      "defaultValue": "10.1.4.0/24",
+      "metadata": {
+        "description": "The address prefix for the private link services subnet."
+      }
     },
     "remotePeeringName": {
       "type": "string",
-      "defaultValue": "spoke-hub-peering"
+      "defaultValue": "spoke-hub-peering",
+      "metadata": {
+        "description": "The name of the peering from spoke to hub VNet."
+      }
     },
     "rtAksSubnetName": {
       "type": "string",
-      "defaultValue": "rt-aks"
+      "defaultValue": "rt-aks",
+      "metadata": {
+        "description": "The name of the route table for the AKS subnet."
+      }
     },
     "firewallIp": {
       "type": "string",
-      "defaultValue": "10.0.1.4"
+      "defaultValue": "10.0.1.4",
+      "metadata": {
+        "description": "The private IP address of the Azure Firewall in the hub network."
+      }
     },
     "agcName": {
       "type": "string",
-      "defaultValue": "alb-controller"
+      "defaultValue": "alb-controller",
+      "metadata": {
+        "description": "The name of the Application Gateway for Containers traffic controller."
+      }
     },
     "nsgAksName": {
       "type": "string",
-      "defaultValue": "nsg-aks"
+      "defaultValue": "nsg-aks",
+      "metadata": {
+        "description": "The name of the NSG for the AKS subnet."
+      }
     },
     "securityRules": {
       "type": "array",
-      "defaultValue": []
+      "defaultValue": [],
+      "metadata": {
+        "description": "Additional security rules for the AKS NSG."
+      }
     },
     "defaultSubnetName": {
       "type": "string",
-      "defaultValue": "default"
+      "defaultValue": "default",
+      "metadata": {
+        "description": "The name of the default subnet in the hub VNet."
+      }
     },
     "defaultSubnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24"
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+        "description": "The address prefix for the default subnet."
+      }
     },
     "azureFirewallSubnetName": {
       "type": "string",
-      "defaultValue": "AzureFirewallSubnet"
+      "defaultValue": "AzureFirewallSubnet",
+      "metadata": {
+        "description": "The name of the Azure Firewall subnet."
+      }
     },
     "azureFirewallSubnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.1.0/26"
+      "defaultValue": "10.0.1.0/26",
+      "metadata": {
+        "description": "The address prefix for the Azure Firewall subnet."
+      }
     },
     "azureFirewallManagementSubnetName": {
       "type": "string",
-      "defaultValue": "AzureFirewallManagementSubnet"
+      "defaultValue": "AzureFirewallManagementSubnet",
+      "metadata": {
+        "description": "The name of the Azure Firewall management subnet."
+      }
     },
     "azureFirewallManagementSubnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.4.0/26"
+      "defaultValue": "10.0.4.0/26",
+      "metadata": {
+        "description": "The address prefix for the Azure Firewall management subnet."
+      }
     },
     "azureBastionSubnetName": {
       "type": "string",
-      "defaultValue": "AzureBastionSubnet"
+      "defaultValue": "AzureBastionSubnet",
+      "metadata": {
+        "description": "The name of the Azure Bastion subnet."
+      }
     },
     "azureBastionSubnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.2.0/27"
+      "defaultValue": "10.0.2.0/27",
+      "metadata": {
+        "description": "The address prefix for the Azure Bastion subnet."
+      }
     },
     "vmSubnetName": {
       "type": "string",
-      "defaultValue": "vmsubnet"
+      "defaultValue": "vmsubnet",
+      "metadata": {
+        "description": "The name of the VM subnet in the hub VNet."
+      }
     },
     "vmSubnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.3.0/24"
+      "defaultValue": "10.0.3.0/24",
+      "metadata": {
+        "description": "The address prefix for the VM subnet."
+      }
     },
     "linuxVirtualMachineVmSize": {
       "type": "string",
-      "defaultValue": "Standard_DS2_v2"
+      "defaultValue": "Standard_DS2_v2",
+      "metadata": {
+        "description": "The VM size for the jumpbox virtual machine."
+      }
     },
     "jumpboxAdminPassword": {
       "type": "securestring",
@@ -366,39 +471,66 @@
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "servicespe"
+      "defaultValue": "servicespe",
+      "metadata": {
+        "description": "The name of the subnet for private endpoints."
+      }
     },
     "privateDnsZoneAcrName": {
       "type": "string",
-      "defaultValue": "[format('privatelink{0}', environment().suffixes.acrLoginServer)]"
+      "defaultValue": "[format('privatelink{0}', environment().suffixes.acrLoginServer)]",
+      "metadata": {
+        "description": "The private DNS zone name for Azure Container Registry."
+      }
     },
     "privateDnsZoneKvName": {
       "type": "string",
-      "defaultValue": "privatelink.vaultcore.azure.net"
+      "defaultValue": "privatelink.vaultcore.azure.net",
+      "metadata": {
+        "description": "The private DNS zone name for Azure Key Vault."
+      }
     },
     "privateDnsZoneSaName": {
       "type": "string",
-      "defaultValue": "[format('privatelink.file.{0}', environment().suffixes.storage)]"
+      "defaultValue": "[format('privatelink.file.{0}', environment().suffixes.storage)]",
+      "metadata": {
+        "description": "The private DNS zone name for Azure Storage."
+      }
     },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "[format('st{0}', uniqueString('aks', uniqueString(subscription().id, utcNow())))]"
+      "defaultValue": "[format('st{0}', uniqueString('aks', uniqueString(subscription().id, utcNow())))]",
+      "metadata": {
+        "description": "The name of the storage account."
+      }
     },
     "storageAccountType": {
       "type": "string",
-      "defaultValue": "Standard_GZRS"
+      "defaultValue": "Standard_GZRS",
+      "metadata": {
+        "description": "The storage account SKU type."
+      }
     },
     "aksSubnetName": {
       "type": "string",
-      "defaultValue": "AKS"
+      "defaultValue": "AKS",
+      "metadata": {
+        "description": "The name of the AKS subnet."
+      }
     },
     "aksIdentityName": {
       "type": "string",
-      "defaultValue": "id-aks"
+      "defaultValue": "id-aks",
+      "metadata": {
+        "description": "The name of the user-assigned managed identity for AKS."
+      }
     },
     "enableAutoScaling": {
       "type": "bool",
-      "defaultValue": true
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enable cluster autoscaling."
+      }
     },
     "autoScalingProfile": {
       "type": "object",
@@ -420,26 +552,44 @@
         "scanInterval": "10s",
         "skipNodesWithLocalStorage": false,
         "skipNodesWithSystemPods": true
+      },
+      "metadata": {
+        "description": "Cluster autoscaler profile settings."
       }
     },
     "aksAdminAccessPrincipalId": {
-      "type": "string"
+      "type": "string",
+      "metadata": {
+        "description": "The object ID of the Entra ID group for AKS cluster admins."
+      }
     },
     "kubernetesVersion": {
       "type": "string",
-      "defaultValue": "1.30"
+      "defaultValue": "1.30",
+      "metadata": {
+        "description": "The Kubernetes version for the AKS cluster."
+      }
     },
     "networkPlugin": {
       "type": "string",
-      "defaultValue": "azure"
+      "defaultValue": "azure",
+      "metadata": {
+        "description": "The network plugin for the AKS cluster."
+      }
     },
     "aksClusterName": {
       "type": "string",
-      "defaultValue": "aks-cluster"
+      "defaultValue": "aks-cluster",
+      "metadata": {
+        "description": "The name of the AKS cluster."
+      }
     },
     "aksVmSize": {
       "type": "string",
-      "defaultValue": "Standard_D4d_v5"
+      "defaultValue": "Standard_D4d_v5",
+      "metadata": {
+        "description": "The VM size for AKS node pools."
+      }
     },
     "aksSkuName": {
       "type": "string",

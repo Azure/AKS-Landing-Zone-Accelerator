@@ -1,11 +1,24 @@
 targetScope = 'subscription'
 
+@description('The name of the resource group for the second region AKS cluster.')
 param rgName string
+
+@description('The Azure region for the second AKS cluster.')
 param secondLocation string
+
+@description('The name of the virtual network in the second region.')
 param secondVnetName string
+
+@description('The subnet definitions for the second region VNet.')
 param secondSubnet array
+
+@description('The address prefixes for the second region VNet.')
 param secondvnetaddressprefixes array
+
+@description('The resource ID of the database VNet for cross-region peering.')
 param clusterDbVnetResourceId string
+
+@description('The object ID of the Entra ID group for AKS cluster admins.')
 param aksAdminsGroupId string
 
 @description('Optional. The AKS cluster SKU name. Set to "Automatic" for AKS Automatic mode, or "Base" for standard mode.')

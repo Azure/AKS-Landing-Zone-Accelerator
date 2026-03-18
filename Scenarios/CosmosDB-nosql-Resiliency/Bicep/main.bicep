@@ -1,15 +1,29 @@
 targetScope = 'subscription'
 
+@description('UTC timestamp used for generating unique deployment names.')
 param timestamp string = utcNow()
+
+@description('A unique string derived from subscription, resource group, and timestamp.')
 param UniqueString string = uniqueString(subscription().subscriptionId, resourceGroupName, timestamp)
+
+@description('The name of the resource group for all resources.')
 param resourceGroupName string = 'SimpleEcomRG'
+
+@description('The Azure region for all resources.')
 param location string = deployment().location
 
 
 /// Deployment for the cosmosdb and its virtual network (01-Database/main.bicep)
+@description('The name of the Cosmos DB account.')
 param cosmosdbname string = 'cosmosdb${UniqueString}'
+
+@description('The subnet definitions for the virtual network.')
 param subnets array
+
+@description('The address prefixes for the virtual network.')
 param vnetaddressprefixes array
+
+@description('The name of the virtual network.')
 param vnetname string
 
   // Create resource group for the AKS Cluster nodes and associated resources.
@@ -37,6 +51,7 @@ output cosmosDbName string = vnetDatabase.outputs.cosmosDbName
 
 
   //// deploy the AKS and its supporting resources
+@description('The name of the Azure Container Registry.')
 param acrname string = 'akssupporting${UniqueString}'
 
 module aksSupporting '02-AKS-Supporting/main.bicep' = {
@@ -54,6 +69,7 @@ output acrName string = aksSupporting.outputs.acrName
 
 /// deploy AKS cluster for region 1
 
+@description('The object ID of the Entra ID group for AKS cluster admins.')
 param aksAdminsGroupId string
 
 @description('Optional. The AKS cluster SKU name. Set to "Automatic" for AKS Automatic mode, or "Base" for standard mode.')
@@ -77,9 +93,16 @@ output firstAKSCluseterName string = aksCluster.outputs.firstAKSCluseterName
 
 
 /// deploy the AKS cluster for region 2
+@description('The Azure region for the second AKS cluster.')
 param secondLocation string
+
+@description('The subnet definitions for the second region VNet.')
 param secondSubnet array
+
+@description('The address prefixes for the second region VNet.')
 param secondvnetaddressprefixes array
+
+@description('The name of the virtual network in the second region.')
 param secondVnetName string
 
 module aksClusterRegion2 '04-AKSCluster-Region2/main.bicep' = {
