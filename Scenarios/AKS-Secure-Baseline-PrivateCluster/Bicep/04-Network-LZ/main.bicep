@@ -22,7 +22,7 @@ param vnetHubName string
 param agcName string
 
 @description('The name of the resource group containing the hub VNet.')
-param vnetHUBRGName string
+param vnetHubRgName string
 
 @description('The name of the NSG for the AKS subnet.')
 param nsgAKSName string
@@ -57,6 +57,9 @@ param remotePeeringName string = 'spoke-hub-peering'
 @description('The VM size for the jumpbox virtual machine.')
 param vmSize string = 'Standard_DS2_v2'
 
+// Auto-detect zone support for VMs in this region
+var vmZones = pickZones('Microsoft.Compute', 'virtualMachines', location, 1)
+
 @secure()
 @description('The admin password for the jumpbox VM.')
 param jumpboxAdminPassword string
@@ -69,7 +72,7 @@ var privateDNSZoneAKSSuffixes = {
 }
 
 resource vnethub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
-  scope: resourceGroup(vnetHUBRGName)
+  scope: resourceGroup(vnetHubRgName)
   name: vnetHubName
 }
 
@@ -290,7 +293,7 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.21.0' = {
     }
     osType: 'Linux'
     vmSize: vmSize
-    availabilityZone: 1
+    availabilityZone: length(vmZones) > 0 ? int(vmZones[0]) : -1
     // Non-required parameters
     disablePasswordAuthentication: false
     adminPassword: jumpboxAdminPassword

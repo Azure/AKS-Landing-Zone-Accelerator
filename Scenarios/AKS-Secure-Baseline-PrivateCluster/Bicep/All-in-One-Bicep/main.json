@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.41.2.15936",
-      "templateHash": "9255509095475829557"
+      "templateHash": "2555766983935046298"
     }
   },
   "parameters": {
@@ -10049,7 +10049,7 @@
           "agcName": {
             "value": "[parameters('agcName')]"
           },
-          "vnetHUBRGName": {
+          "vnetHubRgName": {
             "value": "[parameters('rgHubName')]"
           },
           "nsgAKSName": {
@@ -10090,7 +10090,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "10435145642412965672"
+              "templateHash": "10182849648782112636"
             }
           },
           "parameters": {
@@ -10136,7 +10136,7 @@
                 "description": "The name of the Application Gateway for Containers traffic controller."
               }
             },
-            "vnetHUBRGName": {
+            "vnetHubRgName": {
               "type": "string",
               "metadata": {
                 "description": "The name of the resource group containing the hub VNet."
@@ -10226,6 +10226,7 @@
             }
           },
           "variables": {
+            "vmZones": "[pickZones('Microsoft.Compute', 'virtualMachines', parameters('location'), 1)]",
             "privateDNSZoneAKSSuffixes": {
               "AzureCloud": ".azmk8s.io",
               "AzureUSGovernment": ".cx.aks.containerservice.azure.us",
@@ -10794,7 +10795,7 @@
                         "remotePeeringAllowVirtualNetworkAccess": true,
                         "remotePeeringEnabled": true,
                         "remotePeeringName": "[parameters('remotePeeringName')]",
-                        "remoteVirtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHUBRGName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]",
+                        "remoteVirtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHubRgName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]",
                         "useRemoteGateways": false
                       }
                     ]
@@ -13469,7 +13470,7 @@
                   "virtualNetworkLinks": {
                     "value": [
                       {
-                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHUBRGName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
+                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHubRgName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
                       },
                       {
                         "virtualNetworkResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetSpokeName')), '2025-04-01').outputs.resourceId.value]"
@@ -16875,7 +16876,7 @@
                   "virtualNetworkLinks": {
                     "value": [
                       {
-                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHUBRGName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
+                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHubRgName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
                       },
                       {
                         "virtualNetworkResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetSpokeName')), '2025-04-01').outputs.resourceId.value]"
@@ -20281,7 +20282,7 @@
                   "virtualNetworkLinks": {
                     "value": [
                       {
-                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHUBRGName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
+                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHubRgName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
                       }
                     ]
                   },
@@ -23684,7 +23685,7 @@
                   "virtualNetworkLinks": {
                     "value": [
                       {
-                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHUBRGName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
+                        "virtualNetworkResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('vnetHubRgName')), 'Microsoft.Network/virtualNetworks', parameters('vnetHubName'))]"
                       }
                     ]
                   },
@@ -27715,9 +27716,7 @@
                   "vmSize": {
                     "value": "[parameters('vmSize')]"
                   },
-                  "availabilityZone": {
-                    "value": 1
-                  },
+                  "availabilityZone": "[if(greater(length(variables('vmZones')), 0), createObject('value', int(variables('vmZones')[0])), createObject('value', -1))]",
                   "disablePasswordAuthentication": {
                     "value": false
                   },
@@ -36826,7 +36825,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "15104695538087637258"
+              "templateHash": "9953326879417741521"
             }
           },
           "parameters": {
@@ -36911,11 +36910,14 @@
               }
             }
           },
+          "variables": {
+            "acrZoneRedundancy": "[if(greater(length(pickZones('Microsoft.ContainerRegistry', 'registries', parameters('location'), 3)), 0), 'Enabled', 'Disabled')]"
+          },
           "resources": {
             "servicesSubnet": {
               "existing": true,
               "type": "Microsoft.Network/virtualNetworks/subnets",
-              "apiVersion": "2021-02-01",
+              "apiVersion": "2025-05-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[format('{0}/{1}', parameters('vnetName'), parameters('subnetName'))]",
               "dependsOn": [
@@ -36925,7 +36927,7 @@
             "privateDNSZoneSA": {
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2020-06-01",
+              "apiVersion": "2024-06-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[parameters('privateDNSZoneSAName')]",
               "dependsOn": [
@@ -36935,7 +36937,7 @@
             "privateDNSZoneKV": {
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2020-06-01",
+              "apiVersion": "2024-06-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[parameters('privateDNSZoneKVName')]",
               "dependsOn": [
@@ -36945,7 +36947,7 @@
             "privateDNSZoneACR": {
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2020-06-01",
+              "apiVersion": "2024-06-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[parameters('privateDNSZoneACRName')]",
               "dependsOn": [
@@ -37477,6 +37479,9 @@
                   },
                   "acrSku": {
                     "value": "Premium"
+                  },
+                  "zoneRedundancy": {
+                    "value": "[variables('acrZoneRedundancy')]"
                   },
                   "privateEndpoints": {
                     "value": [
@@ -52382,7 +52387,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "3470445614776705232"
+              "templateHash": "12712825286428203978"
             }
           },
           "parameters": {
@@ -52492,6 +52497,13 @@
               ],
               "metadata": {
                 "description": "Optional. The AKS cluster SKU name. Set to \"Automatic\" for AKS Automatic mode, or \"Base\" for standard mode."
+              }
+            },
+            "availabilityZones": {
+              "type": "array",
+              "defaultValue": "[pickZones('Microsoft.ContainerService', 'managedClusters', parameters('location'), 3)]",
+              "metadata": {
+                "description": "Availability zones for AKS node pools. Defaults to auto-detected zones via pickZones(). Set to empty array [] to disable."
               }
             },
             "enableKmsEncryption": {
@@ -56196,9 +56208,7 @@
                   "primaryAgentPoolProfiles": {
                     "value": [
                       {
-                        "availabilityZones": [
-                          3
-                        ],
+                        "availabilityZones": "[parameters('availabilityZones')]",
                         "count": 3,
                         "enableAutoScaling": true,
                         "maxCount": 3,

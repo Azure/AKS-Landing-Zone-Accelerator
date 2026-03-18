@@ -36,22 +36,25 @@ param enableKmsEncryption bool = true
 @description('The Azure region for all resources.')
 param location string = deployment().location
 
-resource servicesSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
+// Auto-detect zone support for the region
+var acrZoneRedundancy = length(pickZones('Microsoft.ContainerRegistry', 'registries', location, 3)) > 0 ? 'Enabled' : 'Disabled'
+
+resource servicesSubnet 'Microsoft.Network/virtualNetworks/subnets@2025-05-01'existing = {
   scope: resourceGroup(rg.name)
   name: '${vnetName}/${subnetName}'
 }
 
-resource privateDNSZoneSA 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+resource privateDNSZoneSA 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   scope: resourceGroup(rg.name)
   name: privateDNSZoneSAName
 }
 
-resource privateDNSZoneKV 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+resource privateDNSZoneKV 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   scope: resourceGroup(rg.name)
   name: privateDNSZoneKVName
 }
 
-resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2020-06-01' existing = {
+resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   scope: resourceGroup(rg.name)
   name: privateDNSZoneACRName
 }
@@ -74,6 +77,7 @@ module registry 'br/public:avm/res/container-registry/registry:0.11.0' = {
     acrAdminUserEnabled: true
     publicNetworkAccess: 'Disabled'
     acrSku: 'Premium'
+    zoneRedundancy: acrZoneRedundancy
     privateEndpoints: [
       {
         privateDnsZoneGroup: {

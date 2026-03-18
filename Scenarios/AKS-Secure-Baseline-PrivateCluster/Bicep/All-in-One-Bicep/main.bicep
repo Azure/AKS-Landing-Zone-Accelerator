@@ -354,7 +354,7 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
     firewallIP: firewallIP
     vnetHubName: vnetHubName
     agcName: agcName
-    vnetHUBRGName: rgHubName
+    vnetHubRgName: rgHubName
     nsgAKSName: nsgAKSName
     securityRules: securityRules
     spokeSubnetDefaultPrefix: spokeSubnetDefaultPrefix

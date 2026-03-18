@@ -56,6 +56,9 @@ param networkPlugin string
 ])
 param aksSkuName string = 'Base'
 
+@description('Availability zones for AKS node pools. Defaults to auto-detected zones via pickZones(). Set to empty array [] to disable.')
+param availabilityZones array = pickZones('Microsoft.ContainerService', 'managedClusters', location, 3)
+
 @description('Enable etcd encryption with KMS v2. Requires a Key Vault key named "aks-etcd-kms".')
 param enableKmsEncryption bool = true
 
@@ -141,9 +144,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
     skuTier: 'Standard'
     primaryAgentPoolProfiles: [
       {
-        availabilityZones: [
-          3
-        ]
+        availabilityZones: availabilityZones
         count: 3
         enableAutoScaling: true
         maxCount: 3
