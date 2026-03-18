@@ -6,8 +6,8 @@ The following will be created:
 * Spoke Virtual Network and Subnets
 * Peering of Hub and Spoke Networks
 * Private DNS Zones
-* Application Gateway
-* NSGs for AKS subnet and Application Gateway subnet
+* Application Gateway for Containers (AGC) traffic controller
+* NSG for AKS subnet
 
 Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster-AVM/Bicep/04-Network-LZ" folder
 
