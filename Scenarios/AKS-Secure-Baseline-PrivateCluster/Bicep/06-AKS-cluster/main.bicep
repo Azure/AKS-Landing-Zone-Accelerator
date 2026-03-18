@@ -1,22 +1,48 @@
 targetScope = 'subscription'
 
+@description('The name of the resource group for the AKS cluster.')
 param rgName string
+
+@description('The name of the spoke virtual network.')
 param vnetName string
+
+@description('The name of the AKS subnet.')
 param subnetName string
+
+@description('The name of the user-assigned managed identity for AKS.')
 param aksIdentityName string
+
+@description('The Azure region for all resources.')
 param location string = deployment().location
+
+@description('Enable cluster autoscaling.')
 param enableAutoScaling bool
+
+@description('Cluster autoscaler profile settings.')
 param autoScalingProfile object
+
+@description('The object ID of the Entra ID group for AKS cluster admins.')
 param aksadminaccessprincipalId string
+
+@description('The Kubernetes version for the AKS cluster.')
 param kubernetesVersion string
-@description('The name of the keyVault you deployed in the previous step (check Azure portal if you need to).')
+
+@description('The name of the Key Vault deployed in 05-AKS-supporting.')
 param keyvaultName string
-@description('The name of the Container registry you deployed in the previous step (check Azure portal if you need to).')
+
+@description('The name of the Container Registry deployed in 05-AKS-supporting.')
 param acrName string
+
+@description('The name of the AKS cluster.')
 param aksClusterName string
+
+@description('Enable AKS private cluster with private DNS zone.')
 param enablePrivateCluster bool = true
+
+@description('The VM size for AKS node pools.')
 param vmSize string = 'Standard_D4d_v5'
 
+@description('The network plugin for the AKS cluster.')
 @allowed([
   'azure'
   'kubenet'
@@ -29,6 +55,12 @@ param networkPlugin string
   'Automatic'
 ])
 param aksSkuName string = 'Base'
+
+@description('Enable etcd encryption with KMS v2. Requires a Key Vault key named "aks-etcd-kms".')
+param enableKmsEncryption bool = true
+
+@description('The Key Vault key URI for KMS v2 encryption (e.g., https://myvault.vault.azure.net/keys/aks-etcd-kms). Required when enableKmsEncryption is true.')
+param kmsKeyUri string = ''
 
 var privateDNSZoneAKSSuffixes = {
   AzureCloud: '.azmk8s.io'
@@ -148,11 +180,12 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
         }
       : null
     networkPlugin: networkPlugin == 'azure' ? 'azure' : 'kubenet'
+    networkPluginMode: networkPlugin == 'azure' ? 'overlay' : null
+    networkDataplane: networkPlugin == 'azure' ? 'cilium' : null
     outboundType: 'loadBalancer'
     dnsServiceIP: '192.168.100.10'
     serviceCidr: '192.168.100.0/24'
-    networkPolicy: 'calico'
-    podCidr: networkPlugin == 'kubenet' ? '172.17.0.0/16' : null
+    podCidr: '172.17.0.0/16'
     apiServerAccessProfile: {
       enablePrivateCluster: enablePrivateCluster
       privateDNSZone: enablePrivateCluster ? pvtdnsAKSZone.id : null
@@ -173,6 +206,14 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
       workloadIdentity: {
         enabled: true
       }
+      azureKeyVaultKms: enableKmsEncryption && !empty(kmsKeyUri)
+        ? {
+            enabled: true
+            keyId: kmsKeyUri
+            keyVaultNetworkAccess: 'Private'
+            keyVaultResourceId: keyVault.id
+          }
+        : null
     }
     omsAgentEnabled: true
     monitoringWorkspaceResourceId: workspace.outputs.resourceId
@@ -239,6 +280,14 @@ module managedClusterAutomatic 'br/public:avm/res/container-service/managed-clus
       workloadIdentity: {
         enabled: true
       }
+      azureKeyVaultKms: enableKmsEncryption && !empty(kmsKeyUri)
+        ? {
+            enabled: true
+            keyId: kmsKeyUri
+            keyVaultNetworkAccess: 'Private'
+            keyVaultResourceId: keyVault.id
+          }
+        : null
     }
     autoUpgradeProfile: {
       nodeOSUpgradeChannel: 'NodeImage'
@@ -287,6 +336,20 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
       : (managedCluster.?outputs.?kubeletIdentityObjectId ?? '')
     resourceId: ACR.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Grant AKS identity "Key Vault Crypto User" for KMS v2 etcd encryption
+module kvCryptoAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.2' = if (enableKmsEncryption) {
+  scope: resourceGroup(rg.name)
+  name: 'keyvault-aks-crypto'
+  params: {
+    principalId: isAutomatic
+      ? (managedClusterAutomatic.?outputs.?kubeletIdentityObjectId ?? '')
+      : aksIdentity.properties.principalId
+    resourceId: keyVault.id
+    roleDefinitionId: '12338af0-0e69-4776-bea7-57ae8d297424' // Key Vault Crypto User
     principalType: 'ServicePrincipal'
   }
 }

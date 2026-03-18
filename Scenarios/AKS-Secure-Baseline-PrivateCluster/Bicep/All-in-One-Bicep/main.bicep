@@ -245,6 +245,10 @@ param vmsubnetSubnetName string = 'vmsubnet'
 param vmsubnetSubnetAddressPrefix string = '10.0.3.0/24'
 param linuxVirtualMachineVMSize string = 'Standard_DS2_v2'
 
+@secure()
+@description('The admin password for the jumpbox VM in the spoke network.')
+param jumpboxAdminPassword string
+
 /////////////////
 // 05-AKS-Supporting
 /////////////////
@@ -360,7 +364,7 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
     spokeSubnetPLinkervicePrefix: spokeSubnetPLinkervicePrefix
     remotePeeringName: remotePeeringName
     vmSize: linuxVirtualMachineVMSize
-
+    jumpboxAdminPassword: jumpboxAdminPassword
   }
   dependsOn: deployHub ? [networkHub] : []
 }
@@ -406,5 +410,7 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     aksClusterName: aksClusterName
     vmSize: aksVMSize
     aksSkuName: aksSkuName
+    enableKmsEncryption: true
+    kmsKeyUri: aksSupporting.outputs.kmsKeyUri
   }
 }
