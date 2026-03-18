@@ -7,13 +7,13 @@ param rgName string
 param vnetSpokeName string
 
 @description('The address prefixes for the spoke virtual network.')
-param spokeVNETaddPrefixes array
+param spokeVnetAddPrefixes array
 
 @description('The name of the route table for the AKS subnet.')
-param rtAKSSubnetName string
+param rtAksSubnetName string
 
 @description('The private IP address of the Azure Firewall in the hub network.')
-param firewallIP string
+param firewallIp string
 
 @description('The name of the hub virtual network for peering.')
 param vnetHubName string
@@ -25,7 +25,7 @@ param agcName string
 param vnetHubRgName string
 
 @description('The name of the NSG for the AKS subnet.')
-param nsgAKSName string
+param nsgAksName string
 
 @description('Enable AKS private cluster with private DNS zone.')
 param enablePrivateCluster bool = true
@@ -40,13 +40,13 @@ param securityRules array = []
 param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
 
 @description('The address prefix for the AKS subnet.')
-param spokeSubnetAKSPrefix string = '10.1.1.0/24'
+param spokeSubnetAksPrefix string = '10.1.1.0/24'
 
 @description('The address prefix for the AGC delegated subnet.')
-param spokeSubnetAGCPrefix string = '10.1.2.0/24'
+param spokeSubnetAgcPrefix string = '10.1.2.0/24'
 
 @description('The address prefix for the VM subnet.')
-param spokeSubnetVMPrefix string = '10.1.3.0/24'
+param spokeSubnetVmPrefix string = '10.1.3.0/24'
 
 @description('The address prefix for the private link services subnet.')
 param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
@@ -64,14 +64,14 @@ var vmZones = pickZones('Microsoft.Compute', 'virtualMachines', location, 1)
 @description('The admin password for the jumpbox VM.')
 param jumpboxAdminPassword string
 
-var privateDNSZoneAKSSuffixes = {
+var privateDnsZoneAksSuffixes = {
   AzureCloud: '.azmk8s.io'
   AzureUSGovernment: '.cx.aks.containerservice.azure.us'
   AzureChinaCloud: '.cx.prod.service.azk8s.cn'
   AzureGermanCloud: '' //TODO: what is the correct value here?
 }
 
-resource vnethub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
+resource vnetHub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
   scope: resourceGroup(vnetHubRgName)
   name: vnetHubName
 }
@@ -85,11 +85,11 @@ module rg 'br/public:avm/res/resources/resource-group:0.4.3' = {
   }
 }
 
-module vnetspoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
+module vnetSpoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
   scope: resourceGroup(rg.name)
   name: vnetSpokeName
   params: {
-    addressPrefixes: spokeVNETaddPrefixes
+    addressPrefixes: spokeVnetAddPrefixes
     name: vnetSpokeName
     location: location
     subnets: [
@@ -99,18 +99,18 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
       }
       {
         name: 'AKS'
-        addressPrefix: spokeSubnetAKSPrefix
+        addressPrefix: spokeSubnetAksPrefix
         routeTableResourceId: routeTable.outputs.resourceId
-        networkSecurityGroupResourceId: networkSecurityGroupAKS.outputs.resourceId
+        networkSecurityGroupResourceId: networkSecurityGroupAks.outputs.resourceId
       }
       {
         name: 'AGCSubnet'
-        addressPrefix: spokeSubnetAGCPrefix
+        addressPrefix: spokeSubnetAgcPrefix
         delegation: 'Microsoft.ServiceNetworking/trafficControllers'
       }
       {
         name: 'vmsubnet'
-        addressPrefix: spokeSubnetVMPrefix
+        addressPrefix: spokeSubnetVmPrefix
       }
       {
         name: 'servicespe'
@@ -127,7 +127,7 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
         remotePeeringAllowVirtualNetworkAccess: true
         remotePeeringEnabled: true
         remotePeeringName: remotePeeringName
-        remoteVirtualNetworkResourceId: vnethub.id
+        remoteVirtualNetworkResourceId: vnetHub.id
         useRemoteGateways: false
       }
     ]
@@ -135,11 +135,11 @@ module vnetspoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
   dependsOn: []
 }
 
-module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group:0.5.2' = {
+module networkSecurityGroupAks 'br/public:avm/res/network/network-security-group:0.5.2' = {
   scope: resourceGroup(rg.name)
-  name: nsgAKSName
+  name: nsgAksName
   params: {
-    name: nsgAKSName
+    name: nsgAksName
     location: location
     securityRules: securityRules
     enableTelemetry: true
@@ -150,16 +150,16 @@ module networkSecurityGroupAKS 'br/public:avm/res/network/network-security-group
 
 module routeTable 'br/public:avm/res/network/route-table:0.5.0' = {
   scope: resourceGroup(rg.name)
-  name: rtAKSSubnetName
+  name: rtAksSubnetName
   params: {
-    name: rtAKSSubnetName
+    name: rtAksSubnetName
     location: location
     routes: [
       {
         name: 'vm-to-internet'
         properties: {
           addressPrefix: '0.0.0.0/0'
-          nextHopIpAddress: firewallIP
+          nextHopIpAddress: firewallIp
           nextHopType: 'VirtualAppliance'
         }
       }
@@ -168,7 +168,7 @@ module routeTable 'br/public:avm/res/network/route-table:0.5.0' = {
   }
 }
 
-module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
+module privateDnsZoneAcr 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsACRZone'
   params: {
@@ -176,17 +176,17 @@ module privateDnsZoneACR 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
     location: 'global'
     virtualNetworkLinks: [
       {
-        virtualNetworkResourceId: vnethub.id
+        virtualNetworkResourceId: vnetHub.id
       }
       {
-        virtualNetworkResourceId: vnetspoke.outputs.resourceId
+        virtualNetworkResourceId: vnetSpoke.outputs.resourceId
       }
     ]
     enableTelemetry: true
   }
 }
 
-module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
+module privateDnsZoneKv 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsKVZone'
   params: {
@@ -194,17 +194,17 @@ module privateDnsZoneKV 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
     location: 'global'
     virtualNetworkLinks: [
       {
-        virtualNetworkResourceId: vnethub.id
+        virtualNetworkResourceId: vnetHub.id
       }
       {
-        virtualNetworkResourceId: vnetspoke.outputs.resourceId
+        virtualNetworkResourceId: vnetSpoke.outputs.resourceId
       }
     ]
     enableTelemetry: true
   }
 }
 
-module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
+module privateDnsZoneSa 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
   scope: resourceGroup(rg.name)
   name: 'privatednsSAZone'
   params: {
@@ -212,22 +212,22 @@ module privateDnsZoneSA 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
     location: 'global'
     virtualNetworkLinks: [
       {
-        virtualNetworkResourceId: vnethub.id
+        virtualNetworkResourceId: vnetHub.id
       }
     ]
     enableTelemetry: true
   }
 }
 
-module privateDnsZoneAKS 'br/public:avm/res/network/private-dns-zone:0.8.1' = if (enablePrivateCluster) {
+module privateDnsZoneAks 'br/public:avm/res/network/private-dns-zone:0.8.1' = if (enablePrivateCluster) {
   scope: resourceGroup(rg.name)
   name: 'privatednsAKSZone'
   params: {
-    name: 'privatelink.${toLower(location)}${privateDNSZoneAKSSuffixes[environment().name]}'
+    name: 'privatelink.${toLower(location)}${privateDnsZoneAksSuffixes[environment().name]}'
     location: 'global'
     virtualNetworkLinks: [
       {
-        virtualNetworkResourceId: vnethub.id
+        virtualNetworkResourceId: vnetHub.id
       }
     ]
     enableTelemetry: true
@@ -244,15 +244,15 @@ module agc 'agc.bicep' = {
   params: {
     agcName: agcName
     location: location
-    agcSubnetId: vnetspoke.outputs.subnetResourceIds[2] // AGCSubnet
+    agcSubnetId: vnetSpoke.outputs.subnetResourceIds[2] // AGCSubnet
   }
 }
 
 module userAssignedIdentity 'br/public:avm/res/managed-identity/user-assigned-identity:0.5.0' = {
   scope: resourceGroup(rg.name)
-  name: 'aksIdentity'
+  name: 'id-aks'
   params: {
-    name: 'aksIdentity'
+    name: 'id-aks'
     location: location
   }
 }
@@ -269,7 +269,7 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.21.0' = {
       sku: '22_04-lts-gen2'
       version: 'latest'
     }
-    name: 'jumpbox'
+    name: 'vm-jumpbox'
     nicConfigurations: [
       {
         ipConfigurations: [
@@ -278,7 +278,7 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.21.0' = {
             pipConfiguration: {
               name: 'pip-01'
             }
-            subnetResourceId: vnetspoke.outputs.subnetResourceIds[3]
+            subnetResourceId: vnetSpoke.outputs.subnetResourceIds[3]
           }
         ]
         nicSuffix: '-nic-01'

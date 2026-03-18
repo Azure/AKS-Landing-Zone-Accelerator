@@ -10,22 +10,22 @@ param vnetName string
 param subnetName string
 
 @description('The private DNS zone name for Azure Container Registry.')
-param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
+param privateDnsZoneAcrName string = 'privatelink${environment().suffixes.acrLoginServer}'
 
 @description('The private DNS zone name for Azure Key Vault.')
-param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
+param privateDnsZoneKvName string = 'privatelink.vaultcore.azure.net'
 
 @description('The private DNS zone name for Azure Storage.')
-param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.storage}'
+param privateDnsZoneSaName string = 'privatelink.file.${environment().suffixes.storage}'
 
 @description('The name of the Azure Container Registry.')
-param acrName string = 'eslzacr${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
+param acrName string = 'cr${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
 
 @description('The name of the Azure Key Vault.')
-param keyvaultName string = 'eslz-kv-${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
+param keyVaultName string = 'kv-${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
 
 @description('The name of the storage account.')
-param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id), utcNow())}'
+param storageAccountName string = 'st${uniqueString('aks', uniqueString(subscription().id), utcNow())}'
 
 @description('The storage account SKU type.')
 param storageAccountType string
@@ -44,19 +44,19 @@ resource servicesSubnet 'Microsoft.Network/virtualNetworks/subnets@2025-05-01'ex
   name: '${vnetName}/${subnetName}'
 }
 
-resource privateDNSZoneSA 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
+resource existingPrivateDnsZoneSa 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   scope: resourceGroup(rg.name)
-  name: privateDNSZoneSAName
+  name: privateDnsZoneSaName
 }
 
-resource privateDNSZoneKV 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
+resource existingPrivateDnsZoneKv 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   scope: resourceGroup(rg.name)
-  name: privateDNSZoneKVName
+  name: privateDnsZoneKvName
 }
 
-resource privateDNSZoneACR 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
+resource existingPrivateDnsZoneAcr 'Microsoft.Network/privateDnsZones@2024-06-01' existing = {
   scope: resourceGroup(rg.name)
-  name: privateDNSZoneACRName
+  name: privateDnsZoneAcrName
 }
 
 module rg 'br/public:avm/res/resources/resource-group:0.4.3' = {
@@ -83,7 +83,7 @@ module registry 'br/public:avm/res/container-registry/registry:0.11.0' = {
         privateDnsZoneGroup: {
           privateDnsZoneGroupConfigs: [
             {
-              privateDnsZoneResourceId: privateDNSZoneACR.id
+              privateDnsZoneResourceId: existingPrivateDnsZoneAcr.id
             }
           ]
         }
@@ -95,9 +95,9 @@ module registry 'br/public:avm/res/container-registry/registry:0.11.0' = {
 
 module vault 'br/public:avm/res/key-vault/vault:0.13.3' = {
   scope: resourceGroup(rg.name)
-  name: keyvaultName
+  name: keyVaultName
   params: {
-    name: keyvaultName
+    name: keyVaultName
     enablePurgeProtection: true
     location: location
     sku: 'standard'
@@ -123,7 +123,7 @@ module vault 'br/public:avm/res/key-vault/vault:0.13.3' = {
         privateDnsZoneGroup: {
           privateDnsZoneGroupConfigs: [
             {
-              privateDnsZoneResourceId: privateDNSZoneKV.id
+              privateDnsZoneResourceId: existingPrivateDnsZoneKv.id
             }
           ]
         }
@@ -147,7 +147,7 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.32.0' = {
         privateDnsZoneGroup: {
           privateDnsZoneGroupConfigs: [
             {
-              privateDnsZoneResourceId: privateDNSZoneSA.id
+              privateDnsZoneResourceId: existingPrivateDnsZoneSa.id
             }
           ]
         }

@@ -8,16 +8,16 @@ param rgName string
 param vnetHubName string
 
 @description('The address prefixes for the hub virtual network.')
-param hubVNETaddPrefixes array
+param hubVnetAddPrefixes array
 
 @description('The name of the Azure Firewall.')
 param azfwName string
 
 @description('The name of the route table for the VM subnet.')
-param rtVMSubnetName string
+param rtVmSubnetName string
 
 @description('NAT rule collections for Azure Firewall.')
-param fwnatRuleCollections array
+param fwNatRuleCollections array
 
 @description('The Azure region for all resources.')
 param location string = deployment().location
@@ -50,16 +50,16 @@ param azureBastionSubnetName string
 param azureBastionSubnetAddressPrefix string
 
 @description('The name of the VM subnet.')
-param vmsubnetSubnetName string
+param vmSubnetName string
 
 @description('The address prefix for the VM subnet.')
-param vmsubnetSubnetAddressPrefix string
+param vmSubnetAddressPrefix string
 
 @description('The name of the NSG for the Bastion subnet.')
 param nsgBastionName string
 
 @description('The prefix for the spoke subnet AKS')
-param spokeSubnetAKSPrefix string = '10.1.1.0/24'
+param spokeSubnetAksPrefix string = '10.1.1.0/24'
 
 
 module rg 'br/public:avm/res/resources/resource-group:0.4.3' = {
@@ -75,7 +75,7 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.7.2' = {
   scope: resourceGroup(rg.name)
   name: vnetHubName
   params: {
-    addressPrefixes: hubVNETaddPrefixes
+    addressPrefixes: hubVnetAddPrefixes
     name: vnetHubName
     location: location
     subnets: [
@@ -97,8 +97,8 @@ module virtualNetwork 'br/public:avm/res/network/virtual-network:0.7.2' = {
         networkSecurityGroupResourceId: networkSecurityGroupBastion.outputs.resourceId
       }
       {
-        name: vmsubnetSubnetName
-        addressPrefix: vmsubnetSubnetAddressPrefix
+        name: vmSubnetName
+        addressPrefix: vmSubnetAddressPrefix
       }
     ]
     enableTelemetry: true
@@ -258,11 +258,11 @@ module networkSecurityGroupBastion 'br/public:avm/res/network/network-security-g
 }
 
 
-module publicIpFW 'br/public:avm/res/network/public-ip-address:0.12.0' = {
+module publicIpFw 'br/public:avm/res/network/public-ip-address:0.12.0' = {
   scope: resourceGroup(rg.name)
-  name: 'AZFW-PIP'
+  name: 'pip-afw'
   params: {
-    name: 'AZFW-PIP'
+    name: 'pip-afw'
     location: location
     availabilityZones: availabilityZones
     publicIPAllocationMethod: 'Static'
@@ -272,11 +272,11 @@ module publicIpFW 'br/public:avm/res/network/public-ip-address:0.12.0' = {
   }
 }
 
-module publicIpFWMgmt 'br/public:avm/res/network/public-ip-address:0.12.0' = {
+module publicIpFwMgmt 'br/public:avm/res/network/public-ip-address:0.12.0' = {
   scope: resourceGroup(rg.name)
-  name: 'AZFW-Management-PIP'
+  name: 'pip-afw-mgmt'
   params: {
-    name: 'AZFW-Management-PIP'
+    name: 'pip-afw-mgmt'
     location: location
     availabilityZones: availabilityZones
     publicIPAllocationMethod: 'Static'
@@ -286,11 +286,11 @@ module publicIpFWMgmt 'br/public:avm/res/network/public-ip-address:0.12.0' = {
   }
 }
 
-module publicipbastion 'br/public:avm/res/network/public-ip-address:0.12.0' = {
+module publicIpBastion 'br/public:avm/res/network/public-ip-address:0.12.0' = {
   scope: resourceGroup(rg.name)
-  name: 'publicipbastion'
+  name: 'pip-bastion'
   params: {
-    name: 'publicipbastion'
+    name: 'pip-bastion'
     location: location
     availabilityZones: availabilityZones
     publicIPAllocationMethod: 'Static'
@@ -302,11 +302,11 @@ module publicipbastion 'br/public:avm/res/network/public-ip-address:0.12.0' = {
 
 module bastionHost 'br/public:avm/res/network/bastion-host:0.8.2' = {
   scope: resourceGroup(rg.name)
-  name: 'bastion'
+  name: 'bas-hub'
   params: {
-    name: 'bastion'
+    name: 'bas-hub'
     virtualNetworkResourceId: virtualNetwork.outputs.resourceId
-    bastionSubnetPublicIpResourceId: publicipbastion.outputs.resourceId
+    bastionSubnetPublicIpResourceId: publicIpBastion.outputs.resourceId
     location: location
     enableTelemetry: true
   }
@@ -314,9 +314,9 @@ module bastionHost 'br/public:avm/res/network/bastion-host:0.8.2' = {
 
 module routeTable 'br/public:avm/res/network/route-table:0.5.0' = {
   scope: resourceGroup(rg.name)
-  name: rtVMSubnetName
+  name: rtVmSubnetName
   params: {
-    name: rtVMSubnetName
+    name: rtVmSubnetName
     location: location
     routes: [
       {
@@ -340,11 +340,11 @@ module azureFirewall 'br/public:avm/res/network/azure-firewall:0.10.0' = {
     location: location
     virtualNetworkResourceId: virtualNetwork.outputs.resourceId
     availabilityZones: availabilityZones
-    publicIPResourceID: publicIpFW.outputs.resourceId
-    managementIPResourceID: publicIpFWMgmt.outputs.resourceId
-    applicationRuleCollections: fwapplicationRuleCollections
-    natRuleCollections: fwnatRuleCollections
-    networkRuleCollections: fwnetworkRuleCollections
+    publicIPResourceID: publicIpFw.outputs.resourceId
+    managementIPResourceID: publicIpFwMgmt.outputs.resourceId
+    applicationRuleCollections: fwApplicationRuleCollections
+    natRuleCollections: fwNatRuleCollections
+    networkRuleCollections: fwNetworkRuleCollections
   }
 }
 
@@ -366,7 +366,7 @@ module telemetry './telemetry.bicep' = {
 // this way, if customer isnt using the default subnetprefix for AKS, they can configure the
 // firewall settings to make it allow AKS deploy successfully by specifying their own subnet prefix
 @description('Returns the firewall application rule collections')
-param fwapplicationRuleCollections array = [
+param fwApplicationRuleCollections array = [
   {
     name: 'Helper-tools'
     properties: {
@@ -395,7 +395,7 @@ param fwapplicationRuleCollections array = [
             'motd.ubuntu.com'
           ]
           sourceAddresses: [
-            spokeSubnetAKSPrefix
+            spokeSubnetAksPrefix
           ]
         }
       ]
@@ -447,7 +447,7 @@ param fwapplicationRuleCollections array = [
             'production.cloudflare.docker.com'
           ]
           sourceAddresses: [
-            spokeSubnetAKSPrefix
+            spokeSubnetAksPrefix
           ]
         }
         {
@@ -470,7 +470,7 @@ param fwapplicationRuleCollections array = [
             'vortex.data.microsoft.com'
           ]
           sourceAddresses: [
-            spokeSubnetAKSPrefix
+            spokeSubnetAksPrefix
           ]
         }
         {
@@ -490,7 +490,7 @@ param fwapplicationRuleCollections array = [
             'AzureKubernetesService'
           ]
           sourceAddresses: [
-            spokeSubnetAKSPrefix
+            spokeSubnetAksPrefix
           ]
         }
 
@@ -500,7 +500,7 @@ param fwapplicationRuleCollections array = [
 ]
 
 @description('Returns the firewall network rule collections')
-param fwnetworkRuleCollections array = [
+param fwNetworkRuleCollections array = [
   {
     name: 'AKS-egress'
     properties: {
@@ -515,7 +515,7 @@ param fwnetworkRuleCollections array = [
             'UDP'
           ]
           sourceAddresses: [
-            spokeSubnetAKSPrefix
+            spokeSubnetAksPrefix
           ]
           destinationAddresses: [
             '*'
@@ -530,7 +530,7 @@ param fwnetworkRuleCollections array = [
             'TCP'
           ]
           sourceAddresses: [
-            spokeSubnetAKSPrefix
+            spokeSubnetAksPrefix
           ]
           destinationAddresses: [
             '*'
@@ -545,7 +545,7 @@ param fwnetworkRuleCollections array = [
             'UDP'
           ]
           sourceAddresses: [
-            spokeSubnetAKSPrefix
+            spokeSubnetAksPrefix
           ]
           destinationAddresses: [
             '*'

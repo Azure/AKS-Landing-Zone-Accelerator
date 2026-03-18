@@ -1,13 +1,13 @@
 targetScope = 'subscription'
 
 @description('Resource group name for the Istio mesh scenario.')
-param rgName string = 'AKS-Istio-Mesh-RG'
+param rgName string = 'rg-aks-istio-mesh'
 
 @description('Location for all resources.')
 param location string = deployment().location
 
 @description('Name of the virtual network.')
-param vnetName string = 'istio-mesh-vnet'
+param vnetName string = 'vnet-istio-mesh'
 
 @description('Address prefixes for the VNet.')
 param vnetAddressPrefixes array = ['10.10.0.0/16']
@@ -70,7 +70,7 @@ module vnet 'br/public:avm/res/network/virtual-network:0.7.2' = {
     addressPrefixes: vnetAddressPrefixes
     subnets: [
       {
-        name: 'aks-subnet'
+        name: 'snet-aks'
         addressPrefix: aksSubnetPrefix
         networkSecurityGroupResourceId: nsgAks.outputs.resourceId
       }
@@ -84,9 +84,9 @@ module vnet 'br/public:avm/res/network/virtual-network:0.7.2' = {
 
 module workspace 'br/public:avm/res/operational-insights/workspace:0.15.0' = {
   scope: resourceGroup(rg.name)
-  name: 'istio-la-workspace'
+  name: 'log-istio'
   params: {
-    name: 'istio-la-workspace'
+    name: 'log-istio'
     location: location
   }
 }

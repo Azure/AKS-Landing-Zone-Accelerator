@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.41.2.15936",
-      "templateHash": "2555766983935046298"
+      "templateHash": "2241455850604140910"
     }
   },
   "parameters": {
@@ -25,13 +25,13 @@
     },
     "rgHubName": {
       "type": "string",
-      "defaultValue": "ESLZ-HUB-RG"
+      "defaultValue": "rg-hub"
     },
     "vnetHubName": {
       "type": "string",
-      "defaultValue": "VNet-HUB"
+      "defaultValue": "vnet-hub"
     },
-    "hubVNETaddPrefixes": {
+    "hubVnetAddPrefixes": {
       "type": "array",
       "defaultValue": [
         "10.0.0.0/16"
@@ -39,13 +39,13 @@
     },
     "azfwName": {
       "type": "string",
-      "defaultValue": "AZFW"
+      "defaultValue": "afw-hub"
     },
-    "rtVMSubnetName": {
+    "rtVmSubnetName": {
       "type": "string",
-      "defaultValue": "vm-subnet-rt"
+      "defaultValue": "rt-vm-subnet"
     },
-    "fwapplicationRuleCollections": {
+    "fwApplicationRuleCollections": {
       "type": "array",
       "defaultValue": [
         {
@@ -179,7 +179,7 @@
         }
       ]
     },
-    "fwnetworkRuleCollections": {
+    "fwNetworkRuleCollections": {
       "type": "array",
       "defaultValue": [
         {
@@ -240,7 +240,7 @@
         }
       ]
     },
-    "fwnatRuleCollections": {
+    "fwNatRuleCollections": {
       "type": "array",
       "defaultValue": []
     },
@@ -254,17 +254,17 @@
     },
     "nsgBastionName": {
       "type": "string",
-      "defaultValue": "BASTION-NSG"
+      "defaultValue": "nsg-bastion"
     },
     "rgSpokeName": {
       "type": "string",
-      "defaultValue": "ESLZ-SPOKE-RG"
+      "defaultValue": "rg-spoke"
     },
     "vnetSpokeName": {
       "type": "string",
-      "defaultValue": "VNet-SPOKE"
+      "defaultValue": "vnet-spoke"
     },
-    "spokeVNETaddPrefixes": {
+    "spokeVnetAddPrefixes": {
       "type": "array",
       "defaultValue": [
         "10.1.0.0/16"
@@ -274,15 +274,15 @@
       "type": "string",
       "defaultValue": "10.1.0.0/24"
     },
-    "spokeSubnetAKSPrefix": {
+    "spokeSubnetAksPrefix": {
       "type": "string",
       "defaultValue": "10.1.1.0/24"
     },
-    "spokeSubnetAGCPrefix": {
+    "spokeSubnetAgcPrefix": {
       "type": "string",
       "defaultValue": "10.1.2.0/24"
     },
-    "spokeSubnetVMPrefix": {
+    "spokeSubnetVmPrefix": {
       "type": "string",
       "defaultValue": "10.1.3.0/24"
     },
@@ -294,11 +294,11 @@
       "type": "string",
       "defaultValue": "spoke-hub-peering"
     },
-    "rtAKSSubnetName": {
+    "rtAksSubnetName": {
       "type": "string",
-      "defaultValue": "AKS-RT"
+      "defaultValue": "rt-aks"
     },
-    "firewallIP": {
+    "firewallIp": {
       "type": "string",
       "defaultValue": "10.0.1.4"
     },
@@ -306,9 +306,9 @@
       "type": "string",
       "defaultValue": "alb-controller"
     },
-    "nsgAKSName": {
+    "nsgAksName": {
       "type": "string",
-      "defaultValue": "AKS-NSG"
+      "defaultValue": "nsg-aks"
     },
     "securityRules": {
       "type": "array",
@@ -346,15 +346,15 @@
       "type": "string",
       "defaultValue": "10.0.2.0/27"
     },
-    "vmsubnetSubnetName": {
+    "vmSubnetName": {
       "type": "string",
       "defaultValue": "vmsubnet"
     },
-    "vmsubnetSubnetAddressPrefix": {
+    "vmSubnetAddressPrefix": {
       "type": "string",
       "defaultValue": "10.0.3.0/24"
     },
-    "linuxVirtualMachineVMSize": {
+    "linuxVirtualMachineVmSize": {
       "type": "string",
       "defaultValue": "Standard_DS2_v2"
     },
@@ -368,21 +368,21 @@
       "type": "string",
       "defaultValue": "servicespe"
     },
-    "privateDNSZoneACRName": {
+    "privateDnsZoneAcrName": {
       "type": "string",
       "defaultValue": "[format('privatelink{0}', environment().suffixes.acrLoginServer)]"
     },
-    "privateDNSZoneKVName": {
+    "privateDnsZoneKvName": {
       "type": "string",
       "defaultValue": "privatelink.vaultcore.azure.net"
     },
-    "privateDNSZoneSAName": {
+    "privateDnsZoneSaName": {
       "type": "string",
       "defaultValue": "[format('privatelink.file.{0}', environment().suffixes.storage)]"
     },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "[format('eslzsa{0}', uniqueString('aks', uniqueString(subscription().id, utcNow())))]"
+      "defaultValue": "[format('st{0}', uniqueString('aks', uniqueString(subscription().id, utcNow())))]"
     },
     "storageAccountType": {
       "type": "string",
@@ -394,7 +394,7 @@
     },
     "aksIdentityName": {
       "type": "string",
-      "defaultValue": "aksIdentity"
+      "defaultValue": "id-aks"
     },
     "enableAutoScaling": {
       "type": "bool",
@@ -422,7 +422,7 @@
         "skipNodesWithSystemPods": true
       }
     },
-    "aksadminaccessprincipalId": {
+    "aksAdminAccessPrincipalId": {
       "type": "string"
     },
     "kubernetesVersion": {
@@ -435,9 +435,9 @@
     },
     "aksClusterName": {
       "type": "string",
-      "defaultValue": "aksCluster"
+      "defaultValue": "aks-cluster"
     },
-    "aksVMSize": {
+    "aksVmSize": {
       "type": "string",
       "defaultValue": "Standard_D4d_v5"
     },
@@ -472,8 +472,8 @@
           "availabilityZones": {
             "value": "[parameters('availabilityZones')]"
           },
-          "spokeSubnetAKSPrefix": {
-            "value": "[parameters('spokeSubnetAKSPrefix')]"
+          "spokeSubnetAksPrefix": {
+            "value": "[parameters('spokeSubnetAksPrefix')]"
           },
           "vnetHubName": {
             "value": "[parameters('vnetHubName')]"
@@ -481,20 +481,20 @@
           "azfwName": {
             "value": "[parameters('azfwName')]"
           },
-          "rtVMSubnetName": {
-            "value": "[parameters('rtVMSubnetName')]"
+          "rtVmSubnetName": {
+            "value": "[parameters('rtVmSubnetName')]"
           },
-          "fwapplicationRuleCollections": {
-            "value": "[parameters('fwapplicationRuleCollections')]"
+          "fwApplicationRuleCollections": {
+            "value": "[parameters('fwApplicationRuleCollections')]"
           },
-          "fwnetworkRuleCollections": {
-            "value": "[parameters('fwnetworkRuleCollections')]"
+          "fwNetworkRuleCollections": {
+            "value": "[parameters('fwNetworkRuleCollections')]"
           },
-          "fwnatRuleCollections": {
-            "value": "[parameters('fwnatRuleCollections')]"
+          "fwNatRuleCollections": {
+            "value": "[parameters('fwNatRuleCollections')]"
           },
-          "hubVNETaddPrefixes": {
-            "value": "[parameters('hubVNETaddPrefixes')]"
+          "hubVnetAddPrefixes": {
+            "value": "[parameters('hubVnetAddPrefixes')]"
           },
           "defaultSubnetName": {
             "value": "[parameters('defaultSubnetName')]"
@@ -520,11 +520,11 @@
           "azureBastionSubnetAddressPrefix": {
             "value": "[parameters('azureBastionSubnetAddressPrefix')]"
           },
-          "vmsubnetSubnetName": {
-            "value": "[parameters('vmsubnetSubnetName')]"
+          "vmSubnetName": {
+            "value": "[parameters('vmSubnetName')]"
           },
-          "vmsubnetSubnetAddressPrefix": {
-            "value": "[parameters('vmsubnetSubnetAddressPrefix')]"
+          "vmSubnetAddressPrefix": {
+            "value": "[parameters('vmSubnetAddressPrefix')]"
           },
           "nsgBastionName": {
             "value": "[parameters('nsgBastionName')]"
@@ -537,7 +537,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "3555938562875306772"
+              "templateHash": "8322740086550188231"
             }
           },
           "parameters": {
@@ -553,7 +553,7 @@
                 "description": "The name of the hub virtual network."
               }
             },
-            "hubVNETaddPrefixes": {
+            "hubVnetAddPrefixes": {
               "type": "array",
               "metadata": {
                 "description": "The address prefixes for the hub virtual network."
@@ -565,13 +565,13 @@
                 "description": "The name of the Azure Firewall."
               }
             },
-            "rtVMSubnetName": {
+            "rtVmSubnetName": {
               "type": "string",
               "metadata": {
                 "description": "The name of the route table for the VM subnet."
               }
             },
-            "fwnatRuleCollections": {
+            "fwNatRuleCollections": {
               "type": "array",
               "metadata": {
                 "description": "NAT rule collections for Azure Firewall."
@@ -638,13 +638,13 @@
                 "description": "The address prefix for the Azure Bastion subnet."
               }
             },
-            "vmsubnetSubnetName": {
+            "vmSubnetName": {
               "type": "string",
               "metadata": {
                 "description": "The name of the VM subnet."
               }
             },
-            "vmsubnetSubnetAddressPrefix": {
+            "vmSubnetAddressPrefix": {
               "type": "string",
               "metadata": {
                 "description": "The address prefix for the VM subnet."
@@ -656,7 +656,7 @@
                 "description": "The name of the NSG for the Bastion subnet."
               }
             },
-            "spokeSubnetAKSPrefix": {
+            "spokeSubnetAksPrefix": {
               "type": "string",
               "defaultValue": "10.1.1.0/24",
               "metadata": {
@@ -670,7 +670,7 @@
                 "description": "Enable usage and telemetry feedback to Microsoft."
               }
             },
-            "fwapplicationRuleCollections": {
+            "fwApplicationRuleCollections": {
               "type": "array",
               "defaultValue": [
                 {
@@ -701,7 +701,7 @@
                           "motd.ubuntu.com"
                         ],
                         "sourceAddresses": [
-                          "[parameters('spokeSubnetAKSPrefix')]"
+                          "[parameters('spokeSubnetAksPrefix')]"
                         ]
                       }
                     ]
@@ -753,7 +753,7 @@
                           "production.cloudflare.docker.com"
                         ],
                         "sourceAddresses": [
-                          "[parameters('spokeSubnetAKSPrefix')]"
+                          "[parameters('spokeSubnetAksPrefix')]"
                         ]
                       },
                       {
@@ -776,7 +776,7 @@
                           "vortex.data.microsoft.com"
                         ],
                         "sourceAddresses": [
-                          "[parameters('spokeSubnetAKSPrefix')]"
+                          "[parameters('spokeSubnetAksPrefix')]"
                         ]
                       },
                       {
@@ -796,7 +796,7 @@
                           "AzureKubernetesService"
                         ],
                         "sourceAddresses": [
-                          "[parameters('spokeSubnetAKSPrefix')]"
+                          "[parameters('spokeSubnetAksPrefix')]"
                         ]
                       }
                     ]
@@ -807,7 +807,7 @@
                 "description": "Returns the firewall application rule collections"
               }
             },
-            "fwnetworkRuleCollections": {
+            "fwNetworkRuleCollections": {
               "type": "array",
               "defaultValue": [
                 {
@@ -824,7 +824,7 @@
                           "UDP"
                         ],
                         "sourceAddresses": [
-                          "[parameters('spokeSubnetAKSPrefix')]"
+                          "[parameters('spokeSubnetAksPrefix')]"
                         ],
                         "destinationAddresses": [
                           "*"
@@ -839,7 +839,7 @@
                           "TCP"
                         ],
                         "sourceAddresses": [
-                          "[parameters('spokeSubnetAKSPrefix')]"
+                          "[parameters('spokeSubnetAksPrefix')]"
                         ],
                         "destinationAddresses": [
                           "*"
@@ -854,7 +854,7 @@
                           "UDP"
                         ],
                         "sourceAddresses": [
-                          "[parameters('spokeSubnetAKSPrefix')]"
+                          "[parameters('spokeSubnetAksPrefix')]"
                         ],
                         "destinationAddresses": [
                           "*"
@@ -1388,7 +1388,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "addressPrefixes": {
-                    "value": "[parameters('hubVNETaddPrefixes')]"
+                    "value": "[parameters('hubVnetAddPrefixes')]"
                   },
                   "name": {
                     "value": "[parameters('vnetHubName')]"
@@ -1416,8 +1416,8 @@
                         "networkSecurityGroupResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('nsgBastionName')), '2025-04-01').outputs.resourceId.value]"
                       },
                       {
-                        "name": "[parameters('vmsubnetSubnetName')]",
-                        "addressPrefix": "[parameters('vmsubnetSubnetAddressPrefix')]"
+                        "name": "[parameters('vmSubnetName')]",
+                        "addressPrefix": "[parameters('vmSubnetAddressPrefix')]"
                       }
                     ]
                   },
@@ -3868,7 +3868,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "AZFW-PIP",
+              "name": "pip-afw",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -3877,7 +3877,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "AZFW-PIP"
+                    "value": "pip-afw"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -4507,7 +4507,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "AZFW-Management-PIP",
+              "name": "pip-afw-mgmt",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -4516,7 +4516,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "AZFW-Management-PIP"
+                    "value": "pip-afw-mgmt"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -5146,7 +5146,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "publicipbastion",
+              "name": "pip-bastion",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -5155,7 +5155,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "publicipbastion"
+                    "value": "pip-bastion"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -5785,7 +5785,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "bastion",
+              "name": "bas-hub",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -5794,13 +5794,13 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "bastion"
+                    "value": "bas-hub"
                   },
                   "virtualNetworkResourceId": {
                     "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetHubName')), '2025-04-01').outputs.resourceId.value]"
                   },
                   "bastionSubnetPublicIpResourceId": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'publicipbastion'), '2025-04-01').outputs.resourceId.value]"
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'pip-bastion'), '2025-04-01').outputs.resourceId.value]"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -7497,7 +7497,7 @@
                 }
               },
               "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'publicipbastion')]",
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'pip-bastion')]",
                 "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]",
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetHubName'))]"
               ]
@@ -7505,7 +7505,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "[parameters('rtVMSubnetName')]",
+              "name": "[parameters('rtVmSubnetName')]",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -7514,7 +7514,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "[parameters('rtVMSubnetName')]"
+                    "value": "[parameters('rtVmSubnetName')]"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -7872,19 +7872,19 @@
                     "value": "[parameters('availabilityZones')]"
                   },
                   "publicIPResourceID": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'AZFW-PIP'), '2025-04-01').outputs.resourceId.value]"
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'pip-afw'), '2025-04-01').outputs.resourceId.value]"
                   },
                   "managementIPResourceID": {
-                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'AZFW-Management-PIP'), '2025-04-01').outputs.resourceId.value]"
+                    "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'pip-afw-mgmt'), '2025-04-01').outputs.resourceId.value]"
                   },
                   "applicationRuleCollections": {
-                    "value": "[parameters('fwapplicationRuleCollections')]"
+                    "value": "[parameters('fwApplicationRuleCollections')]"
                   },
                   "natRuleCollections": {
-                    "value": "[parameters('fwnatRuleCollections')]"
+                    "value": "[parameters('fwNatRuleCollections')]"
                   },
                   "networkRuleCollections": {
-                    "value": "[parameters('fwnetworkRuleCollections')]"
+                    "value": "[parameters('fwNetworkRuleCollections')]"
                   }
                 },
                 "template": {
@@ -9946,8 +9946,8 @@
                 }
               },
               "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'AZFW-PIP')]",
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'AZFW-Management-PIP')]",
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'pip-afw')]",
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'pip-afw-mgmt')]",
                 "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]",
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetHubName'))]"
               ]
@@ -10034,14 +10034,14 @@
           "vnetSpokeName": {
             "value": "[parameters('vnetSpokeName')]"
           },
-          "spokeVNETaddPrefixes": {
-            "value": "[parameters('spokeVNETaddPrefixes')]"
+          "spokeVnetAddPrefixes": {
+            "value": "[parameters('spokeVnetAddPrefixes')]"
           },
-          "rtAKSSubnetName": {
-            "value": "[parameters('rtAKSSubnetName')]"
+          "rtAksSubnetName": {
+            "value": "[parameters('rtAksSubnetName')]"
           },
-          "firewallIP": {
-            "value": "[parameters('firewallIP')]"
+          "firewallIp": {
+            "value": "[parameters('firewallIp')]"
           },
           "vnetHubName": {
             "value": "[parameters('vnetHubName')]"
@@ -10052,8 +10052,8 @@
           "vnetHubRgName": {
             "value": "[parameters('rgHubName')]"
           },
-          "nsgAKSName": {
-            "value": "[parameters('nsgAKSName')]"
+          "nsgAksName": {
+            "value": "[parameters('nsgAksName')]"
           },
           "securityRules": {
             "value": "[parameters('securityRules')]"
@@ -10061,14 +10061,14 @@
           "spokeSubnetDefaultPrefix": {
             "value": "[parameters('spokeSubnetDefaultPrefix')]"
           },
-          "spokeSubnetAKSPrefix": {
-            "value": "[parameters('spokeSubnetAKSPrefix')]"
+          "spokeSubnetAksPrefix": {
+            "value": "[parameters('spokeSubnetAksPrefix')]"
           },
-          "spokeSubnetAGCPrefix": {
-            "value": "[parameters('spokeSubnetAGCPrefix')]"
+          "spokeSubnetAgcPrefix": {
+            "value": "[parameters('spokeSubnetAgcPrefix')]"
           },
-          "spokeSubnetVMPrefix": {
-            "value": "[parameters('spokeSubnetVMPrefix')]"
+          "spokeSubnetVmPrefix": {
+            "value": "[parameters('spokeSubnetVmPrefix')]"
           },
           "spokeSubnetPLinkervicePrefix": {
             "value": "[parameters('spokeSubnetPLinkervicePrefix')]"
@@ -10077,7 +10077,7 @@
             "value": "[parameters('remotePeeringName')]"
           },
           "vmSize": {
-            "value": "[parameters('linuxVirtualMachineVMSize')]"
+            "value": "[parameters('linuxVirtualMachineVmSize')]"
           },
           "jumpboxAdminPassword": {
             "value": "[parameters('jumpboxAdminPassword')]"
@@ -10090,7 +10090,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "10182849648782112636"
+              "templateHash": "5055718755056415477"
             }
           },
           "parameters": {
@@ -10106,19 +10106,19 @@
                 "description": "The name of the spoke virtual network."
               }
             },
-            "spokeVNETaddPrefixes": {
+            "spokeVnetAddPrefixes": {
               "type": "array",
               "metadata": {
                 "description": "The address prefixes for the spoke virtual network."
               }
             },
-            "rtAKSSubnetName": {
+            "rtAksSubnetName": {
               "type": "string",
               "metadata": {
                 "description": "The name of the route table for the AKS subnet."
               }
             },
-            "firewallIP": {
+            "firewallIp": {
               "type": "string",
               "metadata": {
                 "description": "The private IP address of the Azure Firewall in the hub network."
@@ -10142,7 +10142,7 @@
                 "description": "The name of the resource group containing the hub VNet."
               }
             },
-            "nsgAKSName": {
+            "nsgAksName": {
               "type": "string",
               "metadata": {
                 "description": "The name of the NSG for the AKS subnet."
@@ -10176,21 +10176,21 @@
                 "description": "The address prefix for the default subnet."
               }
             },
-            "spokeSubnetAKSPrefix": {
+            "spokeSubnetAksPrefix": {
               "type": "string",
               "defaultValue": "10.1.1.0/24",
               "metadata": {
                 "description": "The address prefix for the AKS subnet."
               }
             },
-            "spokeSubnetAGCPrefix": {
+            "spokeSubnetAgcPrefix": {
               "type": "string",
               "defaultValue": "10.1.2.0/24",
               "metadata": {
                 "description": "The address prefix for the AGC delegated subnet."
               }
             },
-            "spokeSubnetVMPrefix": {
+            "spokeSubnetVmPrefix": {
               "type": "string",
               "defaultValue": "10.1.3.0/24",
               "metadata": {
@@ -10227,7 +10227,7 @@
           },
           "variables": {
             "vmZones": "[pickZones('Microsoft.Compute', 'virtualMachines', parameters('location'), 1)]",
-            "privateDNSZoneAKSSuffixes": {
+            "privateDnsZoneAksSuffixes": {
               "AzureCloud": ".azmk8s.io",
               "AzureUSGovernment": ".cx.aks.containerservice.azure.us",
               "AzureChinaCloud": ".cx.prod.service.azk8s.cn",
@@ -10747,7 +10747,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "addressPrefixes": {
-                    "value": "[parameters('spokeVNETaddPrefixes')]"
+                    "value": "[parameters('spokeVnetAddPrefixes')]"
                   },
                   "name": {
                     "value": "[parameters('vnetSpokeName')]"
@@ -10763,18 +10763,18 @@
                       },
                       {
                         "name": "AKS",
-                        "addressPrefix": "[parameters('spokeSubnetAKSPrefix')]",
-                        "routeTableResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('rtAKSSubnetName')), '2025-04-01').outputs.resourceId.value]",
-                        "networkSecurityGroupResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('nsgAKSName')), '2025-04-01').outputs.resourceId.value]"
+                        "addressPrefix": "[parameters('spokeSubnetAksPrefix')]",
+                        "routeTableResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('rtAksSubnetName')), '2025-04-01').outputs.resourceId.value]",
+                        "networkSecurityGroupResourceId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('nsgAksName')), '2025-04-01').outputs.resourceId.value]"
                       },
                       {
                         "name": "AGCSubnet",
-                        "addressPrefix": "[parameters('spokeSubnetAGCPrefix')]",
+                        "addressPrefix": "[parameters('spokeSubnetAgcPrefix')]",
                         "delegation": "Microsoft.ServiceNetworking/trafficControllers"
                       },
                       {
                         "name": "vmsubnet",
-                        "addressPrefix": "[parameters('spokeSubnetVMPrefix')]"
+                        "addressPrefix": "[parameters('spokeSubnetVmPrefix')]"
                       },
                       {
                         "name": "servicespe",
@@ -12434,15 +12434,15 @@
                 }
               },
               "dependsOn": [
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('nsgAKSName'))]",
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('nsgAksName'))]",
                 "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]",
-                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('rtAKSSubnetName'))]"
+                "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('rtAksSubnetName'))]"
               ]
             },
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "[parameters('nsgAKSName')]",
+              "name": "[parameters('nsgAksName')]",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -12451,7 +12451,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "[parameters('nsgAKSName')]"
+                    "value": "[parameters('nsgAksName')]"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -13105,7 +13105,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "[parameters('rtAKSSubnetName')]",
+              "name": "[parameters('rtAksSubnetName')]",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -13114,7 +13114,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "[parameters('rtAKSSubnetName')]"
+                    "value": "[parameters('rtAksSubnetName')]"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -13125,7 +13125,7 @@
                         "name": "vm-to-internet",
                         "properties": {
                           "addressPrefix": "0.0.0.0/0",
-                          "nextHopIpAddress": "[parameters('firewallIP')]",
+                          "nextHopIpAddress": "[parameters('firewallIp')]",
                           "nextHopType": "VirtualAppliance"
                         }
                       }
@@ -23677,7 +23677,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "[format('privatelink.{0}{1}', toLower(parameters('location')), variables('privateDNSZoneAKSSuffixes')[environment().name])]"
+                    "value": "[format('privatelink.{0}{1}', toLower(parameters('location')), variables('privateDnsZoneAksSuffixes')[environment().name])]"
                   },
                   "location": {
                     "value": "global"
@@ -27161,7 +27161,7 @@
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "aksIdentity",
+              "name": "id-aks",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -27170,7 +27170,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "aksIdentity"
+                    "value": "id-aks"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -27683,7 +27683,7 @@
                     }
                   },
                   "name": {
-                    "value": "jumpbox"
+                    "value": "vm-jumpbox"
                   },
                   "nicConfigurations": {
                     "value": [
@@ -36801,14 +36801,14 @@
           "subnetName": {
             "value": "[parameters('subnetName')]"
           },
-          "privateDNSZoneACRName": {
-            "value": "[parameters('privateDNSZoneACRName')]"
+          "privateDnsZoneAcrName": {
+            "value": "[parameters('privateDnsZoneAcrName')]"
           },
-          "privateDNSZoneKVName": {
-            "value": "[parameters('privateDNSZoneKVName')]"
+          "privateDnsZoneKvName": {
+            "value": "[parameters('privateDnsZoneKvName')]"
           },
-          "privateDNSZoneSAName": {
-            "value": "[parameters('privateDNSZoneSAName')]"
+          "privateDnsZoneSaName": {
+            "value": "[parameters('privateDnsZoneSaName')]"
           },
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"
@@ -36825,7 +36825,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "9953326879417741521"
+              "templateHash": "16619096037125444699"
             }
           },
           "parameters": {
@@ -36847,21 +36847,21 @@
                 "description": "The name of the subnet for private endpoints."
               }
             },
-            "privateDNSZoneACRName": {
+            "privateDnsZoneAcrName": {
               "type": "string",
               "defaultValue": "[format('privatelink{0}', environment().suffixes.acrLoginServer)]",
               "metadata": {
                 "description": "The private DNS zone name for Azure Container Registry."
               }
             },
-            "privateDNSZoneKVName": {
+            "privateDnsZoneKvName": {
               "type": "string",
               "defaultValue": "privatelink.vaultcore.azure.net",
               "metadata": {
                 "description": "The private DNS zone name for Azure Key Vault."
               }
             },
-            "privateDNSZoneSAName": {
+            "privateDnsZoneSaName": {
               "type": "string",
               "defaultValue": "[format('privatelink.file.{0}', environment().suffixes.storage)]",
               "metadata": {
@@ -36870,21 +36870,21 @@
             },
             "acrName": {
               "type": "string",
-              "defaultValue": "[format('eslzacr{0}', uniqueString('acrvws', uniqueString(subscription().id, utcNow())))]",
+              "defaultValue": "[format('cr{0}', uniqueString('acrvws', uniqueString(subscription().id, utcNow())))]",
               "metadata": {
                 "description": "The name of the Azure Container Registry."
               }
             },
-            "keyvaultName": {
+            "keyVaultName": {
               "type": "string",
-              "defaultValue": "[format('eslz-kv-{0}', uniqueString('acrvws', uniqueString(subscription().id, utcNow())))]",
+              "defaultValue": "[format('kv-{0}', uniqueString('acrvws', uniqueString(subscription().id, utcNow())))]",
               "metadata": {
                 "description": "The name of the Azure Key Vault."
               }
             },
             "storageAccountName": {
               "type": "string",
-              "defaultValue": "[format('eslzsa{0}', uniqueString('aks', uniqueString(subscription().id), utcNow()))]",
+              "defaultValue": "[format('st{0}', uniqueString('aks', uniqueString(subscription().id), utcNow()))]",
               "metadata": {
                 "description": "The name of the storage account."
               }
@@ -36924,32 +36924,32 @@
                 "rg"
               ]
             },
-            "privateDNSZoneSA": {
+            "existingPrivateDnsZoneSa": {
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
               "apiVersion": "2024-06-01",
               "resourceGroup": "[parameters('rgName')]",
-              "name": "[parameters('privateDNSZoneSAName')]",
+              "name": "[parameters('privateDnsZoneSaName')]",
               "dependsOn": [
                 "rg"
               ]
             },
-            "privateDNSZoneKV": {
+            "existingPrivateDnsZoneKv": {
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
               "apiVersion": "2024-06-01",
               "resourceGroup": "[parameters('rgName')]",
-              "name": "[parameters('privateDNSZoneKVName')]",
+              "name": "[parameters('privateDnsZoneKvName')]",
               "dependsOn": [
                 "rg"
               ]
             },
-            "privateDNSZoneACR": {
+            "existingPrivateDnsZoneAcr": {
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
               "apiVersion": "2024-06-01",
               "resourceGroup": "[parameters('rgName')]",
-              "name": "[parameters('privateDNSZoneACRName')]",
+              "name": "[parameters('privateDnsZoneAcrName')]",
               "dependsOn": [
                 "rg"
               ]
@@ -37489,7 +37489,7 @@
                         "privateDnsZoneGroup": {
                           "privateDnsZoneGroupConfigs": [
                             {
-                              "privateDnsZoneResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', parameters('privateDNSZoneACRName'))]"
+                              "privateDnsZoneResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', parameters('privateDnsZoneAcrName'))]"
                             }
                           ]
                         },
@@ -40676,7 +40676,7 @@
             "vault": {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "[parameters('keyvaultName')]",
+              "name": "[parameters('keyVaultName')]",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -40685,7 +40685,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "[parameters('keyvaultName')]"
+                    "value": "[parameters('keyVaultName')]"
                   },
                   "enablePurgeProtection": {
                     "value": true
@@ -40721,7 +40721,7 @@
                         "privateDnsZoneGroup": {
                           "privateDnsZoneGroupConfigs": [
                             {
-                              "privateDnsZoneResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', parameters('privateDNSZoneKVName'))]"
+                              "privateDnsZoneResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', parameters('privateDnsZoneKvName'))]"
                             }
                           ]
                         },
@@ -44158,7 +44158,7 @@
                         "privateDnsZoneGroup": {
                           "privateDnsZoneGroupConfigs": [
                             {
-                              "privateDnsZoneResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', parameters('privateDNSZoneSAName'))]"
+                              "privateDnsZoneResourceId": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', parameters('privateDnsZoneSaName'))]"
                             }
                           ]
                         },
@@ -52348,13 +52348,13 @@
           "autoScalingProfile": {
             "value": "[parameters('autoScalingProfile')]"
           },
-          "aksadminaccessprincipalId": {
-            "value": "[parameters('aksadminaccessprincipalId')]"
+          "aksAdminAccessPrincipalId": {
+            "value": "[parameters('aksAdminAccessPrincipalId')]"
           },
           "kubernetesVersion": {
             "value": "[parameters('kubernetesVersion')]"
           },
-          "keyvaultName": {
+          "keyVaultName": {
             "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', 'aksSupporting'), '2025-04-01').outputs.keyVaultName.value]"
           },
           "networkPlugin": {
@@ -52367,7 +52367,7 @@
             "value": "[parameters('aksClusterName')]"
           },
           "vmSize": {
-            "value": "[parameters('aksVMSize')]"
+            "value": "[parameters('aksVmSize')]"
           },
           "aksSkuName": {
             "value": "[parameters('aksSkuName')]"
@@ -52387,7 +52387,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "12712825286428203978"
+              "templateHash": "12309362544389073741"
             }
           },
           "parameters": {
@@ -52434,7 +52434,7 @@
                 "description": "Cluster autoscaler profile settings."
               }
             },
-            "aksadminaccessprincipalId": {
+            "aksAdminAccessPrincipalId": {
               "type": "string",
               "metadata": {
                 "description": "The object ID of the Entra ID group for AKS cluster admins."
@@ -52446,7 +52446,7 @@
                 "description": "The Kubernetes version for the AKS cluster."
               }
             },
-            "keyvaultName": {
+            "keyVaultName": {
               "type": "string",
               "metadata": {
                 "description": "The name of the Key Vault deployed in 05-AKS-supporting."
@@ -52522,13 +52522,13 @@
             }
           },
           "variables": {
-            "privateDNSZoneAKSSuffixes": {
+            "privateDnsZoneAksSuffixes": {
               "AzureCloud": ".azmk8s.io",
               "AzureUSGovernment": ".cx.aks.containerservice.azure.us",
               "AzureChinaCloud": ".cx.prod.service.azk8s.cn",
               "AzureGermanCloud": ""
             },
-            "privateDNSZoneAKSName": "[format('privatelink.{0}{1}', toLower(parameters('location')), variables('privateDNSZoneAKSSuffixes')[environment().name])]",
+            "privateDnsZoneAksName": "[format('privatelink.{0}{1}', toLower(parameters('location')), variables('privateDnsZoneAksSuffixes')[environment().name])]",
             "isAutomatic": "[equals(parameters('aksSkuName'), 'Automatic')]"
           },
           "resources": {
@@ -52539,13 +52539,13 @@
               "resourceGroup": "[parameters('rgName')]",
               "name": "[parameters('aksIdentityName')]"
             },
-            "pvtdnsAKSZone": {
+            "pvtDnsAksZone": {
               "condition": "[parameters('enablePrivateCluster')]",
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
               "apiVersion": "2020-06-01",
               "resourceGroup": "[parameters('rgName')]",
-              "name": "[variables('privateDNSZoneAKSName')]",
+              "name": "[variables('privateDnsZoneAksName')]",
               "dependsOn": [
                 "rg"
               ]
@@ -52565,12 +52565,12 @@
               "type": "Microsoft.KeyVault/vaults",
               "apiVersion": "2023-07-01",
               "resourceGroup": "[parameters('rgName')]",
-              "name": "[parameters('keyvaultName')]",
+              "name": "[parameters('keyVaultName')]",
               "dependsOn": [
                 "rg"
               ]
             },
-            "ACR": {
+            "acr": {
               "existing": true,
               "type": "Microsoft.ContainerRegistry/registries",
               "apiVersion": "2023-01-01-preview",
@@ -53087,7 +53087,7 @@
             "workspace": {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
-              "name": "akslaworkspace",
+              "name": "log-aks",
               "resourceGroup": "[parameters('rgName')]",
               "properties": {
                 "expressionEvaluationOptions": {
@@ -53096,7 +53096,7 @@
                 "mode": "Incremental",
                 "parameters": {
                   "name": {
-                    "value": "akslaworkspace"
+                    "value": "log-aks"
                   },
                   "location": {
                     "value": "[parameters('location')]"
@@ -56243,7 +56243,7 @@
                   "apiServerAccessProfile": {
                     "value": {
                       "enablePrivateCluster": "[parameters('enablePrivateCluster')]",
-                      "privateDNSZone": "[if(parameters('enablePrivateCluster'), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDNSZoneAKSName')), null())]",
+                      "privateDNSZone": "[if(parameters('enablePrivateCluster'), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDnsZoneAksName')), null())]",
                       "enablePrivateClusterPublicFQDN": false
                     }
                   },
@@ -56256,7 +56256,7 @@
                       "managed": true,
                       "tenantID": "[subscription().tenantId]",
                       "adminGroupObjectIDs": [
-                        "[parameters('aksadminaccessprincipalId')]"
+                        "[parameters('aksAdminAccessPrincipalId')]"
                       ]
                     }
                   },
@@ -56271,7 +56271,7 @@
                       "workloadIdentity": {
                         "enabled": true
                       },
-                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', 'Private', 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyvaultName'))), null())]"
+                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', 'Private', 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))), null())]"
                     }
                   },
                   "omsAgentEnabled": {
@@ -59804,14 +59804,14 @@
                     "value": "managedNATGateway"
                   },
                   "publicNetworkAccess": "[if(parameters('enablePrivateCluster'), createObject('value', 'Disabled'), createObject('value', 'Enabled'))]",
-                  "apiServerAccessProfile": "[if(parameters('enablePrivateCluster'), createObject('value', createObject('enablePrivateCluster', true(), 'privateDNSZone', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDNSZoneAKSName')), 'enablePrivateClusterPublicFQDN', false())), createObject('value', null()))]",
+                  "apiServerAccessProfile": "[if(parameters('enablePrivateCluster'), createObject('value', createObject('enablePrivateCluster', true(), 'privateDNSZone', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDnsZoneAksName')), 'enablePrivateClusterPublicFQDN', false())), createObject('value', null()))]",
                   "aadProfile": {
                     "value": {
                       "enableAzureRBAC": true,
                       "managed": true,
                       "tenantID": "[subscription().tenantId]",
                       "adminGroupObjectIDs": [
-                        "[parameters('aksadminaccessprincipalId')]"
+                        "[parameters('aksAdminAccessPrincipalId')]"
                       ]
                     }
                   },
@@ -59832,7 +59832,7 @@
                       "workloadIdentity": {
                         "enabled": true
                       },
-                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', 'Private', 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyvaultName'))), null())]"
+                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', 'Private', 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))), null())]"
                     }
                   },
                   "autoUpgradeProfile": {
@@ -63344,7 +63344,7 @@
                 "parameters": {
                   "principalId": "[if(variables('isAutomatic'), createObject('value', coalesce(tryGet(tryGet(tryGet(if(variables('isAutomatic'), reference('managedClusterAutomatic'), null()), 'outputs'), 'keyvaultIdentityClientId'), 'value'), '')), createObject('value', coalesce(tryGet(tryGet(tryGet(if(not(variables('isAutomatic')), reference('managedCluster'), null()), 'outputs'), 'keyvaultIdentityClientId'), 'value'), '')))]",
                   "resourceId": {
-                    "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyvaultName'))]"
+                    "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
                   },
                   "roleDefinitionId": {
                     "value": "00482a5a-887f-4fb3-b363-3b7fe8e74483"
@@ -63839,7 +63839,7 @@
                 "parameters": {
                   "principalId": "[if(variables('isAutomatic'), createObject('value', coalesce(tryGet(tryGet(tryGet(if(variables('isAutomatic'), reference('managedClusterAutomatic'), null()), 'outputs'), 'kubeletIdentityObjectId'), 'value'), '')), createObject('value', reference('aksIdentity').principalId))]",
                   "resourceId": {
-                    "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyvaultName'))]"
+                    "value": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
                   },
                   "roleDefinitionId": {
                     "value": "12338af0-0e69-4776-bea7-57ae8d297424"

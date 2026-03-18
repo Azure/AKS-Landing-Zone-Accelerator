@@ -22,13 +22,13 @@ param enableAutoScaling bool
 param autoScalingProfile object
 
 @description('The object ID of the Entra ID group for AKS cluster admins.')
-param aksadminaccessprincipalId string
+param aksAdminAccessPrincipalId string
 
 @description('The Kubernetes version for the AKS cluster.')
 param kubernetesVersion string
 
 @description('The name of the Key Vault deployed in 05-AKS-supporting.')
-param keyvaultName string
+param keyVaultName string
 
 @description('The name of the Container Registry deployed in 05-AKS-supporting.')
 param acrName string
@@ -65,14 +65,14 @@ param enableKmsEncryption bool = true
 @description('The Key Vault key URI for KMS v2 encryption (e.g., https://myvault.vault.azure.net/keys/aks-etcd-kms). Required when enableKmsEncryption is true.')
 param kmsKeyUri string = ''
 
-var privateDNSZoneAKSSuffixes = {
+var privateDnsZoneAksSuffixes = {
   AzureCloud: '.azmk8s.io'
   AzureUSGovernment: '.cx.aks.containerservice.azure.us'
   AzureChinaCloud: '.cx.prod.service.azk8s.cn'
   AzureGermanCloud: '' //TODO: what is the correct value here?
 }
 
-var privateDNSZoneAKSName = 'privatelink.${toLower(location)}${privateDNSZoneAKSSuffixes[environment().name]}'
+var privateDnsZoneAksName = 'privatelink.${toLower(location)}${privateDnsZoneAksSuffixes[environment().name]}'
 
 // Standard mode uses user-assigned identity; Automatic mode uses system-assigned
 var isAutomatic = aksSkuName == 'Automatic'
@@ -82,8 +82,8 @@ resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-3
   name: aksIdentityName
 }
 
-resource pvtdnsAKSZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (enablePrivateCluster) {
-  name: privateDNSZoneAKSName
+resource pvtDnsAksZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (enablePrivateCluster) {
+  name: privateDnsZoneAksName
   scope: resourceGroup(rg.name)
 }
 
@@ -94,10 +94,10 @@ resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existi
 
 resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
   scope: resourceGroup(rg.name)
-  name: keyvaultName
+  name: keyVaultName
 }
 
-resource ACR 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
+resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
   scope: resourceGroup(rg.name)
   name: acrName
 }
@@ -125,9 +125,9 @@ module rg 'br/public:avm/res/resources/resource-group:0.4.3' = {
 
 module workspace 'br/public:avm/res/operational-insights/workspace:0.15.0' = {
   scope: resourceGroup(rg.name)
-  name: 'akslaworkspace'
+  name: 'log-aks'
   params: {
-    name: 'akslaworkspace'
+    name: 'log-aks'
     location: location
   }
 }
@@ -189,7 +189,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
     podCidr: '172.17.0.0/16'
     apiServerAccessProfile: {
       enablePrivateCluster: enablePrivateCluster
-      privateDNSZone: enablePrivateCluster ? pvtdnsAKSZone.id : null
+      privateDNSZone: enablePrivateCluster ? pvtDnsAksZone.id : null
       enablePrivateClusterPublicFQDN: false
     }
     enableRBAC: true
@@ -198,7 +198,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
       managed: true
       tenantID: subscription().tenantId
       adminGroupObjectIDs: [
-        aksadminaccessprincipalId
+        aksAdminAccessPrincipalId
       ]
     }
     kubernetesVersion: kubernetesVersion
@@ -261,7 +261,7 @@ module managedClusterAutomatic 'br/public:avm/res/container-service/managed-clus
     apiServerAccessProfile: enablePrivateCluster
       ? {
           enablePrivateCluster: true
-          privateDNSZone: pvtdnsAKSZone.id
+          privateDNSZone: pvtDnsAksZone.id
           enablePrivateClusterPublicFQDN: false
         }
       : null
@@ -270,7 +270,7 @@ module managedClusterAutomatic 'br/public:avm/res/container-service/managed-clus
       managed: true
       tenantID: subscription().tenantId
       adminGroupObjectIDs: [
-        aksadminaccessprincipalId
+        aksAdminAccessPrincipalId
       ]
     }
     disableLocalAccounts: true
@@ -335,7 +335,7 @@ module acrAssignment 'br/public:avm/ptn/authorization/resource-role-assignment:0
     principalId: isAutomatic
       ? (managedClusterAutomatic.?outputs.?kubeletIdentityObjectId ?? '')
       : (managedCluster.?outputs.?kubeletIdentityObjectId ?? '')
-    resourceId: ACR.id
+    resourceId: acr.id
     roleDefinitionId: '7f951dda-4ed3-4680-a7ca-43fe172d538d'
     principalType: 'ServicePrincipal'
   }

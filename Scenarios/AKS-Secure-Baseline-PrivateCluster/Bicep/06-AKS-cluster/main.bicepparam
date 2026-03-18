@@ -1,6 +1,6 @@
 using 'main.bicep'
 
-param rgName = 'ESLZ-SPOKE-RG'
+param rgName = 'rg-spoke'
 
 param enableAutoScaling = true
 
@@ -24,19 +24,19 @@ param autoScalingProfile = {
   skipNodesWithSystemPods: true
 }
 
-param vnetName = 'VNet-SPOKE'
+param vnetName = 'vnet-spoke'
 
 param subnetName = 'AKS'
 
-param aksIdentityName = 'aksIdentity'
+param aksIdentityName = 'id-aks'
 
-param aksClusterName = 'aksCluster'
+param aksClusterName = 'aks-cluster'
 
-param aksadminaccessprincipalId = '<REPLACE_WITH_ENTRA_ID_GROUP_OBJECT_ID>'
+param aksAdminAccessPrincipalId = '<REPLACE_WITH_ENTRA_ID_GROUP_OBJECT_ID>'
 
 param kubernetesVersion = '1.30'
 
-param keyvaultName = '<REPLACE_WITH_KEYVAULT_NAME>'
+param keyVaultName = '<REPLACE_WITH_KEYVAULT_NAME>'
 
 param acrName = '<REPLACE_WITH_ACR_NAME>'
 
