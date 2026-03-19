@@ -57,10 +57,9 @@ az feature register --namespace Microsoft.Compute --name EncryptionAtHost
 
 > :warning: Don't move ahead to the next steps until all providers are registered.
 
-There are two groups you need to change in parameters-main.json:
+There is one admin group you need to set in main.bicepparam:
 
-* Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId.
-* Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
+* Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksAdminAccessPrincipalId.
 
 ## AKS Networking Choices
 
@@ -92,12 +91,11 @@ To deploy with AKS Automatic, set `aksSkuName=Automatic` in your deployment comm
 
 ## Deploy the cluster
 
-Review "**parameters-main.json**" file and update the values as required. Please make sure to update the Microsoft Entra ID group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using the Azure CLI or Azure PowerShell (code snippets are below).
+Review "**main.bicepparam**" file and update the values as required. Please make sure to update the Microsoft Entra ID group ID with the one created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using the Azure CLI or Azure PowerShell (code snippets are below).
 
-   > :warning: There are two groups you need to change in parameters-main.json:
+   > :warning: Update the admin group in main.bicepparam:
    >
-   > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
-   > * Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
+   > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksAdminAccessPrincipalId*.
 
 The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://learn.microsoft.com/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
 
@@ -110,25 +108,25 @@ az aks get-versions -l $REGION
 ## Reference: Follow the below steps if you are going with the Azure CNI Networking option
 
 ```bash
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p kubernetesVersion=1.30 -p networkPlugin=azure
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p main.bicepparam -p kubernetesVersion=1.30 -p networkPlugin=azure
 ```
 
 ## Reference: Follow the below steps if you are going with AKS Automatic mode
 
 ```bash
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p kubernetesVersion=1.30 -p networkPlugin=azure -p aksSkuName=Automatic
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p main.bicepparam -p kubernetesVersion=1.30 -p networkPlugin=azure -p aksSkuName=Automatic
 ```
 
 ## Reference: Follow the below steps if you are going with the Kubenet option
 
 ```bash
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.29.2 -p networkPlugin=kubenet
+az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p main.bicepparam -p acrName=$acrName -p keyVaultName=$keyVaultName -p kubernetesVersion=1.30 -p networkPlugin=kubenet
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile parameters-main.json -Location $REGION -Name ESLZ-AKS-CLUSTER
+New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile main.bicepparam -Location $REGION -Name ESLZ-AKS-CLUSTER
 ```
 
 ## Azure CNI VS Kubenet

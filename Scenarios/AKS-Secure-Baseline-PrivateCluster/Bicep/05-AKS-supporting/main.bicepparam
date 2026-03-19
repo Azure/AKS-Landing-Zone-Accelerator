@@ -1,8 +1,8 @@
 using 'main.bicep'
 
-param rgName = 'ESLZ-SPOKE-RG'
+param rgName = 'rg-spoke'
 
-param vnetName = 'VNet-SPOKE'
+param vnetName = 'vnet-spoke'
 
 param subnetName = 'servicespe'
 

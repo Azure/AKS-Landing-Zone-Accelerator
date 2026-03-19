@@ -1,6 +1,6 @@
 using 'main.bicep'
 
-param rgName = 'ESLZ-HUB-RG'
+param rgName = 'rg-hub'
 
 param availabilityZones = [
   1
@@ -8,21 +8,21 @@ param availabilityZones = [
   3
 ]
 
-param hubVNETaddPrefixes = [
+param hubVnetAddPrefixes = [
   '10.0.0.0/16'
 ]
 
-param azfwName = 'AZFW'
+param azfwName = 'afw-hub'
 
-param rtVMSubnetName = 'vm-subnet-rt'
+param rtVmSubnetName = 'rt-vm-subnet'
 
-param fwnatRuleCollections = []
+param fwNatRuleCollections = []
 
-param vnetHubName = 'VNet-HUB'
+param vnetHubName = 'vnet-hub'
 
 param defaultSubnetName = 'default'
 
-param nsgBastionName = 'NSG-Bastion'
+param nsgBastionName = 'nsg-bastion'
 
 param defaultSubnetAddressPrefix = '10.0.0.0/24'
 
@@ -38,10 +38,10 @@ param azureBastionSubnetName = 'AzureBastionSubnet'
 
 param azureBastionSubnetAddressPrefix = '10.0.2.0/27'
 
-param vmsubnetSubnetName = 'vmsubnet'
+param vmSubnetName = 'vmsubnet'
 
-param vmsubnetSubnetAddressPrefix = '10.0.3.0/24'
+param vmSubnetAddressPrefix = '10.0.3.0/24'
 
-param spokeSubnetAKSPrefix = '10.1.1.0/24'
+param spokeSubnetAksPrefix = '10.1.1.0/24'
 
 param enableTelemetry = true

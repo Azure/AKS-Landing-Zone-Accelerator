@@ -14,18 +14,18 @@ Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-supporti
 cd ../05-AKS-supporting
 ```
 
-Review "parameters-main.json" and update the values as required. Once the files are updated, deploy using az cli or Az PowerShell
+Review "main.bicepparam" and update the values as required. Once the files are updated, deploy using az cli or Az PowerShell
 
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create -n AKS-LZA-AKS-Supporting -l $REGION -f main.bicep -p parameters-main.json
+az deployment sub create -n AKS-LZA-AKS-Supporting -l $REGION -f main.bicep -p main.bicepparam
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\05-AKS-supporting\main.bicep -TemplateParameterFile .\05-AKS-supporting\parameters-main.json -Location $REGION -Name AKS-LZA-AKS-Supporting
+New-AzSubscriptionDeployment -TemplateFile .\05-AKS-supporting\main.bicep -TemplateParameterFile .\05-AKS-supporting\main.bicepparam -Location $REGION -Name AKS-LZA-AKS-Supporting
 ```
 
 :arrow_forward: [Creation of AKS & enabling Addons](./06-aks-cluster.md)

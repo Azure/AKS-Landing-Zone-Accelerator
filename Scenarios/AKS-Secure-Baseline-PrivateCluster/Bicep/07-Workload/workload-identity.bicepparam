@@ -1,6 +1,6 @@
 using 'workload-identity.bicep'
 
-param rgName = 'ESLZ-SPOKE-RG'
+param rgName = 'rg-spoke'
 
 param workloadIdentityName = 'workload-identity'
 

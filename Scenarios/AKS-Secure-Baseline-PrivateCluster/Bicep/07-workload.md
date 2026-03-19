@@ -10,7 +10,7 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 
 The first major step to deploying the application is to connect to the jumpbox inside the private network and authenticate to Azure and the AKS cluster.
 
-1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resource group, connect to the VM using the **Connect via Bastion** option using the credentials provided in the Bicep template (azureuser/Password123).
+1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resource group, connect to the VM using the **Connect via Bastion** option using the credentials provided during deployment.
 
 1. If prompted, allow the browser to read the contents of your clipboard.
 
@@ -52,7 +52,7 @@ The first major step to deploying the application is to connect to the jumpbox i
 
    ```bash
       # Enter the name of your ACR below
-      SPOKERG=AKS-LZA-SPOKE
+      SPOKERG=rg-spoke
       AKSCLUSTERNAME=$(az aks list -g $SPOKERG --query [0].name -o tsv)
       ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
    ```
@@ -428,7 +428,7 @@ If you need a private DNS zone which is integrated with AKS and accessible from 
 ```bash
 az network private-dns zone create --resource-group $SPOKERG --name private.contoso.com
 
-az network private-dns link vnet create --resource-group $SPOKERG --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
+az network private-dns link vnet create --resource-group $SPOKERG --name privateContosoComLink --zone-name private.contoso.com --virtual-network vnet-spoke --registration-enabled false
 
 ZONEID=$(az network private-dns zone show --resource-group $SPOKERG --name private.contoso.com --query "id" --output tsv)
 

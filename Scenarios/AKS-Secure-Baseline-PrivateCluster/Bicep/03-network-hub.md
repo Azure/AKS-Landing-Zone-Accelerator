@@ -21,7 +21,7 @@ Navigate to "/Scenarios/AKS-Secure-Baseline-Private-AVM/Bicep/03-Network-Hub" fo
 cd ../03-Network-Hub
 ```
 
-Review the "parameters-main.json" file and update the parameter values if required according to your needs. Pay attentions to VNET address prefixes and subnets so it doesn't overlap Spoke VNET in further steps. Also, please pay attention to update Subnet prefix for AKS cluster in Spoke VNET in the further steps to be planned and update in this file.
+Review the "main.bicepparam" file and update the parameter values if required according to your needs. Pay attentions to VNET address prefixes and subnets so it doesn't overlap Spoke VNET in further steps. Also, please pay attention to update Subnet prefix for AKS cluster in Spoke VNET in the further steps to be planned and update in this file.
 
 Once the files are updated, deploy using az cli or Az PowerShell.
 
@@ -29,14 +29,14 @@ Once the files are updated, deploy using az cli or Az PowerShell.
 
 ```azurecli
 REGION=CentralUS
-az deployment sub create -n "AKS-LZA-HUB-AKS" -l $REGION -f main.bicep -p parameters-main.json
+az deployment sub create -n "AKS-LZA-HUB-AKS" -l $REGION -f main.bicep -p main.bicepparam
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
 $REGION="CentralUS"
-New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\main.bicep -TemplateParameterFile .\03-Network-Hub\parameters-main.json -Location $REGION -Name AKS-LZA-HUB-AKS
+New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\main.bicep -TemplateParameterFile .\03-Network-Hub\main.bicepparam -Location $REGION -Name AKS-LZA-HUB-AKS
 ```
 
 :arrow_forward: [Creation of Spoke Network & its respective Components](./04-network-lz.md)
