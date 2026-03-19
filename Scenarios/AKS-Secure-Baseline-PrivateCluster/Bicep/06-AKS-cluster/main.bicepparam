@@ -34,7 +34,7 @@ param aksClusterName = 'aks-cluster'
 
 param aksAdminAccessPrincipalId = '<REPLACE_WITH_ENTRA_ID_GROUP_OBJECT_ID>'
 
-param kubernetesVersion = '1.30'
+param kubernetesVersion = '1.33'
 
 param keyVaultName = '<REPLACE_WITH_KEYVAULT_NAME>'
 
