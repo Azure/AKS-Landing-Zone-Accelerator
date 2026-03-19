@@ -367,7 +367,7 @@ param autoScalingProfile object = {
 param aksAdminAccessPrincipalId string
 
 @description('The Kubernetes version for the AKS cluster.')
-param kubernetesVersion string = '1.33'
+param kubernetesVersion string = '1.35'
 
 @description('The network plugin for the AKS cluster.')
 param networkPlugin string = 'azure'
