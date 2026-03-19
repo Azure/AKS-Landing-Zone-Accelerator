@@ -85,22 +85,22 @@ resource aksIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2024-11-3
   name: aksIdentityName
 }
 
-resource pvtDnsAksZone 'Microsoft.Network/privateDnsZones@2020-06-01' existing = if (enablePrivateCluster) {
+resource pvtDnsAksZone 'Microsoft.Network/privateDnsZones@2024-06-01' existing = if (enablePrivateCluster) {
   name: privateDnsZoneAksName
   scope: resourceGroup(rg.name)
 }
 
-resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' existing = {
+resource aksSubnet 'Microsoft.Network/virtualNetworks/subnets@2025-05-01' existing = {
   scope: resourceGroup(rg.name)
   name: '${vnetName}/${subnetName}'
 }
 
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
   scope: resourceGroup(rg.name)
   name: keyVaultName
 }
 
-resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' existing = {
+resource acr 'Microsoft.ContainerRegistry/registries@2025-11-01' existing = {
   scope: resourceGroup(rg.name)
   name: acrName
 }
