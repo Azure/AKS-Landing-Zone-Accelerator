@@ -74,7 +74,7 @@ var privateDnsZoneAksSuffixes = {
   AzureGermanCloud: '' //TODO: what is the correct value here?
 }
 
-resource vnetHub 'Microsoft.Network/virtualNetworks@2021-02-01' existing = {
+resource vnetHub 'Microsoft.Network/virtualNetworks@2025-05-01' existing = {
   scope: resourceGroup(vnetHubRgName)
   name: vnetHubName
 }

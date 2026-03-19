@@ -48,7 +48,7 @@ module workloadManagedIdentity 'br/public:avm/res/managed-identity/user-assigned
 
 // Grant the workload identity "Key Vault Secrets User" role on the Key Vault
 // This allows the CSI driver to read secrets at runtime without base64-encoded K8s Secrets.
-resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
   scope: resourceGroup(rgName)
   name: keyvaultName
 }
