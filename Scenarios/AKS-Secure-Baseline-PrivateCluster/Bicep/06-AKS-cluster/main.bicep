@@ -161,7 +161,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
     ]
     autoScalerProfile: enableAutoScaling
       ? {
-          'balance-similar-node-groups': '${autoScalingProfile.balanceSimilarNodeGroups}'
+          'balance-similar-node-groups': autoScalingProfile.balanceSimilarNodeGroups ? 'true' : 'false'
           expander: autoScalingProfile.expander
           'max-empty-bulk-delete': '${autoScalingProfile.maxEmptyBulkDelete}'
           'max-graceful-termination-sec': '${autoScalingProfile.maxGracefulTerminationSec}'
@@ -176,8 +176,8 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
           'scale-down-unready-time': autoScalingProfile.scaleDownUnreadyTime
           'scale-down-utilization-threshold': autoScalingProfile.scaleDownUtilizationThreshold
           'scan-interval': autoScalingProfile.scanInterval
-          'skip-nodes-with-local-storage': '${autoScalingProfile.skipNodesWithLocalStorage}'
-          'skip-nodes-with-system-pods': '${autoScalingProfile.skipNodesWithSystemPods}'
+          'skip-nodes-with-local-storage': autoScalingProfile.skipNodesWithLocalStorage ? 'true' : 'false'
+          'skip-nodes-with-system-pods': autoScalingProfile.skipNodesWithSystemPods ? 'true' : 'false'
         }
       : null
     networkPlugin: networkPlugin == 'azure' ? 'azure' : 'kubenet'
