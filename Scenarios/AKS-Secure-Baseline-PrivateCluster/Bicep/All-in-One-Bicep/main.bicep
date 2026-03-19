@@ -507,5 +507,6 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     aksSkuName: aksSkuName
     enableKmsEncryption: true
     kmsKeyUri: aksSupporting.outputs.kmsKeyUri
+    apiServerSubnetId: networkSpoke.outputs.apiServerSubnetId
   }
 }

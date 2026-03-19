@@ -51,6 +51,9 @@ param spokeSubnetVmPrefix string = '10.1.3.0/24'
 @description('The address prefix for the private link services subnet.')
 param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
 
+@description('The address prefix for the AKS API server VNet integration subnet.')
+param spokeSubnetApiServerPrefix string = '10.1.5.0/28'
+
 @description('The name of the peering from spoke to hub VNet.')
 param remotePeeringName string = 'spoke-hub-peering'
 
@@ -115,6 +118,11 @@ module vnetSpoke 'br/public:avm/res/network/virtual-network:0.7.2' = {
       {
         name: 'servicespe'
         addressPrefix: spokeSubnetPLinkervicePrefix
+      }
+      {
+        name: 'apiserver-subnet'
+        addressPrefix: spokeSubnetApiServerPrefix
+        delegation: 'Microsoft.ContainerService/managedClusters'
       }
     ]
     enableTelemetry: true
@@ -300,3 +308,6 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.21.0' = {
     location: location
   }
 }
+
+@description('The resource ID of the API server VNet integration subnet.')
+output apiServerSubnetId string = vnetSpoke.outputs.subnetResourceIds[5] // apiserver-subnet

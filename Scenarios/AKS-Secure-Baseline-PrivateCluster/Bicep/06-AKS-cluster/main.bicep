@@ -65,6 +65,9 @@ param enableKmsEncryption bool = true
 @description('The Key Vault key URI for KMS v2 encryption (e.g., https://myvault.vault.azure.net/keys/aks-etcd-kms). Required when enableKmsEncryption is true.')
 param kmsKeyUri string = ''
 
+@description('The resource ID of the subnet for AKS API server VNet integration. Required for private KMS access.')
+param apiServerSubnetId string = ''
+
 var privateDnsZoneAksSuffixes = {
   AzureCloud: '.azmk8s.io'
   AzureUSGovernment: '.cx.aks.containerservice.azure.us'
@@ -191,6 +194,8 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
       enablePrivateCluster: enablePrivateCluster
       privateDNSZone: enablePrivateCluster ? pvtDnsAksZone.id : null
       enablePrivateClusterPublicFQDN: false
+      enableVnetIntegration: !empty(apiServerSubnetId)
+      subnetId: !empty(apiServerSubnetId) ? apiServerSubnetId : null
     }
     enableRBAC: true
     aadProfile: {
@@ -211,7 +216,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
         ? {
             enabled: true
             keyId: kmsKeyUri
-            keyVaultNetworkAccess: 'Public'
+            keyVaultNetworkAccess: !empty(apiServerSubnetId) ? 'Private' : 'Public'
             keyVaultResourceId: keyVault.id
           }
         : null
@@ -263,6 +268,8 @@ module managedClusterAutomatic 'br/public:avm/res/container-service/managed-clus
           enablePrivateCluster: true
           privateDNSZone: pvtDnsAksZone.id
           enablePrivateClusterPublicFQDN: false
+          enableVnetIntegration: !empty(apiServerSubnetId)
+          subnetId: !empty(apiServerSubnetId) ? apiServerSubnetId : null
         }
       : null
     aadProfile: {
@@ -285,7 +292,7 @@ module managedClusterAutomatic 'br/public:avm/res/container-service/managed-clus
         ? {
             enabled: true
             keyId: kmsKeyUri
-            keyVaultNetworkAccess: 'Public'
+            keyVaultNetworkAccess: !empty(apiServerSubnetId) ? 'Private' : 'Public'
             keyVaultResourceId: keyVault.id
           }
         : null
