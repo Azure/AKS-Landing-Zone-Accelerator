@@ -324,7 +324,7 @@ param jumpboxAdminPassword string
 param subnetName string = 'servicespe'
 
 @description('The name of the storage account. Override to use a custom name.')
-param storageAccountName string = 'st${aksClusterName}${uniqueString(aksClusterName, subscription().id)}'
+param storageAccountName string = 'st${uniqueString(aksClusterName, subscription().id)}'
 
 @description('The storage account SKU type.')
 param storageAccountType string = 'Standard_GZRS'
