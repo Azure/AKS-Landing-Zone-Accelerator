@@ -211,7 +211,7 @@ module managedCluster 'br/public:avm/res/container-service/managed-cluster:0.12.
         ? {
             enabled: true
             keyId: kmsKeyUri
-            keyVaultNetworkAccess: 'Private'
+            keyVaultNetworkAccess: 'Public'
             keyVaultResourceId: keyVault.id
           }
         : null
@@ -285,7 +285,7 @@ module managedClusterAutomatic 'br/public:avm/res/container-service/managed-clus
         ? {
             enabled: true
             keyId: kmsKeyUri
-            keyVaultNetworkAccess: 'Private'
+            keyVaultNetworkAccess: 'Public'
             keyVaultResourceId: keyVault.id
           }
         : null
