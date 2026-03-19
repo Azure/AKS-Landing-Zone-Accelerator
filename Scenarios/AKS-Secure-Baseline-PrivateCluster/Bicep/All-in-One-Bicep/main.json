@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.41.2.15936",
-      "templateHash": "16440581561758286781"
+      "templateHash": "14899758415347918885"
     }
   },
   "parameters": {
@@ -476,32 +476,11 @@
         "description": "The name of the subnet for private endpoints."
       }
     },
-    "privateDnsZoneAcrName": {
-      "type": "string",
-      "defaultValue": "[format('privatelink{0}', environment().suffixes.acrLoginServer)]",
-      "metadata": {
-        "description": "The private DNS zone name for Azure Container Registry."
-      }
-    },
-    "privateDnsZoneKvName": {
-      "type": "string",
-      "defaultValue": "privatelink.vaultcore.azure.net",
-      "metadata": {
-        "description": "The private DNS zone name for Azure Key Vault."
-      }
-    },
-    "privateDnsZoneSaName": {
-      "type": "string",
-      "defaultValue": "[format('privatelink.file.{0}', environment().suffixes.storage)]",
-      "metadata": {
-        "description": "The private DNS zone name for Azure Storage."
-      }
-    },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "[format('st{0}', uniqueString('aks', uniqueString(subscription().id, utcNow())))]",
+      "defaultValue": "[format('st{0}{1}', parameters('aksClusterName'), uniqueString(parameters('aksClusterName'), subscription().id))]",
       "metadata": {
-        "description": "The name of the storage account."
+        "description": "The name of the storage account. Override to use a custom name."
       }
     },
     "storageAccountType": {
@@ -602,6 +581,11 @@
         "description": "Optional. The AKS cluster SKU name. Set to \"Automatic\" for AKS Automatic mode, or \"Base\" for standard mode."
       }
     }
+  },
+  "variables": {
+    "privateDnsZoneAcrName": "[format('privatelink{0}', environment().suffixes.acrLoginServer)]",
+    "privateDnsZoneKvName": "privatelink.vaultcore.azure.net",
+    "privateDnsZoneSaName": "[format('privatelink.file.{0}', environment().suffixes.storage)]"
   },
   "resources": [
     {
@@ -36952,13 +36936,13 @@
             "value": "[parameters('subnetName')]"
           },
           "privateDnsZoneAcrName": {
-            "value": "[parameters('privateDnsZoneAcrName')]"
+            "value": "[variables('privateDnsZoneAcrName')]"
           },
           "privateDnsZoneKvName": {
-            "value": "[parameters('privateDnsZoneKvName')]"
+            "value": "[variables('privateDnsZoneKvName')]"
           },
           "privateDnsZoneSaName": {
-            "value": "[parameters('privateDnsZoneSaName')]"
+            "value": "[variables('privateDnsZoneSaName')]"
           },
           "storageAccountName": {
             "value": "[parameters('storageAccountName')]"

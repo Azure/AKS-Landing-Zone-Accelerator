@@ -323,17 +323,8 @@ param jumpboxAdminPassword string
 @description('The name of the subnet for private endpoints.')
 param subnetName string = 'servicespe'
 
-@description('The private DNS zone name for Azure Container Registry.')
-param privateDnsZoneAcrName string = 'privatelink${environment().suffixes.acrLoginServer}'
-
-@description('The private DNS zone name for Azure Key Vault.')
-param privateDnsZoneKvName string = 'privatelink.vaultcore.azure.net'
-
-@description('The private DNS zone name for Azure Storage.')
-param privateDnsZoneSaName string = 'privatelink.file.${environment().suffixes.storage}'
-
-@description('The name of the storage account.')
-param storageAccountName string = 'st${uniqueString('aks', uniqueString(subscription().id, utcNow()))}'
+@description('The name of the storage account. Override to use a custom name.')
+param storageAccountName string = 'st${aksClusterName}${uniqueString(aksClusterName, subscription().id)}'
 
 @description('The storage account SKU type.')
 param storageAccountType string = 'Standard_GZRS'
@@ -393,6 +384,17 @@ param aksVmSize string = 'Standard_D4d_v5'
   'Automatic'
 ])
 param aksSkuName string = 'Base'
+
+//////////////////////////////////
+//////////////////////////////////
+// VARIABLES
+//////////////////////////////////
+//////////////////////////////////
+
+// Private DNS zone names are deterministic — derived from the Azure environment
+var privateDnsZoneAcrName = 'privatelink${environment().suffixes.acrLoginServer}'
+var privateDnsZoneKvName = 'privatelink.vaultcore.azure.net'
+var privateDnsZoneSaName = 'privatelink.file.${environment().suffixes.storage}'
 
 //////////////////////////////////
 //////////////////////////////////
