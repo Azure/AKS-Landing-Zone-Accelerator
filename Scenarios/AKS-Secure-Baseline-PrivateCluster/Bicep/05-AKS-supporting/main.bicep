@@ -167,5 +167,5 @@ output keyVaultName string = vault.outputs.name
 @description('The resource ID of the Azure Key Vault.')
 output keyVaultResourceId string = vault.outputs.resourceId
 
-@description('The URI of the KMS encryption key (empty if KMS not enabled).')
-output kmsKeyUri string = enableKmsEncryption ? '${vault.outputs.uri}keys/aks-etcd-kms' : ''
+@description('The versioned URI of the KMS encryption key (empty if KMS not enabled).')
+output kmsKeyUri string = enableKmsEncryption ? vault.outputs.keys[0].uriWithVersion : ''
