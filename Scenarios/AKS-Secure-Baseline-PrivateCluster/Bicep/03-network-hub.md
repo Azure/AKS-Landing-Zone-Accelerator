@@ -23,20 +23,32 @@ cd ../03-Network-Hub
 
 Review the "main.bicepparam" file and update the parameter values if required according to your needs. Pay attentions to VNET address prefixes and subnets so it doesn't overlap Spoke VNET in further steps. Also, please pay attention to update Subnet prefix for AKS cluster in Spoke VNET in the further steps to be planned and update in this file.
 
-Once the files are updated, deploy using az cli or Az PowerShell.
+Once the files are updated, deploy using [deployment stacks](https://learn.microsoft.com/azure/azure-resource-manager/bicep/deployment-stacks) for lifecycle management and drift protection.
 
 # [CLI](#tab/CLI)
 
 ```azurecli
-REGION=CentralUS
-az deployment sub create -n "AKS-LZA-HUB-AKS" -l $REGION -f main.bicep -p main.bicepparam
+REGION=eastus2
+az stack sub create \
+  --name "AKS-LZA-HUB" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-$REGION="CentralUS"
-New-AzSubscriptionDeployment -TemplateFile .\03-Network-Hub\main.bicep -TemplateParameterFile .\03-Network-Hub\main.bicepparam -Location $REGION -Name AKS-LZA-HUB-AKS
+$REGION = "eastus2"
+New-AzSubscriptionDeploymentStack `
+  -Name "AKS-LZA-HUB" `
+  -Location $REGION `
+  -TemplateFile .\03-Network-Hub\main.bicep `
+  -TemplateParameterFile .\03-Network-Hub\main.bicepparam `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 :arrow_forward: [Creation of Spoke Network & its respective Components](./04-network-lz.md)

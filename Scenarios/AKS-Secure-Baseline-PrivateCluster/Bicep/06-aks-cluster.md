@@ -108,25 +108,52 @@ az aks get-versions -l $REGION
 ## Reference: Follow the below steps if you are going with the Azure CNI Networking option
 
 ```bash
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p main.bicepparam -p kubernetesVersion=1.30 -p networkPlugin=azure
+az stack sub create \
+  --name "AKS-LZA-CLUSTER" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --parameters kubernetesVersion=1.33 networkPlugin=azure \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 ## Reference: Follow the below steps if you are going with AKS Automatic mode
 
 ```bash
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p main.bicepparam -p kubernetesVersion=1.30 -p networkPlugin=azure -p aksSkuName=Automatic
+az stack sub create \
+  --name "AKS-LZA-CLUSTER" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --parameters kubernetesVersion=1.33 networkPlugin=azure aksSkuName=Automatic \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 ## Reference: Follow the below steps if you are going with the Kubenet option
 
 ```bash
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p main.bicepparam -p acrName=$acrName -p keyVaultName=$keyVaultName -p kubernetesVersion=1.30 -p networkPlugin=kubenet
+az stack sub create \
+  --name "AKS-LZA-CLUSTER" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --parameters acrName=$acrName keyVaultName=$keyVaultName kubernetesVersion=1.33 networkPlugin=kubenet \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile main.bicepparam -Location $REGION -Name ESLZ-AKS-CLUSTER
+New-AzSubscriptionDeploymentStack `
+  -Name "AKS-LZA-CLUSTER" `
+  -Location $REGION `
+  -TemplateFile main.bicep `
+  -TemplateParameterFile main.bicepparam `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 ## Azure CNI VS Kubenet

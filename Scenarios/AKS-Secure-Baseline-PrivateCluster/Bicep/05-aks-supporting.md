@@ -14,18 +14,30 @@ Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/05-AKS-supporti
 cd ../05-AKS-supporting
 ```
 
-Review "main.bicepparam" and update the values as required. Once the files are updated, deploy using az cli or Az PowerShell
+Review "main.bicepparam" and update the values as required. Once the files are updated, deploy using [deployment stacks](https://learn.microsoft.com/azure/azure-resource-manager/bicep/deployment-stacks).
 
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create -n AKS-LZA-AKS-Supporting -l $REGION -f main.bicep -p main.bicepparam
+az stack sub create \
+  --name "AKS-LZA-SUPPORTING" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\05-AKS-supporting\main.bicep -TemplateParameterFile .\05-AKS-supporting\main.bicepparam -Location $REGION -Name AKS-LZA-AKS-Supporting
+New-AzSubscriptionDeploymentStack `
+  -Name "AKS-LZA-SUPPORTING" `
+  -Location $REGION `
+  -TemplateFile .\05-AKS-supporting\main.bicep `
+  -TemplateParameterFile .\05-AKS-supporting\main.bicepparam `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 :arrow_forward: [Creation of AKS & enabling Addons](./06-aks-cluster.md)

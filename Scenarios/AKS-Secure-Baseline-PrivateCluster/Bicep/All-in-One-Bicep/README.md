@@ -52,14 +52,22 @@ Now press the **Review + Create** button, followed by **Create** to start the de
 
 #### Option 2: Using Azure CLI
 
-Log into your Azure CLI and run the command below
+Log into your Azure CLI and deploy using a [deployment stack](https://learn.microsoft.com/azure/azure-resource-manager/bicep/deployment-stacks) for lifecycle management:
 
 ```bash
 LOCATION=<Your azure region>
 ```
 
 ```bash
-az deployment sub create --location $LOCATION --template-file main.bicep --parameters @main.json --name aksLZAAllInOne --parameters aksAdminAccessPrincipalId=<your Azure entra group principal id> --parameters jumpboxAdminPassword=<your secure password>
+az stack sub create \
+  --name "AKS-Secure-Baseline" \
+  --location $LOCATION \
+  --template-file main.bicep \
+  --parameters @main.json \
+  --parameters aksAdminAccessPrincipalId=<your Azure entra group principal id> \
+  --parameters jumpboxAdminPassword=<your secure password> \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 ### Step 3 - Deploy the application to AKS.

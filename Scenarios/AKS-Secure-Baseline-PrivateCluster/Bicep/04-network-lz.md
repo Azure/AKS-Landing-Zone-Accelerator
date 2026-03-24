@@ -15,18 +15,30 @@ Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/04-Network-LZ" 
 cd ../04-Network-LZ
 ```
 
-Review "main.bicepparam" and update the values as required. Please note to verify the Azure Firewall Private IP from the previous deployment in step 03. Once the files are updated, deploy using az cli or Az PowerShell
+Review "main.bicepparam" and update the values as required. Please note to verify the Azure Firewall Private IP from the previous deployment in step 03. Once the files are updated, deploy using [deployment stacks](https://learn.microsoft.com/azure/azure-resource-manager/bicep/deployment-stacks).
 
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create -n "AKS-LZA-Spoke-AKS" -l $REGION -f main.bicep -p main.bicepparam
+az stack sub create \
+  --name "AKS-LZA-SPOKE" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\main.bicep -TemplateParameterFile .\04-Network-LZ\main.bicepparam -Location $REGION -Name AKS-LZA-Spoke-AKS
+New-AzSubscriptionDeploymentStack `
+  -Name "AKS-LZA-SPOKE" `
+  -Location $REGION `
+  -TemplateFile .\04-Network-LZ\main.bicep `
+  -TemplateParameterFile .\04-Network-LZ\main.bicepparam `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 :arrow_forward: [Creation of Supporting Components for AKS](./05-aks-supporting.md)
