@@ -19,13 +19,13 @@ param privateDnsZoneKvName string = 'privatelink.vaultcore.azure.net'
 param privateDnsZoneSaName string = 'privatelink.file.${environment().suffixes.storage}'
 
 @description('The name of the Azure Container Registry.')
-param acrName string = 'cr${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
+param acrName string = 'cr${uniqueString(rgName, subscription().id)}'
 
 @description('The name of the Azure Key Vault.')
-param keyVaultName string = 'kv-${uniqueString('acrvws', uniqueString(subscription().id, utcNow()))}'
+param keyVaultName string = 'kv-${uniqueString(rgName, subscription().id)}'
 
 @description('The name of the storage account.')
-param storageAccountName string = 'st${uniqueString('aks', uniqueString(subscription().id), utcNow())}'
+param storageAccountName string = 'st${uniqueString(rgName, subscription().id)}'
 
 @description('The storage account SKU type.')
 param storageAccountType string
