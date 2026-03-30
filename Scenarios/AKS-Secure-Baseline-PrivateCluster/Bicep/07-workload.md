@@ -128,7 +128,9 @@ Pod → K8s ServiceAccount (annotated with Azure client ID)
 
 This creates a user-assigned managed identity with a federated credential that trusts the AKS OIDC issuer, and grants it "Key Vault Secrets User" on your Key Vault.
 
-```bash
+# [CLI](#tab/CLI)
+
+```azurecli
 cd ../07-Workload
 
 # Get the OIDC issuer URL from the AKS cluster
@@ -152,6 +154,34 @@ WORKLOAD_IDENTITY_CLIENT_ID=$(az deployment sub show \
   --query "properties.outputs.workloadIdentityClientId.value" -o tsv)
 
 echo "Workload Identity Client ID: $WORKLOAD_IDENTITY_CLIENT_ID"
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell
+Set-Location ..\07-Workload
+
+# Get the OIDC issuer URL from the AKS cluster
+$OIDC_ISSUER_URL = az aks show --name $AKSCLUSTERNAME --resource-group $SPOKERG --query "oidcIssuerProfile.issuerUrl" -o tsv
+
+# Get the Key Vault name
+$KEYVAULT_NAME = az keyvault list -g $SPOKERG --query "[0].name" -o tsv
+
+# Deploy workload identity infrastructure
+New-AzSubscriptionDeployment `
+   -Name "ESLZ-WORKLOAD-IDENTITY" `
+   -Location $REGION `
+   -TemplateFile .\workload-identity.bicep `
+   -rgName $SPOKERG `
+   -oidcIssuerUrl $OIDC_ISSUER_URL `
+   -keyvaultName $KEYVAULT_NAME
+
+# Get the workload identity client ID from the deployment output
+$WORKLOAD_IDENTITY_CLIENT_ID = az deployment sub show `
+   -n "ESLZ-WORKLOAD-IDENTITY" `
+   --query "properties.outputs.workloadIdentityClientId.value" -o tsv
+
+Write-Host "Workload Identity Client ID: $WORKLOAD_IDENTITY_CLIENT_ID"
 ```
 
 ### Step 2: Create a test secret in Key Vault

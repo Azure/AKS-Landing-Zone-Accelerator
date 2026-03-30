@@ -86,7 +86,9 @@ Replace the placeholders in each file:
 
 ### Step 2: Deploy the building block
 
-```bash
+# [CLI](#tab/CLI)
+
+```azurecli
 az deployment sub create \
   -n "namespace-onboarding" \
   -l $REGION \
@@ -98,13 +100,36 @@ az deployment sub create \
 
 Or call the module directly for a single namespace:
 
-```bash
+```azurecli
 az deployment group create \
   -g $SPOKERG \
   -f namespace-building-block.bicep \
   -p aksClusterName=$AKSCLUSTERNAME \
   -p namespaceName=team-orders \
   -p gitRepositoryUrl=https://github.com/<org>/platform-config
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell
+New-AzSubscriptionDeployment `
+  -Name "namespace-onboarding" `
+  -Location $REGION `
+  -TemplateFile .\example-namespace-onboarding.bicep `
+  -rgName $SPOKERG `
+  -aksClusterName $AKSCLUSTERNAME `
+  -gitRepositoryUrl "https://github.com/<org>/platform-config"
+```
+
+Or call the module directly for a single namespace:
+
+```azurepowershell
+New-AzResourceGroupDeployment `
+  -ResourceGroupName $SPOKERG `
+  -TemplateFile .\namespace-building-block.bicep `
+  -aksClusterName $AKSCLUSTERNAME `
+  -namespaceName "team-orders" `
+  -gitRepositoryUrl "https://github.com/<org>/platform-config"
 ```
 
 ### Step 3: Verify

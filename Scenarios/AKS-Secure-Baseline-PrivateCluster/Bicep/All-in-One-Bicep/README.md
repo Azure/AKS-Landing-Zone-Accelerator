@@ -54,20 +54,40 @@ Now press the **Review + Create** button, followed by **Create** to start the de
 
 Log into your Azure CLI and deploy using a [deployment stack](https://learn.microsoft.com/azure/azure-resource-manager/bicep/deployment-stacks) for lifecycle management:
 
-```bash
-LOCATION=<Your azure region>
-```
+# [CLI](#tab/CLI)
 
-```bash
+```azurecli
+LOCATION=<Your azure region>
+
 az stack sub create \
   --name "AKS-Secure-Baseline" \
   --location $LOCATION \
   --template-file main.bicep \
-  --parameters @main.json \
+  --parameters @main.bicepparam \
   --parameters aksAdminAccessPrincipalId=<your Azure entra group principal id> \
   --parameters jumpboxAdminPassword=<your secure password> \
   --action-on-unmanage detachAll \
   --deny-settings-mode none
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell
+$LOCATION = "<Your azure region>"
+
+$templateParameters = @{
+  aksAdminAccessPrincipalId = "<your Azure entra group principal id>"
+  jumpboxAdminPassword = "<your secure password>"
+}
+
+New-AzSubscriptionDeploymentStack `
+  -Name "AKS-Secure-Baseline" `
+  -Location $LOCATION `
+  -TemplateFile .\main.bicep `
+  -TemplateParameterFile .\main.bicepparam `
+  -TemplateParameterObject $templateParameters `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 ### Step 3 - Deploy the application to AKS.
