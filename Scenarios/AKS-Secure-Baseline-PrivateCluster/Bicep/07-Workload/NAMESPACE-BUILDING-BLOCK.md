@@ -89,47 +89,53 @@ Replace the placeholders in each file:
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create \
-  -n "namespace-onboarding" \
-  -l $REGION \
-  -f example-namespace-onboarding.bicep \
-  -p rgName=$SPOKERG \
-  -p aksClusterName=$AKSCLUSTERNAME \
-  -p gitRepositoryUrl=https://github.com/<org>/platform-config
+az stack sub create \
+  --name "namespace-onboarding" \
+  --location $REGION \
+  --template-file example-namespace-onboarding.bicep \
+  --parameters rgName=$SPOKERG \
+    aksClusterName=$AKSCLUSTERNAME \
+    gitRepositoryUrl=https://github.com/<org>/platform-config \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 Or call the module directly for a single namespace:
 
 ```azurecli
-az deployment group create \
-  -g $SPOKERG \
-  -f namespace-building-block.bicep \
-  -p aksClusterName=$AKSCLUSTERNAME \
-  -p namespaceName=team-orders \
-  -p gitRepositoryUrl=https://github.com/<org>/platform-config
+az stack group create \
+  --name "namespace-building-block" \
+  --resource-group $SPOKERG \
+  --template-file namespace-building-block.bicep \
+  --parameters aksClusterName=$AKSCLUSTERNAME \
+    namespaceName=team-orders \
+    gitRepositoryUrl=https://github.com/<org>/platform-config \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment `
+New-AzSubscriptionDeploymentStack `
   -Name "namespace-onboarding" `
   -Location $REGION `
   -TemplateFile .\example-namespace-onboarding.bicep `
-  -rgName $SPOKERG `
-  -aksClusterName $AKSCLUSTERNAME `
-  -gitRepositoryUrl "https://github.com/<org>/platform-config"
+  -TemplateParameterObject @{ rgName = $SPOKERG; aksClusterName = $AKSCLUSTERNAME; gitRepositoryUrl = "https://github.com/<org>/platform-config" } `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 Or call the module directly for a single namespace:
 
 ```azurepowershell
-New-AzResourceGroupDeployment `
+New-AzResourceGroupDeploymentStack `
+  -Name "namespace-building-block" `
   -ResourceGroupName $SPOKERG `
   -TemplateFile .\namespace-building-block.bicep `
-  -aksClusterName $AKSCLUSTERNAME `
-  -namespaceName "team-orders" `
-  -gitRepositoryUrl "https://github.com/<org>/platform-config"
+  -TemplateParameterObject @{ aksClusterName = $AKSCLUSTERNAME; namespaceName = "team-orders"; gitRepositoryUrl = "https://github.com/<org>/platform-config" } `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 ### Step 3: Verify

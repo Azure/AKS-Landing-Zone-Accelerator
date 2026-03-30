@@ -140,18 +140,20 @@ OIDC_ISSUER_URL=$(az aks show --name $AKSCLUSTERNAME --resource-group $SPOKERG -
 KEYVAULT_NAME=$(az keyvault list -g $SPOKERG --query [0].name -o tsv)
 
 # Deploy workload identity infrastructure
-az deployment sub create \
-  -n "ESLZ-WORKLOAD-IDENTITY" \
-  -l $REGION \
-  -f workload-identity.bicep \
-  -p rgName=$SPOKERG \
-  -p oidcIssuerUrl=$OIDC_ISSUER_URL \
-  -p keyvaultName=$KEYVAULT_NAME
+az stack sub create \
+  --name "ESLZ-WORKLOAD-IDENTITY" \
+  --location $REGION \
+  --template-file workload-identity.bicep \
+  --parameters rgName=$SPOKERG \
+    oidcIssuerUrl=$OIDC_ISSUER_URL \
+    keyvaultName=$KEYVAULT_NAME \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 
 # Get the workload identity client ID from the deployment output
-WORKLOAD_IDENTITY_CLIENT_ID=$(az deployment sub show \
-  -n "ESLZ-WORKLOAD-IDENTITY" \
-  --query "properties.outputs.workloadIdentityClientId.value" -o tsv)
+WORKLOAD_IDENTITY_CLIENT_ID=$(az stack sub show \
+  --name "ESLZ-WORKLOAD-IDENTITY" \
+  --query "outputs.workloadIdentityClientId.value" -o tsv)
 
 echo "Workload Identity Client ID: $WORKLOAD_IDENTITY_CLIENT_ID"
 ```
@@ -168,18 +170,17 @@ $OIDC_ISSUER_URL = az aks show --name $AKSCLUSTERNAME --resource-group $SPOKERG 
 $KEYVAULT_NAME = az keyvault list -g $SPOKERG --query "[0].name" -o tsv
 
 # Deploy workload identity infrastructure
-New-AzSubscriptionDeployment `
+New-AzSubscriptionDeploymentStack `
    -Name "ESLZ-WORKLOAD-IDENTITY" `
    -Location $REGION `
    -TemplateFile .\workload-identity.bicep `
-   -rgName $SPOKERG `
-   -oidcIssuerUrl $OIDC_ISSUER_URL `
-   -keyvaultName $KEYVAULT_NAME
+   -TemplateParameterObject @{ rgName = $SPOKERG; oidcIssuerUrl = $OIDC_ISSUER_URL; keyvaultName = $KEYVAULT_NAME } `
+   -ActionOnUnmanage DetachAll `
+   -DenySettingsMode None
 
 # Get the workload identity client ID from the deployment output
-$WORKLOAD_IDENTITY_CLIENT_ID = az deployment sub show `
-   -n "ESLZ-WORKLOAD-IDENTITY" `
-   --query "properties.outputs.workloadIdentityClientId.value" -o tsv
+$WORKLOAD_IDENTITY_CLIENT_ID = (Get-AzSubscriptionDeploymentStack `
+   -Name "ESLZ-WORKLOAD-IDENTITY").Outputs.workloadIdentityClientId.Value
 
 Write-Host "Workload Identity Client ID: $WORKLOAD_IDENTITY_CLIENT_ID"
 ```
