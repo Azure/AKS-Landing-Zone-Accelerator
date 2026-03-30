@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.41.2.15936",
-      "templateHash": "14899758415347918885"
+      "templateHash": "8444510632702832350"
     }
   },
   "parameters": {
@@ -478,7 +478,7 @@
     },
     "storageAccountName": {
       "type": "string",
-      "defaultValue": "[format('st{0}{1}', parameters('aksClusterName'), uniqueString(parameters('aksClusterName'), subscription().id))]",
+      "defaultValue": "[format('st{0}', uniqueString(parameters('aksClusterName'), subscription().id))]",
       "metadata": {
         "description": "The name of the storage account. Override to use a custom name."
       }
@@ -544,7 +544,7 @@
     },
     "kubernetesVersion": {
       "type": "string",
-      "defaultValue": "1.30",
+      "defaultValue": "1.35",
       "metadata": {
         "description": "The Kubernetes version for the AKS cluster."
       }
@@ -671,7 +671,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "8322740086550188231"
+              "templateHash": "114477119590746173"
             }
           },
           "parameters": {
@@ -1006,10 +1006,28 @@
               }
             }
           },
-          "variables": {
-            "telemetryId": "[format('0d807b2d-f7c3-4710-9a65-e88257df1ea0-{0}', parameters('location'))]"
-          },
           "resources": [
+            {
+              "condition": "[parameters('enableTelemetry')]",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2024-03-01",
+              "name": "[take(format('0d807b2d-f7c3-4710-9a65-e88257df1ea0.{0}.{1}', replace('-..--..-', '.', '-'), substring(uniqueString(deployment().name, parameters('location')), 0, 4)), 64)]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": [],
+                  "outputs": {
+                    "telemetry": {
+                      "type": "String",
+                      "value": "For more information, see https://aka.ms/avm/TelemetryInfo"
+                    }
+                  }
+                }
+              }
+            },
             {
               "type": "Microsoft.Resources/deployments",
               "apiVersion": "2025-04-01",
@@ -10085,64 +10103,6 @@
                 "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]",
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetHubName'))]"
               ]
-            },
-            {
-              "type": "Microsoft.Resources/deployments",
-              "apiVersion": "2025-04-01",
-              "name": "telemetry",
-              "resourceGroup": "[parameters('rgName')]",
-              "properties": {
-                "expressionEvaluationOptions": {
-                  "scope": "inner"
-                },
-                "mode": "Incremental",
-                "parameters": {
-                  "enableTelemetry": {
-                    "value": "[parameters('enableTelemetry')]"
-                  },
-                  "telemetryId": {
-                    "value": "[variables('telemetryId')]"
-                  }
-                },
-                "template": {
-                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                  "contentVersion": "1.0.0.0",
-                  "metadata": {
-                    "_generator": {
-                      "name": "bicep",
-                      "version": "0.41.2.15936",
-                      "templateHash": "7430961443345489526"
-                    }
-                  },
-                  "parameters": {
-                    "enableTelemetry": {
-                      "type": "bool"
-                    },
-                    "telemetryId": {
-                      "type": "string"
-                    }
-                  },
-                  "resources": [
-                    {
-                      "condition": "[parameters('enableTelemetry')]",
-                      "type": "Microsoft.Resources/deployments",
-                      "apiVersion": "2025-04-01",
-                      "name": "[parameters('telemetryId')]",
-                      "properties": {
-                        "mode": "Incremental",
-                        "template": {
-                          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
-                          "contentVersion": "1.0.0.0",
-                          "resources": {}
-                        }
-                      }
-                    }
-                  ]
-                }
-              },
-              "dependsOn": [
-                "[subscriptionResourceId('Microsoft.Resources/deployments', parameters('rgName'))]"
-              ]
             }
           ]
         }
@@ -10224,7 +10184,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "5055718755056415477"
+              "templateHash": "7984116143840064143"
             }
           },
           "parameters": {
@@ -10336,6 +10296,13 @@
               "defaultValue": "10.1.4.0/24",
               "metadata": {
                 "description": "The address prefix for the private link services subnet."
+              }
+            },
+            "spokeSubnetApiServerPrefix": {
+              "type": "string",
+              "defaultValue": "10.1.5.0/28",
+              "metadata": {
+                "description": "The address prefix for the AKS API server VNet integration subnet."
               }
             },
             "remotePeeringName": {
@@ -10913,6 +10880,11 @@
                       {
                         "name": "servicespe",
                         "addressPrefix": "[parameters('spokeSubnetPLinkervicePrefix')]"
+                      },
+                      {
+                        "name": "apiserver-subnet",
+                        "addressPrefix": "[parameters('spokeSubnetApiServerPrefix')]",
+                        "delegation": "Microsoft.ContainerService/managedClusters"
                       }
                     ]
                   },
@@ -27859,6 +27831,11 @@
                   },
                   "location": {
                     "value": "[parameters('location')]"
+                  },
+                  "managedIdentities": {
+                    "value": {
+                      "systemAssigned": true
+                    }
                   }
                 },
                 "template": {
@@ -36908,7 +36885,23 @@
                 "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetSpokeName'))]"
               ]
             }
-          ]
+          ],
+          "outputs": {
+            "apiServerSubnetId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the API server VNet integration subnet."
+              },
+              "value": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', parameters('vnetSpokeName')), '2025-04-01').outputs.subnetResourceIds.value[5]]"
+            },
+            "jumpboxPrincipalId": {
+              "type": "string",
+              "metadata": {
+                "description": "The principal ID of the jumpbox VM system-assigned managed identity."
+              },
+              "value": "[coalesce(tryGet(tryGet(reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Resources/deployments', 'virtualMachineDeployment'), '2025-04-01').outputs, 'systemAssignedMIPrincipalId'), 'value'), '')]"
+            }
+          }
         }
       },
       "dependsOn": [
@@ -36959,7 +36952,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "16619096037125444699"
+              "templateHash": "1269334250098405838"
             }
           },
           "parameters": {
@@ -37004,21 +36997,21 @@
             },
             "acrName": {
               "type": "string",
-              "defaultValue": "[format('cr{0}', uniqueString('acrvws', uniqueString(subscription().id, utcNow())))]",
+              "defaultValue": "[format('cr{0}', uniqueString(parameters('rgName'), subscription().id))]",
               "metadata": {
                 "description": "The name of the Azure Container Registry."
               }
             },
             "keyVaultName": {
               "type": "string",
-              "defaultValue": "[format('kv-{0}', uniqueString('acrvws', uniqueString(subscription().id, utcNow())))]",
+              "defaultValue": "[format('kv-{0}', uniqueString(parameters('rgName'), subscription().id))]",
               "metadata": {
                 "description": "The name of the Azure Key Vault."
               }
             },
             "storageAccountName": {
               "type": "string",
-              "defaultValue": "[format('st{0}', uniqueString('aks', uniqueString(subscription().id), utcNow()))]",
+              "defaultValue": "[format('st{0}', uniqueString(parameters('rgName'), subscription().id))]",
               "metadata": {
                 "description": "The name of the storage account."
               }
@@ -52439,9 +52432,9 @@
             "kmsKeyUri": {
               "type": "string",
               "metadata": {
-                "description": "The URI of the KMS encryption key (empty if KMS not enabled)."
+                "description": "The versioned URI of the KMS encryption key (empty if KMS not enabled)."
               },
-              "value": "[if(parameters('enableKmsEncryption'), format('{0}keys/aks-etcd-kms', reference('vault').outputs.uri.value), '')]"
+              "value": "[if(parameters('enableKmsEncryption'), reference('vault').outputs.keys.value[0].uriWithVersion, '')]"
             }
           }
         }
@@ -52511,6 +52504,9 @@
           },
           "kmsKeyUri": {
             "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', 'aksSupporting'), '2025-04-01').outputs.kmsKeyUri.value]"
+          },
+          "apiServerSubnetId": {
+            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', 'lzSpokeDeploy'), '2025-04-01').outputs.apiServerSubnetId.value]"
           }
         },
         "template": {
@@ -52521,7 +52517,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.41.2.15936",
-              "templateHash": "12309362544389073741"
+              "templateHash": "5070891041883325829"
             }
           },
           "parameters": {
@@ -52653,6 +52649,13 @@
               "metadata": {
                 "description": "The Key Vault key URI for KMS v2 encryption (e.g., https://myvault.vault.azure.net/keys/aks-etcd-kms). Required when enableKmsEncryption is true."
               }
+            },
+            "apiServerSubnetId": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "The resource ID of the subnet for AKS API server VNet integration. Required for private KMS access."
+              }
             }
           },
           "variables": {
@@ -52677,7 +52680,7 @@
               "condition": "[parameters('enablePrivateCluster')]",
               "existing": true,
               "type": "Microsoft.Network/privateDnsZones",
-              "apiVersion": "2020-06-01",
+              "apiVersion": "2024-06-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[variables('privateDnsZoneAksName')]",
               "dependsOn": [
@@ -52687,7 +52690,7 @@
             "aksSubnet": {
               "existing": true,
               "type": "Microsoft.Network/virtualNetworks/subnets",
-              "apiVersion": "2021-02-01",
+              "apiVersion": "2025-05-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[format('{0}/{1}', parameters('vnetName'), parameters('subnetName'))]",
               "dependsOn": [
@@ -52697,7 +52700,7 @@
             "keyVault": {
               "existing": true,
               "type": "Microsoft.KeyVault/vaults",
-              "apiVersion": "2023-07-01",
+              "apiVersion": "2025-05-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[parameters('keyVaultName')]",
               "dependsOn": [
@@ -52707,7 +52710,7 @@
             "acr": {
               "existing": true,
               "type": "Microsoft.ContainerRegistry/registries",
-              "apiVersion": "2023-01-01-preview",
+              "apiVersion": "2025-11-01",
               "resourceGroup": "[parameters('rgName')]",
               "name": "[parameters('acrName')]",
               "dependsOn": [
@@ -56358,7 +56361,7 @@
                       }
                     ]
                   },
-                  "autoScalerProfile": "[if(parameters('enableAutoScaling'), createObject('value', createObject('balance-similar-node-groups', format('{0}', parameters('autoScalingProfile').balanceSimilarNodeGroups), 'expander', parameters('autoScalingProfile').expander, 'max-empty-bulk-delete', format('{0}', parameters('autoScalingProfile').maxEmptyBulkDelete), 'max-graceful-termination-sec', format('{0}', parameters('autoScalingProfile').maxGracefulTerminationSec), 'max-node-provision-time', parameters('autoScalingProfile').maxNodeProvisionTime, 'max-total-unready-percentage', format('{0}', parameters('autoScalingProfile').maxTotalUnreadyPercentage), 'new-pod-scale-up-delay', parameters('autoScalingProfile').newPodScaleUpDelay, 'ok-total-unready-count', format('{0}', parameters('autoScalingProfile').okTotalUnreadyCount), 'scale-down-delay-after-add', parameters('autoScalingProfile').scaleDownDelayAfterAdd, 'scale-down-delay-after-delete', parameters('autoScalingProfile').scaleDownDelayAfterDelete, 'scale-down-delay-after-failure', parameters('autoScalingProfile').scaleDownDelayAfterFailure, 'scale-down-unneeded-time', parameters('autoScalingProfile').scaleDownUnneededTime, 'scale-down-unready-time', parameters('autoScalingProfile').scaleDownUnreadyTime, 'scale-down-utilization-threshold', parameters('autoScalingProfile').scaleDownUtilizationThreshold, 'scan-interval', parameters('autoScalingProfile').scanInterval, 'skip-nodes-with-local-storage', format('{0}', parameters('autoScalingProfile').skipNodesWithLocalStorage), 'skip-nodes-with-system-pods', format('{0}', parameters('autoScalingProfile').skipNodesWithSystemPods))), createObject('value', null()))]",
+                  "autoScalerProfile": "[if(parameters('enableAutoScaling'), createObject('value', createObject('balance-similar-node-groups', if(parameters('autoScalingProfile').balanceSimilarNodeGroups, 'true', 'false'), 'expander', parameters('autoScalingProfile').expander, 'max-empty-bulk-delete', format('{0}', parameters('autoScalingProfile').maxEmptyBulkDelete), 'max-graceful-termination-sec', format('{0}', parameters('autoScalingProfile').maxGracefulTerminationSec), 'max-node-provision-time', parameters('autoScalingProfile').maxNodeProvisionTime, 'max-total-unready-percentage', format('{0}', parameters('autoScalingProfile').maxTotalUnreadyPercentage), 'new-pod-scale-up-delay', parameters('autoScalingProfile').newPodScaleUpDelay, 'ok-total-unready-count', format('{0}', parameters('autoScalingProfile').okTotalUnreadyCount), 'scale-down-delay-after-add', parameters('autoScalingProfile').scaleDownDelayAfterAdd, 'scale-down-delay-after-delete', parameters('autoScalingProfile').scaleDownDelayAfterDelete, 'scale-down-delay-after-failure', parameters('autoScalingProfile').scaleDownDelayAfterFailure, 'scale-down-unneeded-time', parameters('autoScalingProfile').scaleDownUnneededTime, 'scale-down-unready-time', parameters('autoScalingProfile').scaleDownUnreadyTime, 'scale-down-utilization-threshold', parameters('autoScalingProfile').scaleDownUtilizationThreshold, 'scan-interval', parameters('autoScalingProfile').scanInterval, 'skip-nodes-with-local-storage', if(parameters('autoScalingProfile').skipNodesWithLocalStorage, 'true', 'false'), 'skip-nodes-with-system-pods', if(parameters('autoScalingProfile').skipNodesWithSystemPods, 'true', 'false'))), createObject('value', null()))]",
                   "networkPlugin": "[if(equals(parameters('networkPlugin'), 'azure'), createObject('value', 'azure'), createObject('value', 'kubenet'))]",
                   "networkPluginMode": "[if(equals(parameters('networkPlugin'), 'azure'), createObject('value', 'overlay'), createObject('value', null()))]",
                   "networkDataplane": "[if(equals(parameters('networkPlugin'), 'azure'), createObject('value', 'cilium'), createObject('value', null()))]",
@@ -56378,7 +56381,9 @@
                     "value": {
                       "enablePrivateCluster": "[parameters('enablePrivateCluster')]",
                       "privateDNSZone": "[if(parameters('enablePrivateCluster'), extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDnsZoneAksName')), null())]",
-                      "enablePrivateClusterPublicFQDN": false
+                      "enablePrivateClusterPublicFQDN": false,
+                      "enableVnetIntegration": "[not(empty(parameters('apiServerSubnetId')))]",
+                      "subnetId": "[if(not(empty(parameters('apiServerSubnetId'))), parameters('apiServerSubnetId'), null())]"
                     }
                   },
                   "enableRBAC": {
@@ -56405,7 +56410,7 @@
                       "workloadIdentity": {
                         "enabled": true
                       },
-                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', 'Private', 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))), null())]"
+                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', if(not(empty(parameters('apiServerSubnetId'))), 'Private', 'Public'), 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))), null())]"
                     }
                   },
                   "omsAgentEnabled": {
@@ -59938,7 +59943,7 @@
                     "value": "managedNATGateway"
                   },
                   "publicNetworkAccess": "[if(parameters('enablePrivateCluster'), createObject('value', 'Disabled'), createObject('value', 'Enabled'))]",
-                  "apiServerAccessProfile": "[if(parameters('enablePrivateCluster'), createObject('value', createObject('enablePrivateCluster', true(), 'privateDNSZone', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDnsZoneAksName')), 'enablePrivateClusterPublicFQDN', false())), createObject('value', null()))]",
+                  "apiServerAccessProfile": "[if(parameters('enablePrivateCluster'), createObject('value', createObject('enablePrivateCluster', true(), 'privateDNSZone', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.Network/privateDnsZones', variables('privateDnsZoneAksName')), 'enablePrivateClusterPublicFQDN', false(), 'enableVnetIntegration', not(empty(parameters('apiServerSubnetId'))), 'subnetId', if(not(empty(parameters('apiServerSubnetId'))), parameters('apiServerSubnetId'), null()))), createObject('value', null()))]",
                   "aadProfile": {
                     "value": {
                       "enableAzureRBAC": true,
@@ -59966,7 +59971,7 @@
                       "workloadIdentity": {
                         "enabled": true
                       },
-                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', 'Private', 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))), null())]"
+                      "azureKeyVaultKms": "[if(and(parameters('enableKmsEncryption'), not(empty(parameters('kmsKeyUri')))), createObject('enabled', true(), 'keyId', parameters('kmsKeyUri'), 'keyVaultNetworkAccess', if(not(empty(parameters('apiServerSubnetId'))), 'Private', 'Public'), 'keyVaultResourceId', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('rgName')), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))), null())]"
                     }
                   },
                   "autoUpgradeProfile": {
@@ -64207,11 +64212,517 @@
                 "rg"
               ]
             }
+          },
+          "outputs": {
+            "aksClusterResourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the AKS cluster."
+              },
+              "value": "[if(variables('isAutomatic'), coalesce(tryGet(tryGet(tryGet(if(variables('isAutomatic'), reference('managedClusterAutomatic'), null()), 'outputs'), 'resourceId'), 'value'), ''), coalesce(tryGet(tryGet(tryGet(if(not(variables('isAutomatic')), reference('managedCluster'), null()), 'outputs'), 'resourceId'), 'value'), ''))]"
+            }
           }
         }
       },
       "dependsOn": [
-        "[subscriptionResourceId('Microsoft.Resources/deployments', 'aksSupporting')]"
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'aksSupporting')]",
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'lzSpokeDeploy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "jumpbox-aks-cluster-user",
+      "resourceGroup": "[parameters('rgSpokeName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', 'lzSpokeDeploy'), '2025-04-01').outputs.jumpboxPrincipalId.value]"
+          },
+          "resourceId": {
+            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', 'aksCluster'), '2025-04-01').outputs.aksClusterResourceId.value]"
+          },
+          "roleDefinitionId": {
+            "value": "4abbcc35-e782-43d8-92c5-2d3f1bd2253f"
+          },
+          "principalType": {
+            "value": "ServicePrincipal"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.32.4.45862",
+              "templateHash": "14634305923902101494"
+            },
+            "name": "Resource-scoped role assignment",
+            "description": "This module deploys a Role Assignment for a specific resource."
+          },
+          "parameters": {
+            "resourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. The scope for the role assignment, fully qualified resourceId."
+              }
+            },
+            "name": {
+              "type": "string",
+              "defaultValue": "[guid(parameters('resourceId'), parameters('principalId'), if(contains(parameters('roleDefinitionId'), '/providers/Microsoft.Authorization/roleDefinitions/'), parameters('roleDefinitionId'), subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))))]",
+              "metadata": {
+                "description": "Optional. The unique guid name for the role assignment."
+              }
+            },
+            "roleDefinitionId": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. The role definition ID for the role assignment."
+              }
+            },
+            "roleName": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Optional. The name for the role, used for logging."
+              }
+            },
+            "principalId": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. The Principal or Object ID of the Security Principal (User, Group, Service Principal, Managed Identity)."
+              }
+            },
+            "principalType": {
+              "type": "string",
+              "defaultValue": "",
+              "allowedValues": [
+                "ServicePrincipal",
+                "Group",
+                "User",
+                "ForeignGroup",
+                "Device",
+                ""
+              ],
+              "metadata": {
+                "description": "Optional. The principal type of the assigned principal ID."
+              }
+            },
+            "description": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Optional. The description of role assignment."
+              }
+            },
+            "enableTelemetry": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Optional. Enable/Disable usage telemetry for module."
+              }
+            }
+          },
+          "variables": {
+            "$fxv#0": {
+              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "parameters": {
+                "scope": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "roleDefinitionId": {
+                  "type": "string"
+                },
+                "principalId": {
+                  "type": "string"
+                },
+                "principalType": {
+                  "type": "string",
+                  "allowedValues": [
+                    "Device",
+                    "ForeignGroup",
+                    "Group",
+                    "ServicePrincipal",
+                    "User",
+                    ""
+                  ],
+                  "defaultValue": "",
+                  "metadata": {
+                    "description": "Optional. The principal type of the assigned principal ID."
+                  }
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "resources": [
+                {
+                  "type": "Microsoft.Authorization/roleAssignments",
+                  "apiVersion": "2022-04-01",
+                  "scope": "[[parameters('scope')]",
+                  "name": "[[parameters('name')]",
+                  "properties": {
+                    "roleDefinitionId": "[[parameters('roleDefinitionId')]",
+                    "principalId": "[[parameters('principalId')]",
+                    "principalType": "[[parameters('principalType')]",
+                    "description": "[[parameters('description')]"
+                  }
+                }
+              ],
+              "outputs": {
+                "roleAssignmentId": {
+                  "type": "string",
+                  "value": "[[extensionResourceId(parameters('scope'), 'Microsoft.Authorization/roleAssignments', parameters('name'))]"
+                }
+              }
+            }
+          },
+          "resources": [
+            {
+              "condition": "[parameters('enableTelemetry')]",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2024-03-01",
+              "name": "[format('46d3xbcp.ptn.authorization-resourceroleassignment.{0}.{1}', replace('0.1.2', '.', '-'), substring(uniqueString(deployment().name), 0, 4))]",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": [],
+                  "outputs": {
+                    "telemetry": {
+                      "type": "String",
+                      "value": "For more information, see https://aka.ms/avm/TelemetryInfo"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}-ResourceRoleAssignment', guid(parameters('resourceId'), parameters('principalId'), parameters('roleDefinitionId')))]",
+              "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                  "scope": "Outer"
+                },
+                "template": "[variables('$fxv#0')]",
+                "parameters": {
+                  "scope": {
+                    "value": "[parameters('resourceId')]"
+                  },
+                  "name": {
+                    "value": "[parameters('name')]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[if(contains(parameters('roleDefinitionId'), '/providers/Microsoft.Authorization/roleDefinitions/'), parameters('roleDefinitionId'), subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId')))]"
+                  },
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "description": {
+                    "value": "[parameters('description')]"
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "The GUID of the Role Assignment."
+              },
+              "value": "[parameters('name')]"
+            },
+            "roleName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name for the role, used for logging."
+              },
+              "value": "[parameters('roleName')]"
+            },
+            "resourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Role Assignment."
+              },
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-ResourceRoleAssignment', guid(parameters('resourceId'), parameters('principalId'), parameters('roleDefinitionId')))), '2023-07-01').outputs.roleAssignmentId.value]"
+            },
+            "resourceGroupName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the resource group the role assignment was applied at."
+              },
+              "value": "[resourceGroup().name]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'aksCluster')]",
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'lzSpokeDeploy')]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "jumpbox-aks-rbac-admin",
+      "resourceGroup": "[parameters('rgSpokeName')]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "principalId": {
+            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', 'lzSpokeDeploy'), '2025-04-01').outputs.jumpboxPrincipalId.value]"
+          },
+          "resourceId": {
+            "value": "[reference(subscriptionResourceId('Microsoft.Resources/deployments', 'aksCluster'), '2025-04-01').outputs.aksClusterResourceId.value]"
+          },
+          "roleDefinitionId": {
+            "value": "b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b"
+          },
+          "principalType": {
+            "value": "ServicePrincipal"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.32.4.45862",
+              "templateHash": "14634305923902101494"
+            },
+            "name": "Resource-scoped role assignment",
+            "description": "This module deploys a Role Assignment for a specific resource."
+          },
+          "parameters": {
+            "resourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. The scope for the role assignment, fully qualified resourceId."
+              }
+            },
+            "name": {
+              "type": "string",
+              "defaultValue": "[guid(parameters('resourceId'), parameters('principalId'), if(contains(parameters('roleDefinitionId'), '/providers/Microsoft.Authorization/roleDefinitions/'), parameters('roleDefinitionId'), subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId'))))]",
+              "metadata": {
+                "description": "Optional. The unique guid name for the role assignment."
+              }
+            },
+            "roleDefinitionId": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. The role definition ID for the role assignment."
+              }
+            },
+            "roleName": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Optional. The name for the role, used for logging."
+              }
+            },
+            "principalId": {
+              "type": "string",
+              "metadata": {
+                "description": "Required. The Principal or Object ID of the Security Principal (User, Group, Service Principal, Managed Identity)."
+              }
+            },
+            "principalType": {
+              "type": "string",
+              "defaultValue": "",
+              "allowedValues": [
+                "ServicePrincipal",
+                "Group",
+                "User",
+                "ForeignGroup",
+                "Device",
+                ""
+              ],
+              "metadata": {
+                "description": "Optional. The principal type of the assigned principal ID."
+              }
+            },
+            "description": {
+              "type": "string",
+              "defaultValue": "",
+              "metadata": {
+                "description": "Optional. The description of role assignment."
+              }
+            },
+            "enableTelemetry": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Optional. Enable/Disable usage telemetry for module."
+              }
+            }
+          },
+          "variables": {
+            "$fxv#0": {
+              "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+              "contentVersion": "1.0.0.0",
+              "parameters": {
+                "scope": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "roleDefinitionId": {
+                  "type": "string"
+                },
+                "principalId": {
+                  "type": "string"
+                },
+                "principalType": {
+                  "type": "string",
+                  "allowedValues": [
+                    "Device",
+                    "ForeignGroup",
+                    "Group",
+                    "ServicePrincipal",
+                    "User",
+                    ""
+                  ],
+                  "defaultValue": "",
+                  "metadata": {
+                    "description": "Optional. The principal type of the assigned principal ID."
+                  }
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "resources": [
+                {
+                  "type": "Microsoft.Authorization/roleAssignments",
+                  "apiVersion": "2022-04-01",
+                  "scope": "[[parameters('scope')]",
+                  "name": "[[parameters('name')]",
+                  "properties": {
+                    "roleDefinitionId": "[[parameters('roleDefinitionId')]",
+                    "principalId": "[[parameters('principalId')]",
+                    "principalType": "[[parameters('principalType')]",
+                    "description": "[[parameters('description')]"
+                  }
+                }
+              ],
+              "outputs": {
+                "roleAssignmentId": {
+                  "type": "string",
+                  "value": "[[extensionResourceId(parameters('scope'), 'Microsoft.Authorization/roleAssignments', parameters('name'))]"
+                }
+              }
+            }
+          },
+          "resources": [
+            {
+              "condition": "[parameters('enableTelemetry')]",
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2024-03-01",
+              "name": "[format('46d3xbcp.ptn.authorization-resourceroleassignment.{0}.{1}', replace('0.1.2', '.', '-'), substring(uniqueString(deployment().name), 0, 4))]",
+              "properties": {
+                "mode": "Incremental",
+                "template": {
+                  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                  "contentVersion": "1.0.0.0",
+                  "resources": [],
+                  "outputs": {
+                    "telemetry": {
+                      "type": "String",
+                      "value": "For more information, see https://aka.ms/avm/TelemetryInfo"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "type": "Microsoft.Resources/deployments",
+              "apiVersion": "2023-07-01",
+              "name": "[format('{0}-ResourceRoleAssignment', guid(parameters('resourceId'), parameters('principalId'), parameters('roleDefinitionId')))]",
+              "properties": {
+                "mode": "Incremental",
+                "expressionEvaluationOptions": {
+                  "scope": "Outer"
+                },
+                "template": "[variables('$fxv#0')]",
+                "parameters": {
+                  "scope": {
+                    "value": "[parameters('resourceId')]"
+                  },
+                  "name": {
+                    "value": "[parameters('name')]"
+                  },
+                  "roleDefinitionId": {
+                    "value": "[if(contains(parameters('roleDefinitionId'), '/providers/Microsoft.Authorization/roleDefinitions/'), parameters('roleDefinitionId'), subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('roleDefinitionId')))]"
+                  },
+                  "principalId": {
+                    "value": "[parameters('principalId')]"
+                  },
+                  "principalType": {
+                    "value": "[parameters('principalType')]"
+                  },
+                  "description": {
+                    "value": "[parameters('description')]"
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "The GUID of the Role Assignment."
+              },
+              "value": "[parameters('name')]"
+            },
+            "roleName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name for the role, used for logging."
+              },
+              "value": "[parameters('roleName')]"
+            },
+            "resourceId": {
+              "type": "string",
+              "metadata": {
+                "description": "The resource ID of the Role Assignment."
+              },
+              "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-ResourceRoleAssignment', guid(parameters('resourceId'), parameters('principalId'), parameters('roleDefinitionId')))), '2023-07-01').outputs.roleAssignmentId.value]"
+            },
+            "resourceGroupName": {
+              "type": "string",
+              "metadata": {
+                "description": "The name of the resource group the role assignment was applied at."
+              },
+              "value": "[resourceGroup().name]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'aksCluster')]",
+        "[subscriptionResourceId('Microsoft.Resources/deployments', 'lzSpokeDeploy')]"
       ]
     }
   ]
