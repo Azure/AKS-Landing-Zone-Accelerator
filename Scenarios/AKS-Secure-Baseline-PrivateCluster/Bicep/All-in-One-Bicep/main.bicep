@@ -510,3 +510,33 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     apiServerSubnetId: networkSpoke.outputs.apiServerSubnetId
   }
 }
+
+/////////////////
+// Jumpbox → AKS RBAC
+/////////////////
+
+// Grant the jumpbox VM managed identity "Azure Kubernetes Service Cluster User Role"
+// so it can call `az aks get-credentials` for the private cluster.
+module jumpboxAksClusterUser 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.2' = {
+  scope: resourceGroup(rgSpokeName)
+  name: 'jumpbox-aks-cluster-user'
+  params: {
+    principalId: networkSpoke.outputs.jumpboxPrincipalId
+    resourceId: aksCluster.outputs.aksClusterResourceId
+    roleDefinitionId: '4abbcc35-e782-43d8-92c5-2d3f1bd2253f' // Azure Kubernetes Service Cluster User Role
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Grant the jumpbox VM managed identity "Azure Kubernetes Service RBAC Cluster Admin"
+// so it can run kubectl commands against the private cluster.
+module jumpboxAksRbacAdmin 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.2' = {
+  scope: resourceGroup(rgSpokeName)
+  name: 'jumpbox-aks-rbac-admin'
+  params: {
+    principalId: networkSpoke.outputs.jumpboxPrincipalId
+    resourceId: aksCluster.outputs.aksClusterResourceId
+    roleDefinitionId: 'b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b' // Azure Kubernetes Service RBAC Cluster Admin
+    principalType: 'ServicePrincipal'
+  }
+}

@@ -362,4 +362,9 @@ module kvCryptoAssignment 'br/public:avm/ptn/authorization/resource-role-assignm
   }
 }
 
+@description('The resource ID of the AKS cluster.')
+output aksClusterResourceId string = isAutomatic
+  ? (managedClusterAutomatic.?outputs.?resourceId ?? '')
+  : (managedCluster.?outputs.?resourceId ?? '')
+
 

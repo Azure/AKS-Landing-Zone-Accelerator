@@ -2,7 +2,7 @@ using './main.bicep'
 
 param deployHub = true
 param enablePrivateCluster = true
-param rgHubName = 'rg-hub'
+param rgHubName = 'rg-hub-zt'
 param vnetHubName = 'vnet-hub'
 param hubVnetAddPrefixes = [
   '10.0.0.0/16'
@@ -205,7 +205,7 @@ param availabilityZones = [
   3
 ]
 param nsgBastionName = 'nsg-bastion'
-param rgSpokeName = 'rg-spoke'
+param rgSpokeName = 'rg-spoke-zt'
 param vnetSpokeName = 'vnet-spoke'
 param spokeVnetAddPrefixes = [
   '10.1.0.0/16'

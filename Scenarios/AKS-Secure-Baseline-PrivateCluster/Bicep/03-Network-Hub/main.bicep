@@ -351,13 +351,24 @@ module azureFirewall 'br/public:avm/res/network/azure-firewall:0.10.0' = {
 //  Telemetry Deployment
 @description('Enable usage and telemetry feedback to Microsoft.')
 param enableTelemetry bool = true
-var telemetryId = '0d807b2d-f7c3-4710-9a65-e88257df1ea0-${location}'
-module telemetry './telemetry.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'telemetry'
-  params: {
-    enableTelemetry: enableTelemetry
-    telemetryId: telemetryId
+
+#disable-next-line no-deployments-resources
+resource avmTelemetry 'Microsoft.Resources/deployments@2024-03-01' = if (enableTelemetry) {
+  name: take('0d807b2d-f7c3-4710-9a65-e88257df1ea0.${replace('-..--..-', '.', '-')}.${substring(uniqueString(deployment().name, location), 0, 4)}', 64)
+  location: location
+  properties: {
+    mode: 'Incremental'
+    template: {
+      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
+      contentVersion: '1.0.0.0'
+      resources: []
+      outputs: {
+        telemetry: {
+          type: 'String'
+          value: 'For more information, see https://aka.ms/avm/TelemetryInfo'
+        }
+      }
+    }
   }
 }
 

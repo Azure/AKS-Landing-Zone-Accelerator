@@ -306,8 +306,14 @@ module virtualMachine 'br/public:avm/res/compute/virtual-machine:0.21.0' = {
     disablePasswordAuthentication: false
     adminPassword: jumpboxAdminPassword
     location: location
+    managedIdentities: {
+      systemAssigned: true
+    }
   }
 }
 
 @description('The resource ID of the API server VNet integration subnet.')
 output apiServerSubnetId string = vnetSpoke.outputs.subnetResourceIds[5] // apiserver-subnet
+
+@description('The principal ID of the jumpbox VM system-assigned managed identity.')
+output jumpboxPrincipalId string = virtualMachine.outputs.?systemAssignedMIPrincipalId ?? ''
