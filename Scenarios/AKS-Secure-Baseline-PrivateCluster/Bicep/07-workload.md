@@ -10,7 +10,7 @@ As the infrastructure has been deployed in a private AKS cluster setup with priv
 
 The first major step to deploying the application is to connect to the jumpbox inside the private network and authenticate to Azure and the AKS cluster.
 
-1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resource group, connect to the VM using the **Connect via Bastion** option using the credentials provided in the Bicep template (azureuser/Password123).
+1. From the *jumpbox* resource in the *AKS-LZA-SPOKE* resource group, connect to the VM using the **Connect via Bastion** option using the credentials provided during deployment.
 
 1. If prompted, allow the browser to read the contents of your clipboard.
 
@@ -52,7 +52,7 @@ The first major step to deploying the application is to connect to the jumpbox i
 
    ```bash
       # Enter the name of your ACR below
-      SPOKERG=AKS-LZA-SPOKE
+      SPOKERG=rg-spoke
       AKSCLUSTERNAME=$(az aks list -g $SPOKERG --query [0].name -o tsv)
       ACRNAME=$(az acr list -g $SPOKERG --query [0].name -o tsv)
    ```
@@ -81,7 +81,7 @@ The first major step to deploying the application is to connect to the jumpbox i
 
 ### Control the default NGINX ingress controller configuration (preview)
 
-As part of deploying our AKS environment, we enabled the [AKS app routing addon](https://learn.microsoft.com/en-us/azure/aks/app-routing). For better security, we will ensure that our applications, including the ingress controller are only available within the internal network of your organization. We will later expose our application to the internet using a web application firewall enabled application gateway. Our first step is to ensure that our default settings for the nginx ingress controller managed by the AKS app routing addon ensures the ingress has only internal IP addresses. As of the time of writing, this is a preview feature that requires the use of aks-preview Azure CLI extension. If you do not have this installed, use the commands below to install it.
+As part of deploying our AKS environment, we enabled the [AKS app routing addon](https://learn.microsoft.com/en-us/azure/aks/app-routing). For better security, we will ensure that our applications, including the ingress controller are only available within the internal network of your organization. We will later expose our application to the internet using Application Gateway for Containers (AGC) with the Gateway API. Our first step is to ensure that our default settings for the nginx ingress controller managed by the AKS app routing addon ensures the ingress has only internal IP addresses. As of the time of writing, this is a preview feature that requires the use of aks-preview Azure CLI extension. If you do not have this installed, use the commands below to install it.
 
 ```bash
 az extension add --name aks-preview
@@ -110,6 +110,134 @@ Now that you have enabled the preview feature, run the command below to update t
 ```bash
 az aks approuting update --resource-group $SPOKERG --name $AKSCLUSTERNAME --nginx Internal
 ```
+
+## Set Up Workload Identity and Key Vault CSI Driver Integration
+
+Before deploying your workload, set up Workload Identity so that pods can fetch secrets directly from Key Vault at runtime — with no base64-encoded Kubernetes Secrets.
+
+### How it works
+
+```text
+Pod → K8s ServiceAccount (annotated with Azure client ID)
+  → OIDC token exchange via Federated Identity Credential
+  → Azure Managed Identity authenticates to Key Vault
+  → CSI Driver mounts secrets as files in the pod
+```
+
+### Step 1: Deploy the Workload Identity Infrastructure
+
+This creates a user-assigned managed identity with a federated credential that trusts the AKS OIDC issuer, and grants it "Key Vault Secrets User" on your Key Vault.
+
+# [CLI](#tab/CLI)
+
+```azurecli
+cd ../07-Workload
+
+# Get the OIDC issuer URL from the AKS cluster
+OIDC_ISSUER_URL=$(az aks show --name $AKSCLUSTERNAME --resource-group $SPOKERG --query "oidcIssuerProfile.issuerUrl" -o tsv)
+
+# Get the Key Vault name
+KEYVAULT_NAME=$(az keyvault list -g $SPOKERG --query [0].name -o tsv)
+
+# Deploy workload identity infrastructure
+az stack sub create \
+  --name "ESLZ-WORKLOAD-IDENTITY" \
+  --location $REGION \
+  --template-file workload-identity.bicep \
+  --parameters rgName=$SPOKERG \
+    oidcIssuerUrl=$OIDC_ISSUER_URL \
+    keyvaultName=$KEYVAULT_NAME \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
+
+# Get the workload identity client ID from the deployment output
+WORKLOAD_IDENTITY_CLIENT_ID=$(az stack sub show \
+  --name "ESLZ-WORKLOAD-IDENTITY" \
+  --query "outputs.workloadIdentityClientId.value" -o tsv)
+
+echo "Workload Identity Client ID: $WORKLOAD_IDENTITY_CLIENT_ID"
+```
+
+# [PowerShell](#tab/PowerShell)
+
+```azurepowershell
+Set-Location ..\07-Workload
+
+# Get the OIDC issuer URL from the AKS cluster
+$OIDC_ISSUER_URL = az aks show --name $AKSCLUSTERNAME --resource-group $SPOKERG --query "oidcIssuerProfile.issuerUrl" -o tsv
+
+# Get the Key Vault name
+$KEYVAULT_NAME = az keyvault list -g $SPOKERG --query "[0].name" -o tsv
+
+# Deploy workload identity infrastructure
+New-AzSubscriptionDeploymentStack `
+   -Name "ESLZ-WORKLOAD-IDENTITY" `
+   -Location $REGION `
+   -TemplateFile .\workload-identity.bicep `
+   -TemplateParameterObject @{ rgName = $SPOKERG; oidcIssuerUrl = $OIDC_ISSUER_URL; keyvaultName = $KEYVAULT_NAME } `
+   -ActionOnUnmanage DetachAll `
+   -DenySettingsMode None
+
+# Get the workload identity client ID from the deployment output
+$WORKLOAD_IDENTITY_CLIENT_ID = (Get-AzSubscriptionDeploymentStack `
+   -Name "ESLZ-WORKLOAD-IDENTITY").Outputs.workloadIdentityClientId.Value
+
+Write-Host "Workload Identity Client ID: $WORKLOAD_IDENTITY_CLIENT_ID"
+```
+
+### Step 2: Create a test secret in Key Vault
+
+```bash
+az keyvault secret set --vault-name $KEYVAULT_NAME --name "my-secret" --value "Hello-from-KeyVault"
+az keyvault secret set --vault-name $KEYVAULT_NAME --name "my-connection-string" --value "Server=myserver;Database=mydb;"
+```
+
+### Step 3: Deploy the Kubernetes manifests
+
+Update the placeholders in the manifests and apply them:
+
+```bash
+TENANT_ID=$(az account show --query tenantId -o tsv)
+
+# Update ServiceAccount with the workload identity client ID
+sed -i "s/<WORKLOAD_IDENTITY_CLIENT_ID>/$WORKLOAD_IDENTITY_CLIENT_ID/g" manifests/service-account.yaml
+
+# Update SecretProviderClass with Key Vault details
+sed -i "s/<WORKLOAD_IDENTITY_CLIENT_ID>/$WORKLOAD_IDENTITY_CLIENT_ID/g" manifests/secret-provider-class.yaml
+sed -i "s/<KEYVAULT_NAME>/$KEYVAULT_NAME/g" manifests/secret-provider-class.yaml
+sed -i "s/<TENANT_ID>/$TENANT_ID/g" manifests/secret-provider-class.yaml
+
+# Apply manifests
+kubectl apply -f manifests/service-account.yaml
+kubectl apply -f manifests/secret-provider-class.yaml
+kubectl apply -f manifests/sample-workload.yaml
+```
+
+### Step 4: Verify secrets are mounted
+
+```bash
+# Wait for the pod to be ready
+kubectl wait --for=condition=Ready pod/sample-workload --timeout=120s
+
+# Check the pod logs to see mounted secrets
+kubectl logs sample-workload
+
+# Verify the secret files are mounted
+kubectl exec sample-workload -- ls /mnt/secrets-store/
+
+# Confirm no base64-encoded K8s Secrets were created
+kubectl get secrets -n default | grep -v "default-token"
+```
+
+The pod should show the secrets mounted from Key Vault as files under `/mnt/secrets-store/`. No Kubernetes Secrets (with base64-encoded data) are created — all secret data is fetched at runtime from Key Vault using the CSI driver and Workload Identity.
+
+### Clean up the sample workload
+
+```bash
+kubectl delete -f manifests/sample-workload.yaml
+```
+
+> **Note**: Leave the ServiceAccount and SecretProviderClass in place — your real workloads will use them.
 
 ## Build Container Images
 
@@ -284,29 +412,45 @@ curl $INGRESS_IP/admin
 
 You should see HTML code of the front end web application. If it was configured correctly, there will be no "nginx" in the HTML
 
-### Add your new ingress as a backend pool for your application gateway so it can be accessed from the internet
+### Expose the application externally via Application Gateway for Containers (AGC) + Gateway API
 
-As part of our Bicep deployment code, we already created a backend pool, routing rule, HTTP rules, a PUBLIC frontend IP configuration and a HTTP Listener for the App gateway. This will allow us to expose our app externally with our WAF enabled App gateway. Run the application-gateway address-pool command to add the ingress IP address to the backend pool.
+The legacy AGIC addon has been replaced with [Application Gateway for Containers](https://learn.microsoft.com/azure/application-gateway/for-containers/overview) using the Kubernetes Gateway API. The AGC traffic controller was deployed in step 04-Network-LZ.
 
-```bash
-BACKENDPOOLNAME=aksAppRoutingPool
-# change APPGW below to the correct app gateway name
-az network application-gateway address-pool update \
-  --resource-group $SPOKERG \
-  --gateway-name APPGW \
-  --name $BACKENDPOOLNAME \
-  --servers $INGRESS_IP
-```
-
-To get the public AppGw IP address for public access:
+Get the AGC resource ID from the Azure CLI:
 
 ```bash
-az network public-ip show -g $SPOKERG -n APPGW-PIP --query ipAddress -o tsv
-
-# 74.241.209.184
+AGC_RESOURCE_ID=$(az network alb show --resource-group $SPOKERG --name alb-controller --query id -o tsv)
 ```
 
-Go on your browser and enter the IP address to access your application.
+Update the Gateway manifest with your AGC resource ID and apply the Gateway API resources:
+
+```bash
+sed -i "s|<AGC_RESOURCE_ID>|$AGC_RESOURCE_ID|g" manifests/gateway.yaml
+
+kubectl apply -f manifests/gateway-class.yaml
+kubectl apply -f manifests/gateway.yaml
+kubectl apply -f manifests/httproute.yaml
+```
+
+Verify the Gateway is programmed:
+
+```bash
+kubectl get gateway agc-gateway
+```
+
+Once the Gateway shows `Programmed=True`, get the AGC frontend IP:
+
+```bash
+AGC_IP=$(kubectl get gateway agc-gateway -o jsonpath='{.status.addresses[0].value}')
+echo "AGC Frontend: $AGC_IP"
+```
+
+Test external access:
+
+```bash
+curl http://$AGC_IP
+curl http://$AGC_IP/admin
+```
 
 ## Optional - Private DNS Zone
 
@@ -315,7 +459,7 @@ If you need a private DNS zone which is integrated with AKS and accessible from 
 ```bash
 az network private-dns zone create --resource-group $SPOKERG --name private.contoso.com
 
-az network private-dns link vnet create --resource-group $SPOKERG --name privateContosoComLink --zone-name private.contoso.com --virtual-network VNet-Spoke --registration-enabled false
+az network private-dns link vnet create --resource-group $SPOKERG --name privateContosoComLink --zone-name private.contoso.com --virtual-network vnet-spoke --registration-enabled false
 
 ZONEID=$(az network private-dns zone show --resource-group $SPOKERG --name private.contoso.com --query "id" --output tsv)
 

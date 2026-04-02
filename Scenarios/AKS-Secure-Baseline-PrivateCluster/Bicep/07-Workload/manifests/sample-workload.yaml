@@ -1,0 +1,51 @@
+# Sample workload pod that mounts secrets from Key Vault via CSI Driver
+# Secrets are fetched at runtime using Workload Identity - no base64-encoded
+# Kubernetes Secrets are used.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sample-workload
+  namespace: default
+  labels:
+    app: sample-workload
+    azure.workload.identity/use: "true"
+spec:
+  serviceAccountName: workload-sa
+  containers:
+    - name: app
+      image: mcr.microsoft.com/azure-cli:latest
+      command:
+        - "/bin/sh"
+        - "-c"
+        - |
+          echo "=== Secrets mounted from Key Vault ==="
+          echo "Secret files in /mnt/secrets-store:"
+          ls -la /mnt/secrets-store/
+          echo ""
+          echo "MY_SECRET value (first 4 chars):"
+          cat /mnt/secrets-store/MY_SECRET | cut -c1-4
+          echo "..."
+          echo ""
+          echo "Secrets are fetched at runtime from Key Vault via CSI Driver + Workload Identity."
+          echo "No base64-encoded Kubernetes Secrets were used."
+          echo ""
+          echo "Sleeping to keep pod running for inspection..."
+          sleep 3600
+      volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+  volumes:
+    - name: secrets-store
+      csi:
+        driver: secrets-store.csi.k8s.io
+        readOnly: true
+        volumeAttributes:
+          secretProviderClass: azure-kv-secrets

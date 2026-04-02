@@ -5,7 +5,7 @@ param acrname string
 param location string = deployment().location
 
 // Create an Azure Container Registry
-module registry 'br/public:avm/res/container-registry/registry:0.1.1' = {
+module registry 'br/public:avm/res/container-registry/registry:0.11.0' = {
   scope: resourceGroup(rgName)
   name: acrname
   params: {

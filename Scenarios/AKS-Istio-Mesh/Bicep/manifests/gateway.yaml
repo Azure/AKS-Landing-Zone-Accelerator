@@ -1,0 +1,26 @@
+# Istio Gateway for internal ingress (using the AKS Istio add-on managed gateway).
+# Routes external traffic into the mesh via the internal load balancer.
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: istio-internal-gateway
+  namespace: istio-ingress
+spec:
+  selector:
+    istio: aks-istio-ingressgateway-internal
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*.mesh.internal"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: istio-ingress-tls  # K8s secret with TLS cert
+      hosts:
+        - "*.mesh.internal"

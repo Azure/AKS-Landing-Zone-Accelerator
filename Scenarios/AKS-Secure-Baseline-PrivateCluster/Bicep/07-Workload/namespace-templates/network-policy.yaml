@@ -1,0 +1,21 @@
+# Network policy restricting traffic within the namespace.
+# Only allows ingress from the Istio ingress gateway and
+# same-namespace pods. Denies all other ingress by default.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-with-istio
+  namespace: NAMESPACE_NAME
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  ingress:
+    # Allow traffic from Istio ingress gateway
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: aks-istio-ingress
+    # Allow traffic within the same namespace
+    - from:
+        - podSelector: {}

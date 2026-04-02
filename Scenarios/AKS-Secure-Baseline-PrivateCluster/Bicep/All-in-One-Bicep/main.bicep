@@ -18,12 +18,23 @@ param deployHub bool = true
 @description('Set this to true if you want your aks cluster to be private')
 param enablePrivateCluster bool = true
 
-param rgHubName string = 'ESLZ-HUB-RG'
-param vnetHubName string = 'VNet-HUB'
-param hubVNETaddPrefixes array = ['10.0.0.0/16']
-param azfwName string = 'AZFW'
-param rtVMSubnetName string = 'vm-subnet-rt'
-param fwapplicationRuleCollections array = [
+@description('The name of the resource group for the hub network.')
+param rgHubName string = 'rg-hub'
+
+@description('The name of the hub virtual network.')
+param vnetHubName string = 'vnet-hub'
+
+@description('The address prefixes for the hub virtual network.')
+param hubVnetAddPrefixes array = ['10.0.0.0/16']
+
+@description('The name of the Azure Firewall.')
+param azfwName string = 'afw-hub'
+
+@description('The name of the route table for the VM subnet.')
+param rtVmSubnetName string = 'rt-vm-subnet'
+
+@description('Application rule collections for Azure Firewall.')
+param fwApplicationRuleCollections array = [
   {
     name: 'Helper-tools'
     properties: {
@@ -154,7 +165,8 @@ param fwapplicationRuleCollections array = [
     }
   }
 ]
-param fwnetworkRuleCollections array = [
+@description('Network rule collections for Azure Firewall.')
+param fwNetworkRuleCollections array = [
   {
     name: 'AKS-egress'
     properties: {
@@ -212,52 +224,109 @@ param fwnetworkRuleCollections array = [
     }
   }
 ]
-param fwnatRuleCollections array = []
+@description('NAT rule collections for Azure Firewall.')
+param fwNatRuleCollections array = []
+
+@description('The availability zones to deploy resources into.')
 param availabilityZones array = [1, 2, 3]
-param nsgBastionName string = 'BASTION-NSG'
+
+@description('The name of the NSG for the Bastion subnet.')
+param nsgBastionName string = 'nsg-bastion'
 /////////////////
 // 04-Network-LZ
 /////////////////
 
-param rgSpokeName string = 'ESLZ-SPOKE-RG'
-param vnetSpokeName string = 'VNet-SPOKE'
-param spokeVNETaddPrefixes array = ['10.1.0.0/16']
+@description('The name of the resource group for the spoke network.')
+param rgSpokeName string = 'rg-spoke'
+
+@description('The name of the spoke virtual network.')
+param vnetSpokeName string = 'vnet-spoke'
+
+@description('The address prefixes for the spoke virtual network.')
+param spokeVnetAddPrefixes array = ['10.1.0.0/16']
+
+@description('The address prefix for the default subnet in the spoke VNet.')
 param spokeSubnetDefaultPrefix string = '10.1.0.0/24'
-param spokeSubnetAKSPrefix string = '10.1.1.0/24'
-param spokeSubnetAppGWPrefix string = '10.1.2.0/27'
-param spokeSubnetVMPrefix string = '10.1.3.0/24'
+
+@description('The address prefix for the AKS subnet.')
+param spokeSubnetAksPrefix string = '10.1.1.0/24'
+
+@description('The address prefix for the AGC delegated subnet.')
+param spokeSubnetAgcPrefix string = '10.1.2.0/24'
+
+@description('The address prefix for the VM subnet in the spoke VNet.')
+param spokeSubnetVmPrefix string = '10.1.3.0/24'
+
+@description('The address prefix for the private link services subnet.')
 param spokeSubnetPLinkervicePrefix string = '10.1.4.0/24'
+
+@description('The name of the peering from spoke to hub VNet.')
 param remotePeeringName string = 'spoke-hub-peering'
-param rtAKSSubnetName string = 'AKS-RT'
-param firewallIP string = '10.0.1.4'
-param appGatewayName string = 'APPGW'
-param nsgAKSName string = 'AKS-NSG'
-param nsgAppGWName string = 'APPGW-NSG'
-param rtAppGWSubnetName string = 'AppGWSubnet-RT'
-param appGwyAutoScale object = { maxCapacity: 2, minCapacity: 1 }
+
+@description('The name of the route table for the AKS subnet.')
+param rtAksSubnetName string = 'rt-aks'
+
+@description('The private IP address of the Azure Firewall in the hub network.')
+param firewallIp string = '10.0.1.4'
+
+@description('The name of the Application Gateway for Containers traffic controller.')
+param agcName string = 'alb-controller'
+
+@description('The name of the NSG for the AKS subnet.')
+param nsgAksName string = 'nsg-aks'
+
+@description('Additional security rules for the AKS NSG.')
 param securityRules array = []
+
+@description('The name of the default subnet in the hub VNet.')
 param defaultSubnetName string = 'default'
+
+@description('The address prefix for the default subnet.')
 param defaultSubnetAddressPrefix string = '10.0.0.0/24'
+
+@description('The name of the Azure Firewall subnet.')
 param azureFirewallSubnetName string = 'AzureFirewallSubnet'
+
+@description('The address prefix for the Azure Firewall subnet.')
 param azureFirewallSubnetAddressPrefix string = '10.0.1.0/26'
+
+@description('The name of the Azure Firewall management subnet.')
 param azureFirewallManagementSubnetName string = 'AzureFirewallManagementSubnet'
+
+@description('The address prefix for the Azure Firewall management subnet.')
 param azureFirewallManagementSubnetAddressPrefix string = '10.0.4.0/26'
+
+@description('The name of the Azure Bastion subnet.')
 param azureBastionSubnetName string = 'AzureBastionSubnet'
+
+@description('The address prefix for the Azure Bastion subnet.')
 param azureBastionSubnetAddressPrefix string = '10.0.2.0/27'
-param vmsubnetSubnetName string = 'vmsubnet'
-param vmsubnetSubnetAddressPrefix string = '10.0.3.0/24'
-param linuxVirtualMachineVMSize string = 'Standard_DS2_v2'
+
+@description('The name of the VM subnet in the hub VNet.')
+param vmSubnetName string = 'vmsubnet'
+
+@description('The address prefix for the VM subnet.')
+param vmSubnetAddressPrefix string = '10.0.3.0/24'
+
+@description('The VM size for the jumpbox virtual machine.')
+param linuxVirtualMachineVmSize string = 'Standard_DS2_v2'
+
+@secure()
+@description('The admin password for the jumpbox VM in the spoke network.')
+param jumpboxAdminPassword string
 
 /////////////////
 // 05-AKS-Supporting
 /////////////////
 
 
+@description('The name of the subnet for private endpoints.')
 param subnetName string = 'servicespe'
-param privateDNSZoneACRName string = 'privatelink${environment().suffixes.acrLoginServer}'
-param privateDNSZoneKVName string = 'privatelink.vaultcore.azure.net'
-param privateDNSZoneSAName string = 'privatelink.file.${environment().suffixes.storage}'
-param storageAccountName string = 'eslzsa${uniqueString('aks', uniqueString(subscription().id, utcNow()))}'
+
+@description('The name of the storage account. Override to use a custom name.')
+param storageAccountName string = 'st${uniqueString(aksClusterName, subscription().id)}'
+
+@description('The storage account SKU type.')
 param storageAccountType string = 'Standard_GZRS'
 
 /////////////////
@@ -265,9 +334,16 @@ param storageAccountType string = 'Standard_GZRS'
 /////////////////
 
 
+@description('The name of the AKS subnet.')
 param aksSubnetName string = 'AKS'
-param aksIdentityName string = 'aksIdentity'
+
+@description('The name of the user-assigned managed identity for AKS.')
+param aksIdentityName string = 'id-aks'
+
+@description('Enable cluster autoscaling.')
 param enableAutoScaling bool = true
+
+@description('Cluster autoscaler profile settings.')
 param autoScalingProfile object = {
   balanceSimilarNodeGroups: false
   expander: 'random'
@@ -287,11 +363,38 @@ param autoScalingProfile object = {
   skipNodesWithLocalStorage: false
   skipNodesWithSystemPods: true
 }
-param aksadminaccessprincipalId string
-param kubernetesVersion string = '1.30'
+@description('The object ID of the Entra ID group for AKS cluster admins.')
+param aksAdminAccessPrincipalId string
+
+@description('The Kubernetes version for the AKS cluster.')
+param kubernetesVersion string = '1.35'
+
+@description('The network plugin for the AKS cluster.')
 param networkPlugin string = 'azure'
-param aksClusterName string = 'aksCluster'
-param aksVMSize string = 'Standard_D4d_v5'
+
+@description('The name of the AKS cluster.')
+param aksClusterName string = 'aks-cluster'
+
+@description('The VM size for AKS node pools.')
+param aksVmSize string = 'Standard_D4d_v5'
+
+@description('Optional. The AKS cluster SKU name. Set to "Automatic" for AKS Automatic mode, or "Base" for standard mode.')
+@allowed([
+  'Base'
+  'Automatic'
+])
+param aksSkuName string = 'Base'
+
+//////////////////////////////////
+//////////////////////////////////
+// VARIABLES
+//////////////////////////////////
+//////////////////////////////////
+
+// Private DNS zone names are deterministic — derived from the Azure environment
+var privateDnsZoneAcrName = 'privatelink${environment().suffixes.acrLoginServer}'
+var privateDnsZoneKvName = 'privatelink.vaultcore.azure.net'
+var privateDnsZoneSaName = 'privatelink.file.${environment().suffixes.storage}'
 
 //////////////////////////////////
 //////////////////////////////////
@@ -309,14 +412,14 @@ module networkHub '../03-Network-Hub/main.bicep' = if (deployHub) {
   params: {
     rgName: rgHubName
     availabilityZones: availabilityZones
-    spokeSubnetAKSPrefix: spokeSubnetAKSPrefix
+    spokeSubnetAksPrefix: spokeSubnetAksPrefix
     vnetHubName: vnetHubName
     azfwName: azfwName
-    rtVMSubnetName: rtVMSubnetName
-    fwapplicationRuleCollections: fwapplicationRuleCollections
-    fwnetworkRuleCollections: fwnetworkRuleCollections
-    fwnatRuleCollections: fwnatRuleCollections
-    hubVNETaddPrefixes: hubVNETaddPrefixes
+    rtVmSubnetName: rtVmSubnetName
+    fwApplicationRuleCollections: fwApplicationRuleCollections
+    fwNetworkRuleCollections: fwNetworkRuleCollections
+    fwNatRuleCollections: fwNatRuleCollections
+    hubVnetAddPrefixes: hubVnetAddPrefixes
     defaultSubnetName: defaultSubnetName
     defaultSubnetAddressPrefix: defaultSubnetAddressPrefix
     azureFirewallSubnetName: azureFirewallSubnetName
@@ -325,8 +428,8 @@ module networkHub '../03-Network-Hub/main.bicep' = if (deployHub) {
     azureFirewallManagementSubnetAddressPrefix: azureFirewallManagementSubnetAddressPrefix
     azureBastionSubnetName: azureBastionSubnetName
     azureBastionSubnetAddressPrefix: azureBastionSubnetAddressPrefix
-    vmsubnetSubnetName: vmsubnetSubnetName
-    vmsubnetSubnetAddressPrefix: vmsubnetSubnetAddressPrefix 
+    vmSubnetName: vmSubnetName
+    vmSubnetAddressPrefix: vmSubnetAddressPrefix
     nsgBastionName: nsgBastionName
   }
 }
@@ -341,26 +444,22 @@ module networkSpoke '../04-Network-LZ/main.bicep' = {
     rgName: rgSpokeName
     enablePrivateCluster: enablePrivateCluster
     vnetSpokeName: vnetSpokeName
-    availabilityZones: availabilityZones
-    spokeVNETaddPrefixes: spokeVNETaddPrefixes
-    rtAKSSubnetName: rtAKSSubnetName
-    firewallIP: firewallIP
+    spokeVnetAddPrefixes: spokeVnetAddPrefixes
+    rtAksSubnetName: rtAksSubnetName
+    firewallIp: firewallIp
     vnetHubName: vnetHubName
-    appGatewayName: appGatewayName
-    vnetHUBRGName: rgHubName
-    nsgAKSName: nsgAKSName
-    nsgAppGWName: nsgAppGWName
-    rtAppGWSubnetName: rtAppGWSubnetName
-    appGwyAutoScale: appGwyAutoScale
+    agcName: agcName
+    vnetHubRgName: rgHubName
+    nsgAksName: nsgAksName
     securityRules: securityRules
     spokeSubnetDefaultPrefix: spokeSubnetDefaultPrefix
-    spokeSubnetAKSPrefix: spokeSubnetAKSPrefix
-    spokeSubnetAppGWPrefix: spokeSubnetAppGWPrefix
-    spokeSubnetVMPrefix:spokeSubnetVMPrefix
+    spokeSubnetAksPrefix: spokeSubnetAksPrefix
+    spokeSubnetAgcPrefix: spokeSubnetAgcPrefix
+    spokeSubnetVmPrefix: spokeSubnetVmPrefix
     spokeSubnetPLinkervicePrefix: spokeSubnetPLinkervicePrefix
     remotePeeringName: remotePeeringName
-    vmSize: linuxVirtualMachineVMSize
-
+    vmSize: linuxVirtualMachineVmSize
+    jumpboxAdminPassword: jumpboxAdminPassword
   }
   dependsOn: deployHub ? [networkHub] : []
 }
@@ -375,9 +474,9 @@ module aksSupporting '../05-AKS-Supporting/main.bicep' = {
     rgName: rgSpokeName
     vnetName: vnetSpokeName
     subnetName: subnetName
-    privateDNSZoneACRName: privateDNSZoneACRName
-    privateDNSZoneKVName: privateDNSZoneKVName
-    privateDNSZoneSAName: privateDNSZoneSAName
+    privateDnsZoneAcrName: privateDnsZoneAcrName
+    privateDnsZoneKvName: privateDnsZoneKvName
+    privateDnsZoneSaName: privateDnsZoneSaName
     storageAccountName: storageAccountName
     storageAccountType: storageAccountType
   }
@@ -398,12 +497,46 @@ module aksCluster '../06-AKS-Cluster/main.bicep' = {
     aksIdentityName: aksIdentityName
     enableAutoScaling: enableAutoScaling
     autoScalingProfile: autoScalingProfile
-    aksadminaccessprincipalId: aksadminaccessprincipalId
+    aksAdminAccessPrincipalId: aksAdminAccessPrincipalId
     kubernetesVersion: kubernetesVersion
-    keyvaultName: aksSupporting.outputs.keyVaultName
+    keyVaultName: aksSupporting.outputs.keyVaultName
     networkPlugin: networkPlugin
     acrName: aksSupporting.outputs.acrName
     aksClusterName: aksClusterName
-    vmSize: aksVMSize
+    vmSize: aksVmSize
+    aksSkuName: aksSkuName
+    enableKmsEncryption: true
+    kmsKeyUri: aksSupporting.outputs.kmsKeyUri
+    apiServerSubnetId: networkSpoke.outputs.apiServerSubnetId
+  }
+}
+
+/////////////////
+// Jumpbox → AKS RBAC
+/////////////////
+
+// Grant the jumpbox VM managed identity "Azure Kubernetes Service Cluster User Role"
+// so it can call `az aks get-credentials` for the private cluster.
+module jumpboxAksClusterUser 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.2' = {
+  scope: resourceGroup(rgSpokeName)
+  name: 'jumpbox-aks-cluster-user'
+  params: {
+    principalId: networkSpoke.outputs.jumpboxPrincipalId
+    resourceId: aksCluster.outputs.aksClusterResourceId
+    roleDefinitionId: '4abbcc35-e782-43d8-92c5-2d3f1bd2253f' // Azure Kubernetes Service Cluster User Role
+    principalType: 'ServicePrincipal'
+  }
+}
+
+// Grant the jumpbox VM managed identity "Azure Kubernetes Service RBAC Cluster Admin"
+// so it can run kubectl commands against the private cluster.
+module jumpboxAksRbacAdmin 'br/public:avm/ptn/authorization/resource-role-assignment:0.1.2' = {
+  scope: resourceGroup(rgSpokeName)
+  name: 'jumpbox-aks-rbac-admin'
+  params: {
+    principalId: networkSpoke.outputs.jumpboxPrincipalId
+    resourceId: aksCluster.outputs.aksClusterResourceId
+    roleDefinitionId: 'b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b' // Azure Kubernetes Service RBAC Cluster Admin
+    principalType: 'ServicePrincipal'
   }
 }

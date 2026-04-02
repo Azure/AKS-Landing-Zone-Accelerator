@@ -1,0 +1,27 @@
+# Istio Gateway for the namespace.
+# Routes ingress traffic to services within NAMESPACE_NAME.
+# Replace NAMESPACE_NAME with the actual namespace name.
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: NAMESPACE_NAME-gateway
+  namespace: NAMESPACE_NAME
+spec:
+  selector:
+    istio: aks-istio-ingressgateway-internal
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "NAMESPACE_NAME.mesh.internal"
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      tls:
+        mode: SIMPLE
+        credentialName: NAMESPACE_NAME-tls
+      hosts:
+        - "NAMESPACE_NAME.mesh.internal"

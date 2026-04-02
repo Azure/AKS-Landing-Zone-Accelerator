@@ -7,7 +7,7 @@ param aksClusterVnetRegion2ResourceId string
 param ARECORDS array
 
 
-module privateDnsZone 'br/public:avm/res/network/private-dns-zone:0.2.5' = {
+module privateDnsZone 'br/public:avm/res/network/private-dns-zone:0.8.1' = {
   name: 'privateDnsZoneDeployment'
   scope: resourceGroup(rgName)
   params: {

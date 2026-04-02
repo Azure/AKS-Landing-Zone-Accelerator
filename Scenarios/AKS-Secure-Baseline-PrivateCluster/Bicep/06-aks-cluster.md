@@ -2,7 +2,7 @@
 
 The following will be created:
 
-* AKS Cluster with KeyVault (preview), AGIC and monitoring addons
+* AKS Cluster with KeyVault (preview) and monitoring addons
 * Log Analytics Workspace
 * ACR Access to the AKS Cluster
 * Updates to KeyVault access policy with AKS keyvault addon
@@ -39,12 +39,11 @@ az provider register --namespace Microsoft.ContainerService
 
 There are a few additional Azure Providers and features that needs to be registered as well. Follow the same steps above for the following providers and features:
 
-- Microsoft.ContainerService
-- EnablePodIdentityPreview
-- AKS-AzureKeyVaultSecretsProvider
-- Microsoft.OperationsManagement
-- Microsoft.OperationalInsights
-- EncryptionAtHost
+* Microsoft.ContainerService
+* AKS-AzureKeyVaultSecretsProvider
+* Microsoft.OperationsManagement
+* Microsoft.OperationalInsights
+* EncryptionAtHost
 
 Here is a list with all required providers or features to be registered:
 
@@ -52,31 +51,51 @@ Here is a list with all required providers or features to be registered:
 az provider register --namespace Microsoft.ContainerService
 az provider register --namespace Microsoft.OperationsManagement
 az provider register --namespace Microsoft.OperationalInsights
-az feature register --name EnablePodIdentityPreview --namespace Microsoft.ContainerService
 az feature register --namespace "Microsoft.ContainerService" --name "AKS-AzureKeyVaultSecretsProvider"
 az feature register --namespace Microsoft.Compute --name EncryptionAtHost
 ```
 
 > :warning: Don't move ahead to the next steps until all providers are registered.
 
-There are two groups you need to change in parameters-main.json: 
-    - Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksadminaccessprincipalId. 
-    - Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: aksuseraccessprincipalId.
+There is one admin group you need to set in main.bicepparam:
+
+* Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: aksAdminAccessPrincipalId.
 
 ## AKS Networking Choices
 
-You can choose which AKS network plugin you want to use when deploying the cluster: Azure CNI or Kubenet. To learn more about both options, you can refer to the [Azure CNI VS Kubenet](#Azure-CNI-VS-Kubenet) section at the bottom of this page.
+You can choose which AKS network plugin you want to use when deploying the cluster: Azure CNI or Kubenet. To learn more about both options, you can refer to the [Azure CNI VS Kubenet](#azure-cni-vs-kubenet) section at the bottom of this page.
 
 **Please note: If you are new to Kubernetes, we recommend for you to choose Azure CNI Networking to avoid the extra complexity of routing.**
 
+## AKS SKU: Standard vs Automatic
+
+You can choose between two AKS cluster SKUs:
+
+* **Base (Standard)** — The traditional AKS experience with full manual control over node pools, scaling, and configuration. You manage node pools, autoscaler settings, and cluster upgrades explicitly.
+
+* **Automatic** — An opinionated, fully-managed AKS cluster that automates node provisioning (Node Auto Provisioning), scaling (KEDA + VPA), security defaults, and upgrade policies. Best for teams that want a production-ready cluster with minimal operational overhead.
+
+### Key trade-offs
+
+| Aspect | Base (Standard) | Automatic |
+| -------- | ---------------- | ----------- |
+| **Node management** | Manual node pools with configurable autoscaler | Automatic node provisioning (NAP) |
+| **Scaling** | Cluster autoscaler only | KEDA + VPA + NAP |
+| **Identity** | User-assigned managed identity | System-assigned managed identity |
+| **Upgrades** | Manual or configurable auto-upgrade | Auto-upgrade with maintenance windows |
+| **Outbound type** | Load Balancer (configurable) | Managed NAT Gateway |
+| **Node resource group** | Unrestricted (default) | ReadOnly |
+| **Network plugin** | Azure CNI or Kubenet | Azure CNI (managed) |
+
+To deploy with AKS Automatic, set `aksSkuName=Automatic` in your deployment command.
+
 ## Deploy the cluster
 
-Review "**parameters-main.json**" file and update the values as required. Please make sure to update the Microsoft Entra ID group IDs with ones created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using the Azure CLI or Azure PowerShell (code snippets are below).
+Review "**main.bicepparam**" file and update the values as required. Please make sure to update the Microsoft Entra ID group ID with the one created in Step 02 and kubernetesVersion in the parameters file. Once the files are updated, deploy using the Azure CLI or Azure PowerShell (code snippets are below).
 
-   > :warning: There are two groups you need to change in parameters-main.json:
+   > :warning: Update the admin group in main.bicepparam:
    >
-   > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksadminaccessprincipalId*.
-   > * Dev/User group which will grant "Azure Kubernetes Service Cluster User Role". The parameter name is: *aksadminaccessprincipalId*.
+   > * Admin group which will grant the role "Azure Kubernetes Service Cluster Admin Role". The parameter name is: *aksAdminAccessPrincipalId*.
 
 The Kubernetes community releases minor versions roughly every three months. AKS has it own supportability policy based in the community releases. Before proceeding with the deployment, check the latest version reviewing the [supportability doc](https://learn.microsoft.com/azure/aks/supported-kubernetes-versions). You can also check the latest version by using the following command:
 
@@ -84,49 +103,65 @@ The Kubernetes community releases minor versions roughly every three months. AKS
 az aks get-versions -l $REGION
 ```
 
-# [CLI](#tab/CLI)
+## [CLI](#tab/CLI)
 
-### Reference: Follow the below steps if you are going with the Azure CNI Networking option
+## Reference: Follow the below steps if you are going with the Azure CNI Networking option
 
+```bash
+az stack sub create \
+  --name "AKS-LZA-CLUSTER" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --parameters kubernetesVersion=1.33 networkPlugin=azure \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p kubernetesVersion=1.29.2 -p networkPlugin=azure
+
+## Reference: Follow the below steps if you are going with AKS Automatic mode
+
+```bash
+az stack sub create \
+  --name "AKS-LZA-CLUSTER" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --parameters kubernetesVersion=1.33 networkPlugin=azure aksSkuName=Automatic \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
-### Reference: Follow the below steps if you are going with the Kubenet option
+## Reference: Follow the below steps if you are going with the Kubenet option
 
-Step 1:
-
-[How to setup networking between Application Gateway and AKS](https://azure.github.io/application-gateway-kubernetes-ingress/how-tos/networking/)
-
-Step 2: (Optional - *if you don't do this, you'll have to manually update the route table after scaling changes in the cluster*)
-
-[Using AKS kubenet egress control with AGIC](https://github.com/Welasco/AKS-AGIC-UDR-AutoUpdate)
-
-```
-az deployment sub create -n "ESLZ-AKS-CLUSTER" -l $REGION -f main.bicep -p parameters-main.json -p acrName=$acrName -p keyvaultName=$keyVaultName -p kubernetesVersion=1.29.2 -p networkPlugin=kubenet
+```bash
+az stack sub create \
+  --name "AKS-LZA-CLUSTER" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --parameters acrName=$acrName keyVaultName=$keyVaultName kubernetesVersion=1.33 networkPlugin=kubenet \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile main.bicep -TemplateParameterFile parameters-main.json -Location $REGION -Name ESLZ-AKS-CLUSTER
+New-AzSubscriptionDeploymentStack `
+  -Name "AKS-LZA-CLUSTER" `
+  -Location $REGION `
+  -TemplateFile main.bicep `
+  -TemplateParameterFile main.bicepparam `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 ## Azure CNI VS Kubenet
 
-If you are using the Azure network plugin, each pod in the cluster will have an IP from the AKS Subnet CIDR. This allows Application Gateway and any other external service to reach the pod using this IP.
+If you are using the Azure network plugin, each pod in the cluster will have an IP from the AKS Subnet CIDR. This allows Application Gateway for Containers and any other external service to reach the pod using this IP.
 
 For kubenet plugin, all the PODs get an IP address from POD-CIDR within the cluster. To route traffic to these pods, the TCP/UDP flow must go to the node where the pod resides. By default, AKS will maintain the User Defined Route (UDR) associated with the subnet where it belongs to always be updated with the CIDR /24 of the respective POD/Node IP address.
 
-Currently Application Gateway does not support any scenario where a route 0.0.0.0/0 needs to be redirected through any virtual appliance, a hub/spoke virtual network, or on-premises (forced tunnelling). Since Application Gateway doesn't support UDR with a route 0.0.0.0/0 and it's a requirement for AKS egress control you cannot use the same route table for both subnets (Application Gateway subnet and AKS subnet).
-
-This means the Application Gateway doesn't know how to route the traffic of a POD backend pool in a AKS cluster when you are using the kubenet plugin. Because of this limitation, you cannot associate the default AKS UDR to the Application Gateway subnet since an AKS cluster with egress controller requires a 0.0.0.0/0 route. It's possible to create a manual route table to address this problem but once a node scale operation happens, the route needs to be updated again and this would require a manual update.
-
-For the purpose of this deployment when used with kubenet a UDR will be created during the deployment pointing the expected address prefix (CIDR) to the respective AKS worker node. This UDR will not be auto managed and in case of a cluster scale operation it should be manually updated.
-
-It's also possible to use an Azure external solution to watch the scaling operations and auto-update the routes using Azure Automation, Azure Functions or Logic Apps.
-
 [Use kubenet networking with your own IP address ranges in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/azure/aks/configure-kubenet)
-[Application Gateway infrastructure configuration](https://learn.microsoft.com/azure/application-gateway/configuration-infrastructure#supported-user-defined-routes)
 
 :arrow_forward: [Deploy a Basic Workload](./07-workload.md)

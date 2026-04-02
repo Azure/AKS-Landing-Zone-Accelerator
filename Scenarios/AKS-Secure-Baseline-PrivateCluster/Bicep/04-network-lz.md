@@ -6,27 +6,39 @@ The following will be created:
 * Spoke Virtual Network and Subnets
 * Peering of Hub and Spoke Networks
 * Private DNS Zones
-* Application Gateway
-* NSGs for AKS subnet and Application Gateway subnet
+* Application Gateway for Containers (AGC) traffic controller
+* NSG for AKS subnet
 
-Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster-AVM/Bicep/04-Network-LZ" folder
+Navigate to "/Scenarios/AKS-Secure-Baseline-PrivateCluster/Bicep/04-Network-LZ" folder
 
 ```bash
 cd ../04-Network-LZ
 ```
 
-Review "parameters-main.json" and update the values as required. Please note to verify the Azure Firewall Private IP (dhcp options in parameters-main.json) from the previous deployment in step 03. Once the files are updated, deploy using az cli or Az PowerShell
+Review "main.bicepparam" and update the values as required. Please note to verify the Azure Firewall Private IP from the previous deployment in step 03. Once the files are updated, deploy using [deployment stacks](https://learn.microsoft.com/azure/azure-resource-manager/bicep/deployment-stacks).
 
 # [CLI](#tab/CLI)
 
 ```azurecli
-az deployment sub create -n "AKS-LZA-Spoke-AKS" -l $REGION -f main.bicep -p parameters-main.json
+az stack sub create \
+  --name "AKS-LZA-SPOKE" \
+  --location $REGION \
+  --template-file main.bicep \
+  --parameters main.bicepparam \
+  --action-on-unmanage detachAll \
+  --deny-settings-mode none
 ```
 
 # [PowerShell](#tab/PowerShell)
 
 ```azurepowershell
-New-AzSubscriptionDeployment -TemplateFile .\04-Network-LZ\main.bicep -TemplateParameterFile .\04-Network-LZ\parameters-main.json -Location $REGION -Name AKS-LZA-Spoke-AKS
+New-AzSubscriptionDeploymentStack `
+  -Name "AKS-LZA-SPOKE" `
+  -Location $REGION `
+  -TemplateFile .\04-Network-LZ\main.bicep `
+  -TemplateParameterFile .\04-Network-LZ\main.bicepparam `
+  -ActionOnUnmanage DetachAll `
+  -DenySettingsMode None
 ```
 
 :arrow_forward: [Creation of Supporting Components for AKS](./05-aks-supporting.md)

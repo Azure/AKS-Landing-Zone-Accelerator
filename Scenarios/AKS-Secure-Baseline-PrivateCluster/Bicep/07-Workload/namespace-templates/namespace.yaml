@@ -1,0 +1,12 @@
+# Namespace with Istio sidecar injection enabled.
+# Replace NAMESPACE_NAME with the actual namespace name.
+# Replace ISTIO_REVISION with the installed Istio revision (e.g., asm-1-27).
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: NAMESPACE_NAME
+  labels:
+    istio.io/rev: ISTIO_REVISION
+    purpose: workload
+  annotations:
+    description: "Managed by Flux GitOps - namespace building block"
