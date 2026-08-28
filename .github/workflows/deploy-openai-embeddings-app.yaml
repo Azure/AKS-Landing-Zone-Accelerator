@@ -24,10 +24,10 @@ jobs:
             id-token: write
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
               with:
                 submodules: 'true'
-            - uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+            - uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.7
               name: Azure login
               with:
                 client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -44,18 +44,18 @@ jobs:
         needs:
          - buildImage
         steps:
-            - uses: actions/checkout@v3
-            - uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+            - uses: actions/checkout@a37ce9120846195fa4ece8f58b268e6043cb2f26 # v3.7.0
+            - uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2 # v1.4.7
               name: Azure login
               with:
                 client-id: ${{ secrets.AZURE_CLIENT_ID }}
                 subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
                 tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-            - uses: azure/use-kubelogin@v1
+            - uses: azure/use-kubelogin@76597ae0fcbaace21b05e13a2cbf8daee2c6e820 # v1.2
               name: Set up kubelogin for non-interactive login
               with:
                 kubelogin-version: v0.0.25
-            - uses: azure/aks-set-context@v3
+            - uses: azure/aks-set-context@4edaee69f820359371ee8bc85189ac03a21d3a58 # v3.2
               name: Get K8s context
               with:
                 admin: "false"
@@ -81,7 +81,7 @@ jobs:
                 
             # Runs Kustomize to create manifest files
             - name: Bake deployment
-              uses: azure/k8s-bake@v2
+              uses: azure/k8s-bake@24950e3f44c69c914261e3028a0fcd0fdcd93690 # v2.4
               with:
                 renderEngine: "kustomize"
                 kustomizationPath: ${{ env.KUSTOMIZE_PATH }}
@@ -90,7 +90,7 @@ jobs:
 
             # Deploys application based on manifest files from previous step
             - name: Deploy application
-              uses: Azure/k8s-deploy@v4
+              uses: Azure/k8s-deploy@1082a9290dd683dfe1d60582f418a27684e3a391 # v4.10
               with:
                 action: deploy
                 manifests: ${{ steps.bake.outputs.manifestsBundle }}
