@@ -71,7 +71,7 @@ var privateDnsZoneAksSuffixes = {
   AzureCloud: '.azmk8s.io'
   AzureUSGovernment: '.cx.aks.containerservice.azure.us'
   AzureChinaCloud: '.cx.prod.service.azk8s.cn'
-  AzureGermanCloud: '' //TODO: what is the correct value here?
+  AzureGermanCloud: '.cx.aks.containerservice.azure.de'
 }
 
 resource vnetHub 'Microsoft.Network/virtualNetworks@2025-05-01' existing = {
