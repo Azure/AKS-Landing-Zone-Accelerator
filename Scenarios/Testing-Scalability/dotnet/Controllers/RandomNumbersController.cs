@@ -69,7 +69,7 @@ public class RandomNumbersController : ControllerBase
         Stopwatch stopWatch = new Stopwatch();
         stopWatch.Start();
         for (int i = 0 ; i < toGenerate ; i++) {
-            random.Next();
+            Random.Shared.Next();
         }
         stopWatch.Stop();
 
