@@ -12,7 +12,6 @@ public class RandomNumbersController : ControllerBase
     private const int Factor = 1000000;
 
     private readonly ILogger<RandomNumbersController> _logger;
-    private static Random random = new Random();
 
     private int _LazyNumbersToGenerate = -1;
 
@@ -56,7 +55,7 @@ public class RandomNumbersController : ControllerBase
         Stopwatch stopWatch = new Stopwatch();
         stopWatch.Start();
         for (int i = 0 ; i < toGenerate ; i++) {
-            random.Next();
+            Random.Shared.Next();
         }
         stopWatch.Stop();
 
