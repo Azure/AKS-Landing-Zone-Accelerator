@@ -13,7 +13,6 @@ public class RandomNumbersController : ControllerBase
     private const int MaxNumbersPerRequest = 1000;
 
     private readonly ILogger<RandomNumbersController> _logger;
-    private static readonly Random Random = new Random();
 
     private int _LazyNumbersToGenerate = -1;
 
@@ -69,9 +68,8 @@ public class RandomNumbersController : ControllerBase
         int toGenerate = Factor * numbers;
         Stopwatch stopWatch = new Stopwatch();
         stopWatch.Start();
-        for (int i = 0; i < toGenerate; i++)
-        {
-            Random.Next();
+        for (int i = 0 ; i < toGenerate ; i++) {
+            Random.Shared.Next();
         }
         stopWatch.Stop();
 
