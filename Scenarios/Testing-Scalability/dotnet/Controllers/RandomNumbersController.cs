@@ -10,6 +10,7 @@ public class RandomNumbersController : ControllerBase
 {
     private const int DefaultMillionsToGenerate = 10;
     private const int Factor = 1000000;
+    private const int MaxNumbersPerRequest = 1000;
 
     private readonly ILogger<RandomNumbersController> _logger;
 
@@ -49,13 +50,26 @@ public class RandomNumbersController : ControllerBase
     [HttpGet(Name = "RandomNumbers")]
     public IActionResult Get([FromQuery] int numbers)
     {
+        if (numbers < 0)
+        {
+            return BadRequest("numbers must be greater than zero.");
+        }
+
         if (numbers == 0)
+        {
             numbers = LazyNumbersToGenerate;
+        }
+
+        if (numbers > MaxNumbersPerRequest)
+        {
+            return BadRequest($"numbers must be less than or equal to {MaxNumbersPerRequest}.");
+        }
+
         int toGenerate = Factor * numbers;
         Stopwatch stopWatch = new Stopwatch();
         stopWatch.Start();
         for (int i = 0 ; i < toGenerate ; i++) {
-            Random.Shared.Next();
+            random.Next();
         }
         stopWatch.Stop();
 
@@ -64,6 +78,5 @@ public class RandomNumbersController : ControllerBase
             NumbersGenerated = toGenerate,
             TimeUsed = stopWatch.Elapsed.TotalMilliseconds
         });
-
     }
 }
